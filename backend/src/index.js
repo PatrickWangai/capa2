@@ -1,4 +1,8 @@
 import 'dotenv/config';
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+});
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
@@ -29,6 +33,9 @@ import adminRoutes from './routes/admin.js';
 import webhooksRoutes from './routes/webhooks.js';
 import { setupSocketHandlers } from './services/socketService.js';
 import { startPriceFeed } from './services/priceFeedService.js';
+
+// Prisma can return BigInt values; JSON.stringify doesn't handle them natively
+BigInt.prototype.toJSON = function () { return this.toString(); };
 
 const app = express();
 const httpServer = http.createServer(app);

@@ -41,36 +41,50 @@ export async function register(req, res) {
   const exists = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
   if (exists) return res.status(409).json({ error: 'Email already registered.' });
 
+  if (phone) {
+    const phoneExists = await prisma.user.findUnique({ where: { phone } });
+    if (phoneExists) return res.status(409).json({ error: 'Phone number already registered.' });
+  }
+
   const passwordHash = await bcrypt.hash(password, Number(process.env.BCRYPT_ROUNDS) || 12);
   const referralCode = Math.random().toString(36).slice(2, 10).toUpperCase();
 
-  const user = await prisma.user.create({
-    data: {
-      email: email.toLowerCase(),
-      passwordHash,
-      firstName,
-      lastName,
-      phone,
-      countryOfResidence: country,
-      referralCode,
-      accounts: {
-        create: {
-          accountNumber: 'IG' + Date.now().toString().slice(-8),
-          isPrimary: true,
-          baseCurrency: country === 'KE' ? 'KES' : country === 'GB' ? 'GBP' : 'USD',
-          balances: {
-            create: [
-              { currency: 'USD', available: 0 },
-              { currency: 'KES', available: 0 },
-              { currency: 'GBP', available: 0 },
-            ],
+  let user;
+  try {
+    user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        passwordHash,
+        firstName,
+        lastName,
+        phone: phone || null,
+        countryOfResidence: country,
+        referralCode,
+        accounts: {
+          create: {
+            accountNumber: 'IG' + Date.now().toString().slice(-8),
+            isPrimary: true,
+            baseCurrency: country === 'KE' ? 'KES' : country === 'GB' ? 'GBP' : 'USD',
+            balances: {
+              create: [
+                { currency: 'USD', available: 0 },
+                { currency: 'KES', available: 0 },
+                { currency: 'GBP', available: 0 },
+              ],
+            },
           },
         },
+        watchlists: { create: { name: 'My Watchlist', isDefault: true } },
       },
-      watchlists: { create: { name: 'My Watchlist', isDefault: true } },
-    },
-    select: { id: true, email: true, firstName: true, lastName: true, kycStatus: true, status: true },
-  });
+      select: { id: true, email: true, firstName: true, lastName: true, kycStatus: true, status: true },
+    });
+  } catch (err) {
+    if (err.cause?.originalCode === '23505') {
+      const field = err.cause.constraint?.fields?.[0] || 'field';
+      return res.status(409).json({ error: `${field === 'phone' ? 'Phone number' : 'Email'} already registered.` });
+    }
+    throw err;
+  }
 
   const { access, refresh } = issueTokens(user.id, user.email);
   await saveRefreshToken(user.id, refresh, req);
