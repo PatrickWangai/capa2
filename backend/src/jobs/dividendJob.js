@@ -84,11 +84,4 @@ async function processDividends() {
   }
 }
 
-export default { processDividends }
-
-// Run directly: node src/jobs/dividendJob.js
-if (require.main === module) {
-  processDividends()
-    .then(() => { logger.info('Dividend job complete'); process.exit(0); })
-    .catch(e => { logger.error('Dividend job failed', { error: e.message }); process.exit(1); });
-}
+export { processDividends };

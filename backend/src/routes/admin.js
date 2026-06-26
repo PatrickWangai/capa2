@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import * as c from '../controllers/adminController.js';
-import kycC from '../controllers/kycController.js';
+import * as kycC from '../controllers/kycController.js';
 import auth from '../middleware/authenticate.js';
 import requireAdmin from '../middleware/requireAdmin.js';
 const guard = [auth, requireAdmin()];

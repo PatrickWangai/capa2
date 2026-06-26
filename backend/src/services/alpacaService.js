@@ -135,4 +135,4 @@ export async function getClock() {
   return data;
 }
 
-exports.ENABLED = ENABLED;
+export { ENABLED };

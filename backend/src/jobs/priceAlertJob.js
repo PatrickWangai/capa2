@@ -35,10 +35,4 @@ async function checkPriceAlerts() {
   }
 }
 
-export default { checkPriceAlerts }
-
-if (require.main === module) {
-  checkPriceAlerts()
-    .then(() => process.exit(0))
-    .catch(e => { logger.error(e.message); process.exit(1); });
-}
+export { checkPriceAlerts };

@@ -13,6 +13,19 @@ async function getToken() {
   return data.access_token;
 }
 
+export async function checkMpesaStatus(checkoutRequestId) {
+  const token = await getToken();
+  const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
+  const password = Buffer.from(`${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
+  const { data } = await axios.post(`${BASE}/mpesa/stkpushquery/v1/query`, {
+    BusinessShortCode: process.env.MPESA_SHORTCODE,
+    Password: password,
+    Timestamp: timestamp,
+    CheckoutRequestID: checkoutRequestId,
+  }, { headers: { Authorization: `Bearer ${token}` } });
+  return data;
+}
+
 export async function initiateMpesaSTKPush({ phone, amount, reference }) {
   const token = await getToken();
   const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);

@@ -29,7 +29,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Public */}
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
