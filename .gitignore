@@ -41,3 +41,4 @@ coverage/
 
 # Exported static site
 exported-site/
+backend/prisma/generated/
