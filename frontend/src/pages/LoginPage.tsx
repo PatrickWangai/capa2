@@ -6,7 +6,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import CapaLogo from '../components/ui/CapaLogo';
 
-
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '', mfaCode: '' });
   const [showPass, setShowPass] = useState(false);
@@ -32,59 +31,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center mb-4">
-            <CapaLogo className="text-white h-10 w-auto" />
-          </div>
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-gray-400 mt-1">Sign in to your Capa account</p>
-        </div>
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      {/* Logo — large, centred, white wordmark on black */}
+      <div className="mb-12">
+        <CapaLogo className="text-white h-14 w-auto" />
+      </div>
 
-        <div className="card">
+      <div className="w-full max-w-sm">
+        <h1 className="text-xl font-semibold text-white text-center mb-1">Welcome back</h1>
+        <p className="text-gray-500 text-sm text-center mb-6">Sign in to your Capa account</p>
+
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 space-y-4">
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="label">Email</label>
-              <input className="input" type="email" placeholder="you@example.com" required
-                value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">Email</label>
+              <input
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white/30 focus:border-white/30 transition text-sm"
+                type="email" placeholder="you@example.com" required
+                value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+              />
             </div>
             <div>
-              <label className="label">Password</label>
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">Password</label>
               <div className="relative">
-                <input className="input pr-10" type={showPass ? 'text' : 'password'} placeholder="••••••••" required
-                  value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
-                <button type="button" className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-300"
+                <input
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 pr-10 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white/30 focus:border-white/30 transition text-sm"
+                  type={showPass ? 'text' : 'password'} placeholder="••••••••" required
+                  value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                />
+                <button type="button" className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-300"
                   onClick={() => setShowPass(p => !p)}>
-                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
             {needsMfa && (
               <div>
-                <label className="label">MFA Code</label>
-                <input className="input" type="text" placeholder="6-digit code" maxLength={6}
-                  value={form.mfaCode} onChange={e => setForm(f => ({ ...f, mfaCode: e.target.value }))} />
+                <label className="block text-xs font-medium text-gray-400 mb-1.5">MFA Code</label>
+                <input
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white/30 transition text-sm"
+                  type="text" placeholder="6-digit code" maxLength={6}
+                  value={form.mfaCode} onChange={e => setForm(f => ({ ...f, mfaCode: e.target.value }))}
+                />
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 mt-2">
+            <button
+              type="submit" disabled={loading}
+              className="w-full bg-white text-black font-semibold py-2.5 rounded-lg hover:bg-gray-100 transition disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-1"
+            >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-5 pt-4 border-t border-gray-800 text-center">
-            <p className="text-gray-400 text-sm">
+          <div className="pt-1 text-center">
+            <p className="text-gray-600 text-xs">
               Don't have an account?{' '}
-              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">Create one</Link>
+              <Link to="/register" className="text-white hover:text-gray-300 font-medium">Create one</Link>
             </p>
           </div>
+        </div>
 
-          <div className="mt-3 p-3 bg-gray-800/50 rounded-lg text-xs text-gray-400">
-            <p className="font-medium text-gray-300 mb-1">Demo credentials</p>
-            <p>demo@capa.invest / Demo1234!</p>
-          </div>
+        <div className="mt-4 p-3 bg-white/[0.03] border border-white/5 rounded-xl text-xs text-gray-600 text-center">
+          <span className="text-gray-500 font-medium">Demo: </span>demo@capa.invest / Demo1234!
         </div>
       </div>
     </div>
