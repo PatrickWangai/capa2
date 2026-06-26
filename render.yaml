@@ -15,14 +15,9 @@ services:
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: capa-db
-          property: connectionString
+        sync: false
       - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: capa-cache
-          property: connectionString
+        sync: false
       - key: CORS_ORIGINS
         value: '*'
       - key: VITE_BASE
@@ -57,17 +52,3 @@ services:
         sync: false
       - key: SMTP_PASS
         sync: false
-
-  - type: keyvalue
-    name: capa-cache
-    plan: free
-    region: frankfurt
-    ipAllowList: []
-    maxmemoryPolicy: allkeys-lru
-
-databases:
-  - name: capa-db
-    plan: free
-    region: frankfurt
-    databaseName: capa
-    user: capa
