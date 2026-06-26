@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import AppLayout from './components/layout/AppLayout';
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -31,13 +32,15 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        {/* Public */}
+        {/* Landing page — public visitors see this, logged-in users go to dashboard */}
+        <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+
+        {/* Auth */}
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
         {/* Protected app */}
-        <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="markets" element={<MarketsPage />} />
           <Route path="markets/:id" element={<AssetDetailPage />} />
@@ -57,7 +60,7 @@ export default function App() {
           <Route path="transactions" element={<AdminTransactionsPage />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
