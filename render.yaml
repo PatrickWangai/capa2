@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install && npx prisma generate
+    buildCommand: npm install && npm run --workspace=frontend build && cd backend && npx prisma generate
     startCommand: cd backend && npx prisma migrate deploy && node src/utils/seed.js; node src/index.js
     healthCheckPath: /health
     envVars:
