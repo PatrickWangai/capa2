@@ -5,7 +5,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: npm install && npm run build:frontend && cd backend && npx prisma generate
-    startCommand: cd backend && npx prisma migrate deploy && node src/index.js
+    startCommand: cd backend && npx prisma migrate deploy && node src/utils/seed.js; node src/index.js
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -24,7 +24,9 @@ services:
           name: capa-cache
           property: connectionString
       - key: CORS_ORIGINS
-        value: https://capa.onrender.com
+        value: '*'
+      - key: VITE_BASE
+        value: /
       - key: BCRYPT_ROUNDS
         value: 12
       - key: MPESA_CONSUMER_KEY

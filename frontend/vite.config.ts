@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
         '/socket.io': { target: 'http://localhost:4000', ws: true },
       },
     },
-    base: isProduction ? '/capa2/' : '/',
+    base: process.env.VITE_BASE ?? (isProduction ? '/capa2/' : '/'),
     resolve: { alias: { '@': '/src' } },
   };
 });
