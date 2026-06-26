@@ -23,4 +23,4 @@ RUN npx prisma generate
 EXPOSE 4000
 
 # Define the command to run the app
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+CMD ["sh", "-c", "npm run migrate:deploy && npm run start"]

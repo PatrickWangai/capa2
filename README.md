@@ -67,7 +67,7 @@ capa/
 ### 1. Clone and configure
 First, clone the repository and navigate into the new directory.
 ```bash
-git clone https://github.com/your-gh-username/capa.git
+git clone https://github.com/chimerawang/capa.git
 cd capa
 ```
 
