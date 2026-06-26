@@ -1,0 +1,16 @@
+import { Router } from 'express';
+const router = Router();
+import * as c from '../controllers/adminController.js';
+import kycC from '../controllers/kycController.js';
+import auth from '../middleware/authenticate.js';
+import requireAdmin from '../middleware/requireAdmin.js';
+const guard = [auth, requireAdmin()];
+router.get('/dashboard', ...guard, c.getDashboard);
+router.get('/users', ...guard, c.listUsers);
+router.patch('/users/:id', ...guard, c.updateUser);
+router.get('/transactions', ...guard, c.listTransactions);
+router.patch('/transactions/:id/confirm', ...guard, c.confirmTransaction);
+router.get('/kyc/pending', ...guard, kycC.listPending);
+router.patch('/kyc/:docId/review', ...guard, kycC.reviewDocument);
+router.get('/audit', ...guard, c.getAuditLogs);
+export default router;

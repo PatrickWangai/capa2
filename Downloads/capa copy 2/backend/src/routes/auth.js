@@ -1,0 +1,11 @@
+import { Router } from 'express';
+const router = Router();
+import * as c from '../controllers/authController.js';
+import auth from '../middleware/authenticate.js';
+router.post('/register', c.register);
+router.post('/login', c.login);
+router.post('/refresh', c.refresh);
+router.post('/logout', auth, c.logout);
+router.post('/mfa/setup', auth, c.mfaSetup);
+router.post('/mfa/verify', auth, c.mfaVerify);
+export default router;

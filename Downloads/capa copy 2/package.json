@@ -1,0 +1,24 @@
+{
+  "name": "capa",
+  "version": "1.0.0",
+  "description": "Capa — Invest Globally. Grow Confidently.",
+  "private": true,
+  "workspaces": ["backend", "frontend", "mobile"],
+  "scripts": {
+    "dev:backend":  "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "db:generate": "cd backend && npx prisma generate",
+    "db:migrate": "cd backend && dotenv -- npx prisma migrate deploy",
+    "db:seed":    "cd backend && dotenv -- node src/utils/seed.js",
+    "db:studio":  "cd backend && npx prisma studio",
+    "test":       "cd backend && npm test",
+    "docker:up":  "docker-compose up -d",
+    "docker:down":"docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv-cli": "^7.4.2"
+  }
+}

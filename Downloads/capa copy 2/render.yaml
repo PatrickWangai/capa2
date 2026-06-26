@@ -1,0 +1,71 @@
+services:
+  - type: web
+    name: capa
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build:frontend && cd backend && npx prisma generate
+    startCommand: cd backend && npx prisma migrate deploy && node src/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: capa-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: capa-cache
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: https://capa.onrender.com
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: MPESA_CONSUMER_KEY
+        sync: false
+      - key: MPESA_CONSUMER_SECRET
+        sync: false
+      - key: MPESA_PASSKEY
+        sync: false
+      - key: MPESA_SHORTCODE
+        sync: false
+      - key: MPESA_CALLBACK_URL
+        sync: false
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_SECRET_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: POLYGON_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+
+  - type: keyvalue
+    name: capa-cache
+    plan: free
+    region: frankfurt
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  - name: capa-db
+    plan: free
+    region: frankfurt
+    databaseName: capa
+    user: capa
