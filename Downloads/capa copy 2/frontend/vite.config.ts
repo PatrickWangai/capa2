@@ -11,5 +11,6 @@ export default defineConfig({
       '/socket.io': { target: 'http://localhost:4000', ws: true },
     },
   },
+  base: '/capa2/',
   resolve: { alias: { '@': '/src' } },
 });
