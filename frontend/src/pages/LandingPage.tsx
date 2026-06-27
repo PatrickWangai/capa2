@@ -31,29 +31,25 @@ const stats = [
   { value: '100%', label: 'Secure' },
 ];
 
-function CapaLogoFull({ size = 320 }: { size?: number }) {
+function CapaHelmet({ size = 160 }: { size?: number }) {
+  const h = Math.round(size * 1.2);
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 400 400"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="CAPA"
-    >
+    <svg width={size} height={h} viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-label="CAPA">
       <defs>
-        <linearGradient id="lgFull" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <linearGradient id="lgHero" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
           <stop offset="0%" stopColor="#7117ea" />
           <stop offset="100%" stopColor="#ea6060" />
         </linearGradient>
-        <mask id="cMask">
-          <rect width="400" height="400" fill="white" />
-          {/* C hollow — opens right */}
-          <path d="M 148 110 H 420 V 198 H 148 A 52 52 0 0 1 96 148 V 160 A 52 52 0 0 1 148 110 Z" fill="black" />
+        <mask id="mHero">
+          <rect width="200" height="240" fill="white" />
+          <rect x="46" y="84" width="108" height="66" rx="13" fill="black" />
         </mask>
       </defs>
-      {/* C icon */}
-      <rect x="20" y="20" width="340" height="340" rx="80" ry="80"
-        fill="url(#lgFull)" mask="url(#cMask)" />
+      <path
+        d="M100,10 C52,10 16,50 16,98 L16,165 C16,190 36,208 62,210 L138,210 C164,208 184,190 184,165 L184,98 C184,50 148,10 100,10 Z"
+        fill="url(#lgHero)"
+        mask="url(#mHero)"
+      />
     </svg>
   );
 }
@@ -84,18 +80,18 @@ export default function LandingPage() {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Nav logo — small */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <svg width="36" height="36" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <svg width="30" height="36" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="lgNav" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
                   <stop offset="0%" stopColor="#7117ea" />
                   <stop offset="100%" stopColor="#ea6060" />
                 </linearGradient>
-                <mask id="cMaskNav">
-                  <rect width="400" height="400" fill="white" />
-                  <path d="M 148 110 H 420 V 198 H 148 A 52 52 0 0 1 96 148 V 160 A 52 52 0 0 1 148 110 Z" fill="black" />
+                <mask id="mNav">
+                  <rect width="200" height="240" fill="white" />
+                  <rect x="46" y="84" width="108" height="66" rx="13" fill="black" />
                 </mask>
               </defs>
-              <rect x="20" y="20" width="340" height="340" rx="80" ry="80" fill="url(#lgNav)" mask="url(#cMaskNav)" />
+              <path d="M100,10 C52,10 16,50 16,98 L16,165 C16,190 36,208 62,210 L138,210 C164,208 184,190 184,165 L184,98 C184,50 148,10 100,10 Z" fill="url(#lgNav)" mask="url(#mNav)" />
             </svg>
             <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 16, fontWeight: 900, letterSpacing: '0.05em', background: 'linear-gradient(135deg,#7117ea,#ea6060)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>CAPA</span>
           </div>
@@ -115,7 +111,7 @@ export default function LandingPage() {
 
         {/* Big logo */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-          <CapaLogoFull size={160} />
+          <CapaHelmet size={140} />
         </div>
 
         {/* Wordmark */}
