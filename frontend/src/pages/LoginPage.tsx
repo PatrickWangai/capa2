@@ -4,13 +4,29 @@ import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import CapaIcon from '../components/ui/CapaIcon';
+import OrangeIcon from '../components/ui/OrangeIcon';
+
+const inputCls = [
+  'w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 transition',
+  'border focus:outline-none',
+].join(' ');
+
+const inputStyle = {
+  backgroundColor: '#1a1410',
+  borderColor: 'rgba(245,130,31,0.2)',
+};
+
+const inputFocusStyle = {
+  borderColor: '#f5821f',
+  boxShadow: '0 0 0 2px rgba(245,130,31,0.18)',
+};
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '', mfaCode: '' });
   const [showPass, setShowPass] = useState(false);
   const [needsMfa, setNeedsMfa] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
@@ -30,37 +46,55 @@ export default function LoginPage() {
     }
   };
 
-  const inputCls = [
-    'w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 transition',
-    'bg-[#1f3a30] border border-[#2a4a3c]',
-    'focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20',
-  ].join(' ');
+  const fieldStyle = (name: string) => ({
+    ...inputStyle,
+    ...(focused === name ? inputFocusStyle : {}),
+  });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#152921' }}>
-      <div className="mb-10">
-        <CapaIcon className="h-24 w-24" />
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#0a0808', position: 'relative', overflow: 'hidden' }}>
+
+      {/* Glowing orange blobs */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <div style={{ position: 'absolute', top: '-20%', left: '10%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(245,130,31,0.12)', filter: 'blur(120px)' }} />
+        <div style={{ position: 'absolute', bottom: '-15%', right: '5%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,69,0,0.09)',   filter: 'blur(100px)' }} />
       </div>
 
-      <div className="w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-white text-center mb-1">Welcome back</h1>
-        <p className="text-gray-400 text-sm text-center mb-6">Sign in to your Capa account</p>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 380, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-        <div className="rounded-2xl p-6 space-y-4 border" style={{ backgroundColor: '#1a3028', borderColor: '#2a4a3c' }}>
+        {/* Floating orange */}
+        <div className="orange-float" style={{ marginBottom: 24 }}>
+          <OrangeIcon size={96} />
+        </div>
+
+        <h1 className="text-xl font-semibold text-white text-center mb-1">Welcome back</h1>
+        <p className="text-sm text-center mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>Sign in to your Capa account</p>
+
+        <div className="w-full rounded-2xl p-6 space-y-4" style={{ backgroundColor: '#130f0d', border: '1px solid rgba(245,130,31,0.15)' }}>
           <form onSubmit={submit} className="space-y-4">
+
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">Email</label>
-              <input className={inputCls} type="email" placeholder="you@example.com" required
-                value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Email</label>
+              <input
+                className={inputCls} type="email" placeholder="you@example.com" required
+                style={fieldStyle('email')}
+                onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
+                value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+              />
             </div>
+
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">Password</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Password</label>
               <div className="relative">
-                <input className={inputCls} type={showPass ? 'text' : 'password'} placeholder="••••••••" required
-                  style={{ paddingRight: '2.5rem' }}
-                  value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
-                <button type="button" className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-300"
-                  onClick={() => setShowPass(p => !p)}>
+                <input
+                  className={inputCls} type={showPass ? 'text' : 'password'} placeholder="••••••••" required
+                  style={{ ...fieldStyle('password'), paddingRight: '2.5rem' }}
+                  onFocus={() => setFocused('password')} onBlur={() => setFocused(null)}
+                  value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                />
+                <button type="button" onClick={() => setShowPass(p => !p)}
+                  className="absolute right-3 top-2.5 transition-colors"
+                  style={{ color: 'rgba(255,255,255,0.3)' }}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -68,31 +102,33 @@ export default function LoginPage() {
 
             {needsMfa && (
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1.5">MFA Code</label>
-                <input className={inputCls} type="text" placeholder="6-digit code" maxLength={6}
-                  value={form.mfaCode} onChange={e => setForm(f => ({ ...f, mfaCode: e.target.value }))} />
+                <label className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>MFA Code</label>
+                <input
+                  className={inputCls} type="text" placeholder="6-digit code" maxLength={6}
+                  style={fieldStyle('mfa')}
+                  onFocus={() => setFocused('mfa')} onBlur={() => setFocused(null)}
+                  value={form.mfaCode} onChange={e => setForm(f => ({ ...f, mfaCode: e.target.value }))}
+                />
               </div>
             )}
 
             <button
               type="submit" disabled={loading}
               className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed mt-1"
-              style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)' }}
+              style={{ background: 'linear-gradient(135deg, #f5821f, #ff4500)' }}
             >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
-          <div className="pt-1 text-center">
-            <p className="text-gray-500 text-xs">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-medium" style={{ color: '#c084fc' }}>Create one</Link>
-            </p>
-          </div>
+          <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            Don't have an account?{' '}
+            <Link to="/register" className="font-medium" style={{ color: '#f5821f' }}>Create one</Link>
+          </p>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl text-xs text-gray-500 text-center border" style={{ backgroundColor: '#1a3028', borderColor: '#2a4a3c' }}>
-          <span className="text-gray-400 font-medium">Demo: </span>demo@capa.invest / Demo1234!
+        <div className="mt-4 p-3 rounded-xl text-xs text-center w-full" style={{ backgroundColor: '#130f0d', border: '1px solid rgba(245,130,31,0.1)', color: 'rgba(255,255,255,0.35)' }}>
+          <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>Demo: </span>demo@capa.invest / Demo1234!
         </div>
       </div>
     </div>
