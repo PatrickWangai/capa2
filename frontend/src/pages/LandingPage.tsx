@@ -1,32 +1,101 @@
 import { Link } from 'react-router-dom';
+import { useRef, useState, useCallback } from 'react';
 import { Twitter, Youtube, Shield } from 'lucide-react';
 
 const ORANGE = '#ff4500';
 const BIG = "'Bebas Neue', 'Arial Black', sans-serif";
 
-function Helmet({ size = 120, animated = false }: { size?: number; animated?: boolean }) {
-  const h = Math.round(size * 1.2);
+/* ── Cartoon orange SVG ── */
+function OrangeSVG({ size = 160 }: { size?: number }) {
   return (
-    <svg
-      width={size} height={h} viewBox="0 0 200 240"
-      xmlns="http://www.w3.org/2000/svg"
-      className={animated ? 'helmet-animated' : ''}
-    >
+    <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="hgOrange" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="#ff6b35" />
-          <stop offset="100%" stopColor="#ff4500" />
-        </linearGradient>
-        <mask id="hmOrange">
-          <rect width="200" height="240" fill="white" />
-          <rect x="46" y="84" width="108" height="66" rx="13" fill="black" />
-        </mask>
+        <radialGradient id="ogBody" cx="38%" cy="32%" r="65%">
+          <stop offset="0%"   stopColor="#ffb347" />
+          <stop offset="55%"  stopColor="#f5821f" />
+          <stop offset="100%" stopColor="#c85f0a" />
+        </radialGradient>
+        <radialGradient id="ogShine" cx="30%" cy="22%" r="38%">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.55)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
       </defs>
-      <path
-        d="M100,10 C52,10 16,50 16,98 L16,165 C16,190 36,208 62,210 L138,210 C164,208 184,190 184,165 L184,98 C184,50 148,10 100,10 Z"
-        fill="url(#hgOrange)" mask="url(#hmOrange)"
-      />
+
+      {/* Drop shadow */}
+      <ellipse cx="100" cy="194" rx="52" ry="8" fill="rgba(0,0,0,0.25)" />
+
+      {/* Body */}
+      <circle cx="100" cy="108" r="82" fill="url(#ogBody)" />
+
+      {/* Shine layer */}
+      <circle cx="100" cy="108" r="82" fill="url(#ogShine)" />
+
+      {/* Specular highlight */}
+      <ellipse cx="70" cy="70" rx="28" ry="19" fill="rgba(255,255,255,0.38)" transform="rotate(-35 70 70)" />
+      <ellipse cx="62" cy="62" rx="10" ry="7"  fill="rgba(255,255,255,0.55)" transform="rotate(-35 62 62)" />
+
+      {/* Orange texture lines (subtle segments) */}
+      {[0,60,120,180,240,300].map(a => (
+        <line key={a}
+          x1="100" y1="108"
+          x2={100 + 82 * Math.cos((a * Math.PI) / 180)}
+          y2={108 + 82 * Math.sin((a * Math.PI) / 180)}
+          stroke="rgba(180,90,0,0.12)" strokeWidth="1.5"
+        />
+      ))}
+
+      {/* Navel */}
+      <circle cx="100" cy="182" r="9"  fill="#d97010" />
+      <circle cx="100" cy="182" r="5"  fill="#b85a08" />
+      <path d="M96,179 Q100,175 104,179 Q100,183 96,179Z" fill="#9a4a06" />
+
+      {/* Stem */}
+      <path d="M100,30 C98,22 102,14 99,6" stroke="#4a6e00" strokeWidth="5" strokeLinecap="round" fill="none" />
+
+      {/* Leaf */}
+      <path d="M98,27 C114,4 150,7 143,29 C136,50 108,40 98,27Z" fill="#5ab42a" />
+      {/* Leaf highlight */}
+      <path d="M98,27 C112,10 138,12 143,29" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" strokeLinecap="round" />
+      {/* Leaf vein */}
+      <path d="M98,27 C116,16 138,20 143,29" stroke="#3d8a1e" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     </svg>
+  );
+}
+
+/* ── Wrapper: float animation + cursor 3D tilt ── */
+function TiltOrange({ size = 160 }: { size?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const onMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    const dx = (e.clientX - (r.left + r.width / 2))  / (r.width  / 2);
+    const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+    setTilt({ x: dy * -28, y: dx * 28 });
+  }, []);
+
+  const onLeave = useCallback(() => setTilt({ x: 0, y: 0 }), []);
+
+  return (
+    /* outer: CSS float animation (translateY only, no transform conflict) */
+    <div className="orange-float">
+      {/* inner: JS tilt via rotateX/Y */}
+      <div
+        ref={ref}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        style={{
+          display: 'inline-block',
+          cursor: 'grab',
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: 'transform 0.12s ease-out',
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        <OrangeSVG size={size} />
+      </div>
+    </div>
   );
 }
 
@@ -36,15 +105,15 @@ function OrangeDot() {
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: '#080808', color: '#ffffff', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ backgroundColor: '#080808', color: '#ffffff', minHeight: '100vh', fontFamily: "'Inter', sans-serif", perspective: 800 }}>
 
       {/* ORANGE BORDER FRAME */}
       <div style={{ position: 'fixed', inset: 10, borderRadius: 16, border: `2px solid ${ORANGE}`, pointerEvents: 'none', zIndex: 50 }} />
 
       {/* NAV */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 48px' }}>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 48px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Helmet size={36} />
+          <OrangeSVG size={34} />
           <span style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 900, fontSize: 14, letterSpacing: '0.1em', color: ORANGE }}>CAPA</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
@@ -66,16 +135,17 @@ export default function LandingPage() {
         <p style={{ fontFamily: BIG, fontSize: 12, letterSpacing: '0.35em', color: ORANGE, marginBottom: 12 }}>CAPA PLATFORM</p>
 
         {/* Huge title */}
-        <h1 style={{ fontFamily: BIG, fontSize: 'clamp(64px, 12vw, 140px)', lineHeight: 0.9, letterSpacing: '0.03em', textAlign: 'center', color: '#ffffff', marginBottom: 36 }}>
+        <h1 style={{ fontFamily: BIG, fontSize: 'clamp(64px, 12vw, 140px)', lineHeight: 0.9, letterSpacing: '0.03em', textAlign: 'center', color: '#ffffff', marginBottom: 40 }}>
           UNSTOPPABLE<br />MINDS
         </h1>
 
-        {/* Helmet on pedestal */}
-        <div style={{ position: 'relative', marginBottom: 32 }}>
-          <Helmet size={130} animated />
-          <div style={{ width: 130, height: 12, borderRadius: '50%', background: `radial-gradient(ellipse, ${ORANGE}55 0%, transparent 70%)`, margin: '-4px auto 0' }} />
-          <div style={{ width: 100, height: 8, backgroundColor: '#1c1c1c', borderRadius: 3, margin: '3px auto 0' }} />
-          <div style={{ width: 150, height: 5, backgroundColor: '#141414', borderRadius: 3, margin: '2px auto 0' }} />
+        {/* Animated orange on pedestal */}
+        <div style={{ position: 'relative', marginBottom: 28 }}>
+          <TiltOrange size={170} />
+          {/* Pedestal */}
+          <div style={{ width: 140, height: 14, borderRadius: '50%', background: `radial-gradient(ellipse, ${ORANGE}55 0%, transparent 70%)`, margin: '-6px auto 0' }} />
+          <div style={{ width: 110, height: 8, backgroundColor: '#1c1c1c', borderRadius: 3, margin: '3px auto 0' }} />
+          <div style={{ width: 160, height: 5, backgroundColor: '#141414', borderRadius: 3, margin: '2px auto 0' }} />
         </div>
 
         {/* Side labels */}
@@ -99,16 +169,13 @@ export default function LandingPage() {
         <svg style={{ position: 'absolute', top: 100, left: 40, opacity: 0.12 }} width="80" height="80" viewBox="0 0 40 40"><polygon points="20,2 38,38 2,38" fill={ORANGE} /></svg>
         <svg style={{ position: 'absolute', top: 180, right: 60, opacity: 0.1, transform: 'rotate(180deg)' }} width="55" height="55" viewBox="0 0 40 40"><polygon points="20,2 38,38 2,38" fill={ORANGE} /></svg>
 
-        {/* Badge pill */}
         <div style={{ alignSelf: 'center', marginBottom: 48 }}>
           <span style={{ padding: '7px 22px', borderRadius: 999, border: `1px solid ${ORANGE}`, fontSize: 11, letterSpacing: '0.35em', color: ORANGE, fontFamily: BIG }}>
             NEXT LEVEL INVESTING
           </span>
         </div>
 
-        {/* Giant text */}
         <div style={{ textAlign: 'center', position: 'relative' }}>
-          {/* Ghost behind */}
           <div style={{ fontFamily: BIG, fontSize: 'clamp(56px, 14vw, 170px)', lineHeight: 0.85, color: 'rgba(255,255,255,0.04)', letterSpacing: '0.02em', position: 'absolute', top: 0, left: 0, right: 0, userSelect: 'none', pointerEvents: 'none' }}>
             GROW YOUR<br />WEALTH.
           </div>
@@ -117,10 +184,8 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Divider */}
         <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.08)', margin: '56px 0 28px' }} />
 
-        {/* Info bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
             <span style={{ fontSize: 11, letterSpacing: '0.3em', color: '#fff', display: 'flex', alignItems: 'center' }}><OrangeDot />GLOBAL MARKETS</span>
@@ -139,7 +204,6 @@ export default function LandingPage() {
 
         <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginTop: 28, marginBottom: 56 }} />
 
-        {/* CTA */}
         <div style={{ textAlign: 'center' }}>
           <Link to="/register" style={{ display: 'inline-block', padding: '16px 52px', backgroundColor: ORANGE, color: 'white', textDecoration: 'none', fontFamily: BIG, fontSize: 22, letterSpacing: '0.15em', borderRadius: 6 }}>
             JOIN THE PLATFORM
@@ -150,12 +214,10 @@ export default function LandingPage() {
       {/* ── SECTION 3: SPLIT STATS ── */}
       <section style={{ minHeight: '100vh', display: 'flex', flexWrap: 'wrap' }}>
 
-        {/* Left: big helmet */}
         <div style={{ flex: '1 1 400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at 40% 50%, ${ORANGE}18 0%, transparent 60%)`, minHeight: 400 }}>
-          <Helmet size={320} animated />
+          <TiltOrange size={340} />
         </div>
 
-        {/* Right: stats */}
         <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 64px 80px 40px' }}>
           <div style={{ alignSelf: 'flex-end', marginBottom: 32 }}>
             <span style={{ padding: '6px 18px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.15)', fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', fontFamily: BIG }}>PERFORMANCE</span>

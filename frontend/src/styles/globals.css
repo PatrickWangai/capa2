@@ -14,6 +14,19 @@
   animation: helmet-float 3s ease-in-out infinite, helmet-glow 3s ease-in-out infinite;
 }
 
+@keyframes orange-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-22px); }
+}
+@keyframes orange-glow {
+  0%, 100% { filter: drop-shadow(0 8px 20px rgba(245,130,31,0.4)); }
+  50%       { filter: drop-shadow(0 8px 48px rgba(245,130,31,0.9)); }
+}
+.orange-float {
+  display: inline-block;
+  animation: orange-float 3s ease-in-out infinite, orange-glow 3s ease-in-out infinite;
+}
+
 @layer base {
   :root {
     --bg-base:    #152921;
