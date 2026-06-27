@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu
+  CreditCard, ShieldCheck, LogOut, Menu, User
 } from 'lucide-react';
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -18,6 +18,7 @@ const nav = [
   { to: '/deposit',       label: 'Deposit',      icon: CreditCard },
   { to: '/notifications', label: 'Alerts',       icon: Bell },
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
+  { to: '/profile',       label: 'Profile',      icon: User },
 ];
 
 export default function AppLayout() {

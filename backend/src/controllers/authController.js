@@ -1,11 +1,12 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import { prisma } from '../utils/db.js';
 import { redis } from '../utils/redis.js';
 import logger from '../utils/logger.js';
-import { sendEmail } from '../services/emailService.js';
+import { sendEmail, sendPasswordResetEmail, sendVerifyEmail } from '../services/emailService.js';
 
 const ACCESS_TTL = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_DAYS = 30;
@@ -89,11 +90,11 @@ export async function register(req, res) {
   const { access, refresh } = issueTokens(user.id, user.email);
   await saveRefreshToken(user.id, refresh, req);
 
-  sendEmail({
-    to: user.email,
-    subject: 'Welcome to Capa!',
-    html: `<h1>Hi ${user.firstName},</h1><p>Your account is ready. Complete KYC to start investing.</p>`,
-  }).catch(e => logger.warn('Welcome email failed', { error: e.message }));
+  // Send email verification
+  const verifyToken = crypto.randomBytes(32).toString('hex');
+  await redis.setex(`verify:${verifyToken}`, 86400, user.id); // 24h
+  sendVerifyEmail(user.email, verifyToken, user.firstName)
+    .catch(e => logger.warn('Verification email failed', { error: e.message }));
 
   res.status(201).json({ user, accessToken: access, refreshToken: refresh });
 }
@@ -195,4 +196,79 @@ export async function mfaVerify(req, res) {
   if (!valid) return res.status(400).json({ error: 'Invalid code.' });
   await prisma.user.update({ where: { id: req.user.id }, data: { mfaEnabled: true } });
   res.json({ message: 'MFA enabled successfully.' });
+}
+
+// POST /api/auth/forgot-password
+export async function forgotPassword(req, res) {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email required.' });
+  // Always return 200 to prevent email enumeration
+  res.json({ message: 'If an account with that email exists, a reset link has been sent.' });
+  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } }).catch(() => null);
+  if (!user) return;
+  const token = crypto.randomBytes(32).toString('hex');
+  await redis.setex(`reset:${token}`, 3600, user.id); // 1 hour
+  sendPasswordResetEmail(user.email, token).catch(e => logger.warn('Reset email failed', { error: e.message }));
+}
+
+// POST /api/auth/reset-password
+export async function resetPassword(req, res) {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ error: 'Token and new password required.' });
+  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  const userId = await redis.get(`reset:${token}`);
+  if (!userId) return res.status(400).json({ error: 'Invalid or expired reset link.' });
+  const passwordHash = await bcrypt.hash(password, Number(process.env.BCRYPT_ROUNDS) || 12);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+  await redis.del(`reset:${token}`);
+  // Revoke all refresh tokens for security
+  await prisma.refreshToken.updateMany({ where: { userId, revokedAt: null }, data: { revokedAt: new Date() } });
+  res.json({ message: 'Password reset successfully. Please log in.' });
+}
+
+// POST /api/auth/verify-email
+export async function verifyEmail(req, res) {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: 'Verification token required.' });
+  const userId = await redis.get(`verify:${token}`);
+  if (!userId) return res.status(400).json({ error: 'Invalid or expired verification link.' });
+  await prisma.user.update({ where: { id: userId }, data: { status: 'ACTIVE' } });
+  await redis.del(`verify:${token}`);
+  res.json({ message: 'Email verified successfully.' });
+}
+
+// POST /api/auth/resend-verification
+export async function resendVerification(req, res) {
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  if (user.status === 'ACTIVE') return res.json({ message: 'Email already verified.' });
+  const token = crypto.randomBytes(32).toString('hex');
+  await redis.setex(`verify:${token}`, 86400, user.id);
+  sendVerifyEmail(user.email, token, user.firstName).catch(e => logger.warn('Resend verify failed', { error: e.message }));
+  res.json({ message: 'Verification email sent.' });
+}
+
+// PUT /api/auth/profile
+export async function updateProfile(req, res) {
+  const { firstName, lastName, phone, dateOfBirth, addressLine1, addressLine2, city, postalCode } = req.body;
+  const updated = await prisma.user.update({
+    where: { id: req.user.id },
+    data: { firstName, lastName, phone: phone || null, dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined, addressLine1, addressLine2, city, postalCode },
+    select: { id: true, email: true, firstName: true, lastName: true, phone: true, dateOfBirth: true, addressLine1: true, addressLine2: true, city: true, postalCode: true, kycStatus: true, status: true, createdAt: true },
+  });
+  res.json(updated);
+}
+
+// PUT /api/auth/change-password
+export async function changePassword(req, res) {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both passwords required.' });
+  if (newPassword.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!(await bcrypt.compare(currentPassword, user.passwordHash))) {
+    return res.status(400).json({ error: 'Current password is incorrect.' });
+  }
+  const passwordHash = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_ROUNDS) || 12);
+  await prisma.user.update({ where: { id: req.user.id }, data: { passwordHash } });
+  res.json({ message: 'Password changed successfully.' });
 }

@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Allow all public pages
+Allow: /about
+Allow: /pricing
+Allow: /security
+Allow: /faq
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+
+# Block private app routes
+Disallow: /dashboard
+Disallow: /portfolio
+Disallow: /orders
+Disallow: /deposit
+Disallow: /kyc
+Disallow: /notifications
+Disallow: /profile
+Disallow: /admin
+
+Sitemap: https://capa2.onrender.com/sitemap.xml

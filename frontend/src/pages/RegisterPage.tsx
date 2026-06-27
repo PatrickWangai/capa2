@@ -34,8 +34,8 @@ export default function RegisterPage() {
     try {
       const { data } = await api.post("/api/auth/register", formData);
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success("Account created! Complete KYC to start investing.");
-      navigate("/kyc");
+      toast.success("Welcome to Capa! Let's get you set up.");
+      navigate("/onboarding");
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Registration failed");
     } finally { setLoading(false); }
