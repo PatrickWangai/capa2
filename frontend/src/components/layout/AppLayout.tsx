@@ -20,9 +20,9 @@ const nav = [
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
 ];
 
-const SIDEBAR_BG  = '#0e0c0a';
-const SIDEBAR_BDR = 'rgba(245,130,31,0.18)';
-const MAIN_BG     = '#0a0808';
+const SIDEBAR_BG  = '#0a0a0a';
+const SIDEBAR_BDR = 'rgba(255,255,255,0.10)';
+const MAIN_BG     = '#0a0a0a';
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
@@ -58,7 +58,7 @@ export default function AppLayout() {
           'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30 }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30, boxShadow: '4px 0 40px rgba(0,0,0,0.8)' }}
       >
         <div className="flex items-center gap-2 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
           <OrangeIcon size={38} />

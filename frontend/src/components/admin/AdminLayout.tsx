@@ -13,8 +13,8 @@ const nav = [
   { to: '/admin/transactions',  label: 'Transactions',  icon: ArrowDownUp },
 ];
 
-const SIDEBAR_BG  = '#0e0c0a';
-const SIDEBAR_BDR = 'rgba(245,130,31,0.18)';
+const SIDEBAR_BG  = '#0a0a0a';
+const SIDEBAR_BDR = 'rgba(255,255,255,0.10)';
 
 export default function AdminLayout() {
   const { logout } = useAuthStore();
@@ -38,7 +38,7 @@ export default function AdminLayout() {
 
       <aside
         className="w-60 flex flex-col"
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1 }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1, boxShadow: '4px 0 40px rgba(0,0,0,0.8)' }}
       >
         <div className="flex items-center gap-2.5 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
           <OrangeIcon size={34} />

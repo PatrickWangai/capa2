@@ -97,7 +97,7 @@ function OrangeDot() {
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: '#080808', color: '#ffffff', minHeight: '100vh', fontFamily: "'Inter', sans-serif", perspective: 800 }}>
+    <div style={{ backgroundColor: '#0a0a0a', color: '#ffffff', minHeight: '100vh', fontFamily: "'Inter', sans-serif", perspective: 800 }}>
 
       {/* ORANGE BORDER FRAME */}
       <div style={{ position: 'fixed', inset: 10, borderRadius: 16, border: `2px solid ${ORANGE}`, pointerEvents: 'none', zIndex: 50 }} />

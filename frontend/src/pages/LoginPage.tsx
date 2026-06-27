@@ -12,8 +12,8 @@ const inputCls = [
 ].join(' ');
 
 const inputStyle = {
-  backgroundColor: '#1a1410',
-  borderColor: 'rgba(245,130,31,0.2)',
+  backgroundColor: '#141414',
+  borderColor: 'rgba(255,255,255,0.10)',
 };
 
 const inputFocusStyle = {
@@ -52,7 +52,7 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#0a0808', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
 
       {/* Glowing orange blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -70,7 +70,7 @@ export default function LoginPage() {
         <h1 className="text-xl font-semibold text-white text-center mb-1">Welcome back</h1>
         <p className="text-sm text-center mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>Sign in to your Capa account</p>
 
-        <div className="w-full rounded-2xl p-6 space-y-4" style={{ backgroundColor: '#130f0d', border: '1px solid rgba(245,130,31,0.15)' }}>
+        <div className="w-full rounded-2xl p-6 space-y-4 shadow-2xl" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.10)' }}>
           <form onSubmit={submit} className="space-y-4">
 
             <div>
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl text-xs text-center w-full" style={{ backgroundColor: '#130f0d', border: '1px solid rgba(245,130,31,0.1)', color: 'rgba(255,255,255,0.35)' }}>
+        <div className="mt-4 p-3 rounded-xl text-xs text-center w-full" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)' }}>
           <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>Demo: </span>demo@capa.invest / Demo1234!
         </div>
       </div>

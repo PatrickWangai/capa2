@@ -19,8 +19,8 @@ const COUNTRIES = [
 ];
 
 const baseInput = {
-  backgroundColor: '#1a1410',
-  borderColor: 'rgba(245,130,31,0.2)',
+  backgroundColor: '#141414',
+  borderColor: 'rgba(255,255,255,0.10)',
   color: '#fff',
 };
 const focusInput = {
@@ -66,7 +66,7 @@ export default function RegisterPage() {
   const lbl = { display: 'block', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.5)', marginBottom: 6 };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-10" style={{ backgroundColor: '#0a0808', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-10" style={{ backgroundColor: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
 
       {/* Glowing orange blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -84,7 +84,7 @@ export default function RegisterPage() {
         <h1 className="text-xl font-semibold text-white text-center mb-1">Create your account</h1>
         <p className="text-sm text-center mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>Start investing globally in minutes</p>
 
-        <div className="w-full rounded-2xl p-6" style={{ backgroundColor: '#130f0d', border: '1px solid rgba(245,130,31,0.15)' }}>
+        <div className="w-full rounded-2xl p-6 shadow-2xl" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.10)' }}>
           <form onSubmit={submit} className="space-y-4">
 
             <div className="grid grid-cols-2 gap-3">

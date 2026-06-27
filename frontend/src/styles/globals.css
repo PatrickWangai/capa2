@@ -27,21 +27,31 @@
   animation: orange-float 3s ease-in-out infinite, orange-glow 3s ease-in-out infinite;
 }
 
+/* ── Slamdunk design system ── */
 @layer base {
   :root {
-    --bg-base:    #0a0808;
-    --bg-surface: #130f0d;
-    --bg-elevated:#1a1410;
-    --border:     #2a1e14;
+    /* bg-[#0a0a0a] — exact slamdunk background */
+    --bg-base:    #0a0a0a;
+    --bg-surface: #0f0f0f;
+    --bg-elevated:#141414;
+    /* border-white/10 — exact slamdunk border */
+    --border:     rgba(255,255,255,0.10);
+    --border-sub: rgba(255,255,255,0.05);
     --color-primary-from: #f5821f;
     --color-primary-to:   #ff4500;
   }
-  body { background-color: var(--bg-base); @apply text-gray-100 antialiased; }
+  body { background-color: var(--bg-base); @apply text-gray-100 antialiased select-none; }
+  /* Match slamdunk's * { border-color } pattern */
   * { border-color: var(--border); }
 }
 
 @layer components {
-  .card { background-color: var(--bg-surface); @apply rounded-xl border p-5; }
+  /* shadow-2xl like slamdunk sidebar */
+  .card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    @apply rounded-xl p-5 shadow-2xl;
+  }
 
   .btn-primary {
     @apply relative inline-flex items-center justify-center font-semibold px-4 py-2 rounded-lg transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-white;
@@ -49,27 +59,31 @@
   }
   .btn-primary:hover:not(:disabled) { opacity: 0.9; }
 
-  .btn-secondary { background-color: var(--bg-elevated); @apply hover:opacity-80 text-gray-100 font-medium px-4 py-2 rounded-lg transition-opacity border; }
-  .btn-danger    { @apply bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors; }
+  .btn-secondary {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    @apply hover:opacity-80 text-gray-100 font-medium px-4 py-2 rounded-lg transition-opacity;
+  }
+  .btn-danger { @apply bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors; }
 
   .input {
-    @apply w-full rounded-lg px-3 py-2.5 text-gray-100 placeholder-gray-500 transition text-sm;
+    @apply w-full rounded-lg px-3 py-2.5 text-gray-100 placeholder-gray-600 transition text-sm;
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
   }
   .input:focus {
     outline: none;
     border-color: #f5821f;
-    box-shadow: 0 0 0 2px rgba(245, 130, 31, 0.2);
+    box-shadow: 0 0 0 2px rgba(245, 130, 31, 0.18);
   }
 
-  .label { @apply block text-sm font-medium text-gray-300 mb-1.5; }
+  .label { @apply block text-sm font-medium text-gray-400 mb-1.5; }
 
-  .badge-green  { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900/40 text-green-400; }
-  .badge-red    { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900/40 text-red-400; }
-  .badge-yellow { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-900/40 text-yellow-400; }
-  .badge-blue   { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-900/40 text-purple-400; }
-  .badge-gray   { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#1f3a30] text-gray-300; }
+  .badge-green  { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-950/60  text-green-400; }
+  .badge-red    { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-950/60    text-red-400; }
+  .badge-yellow { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-950/60 text-yellow-400; }
+  .badge-blue   { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-950/40 text-orange-400; }
+  .badge-gray   { @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/5        text-gray-300; }
 
   .gradient-text {
     background: linear-gradient(135deg, #f5821f, #ff4500);
@@ -77,8 +91,14 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* Slamdunk-style dividers */
+  .divider      { height: 1px; background-color: var(--border); }
+  .divider-sub  { height: 1px; background-color: var(--border-sub); }
 }
 
-::-webkit-scrollbar { width: 5px; }
+/* scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent — exact slamdunk */
+::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(245,130,31,0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
