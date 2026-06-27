@@ -21,9 +21,6 @@ function OrangeSVG({ size = 160 }: { size?: number }) {
         </radialGradient>
       </defs>
 
-      {/* Drop shadow */}
-      <ellipse cx="100" cy="194" rx="52" ry="8" fill="rgba(0,0,0,0.25)" />
-
       {/* Body */}
       <circle cx="100" cy="108" r="82" fill="url(#ogBody)" />
 
@@ -43,11 +40,6 @@ function OrangeSVG({ size = 160 }: { size?: number }) {
           stroke="rgba(180,90,0,0.12)" strokeWidth="1.5"
         />
       ))}
-
-      {/* Navel */}
-      <circle cx="100" cy="182" r="9"  fill="#d97010" />
-      <circle cx="100" cy="182" r="5"  fill="#b85a08" />
-      <path d="M96,179 Q100,175 104,179 Q100,183 96,179Z" fill="#9a4a06" />
 
       {/* Stem */}
       <path d="M100,30 C98,22 102,14 99,6" stroke="#4a6e00" strokeWidth="5" strokeLinecap="round" fill="none" />

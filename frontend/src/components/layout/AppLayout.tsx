@@ -8,7 +8,7 @@ import {
 import { useState } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import CapaIcon from '../ui/CapaIcon';
+import OrangeIcon from '../ui/OrangeIcon';
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -19,6 +19,10 @@ const nav = [
   { to: '/notifications', label: 'Alerts',       icon: Bell },
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
 ];
+
+const SIDEBAR_BG  = '#0e0c0a';
+const SIDEBAR_BDR = 'rgba(245,130,31,0.18)';
+const MAIN_BG     = '#0a0808';
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
@@ -35,7 +39,15 @@ export default function AppLayout() {
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#152921' }}>
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: MAIN_BG, position: 'relative' }}>
+
+      {/* Glowing orange background blobs */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-15%', left: '15%',  width: 700, height: 700, borderRadius: '50%', background: 'rgba(245,130,31,0.10)', filter: 'blur(130px)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '5%', width: 550, height: 550, borderRadius: '50%', background: 'rgba(255,69,0,0.08)',   filter: 'blur(110px)' }} />
+        <div style={{ position: 'absolute', top: '40%', left: '40%',   width: 400, height: 400, borderRadius: '50%', background: 'rgba(255,140,0,0.06)',   filter: 'blur(90px)'  }} />
+      </div>
+
       {open && (
         <div className="fixed inset-0 z-20 bg-black/60 lg:hidden" onClick={() => setOpen(false)} />
       )}
@@ -46,10 +58,11 @@ export default function AppLayout() {
           'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
-        style={{ backgroundColor: '#1a3028', borderRight: '1px solid #2a4a3c' }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30 }}
       >
-        <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid #2a4a3c' }}>
-          <CapaIcon className="h-9 w-9" />
+        <div className="flex items-center gap-2 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
+          <OrangeIcon size={38} />
+          <span style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 900, fontSize: 13, letterSpacing: '0.1em', color: '#f5821f' }}>CAPA</span>
         </div>
 
         {/* Nav */}
@@ -60,28 +73,28 @@ export default function AppLayout() {
               onClick={() => setOpen(false)}
               className={({ isActive }) => clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+                isActive ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
               )}
               style={({ isActive }) => isActive
-                ? { background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.2))', color: '#c084fc' }
+                ? { background: 'rgba(245,130,31,0.18)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
                 : undefined
               }
             >
               <Icon size={18} />
               {label}
               {label === 'Verification' && kycBadge && (
-                <span className="ml-auto w-2 h-2 bg-yellow-400 rounded-full" />
+                <span className="ml-auto w-2 h-2 rounded-full" style={{ backgroundColor: '#f5821f' }} />
               )}
             </NavLink>
           ))}
         </nav>
 
         {/* User */}
-        <div className="p-3" style={{ borderTop: '1px solid #2a4a3c' }}>
+        <div className="p-3" style={{ borderTop: `1px solid ${SIDEBAR_BDR}` }}>
           <div className="flex items-center gap-3 px-2 py-2 rounded-lg">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)' }}
+              style={{ background: 'linear-gradient(135deg, #f5821f, #ff4500)' }}
             >
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
@@ -97,16 +110,16 @@ export default function AppLayout() {
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
         {/* Mobile top bar */}
         <header
           className="lg:hidden flex items-center justify-between h-14 px-4"
-          style={{ backgroundColor: '#1a3028', borderBottom: '1px solid #2a4a3c' }}
+          style={{ backgroundColor: SIDEBAR_BG, borderBottom: `1px solid ${SIDEBAR_BDR}` }}
         >
           <button onClick={() => setOpen(true)} className="text-gray-400">
             <Menu size={22} />
           </button>
-          <CapaIcon className="h-8 w-8" />
+          <OrangeIcon size={34} />
           <div className="w-6" />
         </header>
 

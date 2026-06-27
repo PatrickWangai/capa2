@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import CapaIcon from '../ui/CapaIcon';
+import OrangeIcon from '../ui/OrangeIcon';
 
 const nav = [
   { to: '/admin/dashboard',     label: 'Dashboard',     icon: LayoutDashboard },
@@ -12,6 +12,9 @@ const nav = [
   { to: '/admin/kyc',           label: 'KYC Review',    icon: ShieldCheck },
   { to: '/admin/transactions',  label: 'Transactions',  icon: ArrowDownUp },
 ];
+
+const SIDEBAR_BG  = '#0e0c0a';
+const SIDEBAR_BDR = 'rgba(245,130,31,0.18)';
 
 export default function AdminLayout() {
   const { logout } = useAuthStore();
@@ -25,15 +28,21 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#152921' }}>
+    <div className="flex h-screen" style={{ backgroundColor: '#0a0808', position: 'relative' }}>
+
+      {/* Glowing orange background blobs */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '20%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(245,130,31,0.10)', filter: 'blur(120px)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '10%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,69,0,0.08)',   filter: 'blur(100px)' }} />
+      </div>
+
       <aside
         className="w-60 flex flex-col"
-        style={{ backgroundColor: '#1a3028', borderRight: '1px solid #2a4a3c' }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1 }}
       >
-        {/* Logo + admin label */}
-        <div className="flex items-center gap-2.5 px-5 h-16" style={{ borderBottom: '1px solid #2a4a3c' }}>
-          <CapaIcon className="h-8 w-8 flex-shrink-0" />
-          <p className="text-xs text-gray-500">Admin Panel</p>
+        <div className="flex items-center gap-2.5 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
+          <OrangeIcon size={34} />
+          <p className="text-xs text-gray-500" style={{ fontFamily: "'Orbitron',sans-serif", letterSpacing: '0.05em' }}>Admin Panel</p>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-0.5">
@@ -42,10 +51,10 @@ export default function AdminLayout() {
               key={to} to={to}
               className={({ isActive }) => clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+                isActive ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
               )}
               style={({ isActive }) => isActive
-                ? { background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.2))', color: '#c084fc' }
+                ? { background: 'rgba(245,130,31,0.18)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
                 : undefined
               }
             >
@@ -54,11 +63,10 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <div className="p-3 space-y-1" style={{ borderTop: '1px solid #2a4a3c' }}>
+        <div className="p-3 space-y-1" style={{ borderTop: `1px solid ${SIDEBAR_BDR}` }}>
           <NavLink
             to="/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors"
-            style={{ backgroundColor: 'transparent' }}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors hover:bg-white/5"
           >
             <ChevronLeft size={16} /> Back to App
           </NavLink>
@@ -71,7 +79,7 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-6" style={{ position: 'relative', zIndex: 1 }}>
         <Outlet />
       </main>
     </div>
