@@ -6,8 +6,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import OrangeIcon from '../components/ui/OrangeIcon';
 
-const TEXT = '#1d1d1f';
-const SEC  = '#6e6e73';
+const TEXT   = '#ffffff';
+const SEC    = 'rgba(235,235,245,0.6)';
 const ACCENT = '#f5821f';
 
 export default function LoginPage() {
@@ -35,15 +35,15 @@ export default function LoginPage() {
 
   const inputStyle = (name: string) => ({
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17,
-    border: `1px solid ${focused === name ? ACCENT : '#d2d2d7'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(245,130,31,0.15)' : 'none',
-    outline: 'none', backgroundColor: '#fff', color: TEXT,
+    border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
+    boxShadow: focused === name ? '0 0 0 3px rgba(245,130,31,0.18)' : 'none',
+    outline: 'none', backgroundColor: '#2c2c2e', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
     boxSizing: 'border-box' as const,
   });
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
       <div style={{ width: '100%', maxWidth: 380 }}>
         {/* Logo */}
@@ -56,7 +56,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: '28px 24px', boxShadow: '0 2px 20px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06)' }}>
+        <div style={{ backgroundColor: '#1c1c1e', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             <div>
@@ -73,7 +73,7 @@ export default function LoginPage() {
                   value={form.password} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)}
                   onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
                 <button type="button" onClick={() => setShowPass(p => !p)}
-                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(235,235,245,0.4)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
         </div>
 
         {/* Demo hint */}
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.04)', fontSize: 13, color: SEC, textAlign: 'center' }}>
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', fontSize: 13, color: SEC, textAlign: 'center' }}>
           <span style={{ fontWeight: 600, color: TEXT }}>Demo:</span> demo@capa.invest / Demo1234!
         </div>
       </div>

@@ -25,20 +25,20 @@ export default function AdminLayout() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f5f5f7' }}>
+    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#000000' }}>
       <aside style={{
         width: 240, display: 'flex', flexDirection: 'column',
-        backgroundColor: 'rgba(255,255,255,0.72)',
+        backgroundColor: 'rgba(28,28,30,0.85)',
         backdropFilter: 'saturate(180%) blur(20px)',
         WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-        borderRight: '1px solid rgba(0,0,0,0.10)',
-        boxShadow: '1px 0 0 rgba(0,0,0,0.04)',
+        borderRight: '1px solid rgba(84,84,88,0.45)',
+        boxShadow: '1px 0 0 rgba(0,0,0,0.4)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
           <OrangeIcon size={32} />
           <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#1d1d1f', margin: 0 }}>Capa</p>
-            <p style={{ fontSize: 11, color: '#6e6e73', margin: 0 }}>Admin Panel</p>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#ffffff', margin: 0 }}>Capa</p>
+            <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0 }}>Admin Panel</p>
           </div>
         </div>
 
@@ -50,8 +50,8 @@ export default function AdminLayout() {
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
-                backgroundColor: isActive ? 'rgba(245,130,31,0.10)' : 'transparent',
-                color: isActive ? '#f5821f' : '#1d1d1f',
+                backgroundColor: isActive ? 'rgba(245,130,31,0.15)' : 'transparent',
+                color: isActive ? '#ff9f45' : 'rgba(235,235,245,0.85)',
                 transition: 'background 0.15s',
               })}
             >
@@ -65,8 +65,8 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <div style={{ padding: 12, borderTop: '1px solid rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NavLink to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: '#6e6e73', textDecoration: 'none' }}>
+        <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavLink to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: 'rgba(235,235,245,0.6)', textDecoration: 'none' }}>
             <ChevronLeft size={16} /> Back to App
           </NavLink>
           <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: '#ff3b30', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>

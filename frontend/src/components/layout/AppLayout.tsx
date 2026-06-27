@@ -35,7 +35,7 @@ export default function AppLayout() {
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f5f5f7' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#000000' }}>
       {open && (
         <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
       )}
@@ -47,17 +47,17 @@ export default function AppLayout() {
           open ? 'translate-x-0' : '-translate-x-full'
         )}
         style={{
-          backgroundColor: 'rgba(255,255,255,0.72)',
+          backgroundColor: 'rgba(28,28,30,0.85)',
           backdropFilter: 'saturate(180%) blur(20px)',
           WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-          borderRight: '1px solid rgba(0,0,0,0.10)',
-          boxShadow: '1px 0 0 rgba(0,0,0,0.06)',
+          borderRight: '1px solid rgba(84,84,88,0.45)',
+          boxShadow: '1px 0 0 rgba(0,0,0,0.4)',
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
           <OrangeIcon size={36} />
-          <span style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', fontWeight: 600, fontSize: 17, letterSpacing: '-0.02em', color: '#1d1d1f' }}>Capa</span>
+          <span style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', fontWeight: 600, fontSize: 17, letterSpacing: '-0.02em', color: '#ffffff' }}>Capa</span>
         </div>
 
         {/* Nav */}
@@ -72,8 +72,8 @@ export default function AppLayout() {
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
-                backgroundColor: isActive ? 'rgba(245,130,31,0.10)' : 'transparent',
-                color: isActive ? '#f5821f' : '#1d1d1f',
+                backgroundColor: isActive ? 'rgba(245,130,31,0.15)' : 'transparent',
+                color: isActive ? '#ff9f45' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => (
@@ -90,14 +90,14 @@ export default function AppLayout() {
         </nav>
 
         {/* User */}
-        <div style={{ padding: 12, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.03)' }}>
+        <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#f5821f,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-              <p style={{ fontSize: 11, color: '#6e6e73', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+              <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
             </div>
             <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
@@ -111,8 +111,8 @@ export default function AppLayout() {
       {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Mobile top bar */}
-        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(255,255,255,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
-          <button onClick={() => setOpen(true)} style={{ color: '#1d1d1f', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
+        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(28,28,30,0.85)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
+          <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
           <OrangeIcon size={30} />

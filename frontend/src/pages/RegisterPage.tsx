@@ -5,8 +5,8 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import OrangeIcon from '../components/ui/OrangeIcon';
 
-const TEXT   = '#1d1d1f';
-const SEC    = '#6e6e73';
+const TEXT   = '#ffffff';
+const SEC    = 'rgba(235,235,245,0.6)';
 const ACCENT = '#f5821f';
 
 const COUNTRIES = [
@@ -43,9 +43,9 @@ export default function RegisterPage() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 15,
-    border: `1px solid ${focused === name ? ACCENT : '#d2d2d7'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(245,130,31,0.15)' : 'none',
-    outline: 'none', backgroundColor: '#fff', color: TEXT,
+    border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
+    boxShadow: focused === name ? '0 0 0 3px rgba(245,130,31,0.18)' : 'none',
+    outline: 'none', backgroundColor: '#2c2c2e', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
     boxSizing: 'border-box',
   });
@@ -53,7 +53,7 @@ export default function RegisterPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6, letterSpacing: '-0.01em' };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
@@ -66,7 +66,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Card */}
-        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: '28px 24px', boxShadow: '0 2px 20px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06)' }}>
+        <div style={{ backgroundColor: '#1c1c1e', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -89,7 +89,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label style={lbl}>Phone <span style={{ color: '#aeaeb2' }}>(optional)</span></label>
+              <label style={lbl}>Phone <span style={{ color: 'rgba(235,235,245,0.3)' }}>(optional)</span></label>
               <input style={inputStyle('phone')} type="tel" placeholder="+254700000000"
                 value={formData.phone} onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)} onChange={set('phone')} />
             </div>
