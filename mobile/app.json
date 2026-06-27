@@ -32,9 +32,9 @@
       ["expo-notifications", { "icon": "./assets/notification-icon.png", "color": "#2563EB" }]
     ],
     "extra": {
-      "apiUrl": "http://10.0.2.2:4000",
-      "wsUrl": "wss://api.capa.invest",
-      "websiteUrl": "http://10.0.2.2:3000",
+      "apiUrl": "https://capa2.onrender.com",
+      "wsUrl": "wss://capa2.onrender.com",
+      "websiteUrl": "https://capa2.onrender.com",
       "eas": { "projectId": "your-eas-project-id" }
     }
   }
