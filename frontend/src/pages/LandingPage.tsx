@@ -4,23 +4,27 @@ import { Twitter, Youtube, Shield } from 'lucide-react';
 const ORANGE = '#ff4500';
 const BIG = "'Bebas Neue', 'Arial Black', sans-serif";
 
-function Helmet({ size = 120 }: { size?: number }) {
+function Helmet({ size = 120, animated = false }: { size?: number; animated?: boolean }) {
   const h = Math.round(size * 1.2);
   return (
-    <svg width={size} height={h} viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width={size} height={h} viewBox="0 0 200 240"
+      xmlns="http://www.w3.org/2000/svg"
+      className={animated ? 'helmet-animated' : ''}
+    >
       <defs>
-        <linearGradient id="hgLand" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="#7117ea" />
-          <stop offset="100%" stopColor="#ea6060" />
+        <linearGradient id="hgOrange" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+          <stop offset="0%" stopColor="#ff6b35" />
+          <stop offset="100%" stopColor="#ff4500" />
         </linearGradient>
-        <mask id="hmLand">
+        <mask id="hmOrange">
           <rect width="200" height="240" fill="white" />
           <rect x="46" y="84" width="108" height="66" rx="13" fill="black" />
         </mask>
       </defs>
       <path
         d="M100,10 C52,10 16,50 16,98 L16,165 C16,190 36,208 62,210 L138,210 C164,208 184,190 184,165 L184,98 C184,50 148,10 100,10 Z"
-        fill="url(#hgLand)" mask="url(#hmLand)"
+        fill="url(#hgOrange)" mask="url(#hmOrange)"
       />
     </svg>
   );
@@ -68,7 +72,7 @@ export default function LandingPage() {
 
         {/* Helmet on pedestal */}
         <div style={{ position: 'relative', marginBottom: 32 }}>
-          <Helmet size={130} />
+          <Helmet size={130} animated />
           <div style={{ width: 130, height: 12, borderRadius: '50%', background: `radial-gradient(ellipse, ${ORANGE}55 0%, transparent 70%)`, margin: '-4px auto 0' }} />
           <div style={{ width: 100, height: 8, backgroundColor: '#1c1c1c', borderRadius: 3, margin: '3px auto 0' }} />
           <div style={{ width: 150, height: 5, backgroundColor: '#141414', borderRadius: 3, margin: '2px auto 0' }} />
@@ -148,7 +152,7 @@ export default function LandingPage() {
 
         {/* Left: big helmet */}
         <div style={{ flex: '1 1 400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at 40% 50%, ${ORANGE}18 0%, transparent 60%)`, minHeight: 400 }}>
-          <Helmet size={320} />
+          <Helmet size={320} animated />
         </div>
 
         {/* Right: stats */}

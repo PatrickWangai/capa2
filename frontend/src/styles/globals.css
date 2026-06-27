@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes helmet-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-18px); }
+}
+@keyframes helmet-glow {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(255,69,0,0.5)); }
+  50%       { filter: drop-shadow(0 0 32px rgba(255,69,0,0.95)); }
+}
+.helmet-animated {
+  animation: helmet-float 3s ease-in-out infinite, helmet-glow 3s ease-in-out infinite;
+}
+
 @layer base {
   :root {
     --bg-base:    #152921;
