@@ -60,22 +60,18 @@ function CapaLogoFull({ size = 320 }: { size?: number }) {
 
 function CapaWordmark() {
   return (
-    <svg viewBox="0 0 220 48" xmlns="http://www.w3.org/2000/svg" width="220" height="48" aria-label="CAPA">
-      <defs>
-        <linearGradient id="lgWord" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7117ea" />
-          <stop offset="100%" stopColor="#ea6060" />
-        </linearGradient>
-      </defs>
-      <text
-        x="0" y="42"
-        fontFamily="'Inter','Helvetica Neue',sans-serif"
-        fontWeight="900"
-        fontSize="52"
-        letterSpacing="-2"
-        fill="url(#lgWord)"
-      >CAPA</text>
-    </svg>
+    <div style={{
+      fontFamily: "'Orbitron', sans-serif",
+      fontWeight: 900,
+      fontSize: 64,
+      letterSpacing: '0.05em',
+      background: 'linear-gradient(135deg,#7117ea,#ea6060)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      lineHeight: 1,
+    }}>
+      CAPA
+    </div>
   );
 }
 
@@ -101,7 +97,7 @@ export default function LandingPage() {
               </defs>
               <rect x="20" y="20" width="340" height="340" rx="80" ry="80" fill="url(#lgNav)" mask="url(#cMaskNav)" />
             </svg>
-            <span style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-1px', background: 'linear-gradient(135deg,#7117ea,#ea6060)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>CAPA</span>
+            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 16, fontWeight: 900, letterSpacing: '0.05em', background: 'linear-gradient(135deg,#7117ea,#ea6060)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>CAPA</span>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <Link to="/login" style={{ padding: '8px 18px', borderRadius: 8, border: '1px solid #2a4a3c', color: '#d1d5db', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>
