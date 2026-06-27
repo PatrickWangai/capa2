@@ -7,14 +7,11 @@ import toast from 'react-hot-toast';
 import OrangeIcon from '../ui/OrangeIcon';
 
 const nav = [
-  { to: '/admin/dashboard',     label: 'Dashboard',     icon: LayoutDashboard },
-  { to: '/admin/users',         label: 'Users',         icon: Users },
-  { to: '/admin/kyc',           label: 'KYC Review',    icon: ShieldCheck },
-  { to: '/admin/transactions',  label: 'Transactions',  icon: ArrowDownUp },
+  { to: '/admin/dashboard',    label: 'Dashboard',    icon: LayoutDashboard },
+  { to: '/admin/users',        label: 'Users',        icon: Users },
+  { to: '/admin/kyc',          label: 'KYC Review',   icon: ShieldCheck },
+  { to: '/admin/transactions', label: 'Transactions', icon: ArrowDownUp },
 ];
-
-const SIDEBAR_BG  = '#ffffff';
-const SIDEBAR_BDR = 'rgba(0,0,0,0.09)';
 
 export default function AdminLayout() {
   const { logout } = useAuthStore();
@@ -28,58 +25,57 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#0a0808', position: 'relative' }}>
-
-      {/* Soft white blur blobs */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-10%', left: '20%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', filter: 'blur(100px)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', right: '10%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', filter: 'blur(90px)' }} />
-      </div>
-
-      <aside
-        className="w-60 flex flex-col"
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1, boxShadow: '4px 0 24px rgba(0,0,0,0.06)' }}
-      >
-        <div className="flex items-center gap-2.5 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
-          <OrangeIcon size={34} />
-          <p className="text-xs text-gray-500" style={{ fontFamily: "'Orbitron',sans-serif", letterSpacing: '0.05em' }}>Admin Panel</p>
+    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f5f5f7' }}>
+      <aside style={{
+        width: 240, display: 'flex', flexDirection: 'column',
+        backgroundColor: 'rgba(255,255,255,0.72)',
+        backdropFilter: 'saturate(180%) blur(20px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+        borderRight: '1px solid rgba(0,0,0,0.10)',
+        boxShadow: '1px 0 0 rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+          <OrangeIcon size={32} />
+          <div>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#1d1d1f', margin: 0 }}>Capa</p>
+            <p style={{ fontSize: 11, color: '#6e6e73', margin: 0 }}>Admin Panel</p>
+          </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav style={{ flex: 1, padding: '8px 12px' }}>
           {nav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to} to={to}
-              className={({ isActive }) => clsx(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? '' : 'hover:bg-black/5'
-              )}
-              style={({ isActive }) => isActive
-                ? { background: 'rgba(245,130,31,0.12)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
-                : { color: '#555' }
-              }
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 12px', borderRadius: 10, marginBottom: 2,
+                fontSize: 15, fontWeight: 500, textDecoration: 'none',
+                backgroundColor: isActive ? 'rgba(245,130,31,0.10)' : 'transparent',
+                color: isActive ? '#f5821f' : '#1d1d1f',
+                transition: 'background 0.15s',
+              })}
             >
-              <Icon size={17} />{label}
+              {({ isActive }) => (
+                <>
+                  <Icon size={17} strokeWidth={isActive ? 2.2 : 1.8} />
+                  {label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-3 space-y-1" style={{ borderTop: `1px solid ${SIDEBAR_BDR}` }}>
-          <NavLink
-            to="/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors hover:bg-white/5"
-          >
+        <div style={{ padding: 12, borderTop: '1px solid rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavLink to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: '#6e6e73', textDecoration: 'none' }}>
             <ChevronLeft size={16} /> Back to App
           </NavLink>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-red-400 transition-colors"
-          >
+          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: '#ff3b30', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
             <LogOut size={16} /> Logout
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6" style={{ position: 'relative', zIndex: 1, backgroundColor: '#f0ede8' }}>
+      <main style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
         <Outlet />
       </main>
     </div>

@@ -20,10 +20,6 @@ const nav = [
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
 ];
 
-const SIDEBAR_BG  = '#ffffff';
-const SIDEBAR_BDR = 'rgba(0,0,0,0.09)';
-const MAIN_BG     = '#f0ede8';
-
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -39,91 +35,91 @@ export default function AppLayout() {
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: MAIN_BG, position: 'relative' }}>
-
-      {/* Soft white blur blobs */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-10%', left: '10%',  width: 700, height: 700, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', filter: 'blur(100px)' }} />
-        <div style={{ position: 'absolute', bottom: '-5%', right: '5%', width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', filter: 'blur(90px)'  }} />
-        <div style={{ position: 'absolute', top: '35%', left: '45%',   width: 500, height: 500, borderRadius: '50%', background: 'rgba(245,130,31,0.06)', filter: 'blur(80px)'  }} />
-      </div>
-
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f5f5f7' }}>
       {open && (
-        <div className="fixed inset-0 z-20 bg-black/60 lg:hidden" onClick={() => setOpen(false)} />
+        <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — Apple frosted glass */}
       <aside
         className={clsx(
           'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30, boxShadow: '4px 0 24px rgba(0,0,0,0.06)' }}
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.72)',
+          backdropFilter: 'saturate(180%) blur(20px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+          borderRight: '1px solid rgba(0,0,0,0.10)',
+          boxShadow: '1px 0 0 rgba(0,0,0,0.06)',
+        }}
       >
-        <div className="flex items-center gap-2 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
-          <OrangeIcon size={38} />
-          <span style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 900, fontSize: 13, letterSpacing: '0.1em', color: '#f5821f' }}>CAPA</span>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+          <OrangeIcon size={36} />
+          <span style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', fontWeight: 600, fontSize: 17, letterSpacing: '-0.02em', color: '#1d1d1f' }}>Capa</span>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
           {nav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to} to={to}
               onClick={() => setOpen(false)}
-              className={({ isActive }) => clsx(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? '' : 'hover:bg-black/5'
-              )}
-              style={({ isActive }) => isActive
-                ? { background: 'rgba(245,130,31,0.12)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
-                : { color: '#555' }
-              }
+              className={({ isActive }) => clsx('flex items-center gap-3 rounded-xl text-sm font-medium transition-colors', isActive ? '' : '')}
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 12px', borderRadius: 10, marginBottom: 2,
+                fontSize: 15, fontWeight: 500, textDecoration: 'none',
+                transition: 'background 0.15s',
+                backgroundColor: isActive ? 'rgba(245,130,31,0.10)' : 'transparent',
+                color: isActive ? '#f5821f' : '#1d1d1f',
+              })}
             >
-              <Icon size={18} />
-              {label}
-              {label === 'Verification' && kycBadge && (
-                <span className="ml-auto w-2 h-2 rounded-full" style={{ backgroundColor: '#f5821f' }} />
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                  {label}
+                  {label === 'Verification' && kycBadge && (
+                    <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: '#f5821f' }} />
+                  )}
+                </>
               )}
             </NavLink>
           ))}
         </nav>
 
         {/* User */}
-        <div className="p-3" style={{ borderTop: `1px solid ${SIDEBAR_BDR}` }}>
-          <div className="flex items-center gap-3 px-2 py-2 rounded-lg">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #f5821f, #ff4500)' }}
-            >
+        <div style={{ padding: 12, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.03)' }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#f5821f,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user?.firstName} {user?.lastName}</p>
-              <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+              <p style={{ fontSize: 11, color: '#6e6e73', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
             </div>
-            <button onClick={handleLogout} className="text-gray-500 hover:text-red-400 transition-colors">
-              <LogOut size={16} />
+            <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+              <LogOut size={15} />
             </button>
           </div>
         </div>
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Mobile top bar */}
-        <header
-          className="lg:hidden flex items-center justify-between h-14 px-4"
-          style={{ backgroundColor: SIDEBAR_BG, borderBottom: `1px solid ${SIDEBAR_BDR}` }}
-        >
-          <button onClick={() => setOpen(true)} style={{ color: '#666' }}>
-            <Menu size={22} />
+        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(255,255,255,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
+          <button onClick={() => setOpen(true)} style={{ color: '#1d1d1f', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
+            <Menu size={20} />
           </button>
-          <OrangeIcon size={34} />
-          <div className="w-6" />
+          <OrangeIcon size={30} />
+          <div style={{ width: 20 }} />
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
           <Outlet />
         </main>
       </div>

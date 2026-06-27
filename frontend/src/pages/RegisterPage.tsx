@@ -5,41 +5,27 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import OrangeIcon from '../components/ui/OrangeIcon';
 
+const TEXT   = '#1d1d1f';
+const SEC    = '#6e6e73';
+const ACCENT = '#f5821f';
+
 const COUNTRIES = [
-  { code: "KE", name: "Kenya" },
-  { code: "US", name: "United States" },
-  { code: "GB", name: "United Kingdom" },
-  { code: "UG", name: "Uganda" },
-  { code: "TZ", name: "Tanzania" },
-  { code: "RW", name: "Rwanda" },
-  { code: "NG", name: "Nigeria" },
-  { code: "GH", name: "Ghana" },
-  { code: "ZA", name: "South Africa" },
-  { code: "OTHER", name: "Other" },
+  { code: "KE", name: "Kenya" }, { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" }, { code: "UG", name: "Uganda" },
+  { code: "TZ", name: "Tanzania" }, { code: "RW", name: "Rwanda" },
+  { code: "NG", name: "Nigeria" }, { code: "GH", name: "Ghana" },
+  { code: "ZA", name: "South Africa" }, { code: "OTHER", name: "Other" },
 ];
 
-const baseInput = {
-  backgroundColor: '#141414',
-  borderColor: 'rgba(255,255,255,0.10)',
-  color: '#fff',
-};
-const focusInput = {
-  borderColor: '#f5821f',
-  boxShadow: '0 0 0 2px rgba(245,130,31,0.18)',
-  outline: 'none',
-};
-
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    email: "", password: "", firstName: "", lastName: "", phone: "", country: "KE",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "", phone: "", country: "KE" });
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setFormData((prev) => ({ ...prev, [k]: e.target.value }));
+    setFormData(prev => ({ ...prev, [k]: e.target.value }));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,107 +38,85 @@ export default function RegisterPage() {
       navigate("/kyc");
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
-  const fieldStyle = (name: string) => ({
-    ...baseInput,
-    ...(focused === name ? focusInput : {}),
+  const inputStyle = (name: string): React.CSSProperties => ({
+    width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 15,
+    border: `1px solid ${focused === name ? ACCENT : '#d2d2d7'}`,
+    boxShadow: focused === name ? '0 0 0 3px rgba(245,130,31,0.15)' : 'none',
+    outline: 'none', backgroundColor: '#fff', color: TEXT,
+    fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
+    boxSizing: 'border-box',
   });
 
-  const cls = 'w-full rounded-lg px-3 py-2.5 text-sm placeholder-gray-600 transition border focus:outline-none';
-  const lbl = { display: 'block', fontSize: 12, fontWeight: 500, color: '#666', marginBottom: 6 };
+  const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6, letterSpacing: '-0.01em' };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-10" style={{ backgroundColor: '#f0ede8', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
-      {/* Glowing orange blobs */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', top: '-15%', left: '10%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(245,130,31,0.12)', filter: 'blur(120px)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', right: '5%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,69,0,0.09)',   filter: 'blur(100px)' }} />
-      </div>
-
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-        {/* Floating orange */}
-        <div className="orange-float" style={{ marginBottom: 20 }}>
-          <OrangeIcon size={80} />
+      <div style={{ width: '100%', maxWidth: 420 }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div className="orange-float" style={{ display: 'inline-block' }}>
+            <OrangeIcon size={60} />
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 14, marginBottom: 4 }}>Create your account</h1>
+          <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Start investing globally in minutes</p>
         </div>
 
-        <h1 className="text-xl font-semibold text-center mb-1" style={{ color: '#0a0a0a' }}>Create your account</h1>
-        <p className="text-sm text-center mb-6" style={{ color: '#888' }}>Start investing globally in minutes</p>
+        {/* Card */}
+        <div style={{ backgroundColor: '#fff', borderRadius: 20, padding: '28px 24px', boxShadow: '0 2px 20px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06)' }}>
+          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-        <div className="w-full rounded-2xl p-6 shadow-sm" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.09)', backdropFilter: 'blur(16px)' }}>
-          <form onSubmit={submit} className="space-y-4">
-
-            <div className="grid grid-cols-2 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <label style={lbl}>First Name</label>
-                <input className={cls} placeholder="Jane" required
-                  style={fieldStyle('firstName')}
-                  onFocus={() => setFocused('firstName')} onBlur={() => setFocused(null)}
-                  value={formData.firstName} onChange={set('firstName')} />
+                <input style={inputStyle('firstName')} placeholder="Jane" required
+                  value={formData.firstName} onFocus={() => setFocused('firstName')} onBlur={() => setFocused(null)} onChange={set('firstName')} />
               </div>
               <div>
                 <label style={lbl}>Last Name</label>
-                <input className={cls} placeholder="Doe" required
-                  style={fieldStyle('lastName')}
-                  onFocus={() => setFocused('lastName')} onBlur={() => setFocused(null)}
-                  value={formData.lastName} onChange={set('lastName')} />
+                <input style={inputStyle('lastName')} placeholder="Doe" required
+                  value={formData.lastName} onFocus={() => setFocused('lastName')} onBlur={() => setFocused(null)} onChange={set('lastName')} />
               </div>
             </div>
 
             <div>
               <label style={lbl}>Email</label>
-              <input className={cls} type="email" placeholder="jane@example.com" required
-                style={fieldStyle('email')}
-                onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
-                value={formData.email} onChange={set('email')} />
+              <input style={inputStyle('email')} type="email" placeholder="jane@example.com" required
+                value={formData.email} onFocus={() => setFocused('email')} onBlur={() => setFocused(null)} onChange={set('email')} />
             </div>
 
             <div>
-              <label style={lbl}>Phone <span style={{ color: 'rgba(255,255,255,0.25)' }}>(optional)</span></label>
-              <input className={cls} type="tel" placeholder="+254700000000"
-                style={fieldStyle('phone')}
-                onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)}
-                value={formData.phone} onChange={set('phone')} />
+              <label style={lbl}>Phone <span style={{ color: '#aeaeb2' }}>(optional)</span></label>
+              <input style={inputStyle('phone')} type="tel" placeholder="+254700000000"
+                value={formData.phone} onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)} onChange={set('phone')} />
             </div>
 
             <div>
-              <label style={lbl}>Country of Residence</label>
-              <select className={cls}
-                style={fieldStyle('country')}
-                onFocus={() => setFocused('country')} onBlur={() => setFocused(null)}
-                value={formData.country} onChange={set('country')}>
-                {COUNTRIES.map((c) => (
-                  <option key={c.code} value={c.code} style={{ backgroundColor: '#1a1410' }}>{c.name}</option>
-                ))}
+              <label style={lbl}>Country</label>
+              <select style={{ ...inputStyle('country'), appearance: 'auto' }}
+                value={formData.country} onFocus={() => setFocused('country')} onBlur={() => setFocused(null)} onChange={set('country')}>
+                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
               </select>
             </div>
 
             <div>
               <label style={lbl}>Password</label>
-              <input className={cls} type="password" placeholder="Min. 8 characters" required minLength={8}
-                style={fieldStyle('password')}
-                onFocus={() => setFocused('password')} onBlur={() => setFocused(null)}
-                value={formData.password} onChange={set('password')} />
+              <input style={inputStyle('password')} type="password" placeholder="Min. 8 characters" required minLength={8}
+                value={formData.password} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)} onChange={set('password')} />
             </div>
 
-            <button
-              type="submit" disabled={loading}
-              className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed mt-1"
-              style={{ background: 'linear-gradient(135deg, #f5821f, #ff4500)' }}
-            >
-              {loading ? "Creating account…" : "Create Account"}
+            <button type="submit" disabled={loading} style={{ marginTop: 6, width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? '#f0a060' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, letterSpacing: '-0.01em', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
+              {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>
         </div>
 
-        <p className="mt-5 text-center text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Already have an account?{" "}
-          <Link to="/login" className="font-medium" style={{ color: '#f5821f' }}>Sign in</Link>
+        <p style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: SEC }}>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: ACCENT, textDecoration: 'none', fontWeight: 500 }}>Sign in</Link>
         </p>
       </div>
     </div>
