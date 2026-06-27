@@ -63,10 +63,10 @@ export default function RegisterPage() {
   });
 
   const cls = 'w-full rounded-lg px-3 py-2.5 text-sm placeholder-gray-600 transition border focus:outline-none';
-  const lbl = { display: 'block', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.5)', marginBottom: 6 };
+  const lbl = { display: 'block', fontSize: 12, fontWeight: 500, color: '#666', marginBottom: 6 };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-10" style={{ backgroundColor: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-10" style={{ backgroundColor: '#f0ede8', position: 'relative', overflow: 'hidden' }}>
 
       {/* Glowing orange blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -81,10 +81,10 @@ export default function RegisterPage() {
           <OrangeIcon size={80} />
         </div>
 
-        <h1 className="text-xl font-semibold text-white text-center mb-1">Create your account</h1>
-        <p className="text-sm text-center mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>Start investing globally in minutes</p>
+        <h1 className="text-xl font-semibold text-center mb-1" style={{ color: '#0a0a0a' }}>Create your account</h1>
+        <p className="text-sm text-center mb-6" style={{ color: '#888' }}>Start investing globally in minutes</p>
 
-        <div className="w-full rounded-2xl p-6 shadow-2xl" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.10)' }}>
+        <div className="w-full rounded-2xl p-6 shadow-sm" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.09)', backdropFilter: 'blur(16px)' }}>
           <form onSubmit={submit} className="space-y-4">
 
             <div className="grid grid-cols-2 gap-3">

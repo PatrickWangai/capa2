@@ -97,7 +97,7 @@ function OrangeDot() {
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: '#0a0a0a', color: '#ffffff', minHeight: '100vh', fontFamily: "'Inter', sans-serif", perspective: 800 }}>
+    <div style={{ backgroundColor: '#f0ede8', color: '#0a0a0a', minHeight: '100vh', fontFamily: "'Inter', sans-serif", perspective: 800 }}>
 
       {/* ORANGE BORDER FRAME */}
       <div style={{ position: 'fixed', inset: 10, borderRadius: 16, border: `2px solid ${ORANGE}`, pointerEvents: 'none', zIndex: 50 }} />
@@ -109,7 +109,7 @@ export default function LandingPage() {
           <span style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 900, fontSize: 14, letterSpacing: '0.1em', color: ORANGE }}>CAPA</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <Link to="/login" style={{ padding: '8px 20px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.2)', color: 'white', textDecoration: 'none', fontSize: 13, letterSpacing: '0.08em' }}>LOG IN</Link>
+          <Link to="/login" style={{ padding: '8px 20px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.15)', color: '#0a0a0a', textDecoration: 'none', fontSize: 13, letterSpacing: '0.08em' }}>LOG IN</Link>
           <Link to="/register" style={{ padding: '8px 20px', borderRadius: 6, backgroundColor: ORANGE, color: 'white', textDecoration: 'none', fontSize: 13, fontWeight: 700, letterSpacing: '0.08em' }}>GET STARTED</Link>
         </div>
       </nav>
@@ -127,7 +127,7 @@ export default function LandingPage() {
         <p style={{ fontFamily: BIG, fontSize: 12, letterSpacing: '0.35em', color: ORANGE, marginBottom: 12 }}>CAPA PLATFORM</p>
 
         {/* Huge title */}
-        <h1 style={{ fontFamily: BIG, fontSize: 'clamp(64px, 12vw, 140px)', lineHeight: 0.9, letterSpacing: '0.03em', textAlign: 'center', color: '#ffffff', marginBottom: 40 }}>
+        <h1 style={{ fontFamily: BIG, fontSize: 'clamp(64px, 12vw, 140px)', lineHeight: 0.9, letterSpacing: '0.03em', textAlign: 'center', color: '#0a0a0a', marginBottom: 40 }}>
           UNSTOPPABLE<br />MINDS
         </h1>
 
@@ -143,16 +143,16 @@ export default function LandingPage() {
         {/* Side labels */}
         <div style={{ position: 'absolute', left: 80, top: '50%', transform: 'translateY(-20%)' }}>
           <p style={{ fontFamily: BIG, fontSize: 11, letterSpacing: '0.3em', color: ORANGE, marginBottom: 6 }}>RANK 01</p>
-          <h3 style={{ fontFamily: BIG, fontSize: 26, letterSpacing: '0.05em', color: '#ffffff', marginBottom: 10 }}>Elite Investing</h3>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, maxWidth: 180 }}>Built for the highest level of financial performance.</p>
+          <h3 style={{ fontFamily: BIG, fontSize: 26, letterSpacing: '0.05em', color: '#0a0a0a', marginBottom: 10 }}>Elite Investing</h3>
+          <p style={{ fontSize: 13, color: 'rgba(0,0,0,0.45)', lineHeight: 1.6, maxWidth: 180 }}>Built for the highest level of financial performance.</p>
         </div>
         <div style={{ position: 'absolute', right: 80, top: '50%', transform: 'translateY(-20%)', textAlign: 'right' }}>
           <p style={{ fontFamily: BIG, fontSize: 11, letterSpacing: '0.3em', color: ORANGE, marginBottom: 6 }}>CERTIFIED</p>
-          <h3 style={{ fontFamily: BIG, fontSize: 26, letterSpacing: '0.05em', color: '#ffffff', marginBottom: 10 }}>Zero Commission</h3>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, maxWidth: 180 }}>Meets all regulatory standards and compliance requirements.</p>
+          <h3 style={{ fontFamily: BIG, fontSize: 26, letterSpacing: '0.05em', color: '#0a0a0a', marginBottom: 10 }}>Zero Commission</h3>
+          <p style={{ fontSize: 13, color: 'rgba(0,0,0,0.45)', lineHeight: 1.6, maxWidth: 180 }}>Meets all regulatory standards and compliance requirements.</p>
         </div>
 
-        <p style={{ position: 'absolute', bottom: 36, fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.2)' }}>SCROLL TO EXPLORE</p>
+        <p style={{ position: 'absolute', bottom: 36, fontSize: 10, letterSpacing: '0.3em', color: 'rgba(0,0,0,0.25)' }}>SCROLL TO EXPLORE</p>
       </section>
 
       {/* ── SECTION 2: BIG TYPOGRAPHY ── */}
@@ -171,12 +171,12 @@ export default function LandingPage() {
           <div style={{ fontFamily: BIG, fontSize: 'clamp(56px, 14vw, 170px)', lineHeight: 0.85, color: 'rgba(255,255,255,0.04)', letterSpacing: '0.02em', position: 'absolute', top: 0, left: 0, right: 0, userSelect: 'none', pointerEvents: 'none' }}>
             GROW YOUR<br />WEALTH.
           </div>
-          <div style={{ fontFamily: BIG, fontSize: 'clamp(56px, 14vw, 170px)', lineHeight: 0.85, color: '#ffffff', letterSpacing: '0.02em', position: 'relative' }}>
+          <div style={{ fontFamily: BIG, fontSize: 'clamp(56px, 14vw, 170px)', lineHeight: 0.85, color: '#0a0a0a', letterSpacing: '0.02em', position: 'relative' }}>
             GROW YOUR<br />WEALTH<span style={{ display: 'inline-block', width: 'clamp(14px,2vw,32px)', height: 'clamp(14px,2vw,32px)', backgroundColor: ORANGE, verticalAlign: 'middle', marginLeft: 10, marginBottom: 8 }} />
           </div>
         </div>
 
-        <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.08)', margin: '56px 0 28px' }} />
+        <div style={{ height: 1, backgroundColor: 'rgba(0,0,0,0.08)', margin: '56px 0 28px' }} />
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
@@ -190,11 +190,11 @@ export default function LandingPage() {
             <Twitter size={15} color="rgba(255,255,255,0.35)" />
             <Youtube size={15} color="rgba(255,255,255,0.35)" />
             <Shield size={15} color="rgba(255,255,255,0.35)" />
-            <span style={{ fontSize: 11, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.35)' }}>SECURE PLATFORM</span>
+            <span style={{ fontSize: 11, letterSpacing: '0.25em', color: 'rgba(0,0,0,0.4)' }}>SECURE PLATFORM</span>
           </div>
         </div>
 
-        <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginTop: 28, marginBottom: 56 }} />
+        <div style={{ height: 1, backgroundColor: 'rgba(0,0,0,0.08)', marginTop: 28, marginBottom: 56 }} />
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/register" style={{ display: 'inline-block', padding: '16px 52px', backgroundColor: ORANGE, color: 'white', textDecoration: 'none', fontFamily: BIG, fontSize: 22, letterSpacing: '0.15em', borderRadius: 6 }}>
@@ -212,35 +212,35 @@ export default function LandingPage() {
 
         <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 64px 80px 40px' }}>
           <div style={{ alignSelf: 'flex-end', marginBottom: 32 }}>
-            <span style={{ padding: '6px 18px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.15)', fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', fontFamily: BIG }}>PERFORMANCE</span>
+            <span style={{ padding: '6px 18px', borderRadius: 999, border: '1px solid rgba(0,0,0,0.12)', fontSize: 11, letterSpacing: '0.3em', color: 'rgba(0,0,0,0.4)', fontFamily: BIG }}>PERFORMANCE</span>
           </div>
 
-          <h2 style={{ fontFamily: BIG, fontSize: 'clamp(52px, 8vw, 108px)', lineHeight: 0.88, color: '#ffffff', letterSpacing: '0.02em', marginBottom: 48, textAlign: 'right' }}>
+          <h2 style={{ fontFamily: BIG, fontSize: 'clamp(52px, 8vw, 108px)', lineHeight: 0.88, color: '#0a0a0a', letterSpacing: '0.02em', marginBottom: 48, textAlign: 'right' }}>
             PERFECT<br />RETURNS
           </h2>
 
           {[{ value: '50+', label: 'GLOBAL MARKETS' }, { value: '$0', label: 'COMMISSION FEES' }, { value: '24/7', label: 'LIVE SUPPORT' }].map(stat => (
-            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 20, marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 20, marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: BIG, fontSize: 50, lineHeight: 1, color: ORANGE }}>{stat.value}</div>
-                <div style={{ fontSize: 10, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{stat.label}</div>
+                <div style={{ fontSize: 10, letterSpacing: '0.35em', color: 'rgba(0,0,0,0.4)', marginTop: 2 }}>{stat.label}</div>
               </div>
-              <div style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: ORANGE }} />
               </div>
             </div>
           ))}
 
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7, textAlign: 'right', maxWidth: 320, alignSelf: 'flex-end', marginTop: 12 }}>
+          <p style={{ fontSize: 13, color: 'rgba(0,0,0,0.45)', lineHeight: 1.7, textAlign: 'right', maxWidth: 320, alignSelf: 'flex-end', marginTop: 12 }}>
             Real-time portfolio tracking with live prices and instant order execution — built for investors who don't settle.
           </p>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '24px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <span style={{ fontFamily: BIG, fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>UNSTOPPABLE MINDS</span>
-        <span style={{ fontSize: 11, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)' }}>© {new Date().getFullYear()} CAPA. ENGINEERED FOR GREATNESS.</span>
+      <footer style={{ borderTop: '1px solid rgba(0,0,0,0.07)', padding: '24px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <span style={{ fontFamily: BIG, fontSize: 11, letterSpacing: '0.3em', color: 'rgba(0,0,0,0.3)' }}>UNSTOPPABLE MINDS</span>
+        <span style={{ fontSize: 11, letterSpacing: '0.2em', color: 'rgba(0,0,0,0.25)' }}>© {new Date().getFullYear()} CAPA. ENGINEERED FOR GREATNESS.</span>
         <Link to="/login" style={{ fontSize: 11, letterSpacing: '0.25em', color: ORANGE, textDecoration: 'none' }}>LOG IN →</Link>
       </footer>
     </div>

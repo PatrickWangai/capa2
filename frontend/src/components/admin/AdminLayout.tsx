@@ -13,8 +13,8 @@ const nav = [
   { to: '/admin/transactions',  label: 'Transactions',  icon: ArrowDownUp },
 ];
 
-const SIDEBAR_BG  = '#0a0a0a';
-const SIDEBAR_BDR = 'rgba(255,255,255,0.10)';
+const SIDEBAR_BG  = '#ffffff';
+const SIDEBAR_BDR = 'rgba(0,0,0,0.09)';
 
 export default function AdminLayout() {
   const { logout } = useAuthStore();
@@ -30,15 +30,15 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen" style={{ backgroundColor: '#0a0808', position: 'relative' }}>
 
-      {/* Glowing orange background blobs */}
+      {/* Soft white blur blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-10%', left: '20%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(245,130,31,0.10)', filter: 'blur(120px)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', right: '10%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,69,0,0.08)',   filter: 'blur(100px)' }} />
+        <div style={{ position: 'absolute', top: '-10%', left: '20%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', filter: 'blur(100px)' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '10%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', filter: 'blur(90px)' }} />
       </div>
 
       <aside
         className="w-60 flex flex-col"
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1, boxShadow: '4px 0 40px rgba(0,0,0,0.8)' }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 1, boxShadow: '4px 0 24px rgba(0,0,0,0.06)' }}
       >
         <div className="flex items-center gap-2.5 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
           <OrangeIcon size={34} />
@@ -51,11 +51,11 @@ export default function AdminLayout() {
               key={to} to={to}
               className={({ isActive }) => clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                isActive ? '' : 'hover:bg-black/5'
               )}
               style={({ isActive }) => isActive
-                ? { background: 'rgba(245,130,31,0.18)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
-                : undefined
+                ? { background: 'rgba(245,130,31,0.12)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
+                : { color: '#555' }
               }
             >
               <Icon size={17} />{label}
@@ -79,7 +79,7 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6" style={{ position: 'relative', zIndex: 1 }}>
+      <main className="flex-1 overflow-y-auto p-6" style={{ position: 'relative', zIndex: 1, backgroundColor: '#f0ede8' }}>
         <Outlet />
       </main>
     </div>

@@ -52,11 +52,11 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: '#f0ede8', position: 'relative', overflow: 'hidden' }}>
 
       {/* Glowing orange blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', top: '-20%', left: '10%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(245,130,31,0.12)', filter: 'blur(120px)' }} />
+        <div style={{ position: 'absolute', top: '-20%', left: '10%',  width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', filter: 'blur(120px)' }} />
         <div style={{ position: 'absolute', bottom: '-15%', right: '5%', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,69,0,0.09)',   filter: 'blur(100px)' }} />
       </div>
 
@@ -67,10 +67,10 @@ export default function LoginPage() {
           <OrangeIcon size={96} />
         </div>
 
-        <h1 className="text-xl font-semibold text-white text-center mb-1">Welcome back</h1>
-        <p className="text-sm text-center mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>Sign in to your Capa account</p>
+        <h1 className="text-xl font-semibold text-center mb-1" style={{ color: '#0a0a0a' }}>Welcome back</h1>
+        <p className="text-sm text-center mb-6" style={{ color: '#888' }}>Sign in to your Capa account</p>
 
-        <div className="w-full rounded-2xl p-6 space-y-4 shadow-2xl" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.10)' }}>
+        <div className="w-full rounded-2xl p-6 space-y-4 shadow-sm" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.09)', backdropFilter: 'blur(16px)' }}>
           <form onSubmit={submit} className="space-y-4">
 
             <div>
@@ -94,7 +94,7 @@ export default function LoginPage() {
                 />
                 <button type="button" onClick={() => setShowPass(p => !p)}
                   className="absolute right-3 top-2.5 transition-colors"
-                  style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  style={{ color: 'rgba(0,0,0,0.3)' }}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -121,14 +121,14 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="text-center text-xs" style={{ color: 'rgba(0,0,0,0.3)' }}>
             Don't have an account?{' '}
             <Link to="/register" className="font-medium" style={{ color: '#f5821f' }}>Create one</Link>
           </p>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl text-xs text-center w-full" style={{ backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)' }}>
-          <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>Demo: </span>demo@capa.invest / Demo1234!
+        <div className="mt-4 p-3 rounded-xl text-xs text-center w-full" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.09)', color: '#888' }}>
+          <span style={{ color: '#555', fontWeight: 500 }}>Demo: </span>demo@capa.invest / Demo1234!
         </div>
       </div>
     </div>

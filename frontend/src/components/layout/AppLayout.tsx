@@ -20,9 +20,9 @@ const nav = [
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
 ];
 
-const SIDEBAR_BG  = '#0a0a0a';
-const SIDEBAR_BDR = 'rgba(255,255,255,0.10)';
-const MAIN_BG     = '#0a0a0a';
+const SIDEBAR_BG  = '#ffffff';
+const SIDEBAR_BDR = 'rgba(0,0,0,0.09)';
+const MAIN_BG     = '#f0ede8';
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
@@ -41,11 +41,11 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen overflow-hidden" style={{ backgroundColor: MAIN_BG, position: 'relative' }}>
 
-      {/* Glowing orange background blobs */}
+      {/* Soft white blur blobs */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-15%', left: '15%',  width: 700, height: 700, borderRadius: '50%', background: 'rgba(245,130,31,0.10)', filter: 'blur(130px)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', right: '5%', width: 550, height: 550, borderRadius: '50%', background: 'rgba(255,69,0,0.08)',   filter: 'blur(110px)' }} />
-        <div style={{ position: 'absolute', top: '40%', left: '40%',   width: 400, height: 400, borderRadius: '50%', background: 'rgba(255,140,0,0.06)',   filter: 'blur(90px)'  }} />
+        <div style={{ position: 'absolute', top: '-10%', left: '10%',  width: 700, height: 700, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', filter: 'blur(100px)' }} />
+        <div style={{ position: 'absolute', bottom: '-5%', right: '5%', width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', filter: 'blur(90px)'  }} />
+        <div style={{ position: 'absolute', top: '35%', left: '45%',   width: 500, height: 500, borderRadius: '50%', background: 'rgba(245,130,31,0.06)', filter: 'blur(80px)'  }} />
       </div>
 
       {open && (
@@ -58,7 +58,7 @@ export default function AppLayout() {
           'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
-        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30, boxShadow: '4px 0 40px rgba(0,0,0,0.8)' }}
+        style={{ backgroundColor: SIDEBAR_BG, borderRight: `1px solid ${SIDEBAR_BDR}`, position: 'relative', zIndex: 30, boxShadow: '4px 0 24px rgba(0,0,0,0.06)' }}
       >
         <div className="flex items-center gap-2 px-5 h-16" style={{ borderBottom: `1px solid ${SIDEBAR_BDR}` }}>
           <OrangeIcon size={38} />
@@ -73,11 +73,11 @@ export default function AppLayout() {
               onClick={() => setOpen(false)}
               className={({ isActive }) => clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                isActive ? '' : 'hover:bg-black/5'
               )}
               style={({ isActive }) => isActive
-                ? { background: 'rgba(245,130,31,0.18)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
-                : undefined
+                ? { background: 'rgba(245,130,31,0.12)', color: '#f5821f', borderLeft: '2px solid #f5821f', paddingLeft: 10 }
+                : { color: '#555' }
               }
             >
               <Icon size={18} />
@@ -116,7 +116,7 @@ export default function AppLayout() {
           className="lg:hidden flex items-center justify-between h-14 px-4"
           style={{ backgroundColor: SIDEBAR_BG, borderBottom: `1px solid ${SIDEBAR_BDR}` }}
         >
-          <button onClick={() => setOpen(true)} className="text-gray-400">
+          <button onClick={() => setOpen(true)} style={{ color: '#666' }}>
             <Menu size={22} />
           </button>
           <OrangeIcon size={34} />
