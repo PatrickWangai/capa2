@@ -39,6 +39,7 @@ import { startLimitOrderJob } from './jobs/limitOrderJob.js';
 BigInt.prototype.toJSON = function () { return this.toString(); };
 
 const app = express();
+app.set('trust proxy', 1); // Render sits behind a reverse proxy
 const httpServer = http.createServer(app);
 
 // ── Socket.IO ────────────────────────────────────────────────

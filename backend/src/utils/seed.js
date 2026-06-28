@@ -169,28 +169,6 @@ async function seed() {
   }
   console.log('✅ Sample dividends seeded');
 
-  // ── Demo positions for demo account ───────────────────────
-  const demoAccount = await prisma.investmentAccount.findFirst({ where: { userId: demo.id } });
-  if (demoAccount && aapl) {
-    const msft = await prisma.asset.findFirst({ where: { symbol: 'MSFT' } });
-    const scom = await prisma.asset.findFirst({ where: { symbol: 'SCOM' } });
-
-    const positionData = [
-      { asset: aapl, qty: 5.25, costPrice: 175.00 },
-      { asset: msft, qty: 3.0,  costPrice: 350.00 },
-      { asset: scom, qty: 500,  costPrice: 16.00  },
-    ].filter(p => p.asset);
-
-    for (const { asset, qty, costPrice } of positionData) {
-      await prisma.position.upsert({
-        where: { accountId_assetId: { accountId: demoAccount.id, assetId: asset.id } },
-        create: { accountId: demoAccount.id, assetId: asset.id, quantity: qty, avgCostPrice: costPrice, totalInvested: qty * costPrice },
-        update: {},
-      });
-    }
-    console.log('✅ Demo positions seeded');
-  }
-
   console.log('\n🎉 Seed complete!\n');
   console.log('  Admin:  admin@capa.invest\n');
 }

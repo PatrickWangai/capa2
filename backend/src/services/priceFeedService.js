@@ -6,42 +6,57 @@ import logger from '../utils/logger.js';
 
 const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 const POLL_INTERVAL_MS = 15_000;
+const NSE_REFRESH_MS = 5 * 60_000; // re-fetch NSE every 5 minutes
 
-// Yahoo Finance suffix per exchange (LSE/NYSE/NASDAQ only)
+// Yahoo Finance suffix per exchange
 const YAHOO_SUFFIX = { LSE: '.L', NYSE: '', NASDAQ: '' };
 
-// NSE symbols that differ between our DB and AFX
+// NSE symbols that differ from AFX's listing (our DB symbol → AFX symbol)
 const NSE_SYMBOL_MAP = { BATK: 'BAT' };
 
-// ── NSE scraper (afx.kwayisi.org) ────────────────────────────
+// ── NSE individual-page scraper ──────────────────────────────
+// Fetches afx.kwayisi.org/nse/{symbol}.html for each stock.
+// The main listing page (afx.kwayisi.org/nseke/) times out from
+// Render's Frankfurt IPs; individual pages are lighter and work.
 let nseCache = {};
 let nseCacheAt = 0;
 
-async function fetchNsePrices() {
-  if (Date.now() - nseCacheAt < 14_000) return nseCache;
+async function fetchOneNseStock(dbSymbol) {
+  const afxSym = (NSE_SYMBOL_MAP[dbSymbol] ?? dbSymbol).toLowerCase();
   try {
-    const { data } = await axios.get('https://afx.kwayisi.org/nseke/', {
-      timeout: 10_000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-      },
+    const { data } = await axios.get(`https://afx.kwayisi.org/nse/${afxSym}.html`, {
+      timeout: 8_000,
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
     });
-    const re = /([A-Z0-9]+)<\/a><td><a[^>]+>[^<]+<\/a><td>[\d,]+<td>([\d.]+)<td[^>]*>([\+\-][\d.]+)/g;
-    const prices = {};
-    let m;
-    while ((m = re.exec(data)) !== null) {
-      prices[m[1]] = { price: parseFloat(m[2]), change: parseFloat(m[3]) };
+    // HTML: "33.60 <span class=hi>▴ 0.65 (1.97%)"  or  class=lo for down
+    const m = data.match(/>([\d.]+)\s*<span class=(hi|lo)>[^(]*([\d.]+)\s*\(/);
+    if (!m) return null;
+    const price = parseFloat(m[1]);
+    const change = parseFloat(m[3]) * (m[2] === 'lo' ? -1 : 1);
+    return { price, change };
+  } catch {
+    return null;
+  }
+}
+
+async function refreshNsePrices(nseSymbols) {
+  if (Date.now() - nseCacheAt < NSE_REFRESH_MS) return;
+  logger.info(`NSE: refreshing ${nseSymbols.length} stocks via AFX individual pages`);
+  const results = await Promise.allSettled(
+    nseSymbols.map(async sym => ({ sym, data: await fetchOneNseStock(sym) }))
+  );
+  const prices = {};
+  for (const r of results) {
+    if (r.status === 'fulfilled' && r.value.data) {
+      prices[r.value.sym] = r.value.data;
     }
+  }
+  if (Object.keys(prices).length > 0) {
     nseCache = prices;
     nseCacheAt = Date.now();
-    return prices;
-  } catch (err) {
-    logger.warn('NSE scrape failed, using cached/simulated data', { error: err.message });
-    return nseCache;
+    logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} prices`);
+  } else {
+    logger.warn('NSE: all individual-page fetches failed, using simulation');
   }
 }
 
@@ -71,17 +86,17 @@ async function fetchYahooPrice(symbol, exchange) {
   }
 }
 
-// ── Simulation fallback ───────────────────────────────────────
+// ── Simulation fallback (very small drift so seed prices stay accurate) ──
 function simulatePrice(asset, existing) {
   const base = existing ? Number(existing.price) : 100;
-  const change = (Math.random() - 0.495) * base * 0.005;
-  const price = Math.max(0.01, base + change);
-  const prevClose = existing?.price ? Number(existing.price) : price * 0.99;
+  const drift = (Math.random() - 0.495) * base * 0.0005; // ±0.05% per tick
+  const price = Math.max(0.01, base + drift);
+  const prevClose = existing?.previousClose ? Number(existing.previousClose) : price * 0.99;
   return {
     price,
-    open: prevClose * (1 + (Math.random() - 0.5) * 0.01),
-    high: price * (1 + Math.random() * 0.008),
-    low: price * (1 - Math.random() * 0.008),
+    open: prevClose,
+    high: Math.max(price, Number(existing?.high ?? price)),
+    low: Math.min(price, Number(existing?.low ?? price)),
     previousClose: prevClose,
     changeAmount: price - prevClose,
     changePercent: ((price - prevClose) / prevClose) * 100,
@@ -94,16 +109,22 @@ async function updatePrices() {
   try {
     const assets = await prisma.asset.findMany({ where: { isActive: true }, include: { price: true } });
 
-    const nsePrices = assets.some(a => a.exchange === 'NSE') ? await fetchNsePrices() : {};
+    const nseSymbols = assets.filter(a => a.exchange === 'NSE').map(a => a.symbol);
+    if (nseSymbols.length > 0) {
+      await refreshNsePrices(nseSymbols); // no-op if cache is fresh
+    }
 
     for (const asset of assets) {
       let priceData = null;
 
       if (asset.exchange === 'NSE') {
-        const afxSymbol = NSE_SYMBOL_MAP[asset.symbol] ?? asset.symbol;
-        const live = nsePrices[afxSymbol];
+        const live = nseCache[asset.symbol];
         if (live) {
-          const prev = asset.price?.price ? Number(asset.price.price) : live.price;
+          const prev = asset.price?.previousClose
+            ? Number(asset.price.previousClose)
+            : asset.price?.price
+            ? Number(asset.price.price)
+            : live.price;
           priceData = {
             price: live.price,
             open: prev,
@@ -161,7 +182,7 @@ function roundToMinute(date) {
 }
 
 export function startPriceFeed(io) {
-  logger.info('Price feed started — NSE: afx.kwayisi.org | US/UK: Yahoo Finance');
+  logger.info('Price feed started — NSE: AFX individual pages (5 min refresh) | US/UK: Yahoo Finance');
   updatePrices();
   setInterval(updatePrices, POLL_INTERVAL_MS);
 }

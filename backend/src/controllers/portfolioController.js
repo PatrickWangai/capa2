@@ -100,6 +100,7 @@ export async function getPortfolioHistory(req, res) {
   const from = new Date(Date.now() - days * 86_400_000);
 
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.json({ history: [], period });
 
   const txs = await prisma.transaction.findMany({
     where: { accountId: account.id, createdAt: { gte: from }, status: 'COMPLETED' },
