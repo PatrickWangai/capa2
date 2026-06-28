@@ -6,8 +6,14 @@ import bcrypt from 'bcryptjs';
 async function seed() {
   console.log('🌱 Seeding database...');
 
+  // ── Remove demo user if it exists ─────────────────────────
+  await prisma.user.deleteMany({ where: { email: 'demo@capa.invest' } });
+  console.log('✅ Demo user removed');
+
   // ── Admin user ─────────────────────────────────────────────
-  const adminHash = await bcrypt.hash('Admin1234!', 12);
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) throw new Error('ADMIN_PASSWORD env var is required');
+  const adminHash = await bcrypt.hash(adminPassword, 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@capa.invest' },
     create: {
@@ -19,47 +25,14 @@ async function seed() {
       kycStatus: 'APPROVED',
       referralCode: 'ADMIN0001',
     },
-    update: {},
+    update: { passwordHash: adminHash },
   });
   await prisma.userRole.upsert({
     where: { userId: admin.id },
     create: { userId: admin.id, role: 'SUPERADMIN', permissions: ['*'] },
     update: {},
   });
-  console.log('✅ Admin user: admin@capa.invest / Admin1234!');
-
-  // ── Demo investor ──────────────────────────────────────────
-  const demoHash = await bcrypt.hash('Demo1234!', 12);
-  const demo = await prisma.user.upsert({
-    where: { email: 'demo@capa.invest' },
-    create: {
-      email: 'demo@capa.invest',
-      passwordHash: demoHash,
-      firstName: 'Demo',
-      lastName: 'Investor',
-      countryOfResidence: 'KE',
-      status: 'ACTIVE',
-      kycStatus: 'APPROVED',
-      referralCode: 'DEMO0001',
-      accounts: {
-        create: {
-          accountNumber: 'IG00000001',
-          isPrimary: true,
-          baseCurrency: 'USD',
-          balances: {
-            create: [
-              { currency: 'USD', available: 10000 },
-              { currency: 'KES', available: 500000 },
-              { currency: 'GBP', available: 5000 },
-            ],
-          },
-        },
-      },
-      watchlists: { create: { name: 'My Watchlist', isDefault: true } },
-    },
-    update: {},
-  });
-  console.log('✅ Demo user: demo@capa.invest / Demo1234!');
+  console.log('✅ Admin user ready: admin@capa.invest');
 
   // ── Assets ─────────────────────────────────────────────────
   const assets = [
@@ -170,8 +143,7 @@ async function seed() {
   }
 
   console.log('\n🎉 Seed complete!\n');
-  console.log('  Admin:  admin@capa.invest / Admin1234!');
-  console.log('  Demo:   demo@capa.invest  / Demo1234!\n');
+  console.log('  Admin:  admin@capa.invest\n');
 }
 
 seed()
