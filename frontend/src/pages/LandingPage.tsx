@@ -152,7 +152,7 @@ function TiltOrange({ size = 120 }: { size?: number }) {
     <div className="orange-float">
       <div ref={ref} onMouseMove={onMove} onMouseLeave={() => setTilt({ x: 0, y: 0 })}
         style={{ display: 'inline-block', cursor: 'grab', transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transition: 'transform 0.12s ease-out', transformStyle: 'preserve-3d' }}>
-        <CapaLogo size={size * 0.65} />
+        <CapaLogo size={size * 0.65} glass />
       </div>
     </div>
   );
