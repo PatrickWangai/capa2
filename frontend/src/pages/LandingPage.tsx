@@ -296,10 +296,13 @@ export default function LandingPage() {
         </div>
 
         {/* Hero content */}
-        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900 }}>
-          <div style={{ marginBottom: 32 }}>
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
           </div>
+          <p className="hero-text hero-text-1" style={{ fontSize: 'clamp(13px,1.8vw,18px)', fontWeight: 500, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '0 0 32px' }}>
+            Unstoppable Minds
+          </p>
           <h1 className="hero-text hero-text-2" style={{ fontSize: 'clamp(44px,7vw,88px)', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.04, color: TEXT, marginBottom: 20, textShadow: '0 2px 40px rgba(0,0,0,0.6)' }}>
             The future of<br />investing is here.
           </h1>
