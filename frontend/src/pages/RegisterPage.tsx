@@ -59,7 +59,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div className="orange-float" style={{ display: 'inline-block' }}>
-            <CapaLogo size={44} />
+            <CapaLogo size={120} />
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 14, marginBottom: 4 }}>Create your account</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Start investing globally in minutes</p>

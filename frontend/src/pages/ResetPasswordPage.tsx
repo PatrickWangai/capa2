@@ -64,7 +64,7 @@ export default function ResetPasswordPage() {
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div className="orange-float" style={{ display: 'inline-block' }}>
-            <CapaLogo size={44} />
+            <CapaLogo size={120} />
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 16, marginBottom: 4 }}>Set new password</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Must be at least 8 characters</p>

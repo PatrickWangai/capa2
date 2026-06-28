@@ -59,7 +59,7 @@ export default function OnboardingPage() {
       <div style={{ width: '100%', maxWidth: 480 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <CapaLogo size={38} />
+          <CapaLogo size={110} />
         </div>
 
         <StepIndicator current={step} total={3} />

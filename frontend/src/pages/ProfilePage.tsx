@@ -103,7 +103,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
         <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #f5821f, #ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <CapaLogo size={32} />
+          <CapaLogo size={44} />
         </div>
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: TEXT, letterSpacing: '-0.02em' }}>

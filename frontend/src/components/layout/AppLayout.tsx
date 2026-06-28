@@ -67,7 +67,7 @@ export default function AppLayout() {
       >
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
-          <CapaLogo size={22} />
+          <CapaLogo size={44} />
         </div>
 
         {/* Nav */}
@@ -141,7 +141,7 @@ export default function AppLayout() {
           <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
-          <CapaLogo size={18} />
+          <CapaLogo size={40} />
           <div style={{ width: 20 }} />
         </header>
 

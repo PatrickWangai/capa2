@@ -23,7 +23,7 @@ export default function VerifyEmailPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
         <div className="orange-float" style={{ display: 'inline-block', marginBottom: 24 }}>
-          <CapaLogo size={44} />
+          <CapaLogo size={120} />
         </div>
 
         {status === 'loading' && (

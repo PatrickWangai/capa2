@@ -52,9 +52,9 @@ function PageTitle({ title }: { title: string }) {
 
 function LoadingSpinner() {
   return (
-    <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 32, height: 32, border: '3px solid rgba(245,130,31,0.2)', borderTopColor: '#f5821f', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    <div style={{ minHeight: '100vh', backgroundColor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <img src="/capa-logo.png" alt="CAPA" width={356} height={200}
+        style={{ mixBlendMode: 'screen', userSelect: 'none', opacity: 0.9 }} />
     </div>
   );
 }

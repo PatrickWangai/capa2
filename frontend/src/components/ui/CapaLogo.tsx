@@ -1,51 +1,22 @@
-// Image: 1440×810px, white CAPA text on black.
-// Text area ≈ x:310–1130 (820px), y:260–550 (290px).
-// mix-blend-mode: screen makes the black background transparent on dark surfaces.
-interface Props { size?: number; color?: string; glass?: boolean; className?: string; }
+// Protected brand asset — uses /capa-logo.png exactly as provided.
+// mix-blend-mode: screen makes the black background transparent on dark surfaces
+// so only the white letterforms are visible. The image is never cropped,
+// stretched, or modified — only scaled proportionally via the size prop.
 
-export default function CapaLogo({ size = 40, glass = false, className = '' }: Props) {
-  const scale    = size / 290;
-  const imgW     = Math.round(1440 * scale);
-  const imgH     = Math.round(810  * scale);
-  const offsetX  = Math.round(310  * scale);
-  const offsetY  = Math.round(260  * scale);
-  const clipW    = Math.round(820  * scale);
+const ASPECT = 1672 / 941; // exact pixel dimensions of capa-logo.png
 
-  const img = (
-    <div style={{ width: clipW, height: size, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
-      <img
-        src="/capa-logo.png"
-        alt="CAPA"
-        width={imgW}
-        height={imgH}
-        style={{ position: 'absolute', top: -offsetY, left: -offsetX, mixBlendMode: 'screen' }}
-      />
-    </div>
-  );
+interface Props { size?: number; className?: string; }
 
-  if (!glass) {
-    return (
-      <div className={className} style={{ display: 'inline-flex', alignItems: 'center' }}>
-        {img}
-      </div>
-    );
-  }
-
+export default function CapaLogo({ size = 60, className = '' }: Props) {
   return (
-    <div
+    <img
+      src="/capa-logo.png"
+      alt="CAPA"
+      height={size}
+      width={Math.round(size * ASPECT)}
+      draggable={false}
       className={className}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: `${Math.round(size * 0.3)}px ${Math.round(size * 0.6)}px`,
-        background: 'rgba(255,255,255,0.07)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderRadius: Math.round(size * 0.22),
-        border: '1px solid rgba(255,255,255,0.12)',
-      }}>
-      {img}
-    </div>
+      style={{ display: 'block', mixBlendMode: 'screen', userSelect: 'none', flexShrink: 0 }}
+    />
   );
 }
