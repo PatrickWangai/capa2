@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { User, Lock, Shield, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
@@ -103,7 +103,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
         <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #f5821f, #ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <OrangeIcon size={36} />
+          <CapaLogo size={32} />
         </div>
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: TEXT, letterSpacing: '-0.02em' }}>

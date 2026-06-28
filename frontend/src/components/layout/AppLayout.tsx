@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import OrangeIcon from '../ui/OrangeIcon';
+import CapaLogo from '../ui/CapaLogo';
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -67,8 +67,7 @@ export default function AppLayout() {
       >
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
-          <OrangeIcon size={36} />
-          <span style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', fontWeight: 600, fontSize: 17, letterSpacing: '-0.02em', color: '#ffffff' }}>Capa</span>
+          <CapaLogo size={22} />
         </div>
 
         {/* Nav */}
@@ -142,7 +141,7 @@ export default function AppLayout() {
           <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
-          <OrangeIcon size={30} />
+          <CapaLogo size={18} />
           <div style={{ width: 20 }} />
         </header>
 

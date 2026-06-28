@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
@@ -23,7 +23,7 @@ export default function VerifyEmailPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
         <div className="orange-float" style={{ display: 'inline-block', marginBottom: 24 }}>
-          <OrangeIcon size={64} />
+          <CapaLogo size={44} />
         </div>
 
         {status === 'loading' && (

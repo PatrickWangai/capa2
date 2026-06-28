@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
@@ -9,7 +9,7 @@ function Nav() {
   return (
     <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-        <OrangeIcon size={24} />
+        <CapaLogo size={24} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
       </Link>
     </nav>

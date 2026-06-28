@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import OrangeIcon from '../ui/OrangeIcon';
+import CapaLogo from '../ui/CapaLogo';
 
 const nav = [
   { to: '/admin/dashboard',    label: 'Dashboard',    icon: LayoutDashboard },
@@ -35,7 +35,7 @@ export default function AdminLayout() {
         boxShadow: '1px 0 0 rgba(0,0,0,0.4)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
-          <OrangeIcon size={32} />
+          <CapaLogo size={32} />
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, color: '#ffffff', margin: 0 }}>Capa</p>
             <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0 }}>Admin Panel</p>

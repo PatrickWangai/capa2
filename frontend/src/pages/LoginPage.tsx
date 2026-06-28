@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT   = '#ffffff';
 const SEC    = 'rgba(235,235,245,0.6)';
@@ -49,7 +49,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div className="orange-float" style={{ display: 'inline-block' }}>
-            <OrangeIcon size={72} />
+            <CapaLogo size={48} />
           </div>
           <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 16, marginBottom: 4 }}>Sign in to Capa</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Enter your details to continue</p>

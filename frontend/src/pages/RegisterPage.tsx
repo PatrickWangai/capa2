@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT   = '#ffffff';
 const SEC    = 'rgba(235,235,245,0.6)';
@@ -59,7 +59,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div className="orange-float" style={{ display: 'inline-block' }}>
-            <OrangeIcon size={60} />
+            <CapaLogo size={44} />
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 14, marginBottom: 4 }}>Create your account</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Start investing globally in minutes</p>

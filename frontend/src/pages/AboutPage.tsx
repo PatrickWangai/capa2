@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
@@ -22,9 +22,8 @@ const values = [
 function Nav() {
   return (
     <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-        <OrangeIcon size={24} />
-        <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <CapaLogo size={22} />
       </Link>
       <div style={{ display: 'flex', gap: 20 }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
@@ -42,7 +41,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section style={{ textAlign: 'center', padding: '80px 24px 60px' }}>
         <div className="orange-float" style={{ display: 'inline-block', marginBottom: 24 }}>
-          <OrangeIcon size={80} />
+          <CapaLogo size={44} />
         </div>
         <h1 style={{ fontSize: 'clamp(36px,6vw,64px)', fontWeight: 700, letterSpacing: '-0.04em', margin: '0 0 16px', lineHeight: 1.05 }}>
           Investing for Everyone,<br />Everywhere

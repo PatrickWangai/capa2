@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 import { useAuthStore } from '../store/authStore';
 
 const TEXT = '#ffffff';
@@ -12,7 +12,7 @@ export default function NotFoundPage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', textAlign: 'center' }}>
       <div className="orange-float" style={{ display: 'inline-block', marginBottom: 28 }}>
-        <OrangeIcon size={80} />
+        <CapaLogo size={32} />
       </div>
       <h1 style={{ fontSize: 'clamp(64px,12vw,120px)', fontWeight: 800, letterSpacing: '-0.06em', color: TEXT, margin: '0 0 8px', lineHeight: 1 }}>404</h1>
       <h2 style={{ fontSize: 22, fontWeight: 600, color: TEXT, margin: '0 0 12px', letterSpacing: '-0.02em' }}>Page not found</h2>

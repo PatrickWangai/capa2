@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check, TrendingDown } from 'lucide-react';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const ACCENT = '#f5821f';
 const TEXT    = '#ffffff';
@@ -152,7 +152,7 @@ function TiltOrange({ size = 120 }: { size?: number }) {
     <div className="orange-float">
       <div ref={ref} onMouseMove={onMove} onMouseLeave={() => setTilt({ x: 0, y: 0 })}
         style={{ display: 'inline-block', cursor: 'grab', transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transition: 'transform 0.12s ease-out', transformStyle: 'preserve-3d' }}>
-        <OrangeIcon size={size} />
+        <CapaLogo size={size * 0.65} />
       </div>
     </div>
   );
@@ -279,8 +279,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <OrangeIcon size={26} />
-          <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.02em', color: TEXT }}>Capa</span>
+          <CapaLogo size={20} />
         </div>
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
           {[['About', '/about'], ['Pricing', '/pricing'], ['FAQ', '/faq'], ['Security', '/security']].map(([l, h]) => (
@@ -457,8 +456,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <OrangeIcon size={22} />
-                <span style={{ fontWeight: 700, fontSize: 16, color: TEXT }}>Capa</span>
+                <CapaLogo size={18} />
               </div>
               <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
             </div>

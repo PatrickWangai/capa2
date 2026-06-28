@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, BarChart2, Clock, Target } from 'lucide-react';
-import OrangeIcon from '../components/ui/OrangeIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
@@ -59,7 +59,7 @@ export default function OnboardingPage() {
       <div style={{ width: '100%', maxWidth: 480 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <OrangeIcon size={48} />
+          <CapaLogo size={38} />
         </div>
 
         <StepIndicator current={step} total={3} />
