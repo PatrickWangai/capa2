@@ -6,7 +6,7 @@ import logger from '../utils/logger.js';
 const POLL_INTERVAL_MS = 15_000;
 
 // Map database exchange codes to Yahoo Finance symbol suffixes
-const YAHOO_SUFFIX = { LSE: '.L', NSE: null, NYSE: '', NASDAQ: '' };
+const YAHOO_SUFFIX = { LSE: '.L', NSE: '.NR', NYSE: '', NASDAQ: '' };
 
 function yahooSymbol(symbol, exchange) {
   const suffix = YAHOO_SUFFIX[exchange];
