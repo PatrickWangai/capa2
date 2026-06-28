@@ -5,79 +5,14 @@ import { api } from '../services/api';
 import { Search, TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
-const LOGO_DOMAINS: Record<string, string> = {
-  // NSE Kenya — Banks
-  SCOM: 'safaricom.co.ke',
-  EQTY: 'equitybank.co.ke',
-  KCB: 'kcbgroup.com',
-  ABSA: 'absa.co.ke',
-  COOP: 'co-opbank.co.ke',
-  NCBA: 'ncbagroup.com',
-  SCBK: 'sc.com',
-  DTK: 'dtbafrica.com',
-  IMH: 'imbankgroup.com',
-  SBIC: 'stanbicbank.co.ke',
-  FMLY: 'familybank.co.ke',
-  HFCK: 'hfgroup.co.ke',
-  BKG: 'bkgroup.co.rw',
-  OCH: 'olympia.co.ke',
-  // NSE Kenya — Insurance
-  JUB: 'jubileeinsurance.com',
-  BRIT: 'britam.com',
-  CIC: 'cicinsurancegroup.com',
-  KNRE: 'kenyare.co.ke',
-  SLAM: 'sanlam.com',
-  LBTY: 'libertykenya.co.ke',
-  // NSE Kenya — Consumer
-  EABL: 'eabl.com',
-  BATK: 'bat.com',
-  UNGA: 'ungagroup.com',
-  CRWN: 'crownpaintskenya.co.ke',
-  SMER: 'sameerafrica.com',
-  CGEN: 'carandgeneral.co.ke',
-  UCHM: 'uchumi.com',
-  EVRD: 'eveready.co.ke',
-  FTGH: 'flametreegroup.com',
-  // NSE Kenya — Energy & Utilities
-  TOTL: 'vivo-energy.com',
-  KPLC: 'kplc.co.ke',
-  KEGN: 'kengen.co.ke',
-  KPC: 'kpc.co.ke',
-  UMME: 'umeme.co.ug',
-  // NSE Kenya — Transport
-  KQ: 'kenya-airways.com',
-  XPRS: 'expresskenyaltd.co.ke',
-  // NSE Kenya — Agriculture
-  KAPC: 'kapchoruatea.com',
-  KUKZ: 'kakuzi.co.ke',
-  LIMT: 'limurutea.co.ke',
-  SASN: 'sasinigroup.com',
-  WTK: 'williamsonteakenya.com',
-  EGAD: 'eaagads.co.ke',
-  // NSE Kenya — Industrial
-  PORT: 'portlandcement.co.ke',
-  BOC: 'bockenya.com',
-  CARB: 'carbacid.co.ke',
-  // NSE Kenya — Media & Other
-  NMG: 'nationmedia.com',
-  SGL: 'standardmedia.co.ke',
-  LKL: 'longhornpublishers.com',
-  SCAN: 'scangroup.co.ke',
-  TPSE: 'serenahotels.com',
-  CTUM: 'centum.co.ke',
-  HAFR: 'homeafrika.co.ke',
-  NSE: 'nse.co.ke',
-  SMWF: 'satrix.co.za',
-  // US / NASDAQ
-  AAPL: 'apple.com', MSFT: 'microsoft.com', GOOGL: 'google.com',
-  AMZN: 'amazon.com', TSLA: 'tesla.com', NVDA: 'nvidia.com',
-  JPM: 'jpmorganchase.com', META: 'meta.com',
-  SPY: 'ssga.com', QQQ: 'invesco.com', VTI: 'vanguard.com', VWO: 'vanguard.com',
-  // LSE
-  BARC: 'barclays.com', SHEL: 'shell.com', LLOY: 'lloydsbankinggroup.com',
-  VOD: 'vodafone.com', BP: 'bp.com', AZN: 'astrazeneca.com',
-  ISF: 'ishares.com', VUKE: 'vanguard.co.uk',
-};
+// Symbols that have a local logo file in /public/logos/
+const LOCAL_LOGOS = new Set([
+  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BP','CARB','CIC','COOP',
+  'CRWN','CTUM','EABL','EGAD','EQTY','FMLY','FTGH','GOOGL','IMH','JPM',
+  'KCB','KEGN','KNRE','KPC','KPLC','KQ','KUKZ','LBTY','LKL','LLOY','META',
+  'MSFT','NCBA','NMG','NSE','NVDA','QQQ','SASN','SCBK','SCOM','SGL','SHEL',
+  'SLAM','SMER','SMWF','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO',
+]);
 
 const SYMBOL_COLORS = [
   '#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316',
@@ -89,25 +24,20 @@ function symbolColor(sym: string) {
 }
 
 function StockLogo({ symbol }: { symbol: string }) {
-  const [stage, setStage] = useState(0); // 0=clearbit, 1=google favicon, 2=color badge
-  const domain = LOGO_DOMAINS[symbol];
+  const [failed, setFailed] = useState(false);
 
-  if (domain && stage < 2) {
-    const src = stage === 0
-      ? `https://logo.clearbit.com/${domain}`
-      : `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  if (LOCAL_LOGOS.has(symbol) && !failed) {
     return (
       <div className="w-9 h-9 rounded-lg bg-white overflow-hidden flex items-center justify-center p-0.5 shrink-0">
         <img
-          src={src}
+          src={`/logos/${symbol}.png`}
           alt={symbol}
           className="w-full h-full object-contain"
-          onError={() => setStage(s => s + 1)}
+          onError={() => setFailed(true)}
         />
       </div>
     );
   }
-  // Colored badge fallback — consistent color per symbol
   const bg = symbolColor(symbol);
   return (
     <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
