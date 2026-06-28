@@ -6,7 +6,8 @@ import logger from '../utils/logger.js';
 
 const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 const POLL_INTERVAL_MS = 15_000;
-const NSE_REFRESH_MS = 5 * 60_000; // re-fetch NSE every 5 minutes
+const NSE_REFRESH_MS = 15 * 60_000;  // re-fetch NSE every 15 minutes
+const NSE_FAIL_BACKOFF_MS = 60 * 60_000; // back off 1 hr after consecutive failures
 
 // Yahoo Finance suffix per exchange
 const YAHOO_SUFFIX = { LSE: '.L', NYSE: '', NASDAQ: '' };
@@ -20,6 +21,7 @@ const NSE_SYMBOL_MAP = { BATK: 'BAT' };
 // Render's Frankfurt IPs; individual pages are lighter and work.
 let nseCache = {};
 let nseCacheAt = 0;
+let nseFailedAt = 0; // timestamp of last total failure, 0 = never failed
 
 async function fetchOneNseStock(dbSymbol) {
   const afxSym = (NSE_SYMBOL_MAP[dbSymbol] ?? dbSymbol).toLowerCase();
@@ -28,7 +30,6 @@ async function fetchOneNseStock(dbSymbol) {
       timeout: 8_000,
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
     });
-    // HTML: "33.60 <span class=hi>▴ 0.65 (1.97%)"  or  class=lo for down
     const m = data.match(/>([\d.]+)\s*<span class=(hi|lo)>[^(]*([\d.]+)\s*\(/);
     if (!m) return null;
     const price = parseFloat(m[1]);
@@ -40,8 +41,13 @@ async function fetchOneNseStock(dbSymbol) {
 }
 
 async function refreshNsePrices(nseSymbols) {
-  if (Date.now() - nseCacheAt < NSE_REFRESH_MS) return;
-  logger.info(`NSE: refreshing ${nseSymbols.length} stocks via AFX individual pages`);
+  const now = Date.now();
+  // Skip if cache is fresh
+  if (now - nseCacheAt < NSE_REFRESH_MS) return;
+  // Back off for 1 hour after a total failure so we don't spam logs
+  if (nseFailedAt && now - nseFailedAt < NSE_FAIL_BACKOFF_MS) return;
+
+  logger.info(`NSE: refreshing ${nseSymbols.length} stocks via AFX`);
   const results = await Promise.allSettled(
     nseSymbols.map(async sym => ({ sym, data: await fetchOneNseStock(sym) }))
   );
@@ -53,10 +59,12 @@ async function refreshNsePrices(nseSymbols) {
   }
   if (Object.keys(prices).length > 0) {
     nseCache = prices;
-    nseCacheAt = Date.now();
-    logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} prices`);
+    nseCacheAt = now;
+    nseFailedAt = 0;
+    logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} live prices`);
   } else {
-    logger.warn('NSE: all individual-page fetches failed, using simulation');
+    nseFailedAt = now;
+    logger.warn('NSE: live prices unavailable — using seed prices with simulation until next retry in 1 hr');
   }
 }
 

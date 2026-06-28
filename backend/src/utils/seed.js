@@ -6,9 +6,22 @@ import bcrypt from 'bcryptjs';
 async function seed() {
   console.log('🌱 Seeding database...');
 
-  // ── Remove demo user if it exists ─────────────────────────
-  await prisma.user.deleteMany({ where: { email: 'demo@capa.invest' } });
-  console.log('✅ Demo user removed');
+  // ── Remove demo user (delete related data first to respect FK RESTRICT) ──
+  const demoUser = await prisma.user.findUnique({ where: { email: 'demo@capa.invest' } });
+  if (demoUser) {
+    const accounts = await prisma.investmentAccount.findMany({ where: { userId: demoUser.id }, select: { id: true } });
+    const accountIds = accounts.map(a => a.id);
+    if (accountIds.length) {
+      await prisma.transaction.deleteMany({ where: { accountId: { in: accountIds } } });
+      await prisma.order.deleteMany({ where: { accountId: { in: accountIds } } });
+      await prisma.position.deleteMany({ where: { accountId: { in: accountIds } } });
+      await prisma.dividendPayment.deleteMany({ where: { accountId: { in: accountIds } } });
+    }
+    await prisma.user.delete({ where: { id: demoUser.id } });
+    console.log('✅ Demo user removed');
+  } else {
+    console.log('✅ No demo user to remove');
+  }
 
   // ── Admin user ─────────────────────────────────────────────
   const adminPassword = process.env.ADMIN_PASSWORD;
