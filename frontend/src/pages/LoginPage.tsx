@@ -99,10 +99,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Demo hint */}
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', fontSize: 13, color: SEC, textAlign: 'center' }}>
-          <span style={{ fontWeight: 600, color: TEXT }}>Demo:</span> demo@capa.invest / Demo1234!
-        </div>
       </div>
     </div>
   );
