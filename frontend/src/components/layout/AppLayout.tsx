@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu, User
+  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert
 } from 'lucide-react';
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -63,6 +63,22 @@ export default function AppLayout() {
 
         {/* Nav */}
         <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
+          {user?.adminRole && (
+            <NavLink
+              to="/admin/dashboard"
+              onClick={() => setOpen(false)}
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 12px', borderRadius: 10, marginBottom: 2,
+                fontSize: 15, fontWeight: 500, textDecoration: 'none',
+                transition: 'background 0.15s',
+                backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent',
+                color: isActive ? '#c084fc' : 'rgba(235,235,245,0.85)',
+              })}
+            >
+              {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
+            </NavLink>
+          )}
           {nav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to} to={to}

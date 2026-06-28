@@ -8,6 +8,7 @@ interface User {
   lastName: string;
   kycStatus: string;
   status: string;
+  adminRole: string | null;
 }
 
 interface AuthState {

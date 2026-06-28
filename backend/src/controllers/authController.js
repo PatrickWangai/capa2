@@ -121,11 +121,13 @@ export async function login(req, res) {
 
   await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
 
+  const adminRole = await prisma.userRole.findUnique({ where: { userId: user.id }, select: { role: true } });
+
   const { access, refresh } = issueTokens(user.id, user.email);
   await saveRefreshToken(user.id, refresh, req);
 
   res.json({
-    user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, kycStatus: user.kycStatus, status: user.status },
+    user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, kycStatus: user.kycStatus, status: user.status, adminRole: adminRole?.role ?? null },
     accessToken: access,
     refreshToken: refresh,
   });
