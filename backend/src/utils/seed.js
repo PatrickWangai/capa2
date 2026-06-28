@@ -60,14 +60,14 @@ async function seed() {
     { symbol: 'ISF',   exchange: 'LSE',    name: 'iShares Core FTSE 100',  assetClass: 'ETF',   currency: 'GBP', sector: 'Diversified',   isFractional: false, startPrice: 7.80   },
     { symbol: 'VUKE',  exchange: 'LSE',    name: 'Vanguard FTSE 100',      assetClass: 'ETF',   currency: 'GBP', sector: 'Diversified',   isFractional: false, startPrice: 37.50  },
     // Kenyan Stocks
-    { symbol: 'SCOM',  exchange: 'NSE',    name: 'Safaricom PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Telecom',       isFractional: false, startPrice: 18.50  },
-    { symbol: 'EQTY',  exchange: 'NSE',    name: 'Equity Group Holdings',  assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 42.00  },
-    { symbol: 'KPLC',  exchange: 'NSE',    name: 'Kenya Power & Lighting', assetClass: 'STOCK', currency: 'KES', sector: 'Utilities',     isFractional: false, startPrice: 2.10   },
-    { symbol: 'BATK',  exchange: 'NSE',    name: 'BAT Kenya PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Consumer',      isFractional: false, startPrice: 425.00 },
-    { symbol: 'COOP',  exchange: 'NSE',    name: 'Co-operative Bank',      assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 13.80  },
-    { symbol: 'KCB',   exchange: 'NSE',    name: 'KCB Group PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 28.50  },
-    { symbol: 'EABL',  exchange: 'NSE',    name: 'East African Breweries', assetClass: 'STOCK', currency: 'KES', sector: 'Consumer',      isFractional: false, startPrice: 168.00 },
-    { symbol: 'ABSA',  exchange: 'NSE',    name: 'ABSA Bank Kenya',        assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 14.00  },
+    { symbol: 'SCOM',  exchange: 'NSE',    name: 'Safaricom PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Telecom',       isFractional: false, startPrice: 33.60  },
+    { symbol: 'EQTY',  exchange: 'NSE',    name: 'Equity Group Holdings',  assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 79.75  },
+    { symbol: 'KPLC',  exchange: 'NSE',    name: 'Kenya Power & Lighting', assetClass: 'STOCK', currency: 'KES', sector: 'Utilities',     isFractional: false, startPrice: 17.40  },
+    { symbol: 'BATK',  exchange: 'NSE',    name: 'BAT Kenya PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Consumer',      isFractional: false, startPrice: 546.00 },
+    { symbol: 'COOP',  exchange: 'NSE',    name: 'Co-operative Bank',      assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 34.50  },
+    { symbol: 'KCB',   exchange: 'NSE',    name: 'KCB Group PLC',          assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 76.00  },
+    { symbol: 'EABL',  exchange: 'NSE',    name: 'East African Breweries', assetClass: 'STOCK', currency: 'KES', sector: 'Consumer',      isFractional: false, startPrice: 270.50 },
+    { symbol: 'ABSA',  exchange: 'NSE',    name: 'ABSA Bank Kenya',        assetClass: 'STOCK', currency: 'KES', sector: 'Financials',    isFractional: false, startPrice: 32.50  },
   ];
 
   for (const a of assets) {
@@ -94,7 +94,7 @@ async function seed() {
         weekHigh52: startPrice * 1.35,
         weekLow52: startPrice * 0.65,
       },
-      update: { price: startPrice },
+      update: { price: startPrice, changeAmount: startPrice - prev, changePercent: ((startPrice - prev) / prev) * 100 },
     });
   }
   console.log(`✅ ${assets.length} assets seeded`);
