@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check, TrendingDown } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
+import AnimatedCapaLogo from '../components/ui/AnimatedCapaLogo';
 
 const ACCENT = '#f5821f';
 const TEXT    = '#ffffff';
@@ -317,8 +318,8 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900 }}>
-          <div className="hero-text hero-text-1" style={{ marginBottom: 28, display: 'inline-block', perspective: 600 }}>
-            <TiltOrange size={100} />
+          <div className="hero-text hero-text-1" style={{ marginBottom: 36, display: 'inline-block' }}>
+            <AnimatedCapaLogo size={72} glass />
           </div>
           <h1 className="hero-text hero-text-2" style={{ fontSize: 'clamp(44px,7vw,88px)', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.04, color: TEXT, marginBottom: 20, textShadow: '0 2px 40px rgba(0,0,0,0.6)' }}>
             The future of<br />investing is here.
