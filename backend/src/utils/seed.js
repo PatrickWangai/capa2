@@ -162,6 +162,43 @@ async function seed() {
   }
   console.log(`✅ ${assets.length} assets seeded`);
 
+  // ── 30-day synthetic price history ────────────────────────
+  // Seeds 1d candles so weekly/monthly changes work immediately on first deploy.
+  // Uses upsert with update:{} so it never overwrites real accumulated data.
+  const seededAssets = await prisma.asset.findMany({ select: { id: true, symbol: true, exchange: true } });
+  const today = new Date(); today.setUTCHours(0, 0, 0, 0);
+  let historyRows = 0;
+
+  for (const asset of seededAssets) {
+    const def = assets.find(a => a.symbol === asset.symbol && a.exchange === asset.exchange);
+    if (!def) continue;
+    const base = def.startPrice;
+
+    // Walk backward: start from a price 30 days ago (±15% of current), drift to current
+    const startMult = 1 + (Math.random() - 0.5) * 0.30; // ±15%
+    let price = base / startMult;                          // price 30 days ago
+    const dailyTarget = (base - price) / 30;              // linear drift component
+
+    for (let d = 30; d >= 0; d--) {
+      const dayTs = new Date(today.getTime() - d * 86_400_000);
+      const noise = (Math.random() - 0.48) * price * 0.025;
+      const close = Math.max(0.01, price + dailyTarget * 0.3 + noise);
+      const open  = price * (1 + (Math.random() - 0.5) * 0.005);
+      const high  = Math.max(open, close) * (1 + Math.random() * 0.007);
+      const low   = Math.min(open, close) * (1 - Math.random() * 0.007);
+      const vol   = Math.floor(Math.random() * 8_000_000) + 100_000;
+
+      await prisma.priceHistory.upsert({
+        where: { assetId_interval_openTime: { assetId: asset.id, interval: '1d', openTime: dayTs } },
+        create: { assetId: asset.id, interval: '1d', openTime: dayTs, open, high, low, close, volume: vol },
+        update: {},
+      });
+      price = close;
+      historyRows++;
+    }
+  }
+  console.log(`✅ ${historyRows} daily history candles seeded`);
+
   // ── Demo dividends ─────────────────────────────────────────
   const aapl = await prisma.asset.findFirst({ where: { symbol: 'AAPL' } });
   if (aapl) {

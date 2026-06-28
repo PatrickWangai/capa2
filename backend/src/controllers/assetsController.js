@@ -23,7 +23,40 @@ export async function listAssets(req, res) {
     skip: Number(offset),
   });
 
-  res.json({ assets });
+  // Batch-fetch 31 days of daily candles to compute weekly/monthly changes
+  const assetIds = assets.map(a => a.id);
+  const cutoff = new Date(Date.now() - 32 * 86_400_000);
+  const history = await prisma.priceHistory.findMany({
+    where: { assetId: { in: assetIds }, interval: '1d', openTime: { gte: cutoff } },
+    select: { assetId: true, openTime: true, close: true },
+    orderBy: { openTime: 'asc' },
+  });
+
+  const histMap = {};
+  for (const h of history) {
+    if (!histMap[h.assetId]) histMap[h.assetId] = [];
+    histMap[h.assetId].push({ t: h.openTime.getTime(), close: Number(h.close) });
+  }
+
+  const now = Date.now();
+  const enriched = assets.map(asset => {
+    const candles = histMap[asset.id] || [];
+    const current = asset.price ? Number(asset.price.price) : null;
+    let changeWeekly = null, changeMonthly = null;
+
+    if (current !== null && candles.length > 0) {
+      const t7  = now - 7  * 86_400_000;
+      const t30 = now - 30 * 86_400_000;
+      const weekCandle  = [...candles].reverse().find(c => c.t <= t7);
+      const monthCandle = candles.find(c => c.t <= t30) || candles[0];
+      if (weekCandle)  changeWeekly  = ((current - weekCandle.close)  / weekCandle.close)  * 100;
+      if (monthCandle) changeMonthly = ((current - monthCandle.close) / monthCandle.close) * 100;
+    }
+
+    return { ...asset, changeWeekly, changeMonthly };
+  });
+
+  res.json({ assets: enriched });
 }
 
 // GET /api/assets/:id

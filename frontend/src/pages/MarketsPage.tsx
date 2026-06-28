@@ -58,9 +58,17 @@ const EXCHANGE_LABELS: Record<string, string> = {
   LSE: 'London (LSE)',
 };
 
+type Period = '1D' | '1W' | '1M';
+const PERIODS: { id: Period; label: string }[] = [
+  { id: '1D', label: '1D' },
+  { id: '1W', label: '1W' },
+  { id: '1M', label: '1M' },
+];
+
 export default function MarketsPage() {
   const [search, setSearch] = useState('');
   const [exchange, setExchange] = useState('NSE');
+  const [period, setPeriod] = useState<Period>('1D');
 
   const isComingSoon = COMING_SOON.includes(exchange);
 
@@ -111,10 +119,26 @@ export default function MarketsPage() {
         </div>
       ) : (
         <>
-          {/* Search */}
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
-            <input className="input pl-9" placeholder="Search by name or symbol…" value={search} onChange={e => setSearch(e.target.value)} />
+          {/* Search + period toggle */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="relative max-w-sm flex-1">
+              <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
+              <input className="input pl-9 w-full" placeholder="Search by name or symbol…" value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
+            <div className="flex items-center gap-1 bg-gray-800 rounded-lg p-1 shrink-0">
+              {PERIODS.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => setPeriod(p.id)}
+                  className={clsx(
+                    'px-3 py-1.5 rounded-md text-xs font-semibold transition-colors',
+                    period === p.id ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'
+                  )}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Table */}
@@ -122,7 +146,7 @@ export default function MarketsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-800">
-                  {['Asset', 'Price', 'Change', 'Volume', ''].map(h => (
+                  {['Asset', 'Price', `Change (${period})`, 'Volume', ''].map(h => (
                     <th key={h} className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">{h}</th>
                   ))}
                 </tr>
@@ -134,8 +158,12 @@ export default function MarketsPage() {
                   ))
                 ) : data?.assets?.map((asset: any) => {
                   const price = asset.price;
-                  const change = Number(price?.changePercent || 0);
-                  const isUp = change >= 0;
+                  const change =
+                    period === '1D' ? Number(price?.changePercent ?? 0) :
+                    period === '1W' ? (asset.changeWeekly  ?? null) :
+                                     (asset.changeMonthly ?? null);
+                  const hasChange = change !== null;
+                  const isUp = (change ?? 0) >= 0;
                   return (
                     <tr key={asset.id} className="hover:bg-gray-800/50 transition-colors">
                       <td className="px-5 py-4">
@@ -151,10 +179,14 @@ export default function MarketsPage() {
                         {asset.currency} {price ? Number(price.price).toFixed(2) : '—'}
                       </td>
                       <td className="px-5 py-4">
-                        <span className={clsx('flex items-center gap-1 text-sm font-medium', isUp ? 'text-green-400' : 'text-red-400')}>
-                          {isUp ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                          {isUp ? '+' : ''}{change.toFixed(2)}%
-                        </span>
+                        {hasChange ? (
+                          <span className={clsx('flex items-center gap-1 text-sm font-medium', isUp ? 'text-green-400' : 'text-red-400')}>
+                            {isUp ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                            {isUp ? '+' : ''}{(change as number).toFixed(2)}%
+                          </span>
+                        ) : (
+                          <span className="text-gray-600 text-sm">—</span>
+                        )}
                       </td>
                       <td className="px-5 py-4 text-gray-400 text-sm">
                         {price?.volume ? Number(price.volume).toLocaleString() : '—'}

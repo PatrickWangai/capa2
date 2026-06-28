@@ -174,6 +174,23 @@ async function updatePrices() {
         },
       }).catch(() => {});
 
+      // Daily candle — GREATEST/LEAST preserve true intraday high/low across updates
+      const dayStart = startOfDay(new Date());
+      const dayHigh = priceData.high ?? priceData.price;
+      const dayLow  = priceData.low  ?? priceData.price;
+      const dayOpen = priceData.open ?? priceData.price;
+      const dayVol  = BigInt(Math.round(priceData.volume ?? 0));
+      await prisma.$executeRaw`
+        INSERT INTO price_history (id, asset_id, interval, open_time, open, high, low, close, volume)
+        VALUES (gen_random_uuid(), ${asset.id}::uuid, '1d', ${dayStart},
+                ${dayOpen}, ${dayHigh}, ${dayLow}, ${priceData.price}, ${dayVol})
+        ON CONFLICT (asset_id, interval, open_time) DO UPDATE SET
+          high  = GREATEST(price_history.high,  EXCLUDED.high),
+          low   = LEAST   (price_history.low,   EXCLUDED.low),
+          close = EXCLUDED.close,
+          volume = EXCLUDED.volume
+      `.catch(() => {});
+
       broadcastPrice(asset.id, {
         symbol: asset.symbol, price: priceData.price,
         changePercent: priceData.changePercent, changeAmount: priceData.changeAmount,
@@ -187,6 +204,12 @@ async function updatePrices() {
 
 function roundToMinute(date) {
   return new Date(Math.floor(date.getTime() / 60_000) * 60_000);
+}
+
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
 }
 
 export function startPriceFeed(io) {
