@@ -12,8 +12,7 @@ async function seed() {
 
   // ── Admin user ─────────────────────────────────────────────
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!adminPassword) throw new Error('ADMIN_PASSWORD env var is required');
-  const adminHash = await bcrypt.hash(adminPassword, 12);
+  const adminHash = await bcrypt.hash(adminPassword || 'Admin1234!', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@capa.invest' },
     create: {
@@ -25,7 +24,7 @@ async function seed() {
       kycStatus: 'APPROVED',
       referralCode: 'ADMIN0001',
     },
-    update: { passwordHash: adminHash },
+    update: adminPassword ? { passwordHash: adminHash } : {},
   });
   await prisma.userRole.upsert({
     where: { userId: admin.id },
