@@ -5,6 +5,68 @@ import { api } from '../services/api';
 import { Search, TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
+const LOGO_DOMAINS: Record<string, string> = {
+  // NSE Kenya
+  SCOM: 'safaricom.co.ke',
+  EQTY: 'equitybank.co.ke',
+  KCB: 'kcbgroup.com',
+  ABSA: 'absa.co.ke',
+  COOP: 'co-opbank.co.ke',
+  NCBA: 'ncbagroup.com',
+  SCBK: 'sc.com',
+  DTK: 'dtbafrica.com',
+  IMH: 'imbankgroup.com',
+  SBIC: 'stanbicbank.co.ke',
+  FMLY: 'familybank.co.ke',
+  HFCK: 'hfgroup.co.ke',
+  JUB: 'jubileeinsurance.com',
+  BRIT: 'britam.com',
+  CIC: 'cicinsurancegroup.com',
+  KNRE: 'kenyare.co.ke',
+  SLAM: 'sanlam.com',
+  EABL: 'eabl.com',
+  BATK: 'bat.com',
+  UNGA: 'ungagroup.com',
+  CRWN: 'crownpaintskenya.co.ke',
+  KPLC: 'kplc.co.ke',
+  KEGN: 'kengen.co.ke',
+  KQ: 'kenya-airways.com',
+  NMG: 'nationmedia.com',
+  SCAN: 'scangroup.co.ke',
+  CTUM: 'centum.co.ke',
+  NSE: 'nse.co.ke',
+  TOTL: 'vivo-energy.com',
+  // US / NASDAQ
+  AAPL: 'apple.com', MSFT: 'microsoft.com', GOOGL: 'google.com',
+  AMZN: 'amazon.com', TSLA: 'tesla.com', NVDA: 'nvidia.com',
+  JPM: 'jpmorganchase.com', META: 'meta.com',
+  // LSE
+  BARC: 'barclays.com', SHEL: 'shell.com', LLOY: 'lloydsbankinggroup.com',
+  VOD: 'vodafone.com', BP: 'bp.com', AZN: 'astrazeneca.com',
+};
+
+function StockLogo({ symbol }: { symbol: string }) {
+  const [failed, setFailed] = useState(false);
+  const domain = LOGO_DOMAINS[symbol];
+  if (domain && !failed) {
+    return (
+      <div className="w-9 h-9 rounded-lg bg-white overflow-hidden flex items-center justify-center p-0.5 shrink-0">
+        <img
+          src={`https://logo.clearbit.com/${domain}`}
+          alt={symbol}
+          className="w-full h-full object-contain"
+          onError={() => setFailed(true)}
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-xs font-bold text-blue-400 shrink-0">
+      {symbol.slice(0, 2)}
+    </div>
+  );
+}
+
 const EXCHANGES = ['NSE', 'NYSE', 'NASDAQ', 'LSE'];
 const COMING_SOON = ['NYSE', 'NASDAQ', 'LSE'];
 
@@ -97,9 +159,7 @@ export default function MarketsPage() {
                     <tr key={asset.id} className="hover:bg-gray-800/50 transition-colors">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-xs font-bold text-blue-400">
-                            {asset.symbol.slice(0, 2)}
-                          </div>
+                          <StockLogo symbol={asset.symbol} />
                           <div>
                             <p className="font-semibold text-white text-sm">{asset.symbol}</p>
                             <p className="text-gray-400 text-xs truncate max-w-[180px]">{asset.name}</p>
