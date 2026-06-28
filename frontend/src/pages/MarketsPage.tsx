@@ -6,7 +6,7 @@ import { Search, TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
 const LOGO_DOMAINS: Record<string, string> = {
-  // NSE Kenya
+  // NSE Kenya — Banks
   SCOM: 'safaricom.co.ke',
   EQTY: 'equitybank.co.ke',
   KCB: 'kcbgroup.com',
@@ -19,30 +19,64 @@ const LOGO_DOMAINS: Record<string, string> = {
   SBIC: 'stanbicbank.co.ke',
   FMLY: 'familybank.co.ke',
   HFCK: 'hfgroup.co.ke',
+  BKG: 'bkgroup.co.rw',
+  OCH: 'olympia.co.ke',
+  // NSE Kenya — Insurance
   JUB: 'jubileeinsurance.com',
   BRIT: 'britam.com',
   CIC: 'cicinsurancegroup.com',
   KNRE: 'kenyare.co.ke',
   SLAM: 'sanlam.com',
+  LBTY: 'libertykenya.co.ke',
+  // NSE Kenya — Consumer
   EABL: 'eabl.com',
   BATK: 'bat.com',
   UNGA: 'ungagroup.com',
   CRWN: 'crownpaintskenya.co.ke',
+  SMER: 'sameerafrica.com',
+  CGEN: 'carandgeneral.co.ke',
+  UCHM: 'uchumi.com',
+  EVRD: 'eveready.co.ke',
+  FTGH: 'flametreegroup.com',
+  // NSE Kenya — Energy & Utilities
+  TOTL: 'vivo-energy.com',
   KPLC: 'kplc.co.ke',
   KEGN: 'kengen.co.ke',
+  KPC: 'kpc.co.ke',
+  UMME: 'umeme.co.ug',
+  // NSE Kenya — Transport
   KQ: 'kenya-airways.com',
+  XPRS: 'expresskenyaltd.co.ke',
+  // NSE Kenya — Agriculture
+  KAPC: 'kapchoruatea.com',
+  KUKZ: 'kakuzi.co.ke',
+  LIMT: 'limurutea.co.ke',
+  SASN: 'sasinigroup.com',
+  WTK: 'williamsonteakenya.com',
+  EGAD: 'eaagads.co.ke',
+  // NSE Kenya — Industrial
+  PORT: 'portlandcement.co.ke',
+  BOC: 'bockenya.com',
+  CARB: 'carbacid.co.ke',
+  // NSE Kenya — Media & Other
   NMG: 'nationmedia.com',
+  SGL: 'standardmedia.co.ke',
+  LKL: 'longhornpublishers.com',
   SCAN: 'scangroup.co.ke',
+  TPSE: 'serenahotels.com',
   CTUM: 'centum.co.ke',
+  HAFR: 'homeafrika.co.ke',
   NSE: 'nse.co.ke',
-  TOTL: 'vivo-energy.com',
+  SMWF: 'satrix.co.za',
   // US / NASDAQ
   AAPL: 'apple.com', MSFT: 'microsoft.com', GOOGL: 'google.com',
   AMZN: 'amazon.com', TSLA: 'tesla.com', NVDA: 'nvidia.com',
   JPM: 'jpmorganchase.com', META: 'meta.com',
+  SPY: 'ssga.com', QQQ: 'invesco.com', VTI: 'vanguard.com', VWO: 'vanguard.com',
   // LSE
   BARC: 'barclays.com', SHEL: 'shell.com', LLOY: 'lloydsbankinggroup.com',
   VOD: 'vodafone.com', BP: 'bp.com', AZN: 'astrazeneca.com',
+  ISF: 'ishares.com', VUKE: 'vanguard.co.uk',
 };
 
 function StockLogo({ symbol }: { symbol: string }) {
@@ -52,7 +86,7 @@ function StockLogo({ symbol }: { symbol: string }) {
   if (domain && stage < 2) {
     const src = stage === 0
       ? `https://logo.clearbit.com/${domain}`
-      : `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      : `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
     return (
       <div className="w-9 h-9 rounded-lg bg-white overflow-hidden flex items-center justify-center p-0.5 shrink-0">
         <img
