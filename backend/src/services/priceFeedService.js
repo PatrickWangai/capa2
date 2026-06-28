@@ -1,10 +1,18 @@
-import axios from 'axios';
+import yahooFinance from 'yahoo-finance2';
 import { prisma } from '../utils/db.js';
 import { broadcastPrice } from './socketService.js';
 import logger from '../utils/logger.js';
 
-const POLYGON_KEY = process.env.POLYGON_API_KEY;
 const POLL_INTERVAL_MS = 15_000;
+
+// Map database exchange codes to Yahoo Finance symbol suffixes
+const YAHOO_SUFFIX = { LSE: '.L', NSE: null, NYSE: '', NASDAQ: '' };
+
+function yahooSymbol(symbol, exchange) {
+  const suffix = YAHOO_SUFFIX[exchange];
+  if (suffix === null) return null; // NSE not supported — simulate
+  return symbol + suffix;
+}
 
 function simulatePrice(asset, existing) {
   const base = existing ? Number(existing.price) : 100;
@@ -23,27 +31,25 @@ function simulatePrice(asset, existing) {
   };
 }
 
-async function fetchPolygonSnapshot(symbol) {
+async function fetchYahooPrice(symbol, exchange) {
+  const ticker = yahooSymbol(symbol, exchange);
+  if (!ticker) return null;
   try {
-    const { data } = await axios.get(
-      `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${symbol}`,
-      { params: { apiKey: POLYGON_KEY }, timeout: 8000 }
-    );
-    const t = data?.ticker;
-    if (!t) return null;
-
-    const price = t.lastTrade?.p ?? t.day?.c ?? null;
-    if (!price) return null;
-
+    const q = await yahooFinance.quote(ticker, {}, { validateResult: false });
+    if (!q?.regularMarketPrice) return null;
     return {
-      price,
-      open: t.day?.o ?? price,
-      high: t.day?.h ?? price,
-      low: t.day?.l ?? price,
-      previousClose: t.prevDay?.c ?? price,
-      changeAmount: t.todaysChange ?? 0,
-      changePercent: t.todaysChangePerc ?? 0,
-      volume: t.day?.v ?? 0,
+      price: q.regularMarketPrice,
+      open: q.regularMarketOpen ?? q.regularMarketPrice,
+      high: q.regularMarketDayHigh ?? q.regularMarketPrice,
+      low: q.regularMarketDayLow ?? q.regularMarketPrice,
+      previousClose: q.regularMarketPreviousClose ?? q.regularMarketPrice,
+      changeAmount: q.regularMarketChange ?? 0,
+      changePercent: q.regularMarketChangePercent ?? 0,
+      volume: q.regularMarketVolume ?? 0,
+      marketCap: q.marketCap ?? null,
+      peRatio: q.trailingPE ?? null,
+      weekHigh52: q.fiftyTwoWeekHigh ?? null,
+      weekLow52: q.fiftyTwoWeekLow ?? null,
     };
   } catch {
     return null;
@@ -58,12 +64,7 @@ async function updatePrices() {
     });
 
     for (const asset of assets) {
-      let priceData = null;
-
-      const isUsExchange = ['NYSE', 'NASDAQ'].includes(asset.exchange);
-      if (POLYGON_KEY && isUsExchange) {
-        priceData = await fetchPolygonSnapshot(asset.symbol);
-      }
+      let priceData = await fetchYahooPrice(asset.symbol, asset.exchange);
 
       if (!priceData) {
         priceData = simulatePrice(asset, asset.price);
@@ -112,11 +113,7 @@ function roundToMinute(date) {
 }
 
 export function startPriceFeed(io) {
-  if (POLYGON_KEY) {
-    logger.info('Price feed started with Polygon.io live data');
-  } else {
-    logger.info('Price feed started with simulated prices (set POLYGON_API_KEY for live data)');
-  }
+  logger.info('Price feed started (Yahoo Finance — real-time, no API key required)');
   updatePrices();
   setInterval(updatePrices, POLL_INTERVAL_MS);
 }
