@@ -79,8 +79,17 @@ const LOGO_DOMAINS: Record<string, string> = {
   ISF: 'ishares.com', VUKE: 'vanguard.co.uk',
 };
 
+const SYMBOL_COLORS = [
+  '#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316',
+  '#eab308','#22c55e','#14b8a6','#06b6d4','#3b82f6','#a855f7','#10b981',
+];
+function symbolColor(sym: string) {
+  const n = sym.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return SYMBOL_COLORS[n % SYMBOL_COLORS.length];
+}
+
 function StockLogo({ symbol }: { symbol: string }) {
-  const [stage, setStage] = useState(0); // 0=clearbit, 1=google favicon, 2=initials
+  const [stage, setStage] = useState(0); // 0=clearbit, 1=google favicon, 2=color badge
   const domain = LOGO_DOMAINS[symbol];
 
   if (domain && stage < 2) {
@@ -98,8 +107,11 @@ function StockLogo({ symbol }: { symbol: string }) {
       </div>
     );
   }
+  // Colored badge fallback — consistent color per symbol
+  const bg = symbolColor(symbol);
   return (
-    <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-xs font-bold text-blue-400 shrink-0">
+    <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+      style={{ backgroundColor: bg }}>
       {symbol.slice(0, 2)}
     </div>
   );
