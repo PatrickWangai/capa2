@@ -53,7 +53,19 @@ const io = new Server(httpServer, {
 app.set('io', io);
 
 // ── Core middleware ───────────────────────────────────────────
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https://logo.clearbit.com', 'https://www.google.com'],
+      connectSrc: ["'self'", 'wss:', 'ws:', 'https:'],
+      fontSrc: ["'self'", 'data:'],
+    },
+  },
+}));
 app.use(compression());
 app.use(cors({
   origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173'],

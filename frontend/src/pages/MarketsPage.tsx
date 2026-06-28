@@ -46,16 +46,20 @@ const LOGO_DOMAINS: Record<string, string> = {
 };
 
 function StockLogo({ symbol }: { symbol: string }) {
-  const [failed, setFailed] = useState(false);
+  const [stage, setStage] = useState(0); // 0=clearbit, 1=google favicon, 2=initials
   const domain = LOGO_DOMAINS[symbol];
-  if (domain && !failed) {
+
+  if (domain && stage < 2) {
+    const src = stage === 0
+      ? `https://logo.clearbit.com/${domain}`
+      : `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
     return (
       <div className="w-9 h-9 rounded-lg bg-white overflow-hidden flex items-center justify-center p-0.5 shrink-0">
         <img
-          src={`https://logo.clearbit.com/${domain}`}
+          src={src}
           alt={symbol}
           className="w-full h-full object-contain"
-          onError={() => setFailed(true)}
+          onError={() => setStage(s => s + 1)}
         />
       </div>
     );
