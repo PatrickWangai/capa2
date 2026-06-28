@@ -7,11 +7,12 @@ import clsx from 'clsx';
 
 // Symbols that have a local logo file in /public/logos/
 const LOCAL_LOGOS = new Set([
-  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BP','CARB','CIC','COOP',
-  'CRWN','CTUM','EABL','EGAD','EQTY','FMLY','FTGH','GOOGL','IMH','JPM',
-  'KCB','KEGN','KNRE','KPC','KPLC','KQ','KUKZ','LBTY','LKL','LLOY','META',
-  'MSFT','NCBA','NMG','NSE','NVDA','QQQ','SASN','SCBK','SCOM','SGL','SHEL',
-  'SLAM','SMER','SMWF','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO',
+  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
+  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','FMLY','FTGH',
+  'GOOGL','IMH','ISF','JPM','JUB','KCB','KEGN','KNRE','KPC','KPLC','KQ',
+  'KUKZ','LBTY','LKL','LLOY','META','MSFT','NCBA','NMG','NSE','NVDA',
+  'QQQ','SASN','SBIC','SCAN','SCBK','SCOM','SGL','SHEL','SLAM','SMER',
+  'SMWF','SPY','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO','XPRS',
 ]);
 
 const SYMBOL_COLORS = [
