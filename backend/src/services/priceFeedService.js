@@ -4,12 +4,11 @@ import { broadcastPrice } from './socketService.js';
 import logger from '../utils/logger.js';
 
 const POLYGON_KEY = process.env.POLYGON_API_KEY;
-const POLL_INTERVAL_MS = 15_000; // 15 seconds
+const POLL_INTERVAL_MS = 15_000;
 
-// Simulated prices for development (when no API key)
 function simulatePrice(asset, existing) {
   const base = existing ? Number(existing.price) : 100;
-  const change = (Math.random() - 0.495) * base * 0.005; // ±0.5%
+  const change = (Math.random() - 0.495) * base * 0.005;
   const price = Math.max(0.01, base + change);
   const prevClose = existing?.price ? Number(existing.price) : price * 0.99;
   return {
@@ -21,16 +20,31 @@ function simulatePrice(asset, existing) {
     changeAmount: price - prevClose,
     changePercent: ((price - prevClose) / prevClose) * 100,
     volume: Math.floor(Math.random() * 5_000_000) + 100_000,
-  }
+  };
 }
 
-async function fetchPolygonPrice(symbol) {
+async function fetchPolygonSnapshot(symbol) {
   try {
     const { data } = await axios.get(
-      `https://api.polygon.io/v2/last/trade/${symbol}?apiKey=${POLYGON_KEY}`,
-      { timeout: 5000 }
+      `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${symbol}`,
+      { params: { apiKey: POLYGON_KEY }, timeout: 8000 }
     );
-    return data.results?.p || null;
+    const t = data?.ticker;
+    if (!t) return null;
+
+    const price = t.lastTrade?.p ?? t.day?.c ?? null;
+    if (!price) return null;
+
+    return {
+      price,
+      open: t.day?.o ?? price,
+      high: t.day?.h ?? price,
+      low: t.day?.l ?? price,
+      previousClose: t.prevDay?.c ?? price,
+      changeAmount: t.todaysChange ?? 0,
+      changePercent: t.todaysChangePerc ?? 0,
+      volume: t.day?.v ?? 0,
+    };
   } catch {
     return null;
   }
@@ -44,19 +58,11 @@ async function updatePrices() {
     });
 
     for (const asset of assets) {
-      let priceData;
+      let priceData = null;
 
-      if (POLYGON_KEY && asset.exchange !== 'NSE') {
-        const live = await fetchPolygonPrice(asset.symbol);
-        if (live) {
-          const prev = asset.price?.price ? Number(asset.price.price) : live;
-          priceData = {
-            price: live,
-            previousClose: prev,
-            changeAmount: live - prev,
-            changePercent: ((live - prev) / prev) * 100,
-          }
-        }
+      const isUsExchange = ['NYSE', 'NASDAQ'].includes(asset.exchange);
+      if (POLYGON_KEY && isUsExchange) {
+        priceData = await fetchPolygonSnapshot(asset.symbol);
       }
 
       if (!priceData) {
@@ -65,30 +71,27 @@ async function updatePrices() {
 
       await prisma.assetPrice.upsert({
         where: { assetId: asset.id },
-        create: { assetId: asset.id, ...Object.fromEntries(Object.entries(priceData).map(([k, v]) => [k, v])) },
-        update: { ...Object.fromEntries(Object.entries(priceData).map(([k, v]) => [k, v])), fetchedAt: new Date() },
+        create: { assetId: asset.id, ...priceData },
+        update: { ...priceData, fetchedAt: new Date() },
       });
 
-      // Add to price history (1m candle)
       await prisma.priceHistory.upsert({
         where: { assetId_interval_openTime: { assetId: asset.id, interval: '1m', openTime: roundToMinute(new Date()) } },
         create: {
-          assetId: asset.id,
-          interval: '1m',
-          openTime: roundToMinute(new Date()),
-          open: priceData.open || priceData.price,
-          high: priceData.high || priceData.price,
-          low: priceData.low || priceData.price,
+          assetId: asset.id, interval: '1m', openTime: roundToMinute(new Date()),
+          open: priceData.open ?? priceData.price,
+          high: priceData.high ?? priceData.price,
+          low: priceData.low ?? priceData.price,
           close: priceData.price,
-          volume: priceData.volume || 0,
+          volume: priceData.volume ?? 0,
         },
         update: {
-          high: { set: Math.max(priceData.high || priceData.price, Number(priceData.price)) },
-          low: { set: Math.min(priceData.low || priceData.price, Number(priceData.price)) },
+          high: { set: Math.max(priceData.high ?? priceData.price, priceData.price) },
+          low: { set: Math.min(priceData.low ?? priceData.price, priceData.price) },
           close: priceData.price,
-          volume: priceData.volume || 0,
+          volume: priceData.volume ?? 0,
         },
-      }).catch(() => {}); // ignore unique conflicts
+      }).catch(() => {});
 
       broadcastPrice(asset.id, {
         symbol: asset.symbol,
@@ -109,7 +112,11 @@ function roundToMinute(date) {
 }
 
 export function startPriceFeed(io) {
-  logger.info('Price feed started');
-  updatePrices(); // immediate first run
+  if (POLYGON_KEY) {
+    logger.info('Price feed started with Polygon.io live data');
+  } else {
+    logger.info('Price feed started with simulated prices (set POLYGON_API_KEY for live data)');
+  }
+  updatePrices();
   setInterval(updatePrices, POLL_INTERVAL_MS);
 }

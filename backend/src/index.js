@@ -33,6 +33,7 @@ import adminRoutes from './routes/admin.js';
 import webhooksRoutes from './routes/webhooks.js';
 import { setupSocketHandlers } from './services/socketService.js';
 import { startPriceFeed } from './services/priceFeedService.js';
+import { startLimitOrderJob } from './jobs/limitOrderJob.js';
 
 // Prisma can return BigInt values; JSON.stringify doesn't handle them natively
 BigInt.prototype.toJSON = function () { return this.toString(); };
@@ -122,6 +123,7 @@ const PORT = process.env.PORT || 4000;
   logger.info('PostgreSQL connected via Prisma');
   setupSocketHandlers(io);
   startPriceFeed(io);
+  startLimitOrderJob();
   httpServer.listen(PORT, () => logger.info(`API listening on :${PORT}`));
 })();
 

@@ -76,7 +76,7 @@ export async function placeOrder(req, res) {
   res.status(201).json({ order: result, message: 'Order placed successfully.' });
 }
 
-async function fillOrder(orderId, estimatedPrice) {
+export async function fillOrder(orderId, estimatedPrice) {
   try {
     const order = await prisma.order.findUnique({ where: { id: orderId }, include: { asset: true, account: { include: { user: true } } } });
     if (!order || order.status !== 'PENDING') return;
