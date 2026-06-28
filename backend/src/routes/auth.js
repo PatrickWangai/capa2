@@ -6,6 +6,7 @@ import auth from '../middleware/authenticate.js';
 router.post('/register', c.register);
 router.post('/login', c.login);
 router.post('/refresh', c.refresh);
+router.get('/me', auth, c.me);
 router.post('/logout', auth, c.logout);
 
 // Password reset (public)

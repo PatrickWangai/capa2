@@ -162,6 +162,16 @@ export async function refresh(req, res) {
 }
 
 // POST /api/auth/logout
+export async function me(req, res) {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: { id: true, email: true, firstName: true, lastName: true, kycStatus: true, status: true },
+  });
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  const adminRole = await prisma.userRole.findUnique({ where: { userId: user.id }, select: { role: true } });
+  res.json({ user: { ...user, adminRole: adminRole?.role ?? null } });
+}
+
 export async function logout(req, res) {
   const token = req.headers.authorization?.slice(7);
   if (token) {

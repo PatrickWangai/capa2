@@ -5,7 +5,7 @@ import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
   CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
 import OrangeIcon from '../ui/OrangeIcon';
@@ -22,9 +22,19 @@ const nav = [
 ];
 
 export default function AppLayout() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  // Refresh user profile on mount so adminRole is always up to date
+  // even for sessions that predate the adminRole field being added.
+  useEffect(() => {
+    api.get('/api/auth/me').then(r => {
+      if (r.data?.user && accessToken && refreshToken) {
+        setAuth(r.data.user, accessToken, refreshToken);
+      }
+    }).catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}

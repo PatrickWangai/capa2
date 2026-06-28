@@ -64,6 +64,13 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { accessToken, user } = useAuthStore();
+  if (!accessToken) return <Navigate to="/login" replace />;
+  if (!user?.adminRole) return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+}
+
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore(s => s.accessToken);
   return !token ? <>{children}</> : <Navigate to="/dashboard" replace />;
@@ -105,7 +112,7 @@ export default function App() {
             </Route>
 
             {/* Admin */}
-            <Route path="/admin" element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard"    element={<><PageTitle title="Admin — Dashboard" /><AdminDashboardPage /></>} />
               <Route path="users"        element={<><PageTitle title="Admin — Users" /><AdminUsersPage /></>} />
