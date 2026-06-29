@@ -284,7 +284,7 @@ export default function LandingPage() {
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
           </p>
           <div className="hero-text hero-text-4" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(245,130,31,0.45)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(32,212,184,0.45)' }}>
               Start Investing Free <ChevronRight size={16} />
             </Link>
             <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
@@ -319,9 +319,9 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {features.map(({ icon: Icon, title, desc }) => (
               <div key={title} style={{ backgroundColor: '#111', borderRadius: 20, padding: 32, border: '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.2s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(245,130,31,0.3)')}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(32,212,184,0.3)')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)')}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(245,130,31,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(32,212,184,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <Icon size={22} color={ACCENT} strokeWidth={1.8} />
                 </div>
                 <h3 style={{ fontSize: 19, fontWeight: 600, color: TEXT, marginBottom: 8, letterSpacing: '-0.02em' }}>{title}</h3>
@@ -343,7 +343,7 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {steps.map(({ icon: Icon, num, title, desc }) => (
                 <div key={num} style={{ textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(245,130,31,0.1)', border: '1px solid rgba(245,130,31,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(32,212,184,0.1)', border: '1px solid rgba(32,212,184,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                   </div>
                   <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
@@ -367,7 +367,7 @@ export default function LandingPage() {
               <div key={t.name} style={{ backgroundColor: '#111', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <p style={{ fontSize: 15, color: SEC, lineHeight: 1.7, margin: 0, fontStyle: 'italic' }}>"{t.text}"</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 'auto' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
                     {t.initials}
                   </div>
                   <div>
@@ -385,7 +385,7 @@ export default function LandingPage() {
       <FadeSection>
         <section style={{ backgroundColor: '#080808', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
           {/* Subtle glow behind CTA */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(245,130,31,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(32,212,184,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative' }}>
             <h2 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginBottom: 16, lineHeight: 1.06 }}>
               Start investing today.
@@ -400,7 +400,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(245,130,31,0.4)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(32,212,184,0.4)' }}>
               Create Free Account <ChevronRight size={18} />
             </Link>
           </div>

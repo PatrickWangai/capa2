@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
                   onChange={e => setEmail(e.target.value)}
                   onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                   placeholder="you@example.com"
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(245,130,31,0.18)' : 'none', outline: 'none', backgroundColor: '#2c2c2e', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none', outline: 'none', backgroundColor: '#2c2c2e', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
                 />
               </div>
               <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? '#f0a060' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>

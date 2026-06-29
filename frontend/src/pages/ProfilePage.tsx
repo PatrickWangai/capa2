@@ -30,7 +30,7 @@ function Field({ label, value, name, type = 'text', onChange, placeholder }: {
         type={type} value={value} placeholder={placeholder}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         onChange={e => onChange(name, e.target.value)}
-        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(245,130,31,0.18)' : 'none', outline: 'none', backgroundColor: '#2c2c2e', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
+        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none', outline: 'none', backgroundColor: '#2c2c2e', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
       />
     </div>
   );
@@ -102,7 +102,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
-        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #20d4b8, #ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #20d4b8, #0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <CapaLogo size={44} />
         </div>
         <div>

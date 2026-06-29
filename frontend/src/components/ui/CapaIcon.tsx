@@ -14,7 +14,7 @@ export default function CapaIcon({ className = '', animated = false }: CapaIconP
       <defs>
         <linearGradient id="helmetOrange" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
           <stop offset="0%" stopColor="#ff6b35" />
-          <stop offset="100%" stopColor="#ff4500" />
+          <stop offset="100%" stopColor="#0fa8a0" />
         </linearGradient>
         <mask id="helmetVisor">
           <rect width="200" height="240" fill="white" />

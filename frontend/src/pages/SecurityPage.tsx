@@ -38,7 +38,7 @@ export default function SecurityPage() {
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 80px' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: 'rgba(245,130,31,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: 'rgba(32,212,184,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <Shield size={32} color={ACCENT} />
           </div>
           <h1 style={{ fontSize: 'clamp(32px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.04em', margin: '0 0 12px' }}>Your Security is Our Priority</h1>
@@ -49,7 +49,7 @@ export default function SecurityPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 40 }}>
           {pillars.map(({ icon: Icon, title, desc }) => (
             <div key={title} style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(245,130,31,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(32,212,184,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 <Icon size={20} color={ACCENT} />
               </div>
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, letterSpacing: '-0.01em' }}>{title}</h3>

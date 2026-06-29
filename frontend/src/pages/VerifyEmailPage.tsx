@@ -27,7 +27,7 @@ export default function VerifyEmailPage() {
 
         {status === 'loading' && (
           <>
-            <div style={{ width: 40, height: 40, border: '3px solid rgba(245,130,31,0.2)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
+            <div style={{ width: 40, height: 40, border: '3px solid rgba(32,212,184,0.2)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
             <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700 }}>Verifying your email…</h2>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </>

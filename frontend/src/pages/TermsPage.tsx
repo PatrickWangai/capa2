@@ -40,8 +40,8 @@ export default function TermsPage() {
         <h1 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.04em', marginBottom: 8 }}>Terms of Service</h1>
         <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: January 2024</p>
 
-        <div style={{ backgroundColor: 'rgba(245,130,31,0.08)', border: '1px solid rgba(245,130,31,0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 36 }}>
-          <p style={{ margin: 0, fontSize: 14, color: 'rgba(245,130,31,0.9)', lineHeight: 1.6 }}>
+        <div style={{ backgroundColor: 'rgba(32,212,184,0.08)', border: '1px solid rgba(32,212,184,0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 36 }}>
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(32,212,184,0.9)', lineHeight: 1.6 }}>
             <strong>Important:</strong> Investing involves risk. By using Capa, you acknowledge that you may lose some or all of your invested capital. Please read these terms carefully.
           </p>
         </div>

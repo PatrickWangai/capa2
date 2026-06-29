@@ -60,7 +60,7 @@ export default function PricingPage() {
         </div>
 
         {/* No monthly fee highlight */}
-        <div style={{ backgroundColor: 'rgba(245,130,31,0.08)', border: '1px solid rgba(245,130,31,0.25)', borderRadius: 18, padding: '28px 32px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ backgroundColor: 'rgba(32,212,184,0.08)', border: '1px solid rgba(32,212,184,0.25)', borderRadius: 18, padding: '28px 32px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div>
             <h3 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 700, color: TEXT }}>No monthly subscription</h3>
             <p style={{ margin: 0, fontSize: 15, color: SEC }}>You only pay when you trade. Open an account for free and keep it open at no cost — forever.</p>

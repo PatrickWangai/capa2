@@ -46,7 +46,7 @@ export default function AppLayout() {
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#000000' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)' }}>
       {open && (
         <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
       )}
@@ -98,8 +98,8 @@ export default function AppLayout() {
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
-                backgroundColor: isActive ? 'rgba(245,130,31,0.15)' : 'transparent',
-                color: isActive ? '#ff9f45' : 'rgba(235,235,245,0.85)',
+                backgroundColor: isActive ? 'rgba(32,212,184,0.18)' : 'transparent',
+                color: isActive ? '#20d4b8' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => (
@@ -118,7 +118,7 @@ export default function AppLayout() {
         {/* User */}
         <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
