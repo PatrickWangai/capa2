@@ -112,7 +112,7 @@ export default function AppLayout() {
         style={{
           width: 256, flexShrink: 0, display: 'flex', flexDirection: 'column',
           height: '100vh', overflowY: 'auto',
-          backgroundColor: 'var(--sidebar-bg)',
+          backgroundColor: 'rgba(6,38,52,0.62)',
           backdropFilter: 'saturate(160%) blur(28px)',
           WebkitBackdropFilter: 'saturate(160%) blur(28px)',
           borderRight: '1px solid rgba(255,255,255,0.10)',
@@ -135,7 +135,7 @@ export default function AppLayout() {
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
                 backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent',
-                color: isActive ? '#c084fc' : 'var(--nav-text)',
+                color: isActive ? '#c084fc' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
@@ -150,7 +150,7 @@ export default function AppLayout() {
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
                 backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent',
-                color: isActive ? 'var(--accent)' : 'var(--nav-text)',
+                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => (
@@ -172,7 +172,7 @@ export default function AppLayout() {
               display: 'flex', alignItems: 'center', gap: 10, width: '100%',
               padding: '9px 12px', borderRadius: 10, marginTop: 2,
               fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
-              cursor: 'pointer', color: 'var(--nav-text)', transition: 'background 0.15s',
+              cursor: 'pointer', color: 'rgba(235,235,245,0.85)', transition: 'background 0.15s',
               textAlign: 'left',
             }}
             onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
@@ -190,8 +190,8 @@ export default function AppLayout() {
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-              <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+              <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
             </div>
             <button
               onClick={handleLogout}

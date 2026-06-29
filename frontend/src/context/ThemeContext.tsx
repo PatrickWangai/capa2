@@ -12,14 +12,6 @@ type ThemeVars = {
   accentDark: string;
   accentRgb: string;
   bg: [string, string, string, string, string, string];
-  // Optional overrides — used by Black/White Apple-style themes
-  textPrimary?: string;
-  textSecondary?: string;
-  cardBg?: string;
-  cardBorder?: string;
-  sidebarBg?: string;
-  inputBg?: string;
-  navText?: string;
 };
 
 export const THEMES: Record<ThemeName, ThemeVars> = {
@@ -36,65 +28,26 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
   violet:  { label: 'Violet',  swatch: '#8b5cf6', accent: '#8b5cf6', accentDark: '#6d28d9', accentRgb: '139,92,246',   bg: ['#0f0a20','#1e1050','#3b1fa0','#5b21b6','#7c3aed','#4c1d95'] },
   purple:  { label: 'Purple',  swatch: '#a855f7', accent: '#a855f7', accentDark: '#7c3aed', accentRgb: '168,85,247',   bg: ['#0f0a1e','#1e0a4e','#3b0a8e','#6d28d9','#7c3aed','#5b21b6'] },
   indigo:  { label: 'Indigo',  swatch: '#6366f1', accent: '#6366f1', accentDark: '#4338ca', accentRgb: '99,102,241',   bg: ['#0d0d28','#16164a','#2525a0','#3730a3','#6366f1','#4338ca'] },
-
-  // Apple Night — pure black, silver accent, charcoal glass cards
-  black: {
-    label: 'Night', swatch: '#1c1c1e',
-    accent: '#f5f5f7', accentDark: '#e5e5ea', accentRgb: '245,245,247',
-    bg: ['#000000','#000000','#0a0a0a','#111111','#161616','#000000'],
-    textPrimary:   '#f5f5f7',
-    textSecondary: 'rgba(235,235,245,0.55)',
-    cardBg:        'rgba(28,28,30,0.96)',
-    cardBorder:    'rgba(255,255,255,0.08)',
-    sidebarBg:     'rgba(0,0,0,0.92)',
-    inputBg:       'rgba(28,28,30,0.95)',
-    navText:       'rgba(245,245,247,0.80)',
-  },
-
-  // Apple Day — white, minimal, #0071e3 blue accent
-  white: {
-    label: 'Day', swatch: '#f5f5f7',
-    accent: '#0071e3', accentDark: '#0060c7', accentRgb: '0,113,227',
-    bg: ['#ffffff','#f5f5f7','#fbfbfd','#f5f5f7','#ffffff','#f0f0f5'],
-    textPrimary:   '#1d1d1f',
-    textSecondary: '#6e6e73',
-    cardBg:        'rgba(255,255,255,0.85)',
-    cardBorder:    'rgba(0,0,0,0.08)',
-    sidebarBg:     'rgba(255,255,255,0.80)',
-    inputBg:       'rgba(242,242,247,0.90)',
-    navText:       'rgba(29,29,31,0.80)',
-  },
+  black:   { label: 'Black',   swatch: '#71717a', accent: '#d4d4d8', accentDark: '#a1a1aa', accentRgb: '212,212,216',  bg: ['#000000','#080808','#111111','#18181b','#27272a','#09090b'] },
+  white:   { label: 'White',   swatch: '#e4e4e7', accent: '#ffffff', accentDark: '#d4d4d8', accentRgb: '255,255,255',  bg: ['#18181b','#27272a','#3f3f46','#52525b','#71717a','#3f3f46'] },
 };
 
 function applyTheme(name: ThemeName) {
   const t = THEMES[name];
   const r = document.documentElement;
-
-  // Accent
-  r.style.setProperty('--accent',              t.accent);
-  r.style.setProperty('--accent-dark',         t.accentDark);
-  r.style.setProperty('--accent-rgb',          t.accentRgb);
-  r.style.setProperty('--accent-dim',          `rgba(${t.accentRgb},0.18)`);
-  r.style.setProperty('--accent-glow',         `rgba(${t.accentRgb},0.22)`);
-  r.style.setProperty('--color-primary-from',  t.accent);
-  r.style.setProperty('--color-primary-to',    t.accentDark);
-
-  // Background gradient stops
+  r.style.setProperty('--accent',             t.accent);
+  r.style.setProperty('--accent-dark',        t.accentDark);
+  r.style.setProperty('--accent-rgb',         t.accentRgb);
+  r.style.setProperty('--accent-dim',         `rgba(${t.accentRgb},0.18)`);
+  r.style.setProperty('--accent-glow',        `rgba(${t.accentRgb},0.22)`);
+  r.style.setProperty('--color-primary-from', t.accent);
+  r.style.setProperty('--color-primary-to',   t.accentDark);
   r.style.setProperty('--bg-1', t.bg[0]);
   r.style.setProperty('--bg-2', t.bg[1]);
   r.style.setProperty('--bg-3', t.bg[2]);
   r.style.setProperty('--bg-4', t.bg[3]);
   r.style.setProperty('--bg-5', t.bg[4]);
   r.style.setProperty('--bg-6', t.bg[5]);
-
-  // Text & surfaces (with sensible dark-mode defaults)
-  r.style.setProperty('--text',           t.textPrimary   ?? '#ffffff');
-  r.style.setProperty('--text-secondary', t.textSecondary ?? 'rgba(235,235,245,0.60)');
-  r.style.setProperty('--card-bg',        t.cardBg        ?? 'rgba(28,28,30,0.72)');
-  r.style.setProperty('--card-border',    t.cardBorder    ?? 'rgba(255,255,255,0.08)');
-  r.style.setProperty('--sidebar-bg',     t.sidebarBg     ?? 'rgba(6,38,52,0.62)');
-  r.style.setProperty('--input-bg',       t.inputBg       ?? 'rgba(44,44,46,0.85)');
-  r.style.setProperty('--nav-text',       t.navText       ?? 'rgba(235,235,245,0.85)');
 }
 
 type ThemeCtx = { theme: ThemeName; setTheme: (t: ThemeName) => void };
