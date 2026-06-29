@@ -21,10 +21,9 @@ export default function VerifyEmailPage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
-      <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
-        <div className="orange-float" style={{ display: 'inline-block', marginBottom: 24 }}>
-          <CapaLogo size={120} />
-        </div>
+      <div style={{ width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <CapaLogo size={120} />
+        <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 24px' }}>Unstoppable Minds</p>
 
         {status === 'loading' && (
           <>

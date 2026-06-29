@@ -47,11 +47,10 @@ export default function LoginPage() {
 
       <div style={{ width: '100%', maxWidth: 380 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div className="orange-float" style={{ display: 'inline-block' }}>
-            <CapaLogo size={130} />
-          </div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 16, marginBottom: 4 }}>Sign in to Capa</h1>
+        <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <CapaLogo size={130} />
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 16px' }}>Unstoppable Minds</p>
+          <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '0 0 4px' }}>Sign in to Capa</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Enter your details to continue</p>
         </div>
 

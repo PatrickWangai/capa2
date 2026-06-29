@@ -58,8 +58,9 @@ export default function OnboardingPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 480 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <CapaLogo size={110} />
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: '#f5821f', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
         </div>
 
         <StepIndicator current={step} total={3} />

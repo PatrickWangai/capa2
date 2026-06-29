@@ -30,11 +30,10 @@ export default function ForgotPasswordPage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div className="orange-float" style={{ display: 'inline-block' }}>
-            <CapaLogo size={120} />
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginTop: 16, marginBottom: 4 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <CapaLogo size={120} />
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 14px' }}>Unstoppable Minds</p>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '0 0 4px' }}>
             {sent ? 'Check your inbox' : 'Reset your password'}
           </h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>
