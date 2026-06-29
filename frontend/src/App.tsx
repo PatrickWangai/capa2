@@ -12,17 +12,17 @@ import RegisterPage from './pages/RegisterPage';
 import AppLayout from './components/layout/AppLayout';
 import AdminLayout from './components/admin/AdminLayout';
 
-// Lazy loaded (reduces initial bundle)
-const DashboardPage         = lazy(() => import('./pages/DashboardPage'));
-const MarketsPage           = lazy(() => import('./pages/MarketsPage'));
-const AssetDetailPage       = lazy(() => import('./pages/AssetDetailPage'));
-const PortfolioPage         = lazy(() => import('./pages/PortfolioPage'));
-const DepositPage           = lazy(() => import('./pages/DepositPage'));
-const OrdersPage            = lazy(() => import('./pages/OrdersPage'));
-const KycPage               = lazy(() => import('./pages/KycPage'));
-const NotificationsPage     = lazy(() => import('./pages/NotificationsPage'));
-const ProfilePage           = lazy(() => import('./pages/ProfilePage'));
-const OnboardingPage        = lazy(() => import('./pages/OnboardingPage'));
+// Eagerly loaded (core app pages — no loading flash on navigation)
+import DashboardPage     from './pages/DashboardPage';
+import MarketsPage       from './pages/MarketsPage';
+import AssetDetailPage   from './pages/AssetDetailPage';
+import PortfolioPage     from './pages/PortfolioPage';
+import DepositPage       from './pages/DepositPage';
+import OrdersPage        from './pages/OrdersPage';
+import KycPage           from './pages/KycPage';
+import NotificationsPage from './pages/NotificationsPage';
+import ProfilePage       from './pages/ProfilePage';
+import OnboardingPage    from './pages/OnboardingPage';
 
 // Admin
 const AdminDashboardPage    = lazy(() => import('./pages/admin/AdminDashboardPage'));
