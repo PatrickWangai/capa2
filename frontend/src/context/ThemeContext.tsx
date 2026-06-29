@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type ThemeName =
   | 'blue' | 'teal' | 'purple' | 'rose' | 'amber'
   | 'indigo' | 'cyan' | 'emerald' | 'orange' | 'pink'
-  | 'violet' | 'sky' | 'lime';
+  | 'violet' | 'sky' | 'lime' | 'black' | 'white';
 
 type ThemeVars = {
   label: string;
@@ -28,6 +28,8 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
   violet:  { label: 'Violet',  swatch: '#8b5cf6', accent: '#8b5cf6', accentDark: '#6d28d9', accentRgb: '139,92,246',   bg: ['#0f0a20','#1e1050','#3b1fa0','#5b21b6','#7c3aed','#4c1d95'] },
   purple:  { label: 'Purple',  swatch: '#a855f7', accent: '#a855f7', accentDark: '#7c3aed', accentRgb: '168,85,247',   bg: ['#0f0a1e','#1e0a4e','#3b0a8e','#6d28d9','#7c3aed','#5b21b6'] },
   indigo:  { label: 'Indigo',  swatch: '#6366f1', accent: '#6366f1', accentDark: '#4338ca', accentRgb: '99,102,241',   bg: ['#0d0d28','#16164a','#2525a0','#3730a3','#6366f1','#4338ca'] },
+  black:   { label: 'Black',   swatch: '#2a2a2a', accent: '#d4d4d8', accentDark: '#a1a1aa', accentRgb: '212,212,216',  bg: ['#000000','#080808','#0f0f0f','#161616','#1c1c1c','#0a0a0a'] },
+  white:   { label: 'White',   swatch: '#c8c8d8', accent: '#3730a3', accentDark: '#1e1b4b', accentRgb: '55,48,163',    bg: ['#e8e8f4','#d8d8ec','#c8c8e4','#b8b8dc','#a8a8d4','#d0d0e8'] },
 };
 
 function applyTheme(name: ThemeName) {
