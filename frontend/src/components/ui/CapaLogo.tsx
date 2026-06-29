@@ -1,22 +1,31 @@
-// Protected brand asset — uses /capa-logo.png exactly as provided.
-// mix-blend-mode: screen makes the black background transparent on dark surfaces
-// so only the white letterforms are visible. The image is never cropped,
-// stretched, or modified — only scaled proportionally via the size prop.
-
-const ASPECT = 1672 / 941; // exact pixel dimensions of capa-logo.png
+// Uses the PNG as a CSS mask so only the white letterforms are visible.
+// The black background of the source image becomes fully transparent on any surface.
+const ASPECT = 1672 / 941;
 
 interface Props { size?: number; className?: string; }
 
 export default function CapaLogo({ size = 60, className = '' }: Props) {
   return (
-    <img
-      src="/capa-logo.png"
-      alt="CAPA"
-      height={size}
-      width={Math.round(size * ASPECT)}
-      draggable={false}
+    <div
+      aria-label="CAPA"
+      role="img"
       className={className}
-      style={{ display: 'block', mixBlendMode: 'lighten', userSelect: 'none', flexShrink: 0 }}
+      style={{
+        height: size,
+        width: Math.round(size * ASPECT),
+        backgroundColor: '#ffffff',
+        WebkitMaskImage: 'url(/capa-logo.png)',
+        maskImage: 'url(/capa-logo.png)',
+        WebkitMaskSize: 'contain',
+        maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat',
+        maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center',
+        maskPosition: 'center',
+        flexShrink: 0,
+        display: 'block',
+        userSelect: 'none',
+      }}
     />
   );
 }
