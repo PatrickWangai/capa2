@@ -3,10 +3,9 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, X, Palette
+  CreditCard, ShieldCheck, LogOut, User, ShieldAlert, X, Palette
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import clsx from 'clsx';
 import toast from 'react-hot-toast';
 import CapaLogo from '../ui/CapaLogo';
 import { useTheme, THEMES, type ThemeName } from '../../context/ThemeContext';
@@ -25,7 +24,6 @@ const nav = [
 export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
-  const [open, setOpen]           = useState(false);
   const [paletteOpen, setPalette] = useState(false);
   const { theme, setTheme }       = useTheme();
 
@@ -48,12 +46,8 @@ export default function AppLayout() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
-      {/* Mobile nav overlay */}
-      {open && (
-        <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
-      )}
 
-      {/* Customizations drawer overlay */}
+      {/* Customizations drawer */}
       {paletteOpen && (
         <div
           style={{ position: 'fixed', inset: 0, zIndex: 50 }}
@@ -71,17 +65,12 @@ export default function AppLayout() {
               boxShadow: '-8px 0 40px rgba(0,0,0,0.4)',
             }}
           >
-            {/* Drawer header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>
-                Customizations
-              </span>
+              <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>Customizations</span>
               <button onClick={() => setPalette(false)} style={{ color: 'rgba(235,235,245,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}>
                 <X size={18} />
               </button>
             </div>
-
-            {/* Colour theme grid */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(235,235,245,0.38)', letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 16px' }}>Colour Theme</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
@@ -103,7 +92,7 @@ export default function AppLayout() {
                     >
                       <div style={{
                         width: 34, height: 34, borderRadius: '50%', background: t.swatch,
-                        boxShadow: active ? `0 0 0 2.5px #fff, 0 0 0 4.5px ${t.swatch}` : `0 2px 8px rgba(0,0,0,0.35)`,
+                        boxShadow: active ? `0 0 0 2.5px #fff, 0 0 0 4.5px ${t.swatch}` : '0 2px 8px rgba(0,0,0,0.35)',
                         transition: 'box-shadow 0.15s',
                       }} />
                       <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, color: active ? '#fff' : 'rgba(235,235,245,0.45)', letterSpacing: '0.02em' }}>
@@ -118,13 +107,11 @@ export default function AppLayout() {
         </div>
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — always visible */}
       <aside
-        className={clsx(
-          'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
-          open ? 'translate-x-0' : '-translate-x-full'
-        )}
         style={{
+          width: 256, flexShrink: 0, display: 'flex', flexDirection: 'column',
+          height: '100vh', overflowY: 'auto',
           backgroundColor: 'rgba(6,38,52,0.62)',
           backdropFilter: 'saturate(160%) blur(28px)',
           WebkitBackdropFilter: 'saturate(160%) blur(28px)',
@@ -133,7 +120,7 @@ export default function AppLayout() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
         </div>
 
@@ -142,7 +129,6 @@ export default function AppLayout() {
           {user?.adminRole && (
             <NavLink
               to="/admin/dashboard"
-              onClick={() => setOpen(false)}
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
@@ -158,8 +144,6 @@ export default function AppLayout() {
           {nav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to} to={to}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) => clsx('flex items-center gap-3 rounded-xl text-sm font-medium transition-colors', isActive ? '' : '')}
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
@@ -183,7 +167,7 @@ export default function AppLayout() {
 
           {/* Customizations */}
           <button
-            onClick={() => { setPalette(true); setOpen(false); }}
+            onClick={() => setPalette(true)}
             style={{
               display: 'flex', alignItems: 'center', gap: 10, width: '100%',
               padding: '9px 12px', borderRadius: 10, marginTop: 2,
@@ -209,9 +193,12 @@ export default function AppLayout() {
               <p style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
               <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
             </div>
-            <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+            <button
+              onClick={handleLogout}
+              style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+              onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}
+            >
               <LogOut size={15} />
             </button>
           </div>
@@ -219,20 +206,9 @@ export default function AppLayout() {
       </aside>
 
       {/* Main */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Mobile top bar */}
-        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(6,38,52,0.62)', backdropFilter: 'saturate(160%) blur(28px)', WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
-          <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
-            <Menu size={20} />
-          </button>
-          <CapaLogo size={40} />
-          <div style={{ width: 20 }} />
-        </header>
-
-        <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
-          <Outlet />
-        </main>
-      </div>
+      <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
+        <Outlet />
+      </main>
     </div>
   );
 }
