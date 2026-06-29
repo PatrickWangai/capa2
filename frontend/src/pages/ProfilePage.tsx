@@ -7,7 +7,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#f5821f';
+const ACCENT = '#20d4b8';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -102,7 +102,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
-        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #f5821f, #ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #20d4b8, #ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <CapaLogo size={44} />
         </div>
         <div>

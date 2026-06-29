@@ -107,7 +107,7 @@ export default function AppLayout() {
                   <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
                   {label}
                   {label === 'Verification' && kycBadge && (
-                    <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: '#f5821f' }} />
+                    <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: '#20d4b8' }} />
                   )}
                 </>
               )}
@@ -118,7 +118,7 @@ export default function AppLayout() {
         {/* User */}
         <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#f5821f,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#ff4500)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>

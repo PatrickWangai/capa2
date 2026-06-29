@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const STORAGE_KEY = 'capa_cookies_accepted';
-const ACCENT = '#f5821f';
+const ACCENT = '#20d4b8';
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
 

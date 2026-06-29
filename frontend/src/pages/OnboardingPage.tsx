@@ -5,7 +5,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#f5821f';
+const ACCENT = '#20d4b8';
 
 const RISK_OPTIONS = [
   { value: 'low', icon: '🛡️', label: 'Conservative', desc: 'Preserve capital. Low volatility. Bonds and stable ETFs.' },
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <CapaLogo size={110} />
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: '#f5821f', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: '#20d4b8', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
         </div>
 
         <StepIndicator current={step} total={3} />

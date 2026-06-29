@@ -29,9 +29,9 @@
     --text:          #ffffff;
     --text-secondary:rgba(235,235,245,0.60);
     --text-tertiary: rgba(235,235,245,0.30);
-    --accent:        #f5821f;
+    --accent:        #20d4b8;
     --accent-dark:   #e06010;
-    --color-primary-from: #f5821f;
+    --color-primary-from: #20d4b8;
     --color-primary-to:   #ff4500;
   }
   body {
@@ -131,7 +131,7 @@
   .badge-gray   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(255,255,255,0.08); color:rgba(235,235,245,0.6); }
 
   .gradient-text {
-    background: linear-gradient(135deg, #f5821f, #ff4500);
+    background: linear-gradient(135deg, #20d4b8, #ff4500);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

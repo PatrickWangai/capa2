@@ -3,7 +3,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#f5821f';
+const ACCENT = '#20d4b8';
 const CARD = '#1c1c1e';
 
 const team = [
@@ -84,7 +84,7 @@ export default function AboutPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
           {team.map(m => (
             <div key={m.name} style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #f5821f, #ff4500)', marginBottom: 16 }} />
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #20d4b8, #ff4500)', marginBottom: 16 }} />
               <h3 style={{ fontSize: 17, fontWeight: 600, marginBottom: 4, letterSpacing: '-0.02em' }}>{m.name}</h3>
               <p style={{ fontSize: 13, color: ACCENT, marginBottom: 10, fontWeight: 500 }}>{m.role}</p>
               <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.6 }}>{m.bio}</p>

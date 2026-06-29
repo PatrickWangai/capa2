@@ -12,7 +12,7 @@ export default function OrangeIcon({ className = '', size = 40 }: Props) {
       <defs>
         <radialGradient id={bodyId} cx="38%" cy="32%" r="65%">
           <stop offset="0%"   stopColor="#ffb347" />
-          <stop offset="55%"  stopColor="#f5821f" />
+          <stop offset="55%"  stopColor="#20d4b8" />
           <stop offset="100%" stopColor="#c85f0a" />
         </radialGradient>
         <radialGradient id={shineId} cx="30%" cy="22%" r="38%">
