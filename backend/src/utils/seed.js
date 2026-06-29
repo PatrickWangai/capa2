@@ -4,7 +4,7 @@ import { prisma } from './db.js';
 import bcrypt from 'bcryptjs';
 
 async function seed() {
-  console.log('🌱 Seeding database...');
+  console.log('🌱 Checking seed state...');
 
   // ── Remove demo user (delete related data first to respect FK RESTRICT) ──
   const demoUser = await prisma.user.findUnique({ where: { email: 'demo@capa.invest' } });
@@ -19,13 +19,15 @@ async function seed() {
     }
     await prisma.user.delete({ where: { id: demoUser.id } });
     console.log('✅ Demo user removed');
-  } else {
-    console.log('✅ No demo user to remove');
   }
 
-  // ── Admin user ─────────────────────────────────────────────
+  // ── Admin user — only hash password when necessary ──────────
   const adminPassword = process.env.ADMIN_PASSWORD;
-  const adminHash = await bcrypt.hash(adminPassword || 'Admin1234!', 12);
+  const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@capa.invest' } });
+  // Skip expensive bcrypt if admin already exists and password isn't being changed
+  const adminHash = (!existingAdmin || adminPassword)
+    ? await bcrypt.hash(adminPassword || 'Admin1234!', 12)
+    : existingAdmin.passwordHash;
   const admin = await prisma.user.upsert({
     where: { email: 'admin@capa.invest' },
     create: {
@@ -46,7 +48,15 @@ async function seed() {
   });
   console.log('✅ Admin user ready: admin@capa.invest');
 
-  // ── Assets ─────────────────────────────────────────────────
+  // ── Assets — skip entirely if already seeded ───────────────
+  const assetCount = await prisma.asset.count();
+  if (assetCount >= 60) {
+    console.log(`✅ Assets already seeded (${assetCount} found), skipping heavy seed`);
+    console.log('\n🎉 Seed check complete!\n');
+    return;
+  }
+  console.log('🌱 First-run seed: inserting assets and history...');
+
   const assets = [
     // US Stocks
     { symbol: 'AAPL',  exchange: 'NASDAQ', name: 'Apple Inc.',             assetClass: 'STOCK', currency: 'USD', sector: 'Technology',    isFractional: true,  startPrice: 189.50 },
