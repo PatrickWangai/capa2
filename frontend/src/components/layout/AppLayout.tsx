@@ -58,15 +58,15 @@ export default function AppLayout() {
           open ? 'translate-x-0' : '-translate-x-full'
         )}
         style={{
-          backgroundColor: 'rgba(28,28,30,0.85)',
-          backdropFilter: 'saturate(180%) blur(20px)',
-          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-          borderRight: '1px solid rgba(84,84,88,0.45)',
-          boxShadow: '1px 0 0 rgba(0,0,0,0.4)',
+          backgroundColor: 'rgba(6,38,52,0.62)',
+          backdropFilter: 'saturate(160%) blur(28px)',
+          WebkitBackdropFilter: 'saturate(160%) blur(28px)',
+          borderRight: '1px solid rgba(255,255,255,0.10)',
+          boxShadow: '1px 0 0 rgba(0,0,0,0.2)',
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
         </div>
 
@@ -116,7 +116,7 @@ export default function AppLayout() {
         </nav>
 
         {/* User */}
-        <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)' }}>
+        <div style={{ padding: 12, borderTop: '1px solid rgba(255,255,255,0.10)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
@@ -137,7 +137,7 @@ export default function AppLayout() {
       {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Mobile top bar */}
-        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(28,28,30,0.85)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
+        <header className="lg:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 44, padding: '0 16px', backgroundColor: 'rgba(6,38,52,0.62)', backdropFilter: 'saturate(160%) blur(28px)', WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
@@ -145,7 +145,7 @@ export default function AppLayout() {
           <div style={{ width: 20 }} />
         </header>
 
-        <main style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)', backgroundAttachment: 'fixed' }}>
           <Outlet />
         </main>
       </div>
