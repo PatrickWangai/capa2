@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, SlidersHorizontal, X
+  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, X, Palette
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
@@ -132,18 +132,9 @@ export default function AppLayout() {
           boxShadow: '1px 0 0 rgba(0,0,0,0.2)',
         }}
       >
-        {/* Logo + Customizations button */}
+        {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
-          <button
-            onClick={() => { setPalette(true); setOpen(false); }}
-            title="Customizations"
-            style={{ marginLeft: 'auto', color: 'rgba(235,235,245,0.45)', background: 'none', border: 'none', cursor: 'pointer', padding: 5, borderRadius: 8, display: 'flex', transition: 'color 0.15s' }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(235,235,245,0.45)'; }}
-          >
-            <SlidersHorizontal size={16} />
-          </button>
         </div>
 
         {/* Nav */}
@@ -189,6 +180,23 @@ export default function AppLayout() {
               )}
             </NavLink>
           ))}
+
+          {/* Customizations */}
+          <button
+            onClick={() => { setPalette(true); setOpen(false); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+              padding: '9px 12px', borderRadius: 10, marginTop: 2,
+              fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
+              cursor: 'pointer', color: 'rgba(235,235,245,0.85)', transition: 'background 0.15s',
+              textAlign: 'left',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            <Palette size={18} strokeWidth={1.8} />
+            Customizations
+          </button>
         </nav>
 
         {/* User */}
