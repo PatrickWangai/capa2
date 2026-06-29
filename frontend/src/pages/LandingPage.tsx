@@ -9,7 +9,7 @@ const SEC     = 'rgba(235,235,245,0.6)';
 
 // ── Dreamy sky canvas ────────────────────────────────────────
 interface SkyCloud { x: number; y: number; drift: number; alpha: number; puffs: { dx: number; dy: number; r: number }[]; }
-interface SkyBird  { x: number; y: number; spd: number; sz: number; ph: number; fp: number; type: 0 | 1; }
+interface SkyBird  { x: number; y: number; spd: number; sz: number; ph: number; fp: number; }
 
 function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,14 +36,13 @@ function HeroCanvas() {
         { x: W*0.50, y: H*0.07, drift: 0.06, alpha: 0.52,
           puffs: [{dx:0,dy:0,r:48},{dx:38,dy:-8,r:36},{dx:-28,dy:10,r:32}] },
       ];
-      birds = Array.from({ length: 9 }, (_, i) => ({
+      birds = Array.from({ length: 11 }, () => ({
         x: Math.random() * W,
-        y: H * 0.20 + Math.random() * H * 0.45,
-        spd: 0.25 + Math.random() * 0.55,
-        sz:  5 + Math.random() * 16,
+        y: H * 0.10 + Math.random() * H * 0.50,
+        spd: 0.20 + Math.random() * 0.60,
+        sz:  6 + Math.random() * 14,
         ph:  Math.random() * Math.PI * 2,
-        fp:  0.035 + Math.random() * 0.03,
-        type: (i < 6 ? 0 : 1) as 0 | 1,
+        fp:  0.030 + Math.random() * 0.028,
       }));
     }
 
@@ -99,11 +98,11 @@ function HeroCanvas() {
         }
       }
 
-      // Water
+      // Water — matches sky theme colours
       const wg = ctx.createLinearGradient(0, hy, 0, H);
-      wg.addColorStop(0,   '#28cfbc');
-      wg.addColorStop(0.5, '#18aaa0');
-      wg.addColorStop(1,   '#0a6c60');
+      wg.addColorStop(0,   cs.getPropertyValue('--bg-4').trim() || '#2563eb');
+      wg.addColorStop(0.5, cs.getPropertyValue('--bg-3').trim() || '#1a4aad');
+      wg.addColorStop(1,   cs.getPropertyValue('--bg-2').trim() || '#0f2d5c');
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
       // Shimmer
@@ -125,34 +124,59 @@ function HeroCanvas() {
       for (let x = 0; x <= W; x += 40) ctx.lineTo(x, H*0.86 + Math.sin(x*0.04 + t*0.015)*6);
       ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
 
-      // Creatures
+      // Birds — side-view silhouettes (body + head + beak + flapping wing + forked tail)
       for (const b of birds) {
         b.x += b.spd;
-        if (b.x > W + 100) b.x = -100;
+        if (b.x > W + 140) b.x = -140;
         b.ph += b.fp;
-        const wing = Math.sin(b.ph) * b.sz * 0.65;
+
+        const s  = b.sz;
+        const fl = Math.sin(b.ph);           // -1 (down) → +1 (up)
+        const tipX = -s * 2.5;
+        const tipY =  fl * s * 1.55;
+
         ctx.save();
-        ctx.globalAlpha = 0.50;
-        ctx.fillStyle = ctx.strokeStyle = '#0a2830';
-        ctx.lineWidth = b.sz * 0.16;
-        if (b.type === 0) {
-          ctx.beginPath();
-          ctx.moveTo(b.x, b.y);
-          ctx.bezierCurveTo(b.x-b.sz*1.6, b.y-wing,      b.x-b.sz*3.0, b.y+wing*0.25, b.x-b.sz*3.8, b.y+wing*0.45);
-          ctx.bezierCurveTo(b.x-b.sz*2.6, b.y+wing*0.75, b.x-b.sz*0.4, b.y+b.sz*0.3,  b.x, b.y);
-          ctx.bezierCurveTo(b.x+b.sz*0.4, b.y+b.sz*0.3,  b.x+b.sz*2.6, b.y+wing*0.75, b.x+b.sz*3.8, b.y+wing*0.45);
-          ctx.bezierCurveTo(b.x+b.sz*3.0, b.y+wing*0.25, b.x+b.sz*1.6, b.y-wing,      b.x, b.y);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(b.x-b.sz*0.3, b.y+b.sz*0.2);
-          ctx.bezierCurveTo(b.x-b.sz*0.6, b.y+b.sz*1.1, b.x-b.sz*0.2, b.y+b.sz*1.9, b.x-b.sz*0.15, b.y+b.sz*2.3);
-          ctx.stroke();
-        } else {
-          ctx.beginPath();
-          ctx.moveTo(b.x-b.sz*0.1, b.y); ctx.quadraticCurveTo(b.x-b.sz*0.9, b.y-wing, b.x-b.sz*1.7, b.y-wing*0.4);
-          ctx.moveTo(b.x+b.sz*0.1, b.y); ctx.quadraticCurveTo(b.x+b.sz*0.9, b.y-wing, b.x+b.sz*1.7, b.y-wing*0.4);
-          ctx.stroke();
-        }
+        ctx.translate(b.x, b.y);
+        ctx.globalAlpha = 0.62;
+        ctx.fillStyle = 'rgba(4,8,36,0.88)';
+
+        // Wing (filled swept shape, tip goes up on upstroke)
+        ctx.beginPath();
+        ctx.moveTo(s * 0.1, -s * 0.12);
+        ctx.bezierCurveTo(tipX * 0.22, tipY * 0.38 - s * 0.32, tipX * 0.72, tipY * 0.88, tipX, tipY);
+        ctx.bezierCurveTo(tipX * 0.78, tipY * 0.38 + s * 0.36, s * 0.04, s * 0.30, s * 0.1, -s * 0.12);
+        ctx.fill();
+
+        // Body oval (drawn on top so wing tucks under it)
+        ctx.beginPath();
+        ctx.ellipse(0, 0, s * 1.32, s * 0.34, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(s * 1.18, -s * 0.10, s * 0.37, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Beak
+        ctx.beginPath();
+        ctx.moveTo(s * 1.52, -s * 0.10);
+        ctx.lineTo(s * 1.94,  s * 0.00);
+        ctx.lineTo(s * 1.52,  s * 0.16);
+        ctx.closePath();
+        ctx.fill();
+
+        // Tail — forked (two lobes)
+        ctx.beginPath();
+        ctx.moveTo(-s * 1.25, -s * 0.02);
+        ctx.bezierCurveTo(-s * 1.50, -s * 0.06, -s * 1.92, -s * 0.50, -s * 2.05, -s * 0.64);
+        ctx.bezierCurveTo(-s * 1.70, -s * 0.08, -s * 1.32,  s * 0.06, -s * 1.25, -s * 0.02);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(-s * 1.25,  s * 0.02);
+        ctx.bezierCurveTo(-s * 1.50,  s * 0.06, -s * 1.92,  s * 0.44, -s * 2.05,  s * 0.58);
+        ctx.bezierCurveTo(-s * 1.70,  s * 0.08, -s * 1.32, -s * 0.06, -s * 1.25,  s * 0.02);
+        ctx.fill();
+
         ctx.restore();
       }
 
