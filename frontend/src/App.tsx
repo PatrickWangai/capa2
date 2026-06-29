@@ -91,7 +91,8 @@ function LoadingSpinner() {
 
         {/* Tagline */}
         <p style={{
-          fontSize: 11, fontWeight: 600, letterSpacing: '0.24em', color: '#20d4b8',
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: 13, fontWeight: 700, letterSpacing: '0.18em', color: '#20d4b8',
           textTransform: 'uppercase', margin: '0 0 28px',
           animation: 'capa-fade-up 0.7s ease 0.2s both',
         }}>Unstoppable Minds</p>
