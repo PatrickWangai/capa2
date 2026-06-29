@@ -10,6 +10,19 @@ import toast from 'react-hot-toast';
 import CapaLogo from '../ui/CapaLogo';
 import { useTheme, THEMES, type ThemeName } from '../../context/ThemeContext';
 
+const WEATHER = [
+  { label: 'Sunny',         icon: '☀️',  desc: 'Clear skies',        color: '#fbbf24' },
+  { label: 'Partly Cloudy', icon: '⛅',  desc: 'Some cloud cover',   color: '#94a3b8' },
+  { label: 'Cloudy',        icon: '☁️',  desc: 'Overcast',           color: '#9ca3af' },
+  { label: 'Rainy',         icon: '🌧️', desc: 'Light rain',          color: '#60a5fa' },
+  { label: 'Heavy Rain',    icon: '⛈️', desc: 'Heavy downpour',      color: '#818cf8' },
+  { label: 'Stormy',        icon: '🌩️', desc: 'Thunder & lightning', color: '#a78bfa' },
+  { label: 'Windy',         icon: '💨',  desc: 'Strong gusts',        color: '#34d399' },
+  { label: 'Snowy',         icon: '❄️',  desc: 'Snow falling',        color: '#bae6fd' },
+  { label: 'Foggy',         icon: '🌫️', desc: 'Low visibility',      color: '#d1d5db' },
+  { label: 'Hailing',       icon: '🌨️', desc: 'Hail expected',       color: '#93c5fd' },
+];
+
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
   { to: '/markets',       label: 'Markets',      icon: TrendingUp },
@@ -26,6 +39,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [paletteOpen, setPalette] = useState(false);
   const { theme, setTheme }       = useTheme();
+  const [weather]                 = useState(() => WEATHER[Math.floor(Math.random() * WEATHER.length)]);
 
   useEffect(() => {
     api.get('/api/auth/me').then(r => {
@@ -123,6 +137,20 @@ export default function AppLayout() {
         <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
         </div>
+
+        {/* Weather — Black & White themes only */}
+        {(theme === 'black' || theme === 'white') && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)',
+          }}>
+            <span style={{ fontSize: 28, lineHeight: 1 }}>{weather.icon}</span>
+            <div>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: weather.color }}>{weather.label}</p>
+              <p style={{ margin: 0, fontSize: 11, color: 'rgba(235,235,245,0.45)' }}>{weather.desc}</p>
+            </div>
+          </div>
+        )}
 
         {/* Nav */}
         <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>

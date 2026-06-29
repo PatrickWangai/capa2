@@ -23,6 +23,7 @@
     --accent-glow:        rgba(59,130,246,0.22);
     --color-primary-from: #3b82f6;
     --color-primary-to:   #1d4ed8;
+    --accent-text:        #ffffff;
 
     /* Background gradient stops */
     --bg-1: #0a1628;
@@ -72,7 +73,7 @@
   font-weight: 400;
   transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   background-color: var(--accent);
-  color: #ffffff !important;
+  color: var(--accent-text, #ffffff) !important;
   border-radius: 980px;
   padding: 8px 20px;
   font-size: 17px;
