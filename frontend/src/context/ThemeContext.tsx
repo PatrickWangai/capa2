@@ -45,6 +45,8 @@ function applyTheme(name: ThemeName) {
   r.style.setProperty('--accent', t.accent);
   r.style.setProperty('--accent-dark', t.accentDark);
   r.style.setProperty('--accent-rgb', t.accentRgb);
+  r.style.setProperty('--accent-dim',  `rgba(${t.accentRgb},0.18)`);
+  r.style.setProperty('--accent-glow', `rgba(${t.accentRgb},0.22)`);
   r.style.setProperty('--color-primary-from', t.accent);
   r.style.setProperty('--color-primary-to', t.accentDark);
   r.style.setProperty('--bg-1', t.bg[0]);

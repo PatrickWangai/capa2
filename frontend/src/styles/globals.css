@@ -6,22 +6,21 @@
 /* ── Apple dark mode palette ── */
 @layer base {
   :root {
-    /* Apple systemBackground / secondarySystemBackground / tertiarySystemBackground */
     --bg-base:       #000000;
     --bg-surface:    #1c1c1e;
     --bg-elevated:   #2c2c2e;
-    /* Apple separator */
     --border:        rgba(84,84,88,0.65);
     --border-sub:    rgba(84,84,88,0.35);
-    /* Apple label / secondaryLabel */
     --text:          #ffffff;
     --text-secondary:rgba(235,235,245,0.60);
     --text-tertiary: rgba(235,235,245,0.30);
 
-    /* ── Theme colours (swapped by ThemeContext via JS) ── */
+    /* ── Theme colours (set by ThemeContext) ── */
     --accent:             #3b82f6;
     --accent-dark:        #1d4ed8;
     --accent-rgb:         59,130,246;
+    --accent-dim:         rgba(59,130,246,0.18);
+    --accent-glow:        rgba(59,130,246,0.22);
     --color-primary-from: #3b82f6;
     --color-primary-to:   #1d4ed8;
 
@@ -44,9 +43,8 @@
   }
   * { border-color: var(--border); }
 
-  /* Restore white text classes for dark bg */
-  .text-white    { color: #ffffff              !important; }
-  .text-gray-100 { color: #f5f5f5             !important; }
+  .text-white    { color: #ffffff               !important; }
+  .text-gray-100 { color: #f5f5f5              !important; }
   .text-gray-200 { color: rgba(235,235,245,.85) !important; }
   .text-gray-300 { color: rgba(235,235,245,.70) !important; }
   .text-gray-400 { color: rgba(235,235,245,.60) !important; }
@@ -55,93 +53,107 @@
   .placeholder-gray-600::placeholder { color: rgba(235,235,245,0.3); }
 }
 
-@layer components {
-  /* Glass card */
-  .card {
-    background: rgba(28,28,30,0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  /* Primary pill CTA */
-  .btn-primary {
-    @apply relative inline-flex items-center justify-center font-normal transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
-    background-color: var(--accent);
-    color: #ffffff !important;
-    border-radius: 980px;
-    padding: 8px 20px;
-    font-size: 17px;
-    letter-spacing: -0.01em;
-  }
-  .btn-primary:hover:not(:disabled) { background-color: var(--accent-dark); }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center font-normal transition-colors;
-    background-color: var(--bg-elevated);
-    color: var(--accent) !important;
-    border-radius: 980px;
-    padding: 8px 20px;
-    font-size: 17px;
-    border: none;
-  }
-  .btn-secondary:hover { background-color: #3a3a3c; }
-
-  .btn-danger {
-    @apply inline-flex items-center justify-center font-medium transition-colors;
-    background-color: #ff3b30;
-    color: #fff !important;
-    border-radius: 980px;
-    padding: 8px 18px;
-    font-size: 15px;
-  }
-
-  /* Apple dark input */
-  .input {
-    @apply w-full transition text-sm;
-    background-color: rgba(44,44,46,0.85);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-family: inherit;
-    font-size: 17px;
-  }
-  .input::placeholder { color: var(--text-tertiary); }
-  .input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.22);
-  }
-
-  .label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-
-  /* Apple dark badges */
-  .badge-green  { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(52,199,89,0.18);  color:#30d158; }
-  .badge-red    { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(255,69,58,0.18);  color:#ff453a; }
-  .badge-yellow { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(255,159,10,0.18); color:#ffa00a; }
-  .badge-blue   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(var(--accent-rgb),0.18); color:var(--accent); }
-  .badge-gray   { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium; background:rgba(255,255,255,0.08); color:rgba(235,235,245,0.6); }
-
-  .gradient-text {
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* ── Components ── */
+.card {
+  background: rgba(28,28,30,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Apple dark scrollbar */
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
+  background-color: var(--accent);
+  color: #ffffff !important;
+  border-radius: 980px;
+  padding: 8px 20px;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary:hover:not(:disabled) { background-color: var(--accent-dark); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  transition: color 150ms cubic-bezier(0.4,0,0.2,1),
+              background-color 150ms cubic-bezier(0.4,0,0.2,1);
+  background-color: var(--bg-elevated);
+  color: var(--accent) !important;
+  border-radius: 980px;
+  padding: 8px 20px;
+  font-size: 17px;
+  border: none;
+}
+.btn-secondary:hover { background-color: #3a3a3c; }
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: color 150ms cubic-bezier(0.4,0,0.2,1),
+              background-color 150ms cubic-bezier(0.4,0,0.2,1);
+  background-color: #ff3b30;
+  color: #fff !important;
+  border-radius: 980px;
+  padding: 8px 18px;
+  font-size: 15px;
+}
+
+.input {
+  width: 100%;
+  transition: border-color 150ms cubic-bezier(0.4,0,0.2,1),
+              box-shadow 150ms cubic-bezier(0.4,0,0.2,1);
+  background-color: rgba(44,44,46,0.85);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 17px;
+}
+.input::placeholder { color: var(--text-tertiary); }
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+/* Badges */
+.badge-green  { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:.75rem; font-weight:500; background:rgba(52,199,89,0.18);  color:#30d158; }
+.badge-red    { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:.75rem; font-weight:500; background:rgba(255,69,58,0.18);  color:#ff453a; }
+.badge-yellow { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:.75rem; font-weight:500; background:rgba(255,159,10,0.18); color:#ffa00a; }
+.badge-blue   { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:.75rem; font-weight:500; background:var(--accent-dim);    color:var(--accent); }
+.badge-gray   { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:.75rem; font-weight:500; background:rgba(255,255,255,0.08); color:rgba(235,235,245,0.6); }
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar       { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }

@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert
+  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, Settings2, ChevronDown
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
@@ -27,6 +27,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [customOpen, setCustomOpen] = useState(false);
 
   // Refresh user profile on mount so adminRole is always up to date
   // even for sessions that predate the adminRole field being added.
@@ -100,7 +101,7 @@ export default function AppLayout() {
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
-                backgroundColor: isActive ? 'rgba(var(--accent-rgb),0.18)' : 'transparent',
+                backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent',
                 color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
               })}
             >
@@ -115,32 +116,58 @@ export default function AppLayout() {
               )}
             </NavLink>
           ))}
-        </nav>
 
-        {/* Theme picker */}
-        <div style={{ padding: '8px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(235,235,245,0.35)', letterSpacing: '0.10em', textTransform: 'uppercase', margin: '6px 4px 8px' }}>Theme</p>
-          <div style={{ display: 'flex', gap: 8, paddingLeft: 4 }}>
-            {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
-              <button
-                key={name}
-                title={t.label}
-                onClick={() => setTheme(name)}
-                style={{
-                  width: 22, height: 22, borderRadius: '50%',
-                  background: t.swatch,
-                  border: theme === name ? '2.5px solid #fff' : '2.5px solid transparent',
-                  outline: theme === name ? `2px solid ${t.swatch}` : 'none',
-                  outlineOffset: 1,
-                  cursor: 'pointer', flexShrink: 0, padding: 0,
-                  transition: 'transform 0.15s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.25)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
-              />
-            ))}
-          </div>
-        </div>
+          {/* Customizations accordion */}
+          <button
+            onClick={() => setCustomOpen(o => !o)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+              padding: '9px 12px', borderRadius: 10, marginTop: 2,
+              fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
+              cursor: 'pointer', color: 'rgba(235,235,245,0.85)', transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+          >
+            <Settings2 size={18} strokeWidth={1.8} />
+            Customizations
+            <ChevronDown
+              size={14}
+              style={{ marginLeft: 'auto', transition: 'transform 0.2s', transform: customOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            />
+          </button>
+
+          {customOpen && (
+            <div style={{ padding: '10px 14px 6px', borderRadius: 10, marginTop: 2, backgroundColor: 'rgba(255,255,255,0.04)' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(235,235,245,0.38)', letterSpacing: '0.09em', textTransform: 'uppercase', margin: '0 0 10px' }}>Colour Theme</p>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
+                  <button
+                    key={name}
+                    title={t.label}
+                    onClick={() => setTheme(name)}
+                    style={{
+                      width: 24, height: 24, borderRadius: '50%',
+                      background: t.swatch,
+                      border: theme === name ? '2.5px solid #fff' : '2.5px solid transparent',
+                      outline: theme === name ? `2px solid ${t.swatch}` : 'none',
+                      outlineOffset: 1,
+                      cursor: 'pointer', flexShrink: 0, padding: 0,
+                      transition: 'transform 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.22)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+                  />
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
+                {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
+                  <span key={name} style={{ fontSize: 10, color: theme === name ? 'var(--accent)' : 'rgba(235,235,245,0.35)', fontWeight: theme === name ? 600 : 400 }}>{t.label}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </nav>
 
         {/* User */}
         <div style={{ padding: 12, borderTop: '1px solid rgba(255,255,255,0.10)' }}>
