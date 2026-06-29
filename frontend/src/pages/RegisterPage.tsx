@@ -53,7 +53,7 @@ export default function RegisterPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6, letterSpacing: '-0.01em' };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
@@ -65,7 +65,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Card */}
-        <div style={{ backgroundColor: '#1c1c1e', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: 'rgba(10,10,12,0.82)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
