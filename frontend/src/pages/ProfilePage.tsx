@@ -93,7 +93,7 @@ export default function ProfilePage() {
   };
 
   const btnStyle = (loading: boolean): React.CSSProperties => ({
-    padding: '11px 24px', borderRadius: 980, backgroundColor: loading ? '#f0a060' : ACCENT,
+    padding: '11px 24px', borderRadius: 980, backgroundColor: loading ? '#17b8a2' : ACCENT,
     color: '#fff', border: 'none', fontSize: 15, fontWeight: 500,
     cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit',
   });
