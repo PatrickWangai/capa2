@@ -277,7 +277,7 @@ export default function LandingPage() {
           <div style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
           </div>
-          <h1 className="hero-text hero-text-2" style={{ fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, marginBottom: 20, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
+          <h1 className="hero-text hero-text-2" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
           </h1>
           <p className="hero-text hero-text-3" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
