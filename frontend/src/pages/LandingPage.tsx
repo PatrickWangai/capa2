@@ -300,11 +300,8 @@ export default function LandingPage() {
           <div style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
           </div>
-          <p className="hero-text hero-text-1" style={{ fontSize: 'clamp(13px,1.8vw,18px)', fontWeight: 500, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '0 0 32px' }}>
+          <h1 className="hero-text hero-text-2" style={{ fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, marginBottom: 20, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
-          </p>
-          <h1 className="hero-text hero-text-2" style={{ fontSize: 'clamp(44px,7vw,88px)', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.04, color: TEXT, marginBottom: 20, textShadow: '0 2px 40px rgba(0,0,0,0.6)' }}>
-            The future of<br />investing is here.
           </h1>
           <p className="hero-text hero-text-3" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
