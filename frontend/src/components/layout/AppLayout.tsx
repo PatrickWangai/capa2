@@ -73,8 +73,7 @@ export default function AppLayout() {
           >
             {/* Drawer header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              <span style={{ fontSize: 16, fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <SlidersHorizontal size={16} style={{ color: 'var(--accent)' }} />
+              <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>
                 Customizations
               </span>
               <button onClick={() => setPalette(false)} style={{ color: 'rgba(235,235,245,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}>
@@ -219,9 +218,7 @@ export default function AppLayout() {
             <Menu size={20} />
           </button>
           <CapaLogo size={40} />
-          <button onClick={() => setPalette(true)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
-            <SlidersHorizontal size={18} />
-          </button>
+          <div style={{ width: 20 }} />
         </header>
 
         <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
