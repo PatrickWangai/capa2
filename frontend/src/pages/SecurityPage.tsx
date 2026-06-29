@@ -33,7 +33,7 @@ function Nav() {
 
 export default function SecurityPage() {
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 80px' }}>

@@ -26,7 +26,7 @@ export default function Skeleton({ width = '100%', height = 20, borderRadius = 8
 
 export function SkeletonCard({ lines = 3 }: { lines?: number }) {
   return (
-    <div style={{ backgroundColor: '#1c1c1e', borderRadius: 18, padding: 24, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+    <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 18, padding: 24, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
       <Skeleton width="40%" height={14} style={{ marginBottom: 12 }} />
       <Skeleton width="70%" height={28} style={{ marginBottom: 8 }} />
       {lines > 2 && <Skeleton width="55%" height={14} />}

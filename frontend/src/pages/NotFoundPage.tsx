@@ -10,7 +10,7 @@ export default function NotFoundPage() {
   const token = useAuthStore(s => s.accessToken);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', textAlign: 'center' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', textAlign: 'center' }}>
       <div className="orange-float" style={{ display: 'inline-block', marginBottom: 28 }}>
         <CapaLogo size={80} />
       </div>

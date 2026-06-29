@@ -11,7 +11,7 @@ const ACCENT = '#20d4b8';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ backgroundColor: '#1c1c1e', borderRadius: 18, padding: 24, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', marginBottom: 16 }}>
+    <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 18, padding: 24, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', marginBottom: 16 }}>
       <h3 style={{ margin: '0 0 20px', fontSize: 17, fontWeight: 600, color: TEXT, letterSpacing: '-0.02em' }}>{title}</h3>
       {children}
     </div>
@@ -30,7 +30,7 @@ function Field({ label, value, name, type = 'text', onChange, placeholder }: {
         type={type} value={value} placeholder={placeholder}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         onChange={e => onChange(name, e.target.value)}
-        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none', outline: 'none', backgroundColor: '#2c2c2e', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
+        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none', outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
       />
     </div>
   );

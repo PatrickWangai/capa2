@@ -45,7 +45,7 @@ export default function RegisterPage() {
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 15,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
     boxShadow: focused === name ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none',
-    outline: 'none', backgroundColor: '#2c2c2e', color: TEXT,
+    outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
     boxSizing: 'border-box',
   });

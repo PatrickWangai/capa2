@@ -35,7 +35,7 @@ function Nav() {
 
 export default function AboutPage() {
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       {/* Hero */}
@@ -94,7 +94,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: '#111111', marginTop: 24 }}>
+      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', marginTop: 24 }}>
         <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>Join thousands of investors</h2>
         <p style={{ fontSize: 17, color: SEC, marginBottom: 28 }}>Open your account in minutes. No minimum deposit.</p>
         <Link to="/register" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '14px 36px', borderRadius: 980, fontSize: 18, fontWeight: 500 }}>

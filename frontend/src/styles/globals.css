@@ -23,7 +23,8 @@
     --color-primary-to:   #0fa8a0;
   }
   body {
-    background-color: var(--bg-base);
+    background: linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%);
+    background-attachment: fixed;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -43,13 +44,15 @@
 }
 
 @layer components {
-  /* Apple dark card */
+  /* Glass card */
   .card {
-    background-color: var(--bg-surface);
+    background: rgba(28,28,30,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-radius: 18px;
     padding: 24px;
-    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.08);
-    border: none;
+    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.08);
   }
 
   /* Orange pill CTA */
@@ -87,7 +90,7 @@
   /* Apple dark input */
   .input {
     @apply w-full transition text-sm;
-    background-color: var(--bg-elevated);
+    background-color: rgba(44,44,46,0.85);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: 12px;

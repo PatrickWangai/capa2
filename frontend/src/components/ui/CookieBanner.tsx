@@ -31,7 +31,7 @@ export default function CookieBanner() {
     <div style={{
       position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)',
       zIndex: 9999, width: 'calc(100% - 32px)', maxWidth: 640,
-      backgroundColor: '#1c1c1e',
+      backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
       border: '1px solid rgba(255,255,255,0.12)',
       borderRadius: 18,
       padding: '20px 24px',

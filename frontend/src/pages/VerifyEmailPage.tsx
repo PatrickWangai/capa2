@@ -20,7 +20,7 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <CapaLogo size={120} />
         <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 24px' }}>Unstoppable Minds</p>
@@ -34,7 +34,7 @@ export default function VerifyEmailPage() {
         )}
 
         {status === 'success' && (
-          <div style={{ backgroundColor: '#1c1c1e', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
             <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Email verified!</h2>
             <p style={{ color: SEC, fontSize: 15, lineHeight: 1.6, marginBottom: 28 }}>Your email address has been confirmed. Your account is now active.</p>
@@ -45,7 +45,7 @@ export default function VerifyEmailPage() {
         )}
 
         {status === 'error' && (
-          <div style={{ backgroundColor: '#1c1c1e', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>❌</div>
             <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Verification failed</h2>
             <p style={{ color: SEC, fontSize: 15, lineHeight: 1.6, marginBottom: 28 }}>This link is invalid or has expired. Sign in and we'll send a new one.</p>

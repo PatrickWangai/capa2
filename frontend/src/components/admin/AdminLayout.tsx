@@ -25,7 +25,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ display: 'flex', height: '100vh', background: 'transparent' }}>
       <aside style={{
         width: 240, display: 'flex', flexDirection: 'column',
         backgroundColor: 'rgba(28,28,30,0.85)',

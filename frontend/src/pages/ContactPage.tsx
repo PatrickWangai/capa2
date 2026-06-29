@@ -36,7 +36,7 @@ export default function ContactPage() {
     width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
     boxShadow: focused === name ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none',
-    outline: 'none', backgroundColor: '#2c2c2e', color: TEXT,
+    outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box',
   });
 
@@ -50,7 +50,7 @@ export default function ContactPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6 };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 80px' }}>
