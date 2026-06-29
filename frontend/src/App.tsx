@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react';
+import CapaCIcon from './components/ui/CapaCIcon';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
@@ -79,23 +80,9 @@ function LoadingSpinner() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
       }}>
-        {/* feColorMatrix filter: black→transparent, white→opaque */}
-        <svg width={0} height={0} style={{ position: 'absolute' }} aria-hidden>
-          <defs>
-            <filter id="loading-logo-mask">
-              <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 0 0 0 0" />
-            </filter>
-          </defs>
-        </svg>
-
-        {/* Logo — pulse */}
+        {/* Animated C icon */}
         <div style={{ animation: 'capa-pulse 2.4s ease-in-out infinite', marginBottom: 16 }}>
-          <img
-            src="/capa-logo.png" alt="CAPA"
-            width={300} height={169}
-            draggable={false}
-            style={{ display: 'block', filter: 'url(#loading-logo-mask)', userSelect: 'none' }}
-          />
+          <CapaCIcon size={96} borderRadius={22} />
         </div>
 
         {/* Tagline */}
