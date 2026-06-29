@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check, TrendingDown } from 'lucide-react';
+import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const ACCENT = '#f5821f';
+const ACCENT = '#20d4b8';
 const TEXT    = '#ffffff';
 const SEC     = 'rgba(235,235,245,0.6)';
 
@@ -176,38 +176,6 @@ function HeroCanvas() {
 }
 
 
-// ── Floating stock badge ──────────────────────────────────────
-interface Badge { sym: string; price: string; change: string; up: boolean; delay: number; left: string; }
-const BADGES: Badge[] = [
-  { sym: 'SCOM', price: 'KES 33.60', change: '+1.2%', up: true,  delay: 0,    left: '6%'  },
-  { sym: 'AAPL', price: 'USD 189.5', change: '+0.4%', up: true,  delay: 1.4,  left: '78%' },
-  { sym: 'TSLA', price: 'USD 242.8', change: '-1.1%', up: false, delay: 2.6,  left: '20%' },
-  { sym: 'EQTY', price: 'KES 79.75', change: '+2.1%', up: true,  delay: 3.8,  left: '65%' },
-  { sym: 'NVDA', price: 'USD 495.0', change: '+3.2%', up: true,  delay: 5.0,  left: '88%' },
-  { sym: 'KCB',  price: 'KES 76.00', change: '+0.7%', up: true,  delay: 6.2,  left: '42%' },
-];
-
-function FloatingBadge({ sym, price, change, up, delay, left }: Badge) {
-  return (
-    <div style={{
-      position: 'absolute', bottom: '10%', left,
-      display: 'flex', alignItems: 'center', gap: 8,
-      padding: '8px 14px', borderRadius: 999,
-      background: 'rgba(28,28,30,0.75)',
-      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-      animation: `badge-float 7s ease-in-out ${delay}s infinite`,
-      zIndex: 5, whiteSpace: 'nowrap',
-    }}>
-      <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{sym}</span>
-      <span style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)' }}>{price}</span>
-      <span style={{ fontSize: 11, fontWeight: 600, color: up ? '#34d399' : '#f87171', display: 'flex', alignItems: 'center', gap: 2 }}>
-        {up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}{change}
-      </span>
-    </div>
-  );
-}
 
 // ── Section fade-in hook ─────────────────────────────────────
 function useFadeIn() {
@@ -266,26 +234,9 @@ export default function LandingPage() {
 
       {/* Inject keyframes */}
       <style>{`
-        @keyframes badge-float {
-          0%   { transform: translateY(0px);   opacity: 0; }
-          8%   { opacity: 1; }
-          50%  { transform: translateY(-60px); opacity: 1; }
-          92%  { opacity: 1; }
-          100% { transform: translateY(-120px);opacity: 0; }
-        }
         @keyframes hero-text-in {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes orb-drift-1 {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          33%      { transform: translate(60px,-40px) scale(1.08); }
-          66%      { transform: translate(-30px,50px) scale(0.95); }
-        }
-        @keyframes orb-drift-2 {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          40%      { transform: translate(-70px,30px) scale(1.05); }
-          70%      { transform: translate(40px,-60px) scale(0.92); }
         }
         .hero-text { animation: hero-text-in 1s ease both; }
         .hero-text-1 { animation-delay: 0.1s; }
@@ -320,11 +271,6 @@ export default function LandingPage() {
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, #000 0%, transparent 100%)', zIndex: 2 }} />
         {/* Top fade (for nav) */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%)', zIndex: 2 }} />
-
-        {/* Floating stock badges */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-          {BADGES.map(b => <FloatingBadge key={b.sym} {...b} />)}
-        </div>
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
