@@ -50,8 +50,8 @@ export default function AdminLayout() {
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
-                backgroundColor: isActive ? 'rgba(32,212,184,0.15)' : 'transparent',
-                color: isActive ? '#20d4b8' : 'rgba(235,235,245,0.85)',
+                backgroundColor: isActive ? 'rgba(var(--accent-rgb),0.15)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
                 transition: 'background 0.15s',
               })}
             >

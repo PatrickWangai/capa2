@@ -12,7 +12,7 @@ export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10
       <rect width="100" height="100" rx={borderRadius * (100 / size)} fill="#082e3c" />
       <path
         d="M 78,28 A 34,34 0 1,0 78,72"
-        fill="none" stroke="#20d4b8" strokeWidth="11" strokeLinecap="round"
+        fill="none" stroke="var(--accent)" strokeWidth="11" strokeLinecap="round"
         {...(animate ? {
           strokeDasharray: `${totalLen}`,
           strokeDashoffset: `${totalLen}`,
@@ -42,7 +42,7 @@ export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10
         )}
       </path>
       {animate && (
-        <circle cx="78" cy="28" r="5" fill="#20d4b8">
+        <circle cx="78" cy="28" r="5" fill="var(--accent)">
           <animate attributeName="opacity" values="0;0.9;0.9;0" keyTimes="0;0.1;0.55;0.65" dur={duration} repeatCount="indefinite" />
         </circle>
       )}

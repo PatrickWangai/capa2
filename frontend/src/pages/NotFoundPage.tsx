@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/authStore';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 export default function NotFoundPage() {
   const token = useAuthStore(s => s.accessToken);

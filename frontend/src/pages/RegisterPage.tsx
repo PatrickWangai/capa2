@@ -7,7 +7,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT   = '#ffffff';
 const SEC    = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 const COUNTRIES = [
   { code: "KE", name: "Kenya" }, { code: "US", name: "United States" },
@@ -44,7 +44,7 @@ export default function RegisterPage() {
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 15,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none',
+    boxShadow: focused === name ? '0 0 0 3px rgba(var(--accent-rgb),0.18)' : 'none',
     outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
     boxSizing: 'border-box',
@@ -53,7 +53,7 @@ export default function RegisterPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6, letterSpacing: '-0.01em' };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-gradient)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                 value={formData.password} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)} onChange={set('password')} />
             </div>
 
-            <button type="submit" disabled={loading} style={{ marginTop: 6, width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? '#17b8a2' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, letterSpacing: '-0.01em', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
+            <button type="submit" disabled={loading} style={{ marginTop: 6, width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? 'var(--accent-dark)' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, letterSpacing: '-0.01em', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
               {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>

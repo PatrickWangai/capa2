@@ -5,7 +5,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 export default function VerifyEmailPage() {
   const [params] = useSearchParams();
@@ -27,7 +27,7 @@ export default function VerifyEmailPage() {
 
         {status === 'loading' && (
           <>
-            <div style={{ width: 40, height: 40, border: '3px solid rgba(32,212,184,0.2)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
+            <div style={{ width: 40, height: 40, border: '3px solid rgba(var(--accent-rgb),0.2)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
             <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700 }}>Verifying your email…</h2>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </>

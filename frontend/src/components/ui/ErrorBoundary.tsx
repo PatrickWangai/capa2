@@ -6,7 +6,7 @@ interface State { hasError: boolean; message: string }
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, message: '' };

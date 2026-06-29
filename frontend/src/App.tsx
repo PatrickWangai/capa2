@@ -75,7 +75,7 @@ function LoadingSpinner() {
 
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)',
+        background: 'var(--bg-gradient)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
       }}>
@@ -92,7 +92,7 @@ function LoadingSpinner() {
         {/* Tagline */}
         <p style={{
           fontFamily: "'Orbitron', sans-serif",
-          fontSize: 13, fontWeight: 700, letterSpacing: '0.18em', color: '#20d4b8',
+          fontSize: 13, fontWeight: 700, letterSpacing: '0.18em', color: 'var(--accent)',
           textTransform: 'uppercase', margin: '0 0 28px',
           animation: 'capa-fade-up 0.7s ease 0.2s both',
         }}>Unstoppable Minds</p>
@@ -106,7 +106,7 @@ function LoadingSpinner() {
         }}>
           <div style={{
             height: '100%', borderRadius: 2,
-            backgroundColor: '#20d4b8',
+            backgroundColor: 'var(--accent)',
             animation: 'capa-bar 2.8s cubic-bezier(0.4,0,0.2,1) forwards',
           }} />
           {/* Shimmer sweep */}

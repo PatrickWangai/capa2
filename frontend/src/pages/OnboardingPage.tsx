@@ -5,7 +5,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 const RISK_OPTIONS = [
   { value: 'low', icon: '🛡️', label: 'Conservative', desc: 'Preserve capital. Low volatility. Bonds and stable ETFs.' },
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <CapaLogo size={110} />
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: '#20d4b8', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'var(--accent)', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
         </div>
 
         <StepIndicator current={step} total={3} />
@@ -75,7 +75,7 @@ export default function OnboardingPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {RISK_OPTIONS.map(o => (
                 <button key={o.value} onClick={() => setAnswers(a => ({ ...a, risk: o.value }))}
-                  style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderRadius: 14, border: `1.5px solid ${answers.risk === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.risk === o.value ? 'rgba(32,212,184,0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderRadius: 14, border: `1.5px solid ${answers.risk === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.risk === o.value ? 'rgba(var(--accent-rgb),0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
                   <span style={{ fontSize: 28 }}>{o.icon}</span>
                   <div>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: TEXT }}>{o.label}</p>
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {GOAL_OPTIONS.map(o => (
                 <button key={o.value} onClick={() => setAnswers(a => ({ ...a, goal: o.value }))}
-                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, padding: '18px 16px', borderRadius: 14, border: `1.5px solid ${answers.goal === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.goal === o.value ? 'rgba(32,212,184,0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, padding: '18px 16px', borderRadius: 14, border: `1.5px solid ${answers.goal === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.goal === o.value ? 'rgba(var(--accent-rgb),0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
                   <span style={{ fontSize: 24 }}>{o.icon}</span>
                   <div>
                     <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: TEXT }}>{o.label}</p>
@@ -119,7 +119,7 @@ export default function OnboardingPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {HORIZON_OPTIONS.map(o => (
                 <button key={o.value} onClick={() => setAnswers(a => ({ ...a, horizon: o.value }))}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderRadius: 14, border: `1.5px solid ${answers.horizon === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.horizon === o.value ? 'rgba(32,212,184,0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderRadius: 14, border: `1.5px solid ${answers.horizon === o.value ? ACCENT : 'rgba(84,84,88,0.5)'}`, backgroundColor: answers.horizon === o.value ? 'rgba(var(--accent-rgb),0.08)' : 'rgba(28,28,30,0.72)', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'all 0.15s' }}>
                   <span style={{ fontSize: 15, fontWeight: 500, color: TEXT }}>{o.label}</span>
                   {answers.horizon === o.value && <div style={{ width: 18, height: 18, borderRadius: '50%', backgroundColor: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -139,7 +139,7 @@ export default function OnboardingPage() {
             </button>
           )}
           <button onClick={next} disabled={!canNext()}
-            style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '14px', borderRadius: 12, backgroundColor: canNext() ? ACCENT : 'rgba(32,212,184,0.3)', color: '#fff', border: 'none', fontSize: 16, fontWeight: 500, cursor: canNext() ? 'pointer' : 'not-allowed', fontFamily: 'inherit', transition: 'background 0.15s' }}>
+            style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '14px', borderRadius: 12, backgroundColor: canNext() ? ACCENT : 'rgba(var(--accent-rgb),0.3)', color: '#fff', border: 'none', fontSize: 16, fontWeight: 500, cursor: canNext() ? 'pointer' : 'not-allowed', fontFamily: 'inherit', transition: 'background 0.15s' }}>
             {step === 2 ? 'Go to Dashboard' : 'Continue'} <ChevronRight size={16} />
           </button>
         </div>

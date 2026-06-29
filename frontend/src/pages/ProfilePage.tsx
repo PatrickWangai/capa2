@@ -7,7 +7,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -30,7 +30,7 @@ function Field({ label, value, name, type = 'text', onChange, placeholder }: {
         type={type} value={value} placeholder={placeholder}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         onChange={e => onChange(name, e.target.value)}
-        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none', outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
+        style={{ width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, boxShadow: focused ? '0 0 0 3px rgba(var(--accent-rgb),0.18)' : 'none', outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
       />
     </div>
   );
@@ -93,7 +93,7 @@ export default function ProfilePage() {
   };
 
   const btnStyle = (loading: boolean): React.CSSProperties => ({
-    padding: '11px 24px', borderRadius: 980, backgroundColor: loading ? '#17b8a2' : ACCENT,
+    padding: '11px 24px', borderRadius: 980, backgroundColor: loading ? 'var(--accent-dark)' : ACCENT,
     color: '#fff', border: 'none', fontSize: 15, fontWeight: 500,
     cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit',
   });
@@ -102,7 +102,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
-        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #20d4b8, #0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <CapaLogo size={44} />
         </div>
         <div>

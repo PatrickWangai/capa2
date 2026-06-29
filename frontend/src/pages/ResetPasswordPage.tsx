@@ -7,7 +7,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 
 export default function ResetPasswordPage() {
   const [params] = useSearchParams();
@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
   const inputStyle = (name: string) => ({
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none',
+    boxShadow: focused === name ? '0 0 0 3px rgba(var(--accent-rgb),0.18)' : 'none',
     outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' as const,
   });
@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
                 style={inputStyle('confirm')}
               />
             </div>
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? '#17b8a2' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? 'var(--accent-dark)' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
               {loading ? 'Resetting…' : 'Reset Password'}
             </button>
           </form>

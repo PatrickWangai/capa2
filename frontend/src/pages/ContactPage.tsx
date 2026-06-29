@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 const CARD = '#1c1c1e';
 
 function Nav() {
@@ -35,7 +35,7 @@ export default function ContactPage() {
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(32,212,184,0.18)' : 'none',
+    boxShadow: focused === name ? '0 0 0 3px rgba(var(--accent-rgb),0.18)' : 'none',
     outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box',
   });

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
 import CapaLogo from '../ui/CapaLogo';
+import { useTheme, THEMES, type ThemeName } from '../../context/ThemeContext';
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -25,6 +26,7 @@ export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   // Refresh user profile on mount so adminRole is always up to date
   // even for sessions that predate the adminRole field being added.
@@ -46,7 +48,7 @@ export default function AppLayout() {
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
       {open && (
         <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
       )}
@@ -98,8 +100,8 @@ export default function AppLayout() {
                 padding: '9px 12px', borderRadius: 10, marginBottom: 2,
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
-                backgroundColor: isActive ? 'rgba(32,212,184,0.18)' : 'transparent',
-                color: isActive ? '#20d4b8' : 'rgba(235,235,245,0.85)',
+                backgroundColor: isActive ? 'rgba(var(--accent-rgb),0.18)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => (
@@ -107,7 +109,7 @@ export default function AppLayout() {
                   <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
                   {label}
                   {label === 'Verification' && kycBadge && (
-                    <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: '#20d4b8' }} />
+                    <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />
                   )}
                 </>
               )}
@@ -115,10 +117,35 @@ export default function AppLayout() {
           ))}
         </nav>
 
+        {/* Theme picker */}
+        <div style={{ padding: '8px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(235,235,245,0.35)', letterSpacing: '0.10em', textTransform: 'uppercase', margin: '6px 4px 8px' }}>Theme</p>
+          <div style={{ display: 'flex', gap: 8, paddingLeft: 4 }}>
+            {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
+              <button
+                key={name}
+                title={t.label}
+                onClick={() => setTheme(name)}
+                style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: t.swatch,
+                  border: theme === name ? '2.5px solid #fff' : '2.5px solid transparent',
+                  outline: theme === name ? `2px solid ${t.swatch}` : 'none',
+                  outlineOffset: 1,
+                  cursor: 'pointer', flexShrink: 0, padding: 0,
+                  transition: 'transform 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+              />
+            ))}
+          </div>
+        </div>
+
         {/* User */}
         <div style={{ padding: 12, borderTop: '1px solid rgba(255,255,255,0.10)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -145,7 +172,7 @@ export default function AppLayout() {
           <div style={{ width: 20 }} />
         </header>
 
-        <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'linear-gradient(160deg, #082e3c 0%, #0c5260 18%, #0f8878 45%, #18c0a8 72%, #2acfbc 88%, #1aaa96 100%)', backgroundAttachment: 'fixed' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
           <Outlet />
         </main>
       </div>

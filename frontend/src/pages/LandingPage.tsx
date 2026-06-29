@@ -3,7 +3,7 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 const TEXT    = '#ffffff';
 const SEC     = 'rgba(235,235,245,0.6)';
 
@@ -52,13 +52,14 @@ function HeroCanvas() {
       ctx.clearRect(0, 0, W, H);
       const hy = H * 0.70;
 
-      // Sky
+      // Sky — reads CSS theme variables so colour changes with the theme
+      const cs = getComputedStyle(document.documentElement);
       const sky = ctx.createLinearGradient(0, 0, 0, hy);
-      sky.addColorStop(0,    '#082e3c');
-      sky.addColorStop(0.22, '#0c5260');
-      sky.addColorStop(0.52, '#0f8878');
-      sky.addColorStop(0.80, '#18c0a8');
-      sky.addColorStop(1,    '#35d8bc');
+      sky.addColorStop(0,    cs.getPropertyValue('--bg-1').trim() || '#0a1628');
+      sky.addColorStop(0.22, cs.getPropertyValue('--bg-2').trim() || '#0f2d5c');
+      sky.addColorStop(0.52, cs.getPropertyValue('--bg-3').trim() || '#1a4aad');
+      sky.addColorStop(0.80, cs.getPropertyValue('--bg-4').trim() || '#2563eb');
+      sky.addColorStop(1,    cs.getPropertyValue('--bg-5').trim() || '#3b82f6');
       ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
 
       // Sun glow
@@ -268,7 +269,7 @@ export default function LandingPage() {
         <HeroCanvas />
 
         {/* Bottom gradient fade */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, #082e3c 0%, transparent 100%)', zIndex: 2 }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
         {/* Top fade (for nav) */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, rgba(8,46,60,0.5) 0%, transparent 100%)', zIndex: 2 }} />
 
@@ -284,7 +285,7 @@ export default function LandingPage() {
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
           </p>
           <div className="hero-text hero-text-4" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(32,212,184,0.45)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
               Start Investing Free <ChevronRight size={16} />
             </Link>
             <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
@@ -319,9 +320,9 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {features.map(({ icon: Icon, title, desc }) => (
               <div key={title} style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid rgba(255,255,255,0.10)', transition: 'border-color 0.2s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(32,212,184,0.3)')}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.3)')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)')}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(32,212,184,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <Icon size={22} color={ACCENT} strokeWidth={1.8} />
                 </div>
                 <h3 style={{ fontSize: 19, fontWeight: 600, color: TEXT, marginBottom: 8, letterSpacing: '-0.02em' }}>{title}</h3>
@@ -343,7 +344,7 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {steps.map(({ icon: Icon, num, title, desc }) => (
                 <div key={num} style={{ textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(32,212,184,0.1)', border: '1px solid rgba(32,212,184,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                   </div>
                   <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
@@ -367,7 +368,7 @@ export default function LandingPage() {
               <div key={t.name} style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.10)', display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <p style={{ fontSize: 15, color: SEC, lineHeight: 1.7, margin: 0, fontStyle: 'italic' }}>"{t.text}"</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 'auto' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#20d4b8,#0fa8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
                     {t.initials}
                   </div>
                   <div>
@@ -385,7 +386,7 @@ export default function LandingPage() {
       <FadeSection>
         <section style={{ backgroundColor: 'rgba(8,46,60,0.65)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', position: 'relative', overflow: 'hidden' }}>
           {/* Subtle glow behind CTA */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(32,212,184,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(var(--accent-rgb),0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative' }}>
             <h2 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginBottom: 16, lineHeight: 1.06 }}>
               Start investing today.
@@ -400,7 +401,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(32,212,184,0.4)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(var(--accent-rgb),0.4)' }}>
               Create Free Account <ChevronRight size={18} />
             </Link>
           </div>

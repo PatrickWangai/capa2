@@ -3,7 +3,7 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = '#ffffff';
 const SEC = 'rgba(235,235,245,0.6)';
-const ACCENT = '#20d4b8';
+const ACCENT = 'var(--accent)';
 const CARD = '#1c1c1e';
 
 function Nav() {
@@ -40,8 +40,8 @@ export default function TermsPage() {
         <h1 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.04em', marginBottom: 8 }}>Terms of Service</h1>
         <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: January 2024</p>
 
-        <div style={{ backgroundColor: 'rgba(32,212,184,0.08)', border: '1px solid rgba(32,212,184,0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 36 }}>
-          <p style={{ margin: 0, fontSize: 14, color: 'rgba(32,212,184,0.9)', lineHeight: 1.6 }}>
+        <div style={{ backgroundColor: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 36 }}>
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(var(--accent-rgb),0.9)', lineHeight: 1.6 }}>
             <strong>Important:</strong> Investing involves risk. By using Capa, you acknowledge that you may lose some or all of your invested capital. Please read these terms carefully.
           </p>
         </div>
