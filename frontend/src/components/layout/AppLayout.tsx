@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import CapaLogo from '../ui/CapaLogo';
+
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -66,8 +66,9 @@ export default function AppLayout() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
-          <CapaLogo size={44} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
+          <img src="/icon-512.png" alt="Capa" width={40} height={40} style={{ borderRadius: 10, display: 'block', flexShrink: 0 }} />
+          <span style={{ fontSize: 17, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em' }}>Capa</span>
         </div>
 
         {/* Nav */}
@@ -141,7 +142,7 @@ export default function AppLayout() {
           <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
-          <CapaLogo size={40} />
+          <img src="/icon-512.png" alt="Capa" width={32} height={32} style={{ borderRadius: 8, display: 'block' }} />
           <div style={{ width: 20 }} />
         </header>
 
