@@ -47,11 +47,11 @@ export default function LoginPage() {
 
       <div style={{ width: '100%', maxWidth: 380 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <CapaLogo size={130} />
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 16px' }}>Unstoppable Minds</p>
-          <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '0 0 4px' }}>Sign in to Capa</h1>
-          <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Enter your details to continue</p>
+        <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <CapaLogo size={110} />
+          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '4px 0 14px' }}>Unstoppable Minds</p>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '0 0 4px' }}>Sign in to Capa</h1>
+          <p style={{ fontSize: 14, color: SEC, margin: 0 }}>Enter your details to continue</p>
         </div>
 
         {/* Card */}
@@ -66,7 +66,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6, letterSpacing: '-0.01em' }}>Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 500, color: SEC, letterSpacing: '-0.01em' }}>Password</label>
+                <Link to="/forgot-password" style={{ fontSize: 12, color: ACCENT, textDecoration: 'none', fontWeight: 500 }}>Forgot password?</Link>
+              </div>
               <div style={{ position: 'relative' }}>
                 <input style={{ ...inputStyle('password'), paddingRight: 44 }} type={showPass ? 'text' : 'password'} placeholder="••••••••" required
                   value={form.password} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)}

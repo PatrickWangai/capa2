@@ -7,130 +7,168 @@ const ACCENT = '#f5821f';
 const TEXT    = '#ffffff';
 const SEC     = 'rgba(235,235,245,0.6)';
 
-// ── Canvas animation types & helpers (module-level so TS knows types) ────
-interface Particle { x: number; y: number; vx: number; vy: number; r: number; gr: string; hex: string; alpha: number; phase: number; }
-interface ChartLine { points: { x: number; y: number }[]; progress: number; speed: number; color: string; glow: string; width: number; }
+// ── Dreamy sky canvas ────────────────────────────────────────
+interface SkyCloud { x: number; y: number; drift: number; alpha: number; puffs: { dx: number; dy: number; r: number }[]; }
+interface SkyBird  { x: number; y: number; spd: number; sz: number; ph: number; fp: number; type: 0 | 1; }
 
-function buildPoints(seed: number, yBase: number, amplitude: number, w: number): { x: number; y: number }[] {
-  const pts: { x: number; y: number }[] = [];
-  let y = yBase;
-  for (let i = 0; i <= 80; i++) {
-    const x = (i / 80) * w;
-    y = yBase + Math.sin(i * 0.3 + seed) * amplitude * 0.4
-      + Math.sin(i * 0.7 + seed * 2) * amplitude * 0.3
-      + Math.sin(i * 1.4 + seed * 3) * amplitude * 0.15
-      - (i / 80) * amplitude * 0.6;
-    pts.push({ x, y });
-  }
-  return pts;
-}
-
-function renderChart(ctx: CanvasRenderingContext2D, line: ChartLine) {
-  line.progress = Math.min(1, line.progress + line.speed);
-  const pts = line.points;
-  const vis = Math.floor(line.progress * (pts.length - 1));
-  if (vis < 2) return;
-
-  ctx.save();
-  ctx.shadowColor = line.glow; ctx.shadowBlur = 12;
-  ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i = 1; i <= vis; i++) ctx.lineTo(pts[i].x, pts[i].y);
-  ctx.strokeStyle = line.color; ctx.lineWidth = line.width; ctx.lineJoin = 'round'; ctx.stroke();
-  ctx.restore();
-
-  const tip = pts[vis];
-  const tipColor = line.glow === '#f5821f' ? 'rgba(245,130,31,0.8)' : line.glow === '#3b82f6' ? 'rgba(59,130,246,0.6)' : 'rgba(255,255,255,0.3)';
-  const grad = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 14);
-  grad.addColorStop(0, tipColor); grad.addColorStop(1, 'transparent');
-  ctx.beginPath(); ctx.arc(tip.x, tip.y, 14, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
-  ctx.beginPath(); ctx.arc(tip.x, tip.y, line.width + 1, 0, Math.PI * 2);
-  ctx.fillStyle = line.glow; ctx.globalAlpha = 0.9; ctx.fill(); ctx.globalAlpha = 1;
-}
-
-function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, particles: Particle[], chartLines: ChartLine[]) {
-  ctx.clearRect(0, 0, w, h);
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
-  for (let x = 0; x < w; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-  for (let y = 0; y < h; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-
-  for (const line of chartLines) renderChart(ctx, line);
-
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 150) {
-        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(245,130,31,${(1 - d / 150) * 0.15})`; ctx.lineWidth = 0.5; ctx.stroke();
-      }
-    }
-  }
-
-  for (const p of particles) {
-    p.phase += 0.012; p.x += p.vx; p.y += p.vy;
-    if (p.x < 0 || p.x > w) p.vx *= -1;
-    if (p.y < 0 || p.y > h) p.vy *= -1;
-    const pr = p.r * (1 + Math.sin(p.phase) * 0.25);
-    const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, pr * 6);
-    grd.addColorStop(0, p.gr + String(p.alpha * 0.5) + ')'); grd.addColorStop(1, p.gr + '0)');
-    ctx.beginPath(); ctx.arc(p.x, p.y, pr * 6, 0, Math.PI * 2); ctx.fillStyle = grd; ctx.fill();
-    ctx.beginPath(); ctx.arc(p.x, p.y, pr, 0, Math.PI * 2);
-    ctx.fillStyle = p.hex; ctx.globalAlpha = p.alpha; ctx.fill(); ctx.globalAlpha = 1;
-  }
-}
-
-// ── Particle network canvas ──────────────────────────────────
 function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const elRaw = canvasRef.current;
     if (!elRaw) return;
     const ctxRaw = elRaw.getContext('2d');
     if (!ctxRaw) return;
-    // Explicit typed aliases so TypeScript doesn't lose narrowing in closures
-    const cvs = elRaw   as HTMLCanvasElement;
-    const ctx = ctxRaw  as CanvasRenderingContext2D;
+    const el  = elRaw  as HTMLCanvasElement;
+    const ctx = ctxRaw as CanvasRenderingContext2D;
+    let animId: number, t = 0, W = 0, H = 0;
+    let clouds: SkyCloud[] = [], birds: SkyBird[] = [];
 
-    let animId: number;
-    let w = 0, h = 0;
-    let particles: Particle[] = [];
-    let chartLines: ChartLine[] = [];
-
-    const COLORS = [
-      { hex: '#f5821f', gr: 'rgba(245,130,31,' },
-      { hex: '#3b82f6', gr: 'rgba(59,130,246,' },
-      { hex: '#8b5cf6', gr: 'rgba(139,92,246,' },
-      { hex: '#ffffff', gr: 'rgba(255,255,255,' },
-    ];
-
-    function setup() {
-      w = cvs.width  = cvs.offsetWidth;
-      h = cvs.height = cvs.offsetHeight;
-      chartLines = [
-        { points: buildPoints(1.2, h * 0.72, h * 0.12, w), progress: 0,   speed: 0.0018, color: 'rgba(245,130,31,0.55)', glow: '#f5821f', width: 2   },
-        { points: buildPoints(3.5, h * 0.82, h * 0.08, w), progress: 0.3, speed: 0.0012, color: 'rgba(59,130,246,0.35)',  glow: '#3b82f6', width: 1.5 },
-        { points: buildPoints(6.1, h * 0.62, h * 0.10, w), progress: 0.6, speed: 0.0009, color: 'rgba(255,255,255,0.15)', glow: '#ffffff', width: 1   },
+    function init() {
+      W = el.width  = el.offsetWidth;
+      H = el.height = el.offsetHeight;
+      clouds = [
+        { x: W*0.10, y: H*0.18, drift: 0.08, alpha: 0.88,
+          puffs: [{dx:0,dy:0,r:96},{dx:82,dy:-24,r:74},{dx:-52,dy:18,r:68},
+                  {dx:148,dy:6,r:58},{dx:-98,dy:32,r:52},{dx:50,dy:-60,r:64},{dx:188,dy:-8,r:46}] },
+        { x: W*0.73, y: H*0.30, drift: 0.05, alpha: 0.78,
+          puffs: [{dx:0,dy:0,r:72},{dx:62,dy:-16,r:58},{dx:-40,dy:22,r:52},
+                  {dx:102,dy:8,r:46},{dx:-78,dy:14,r:44}] },
+        { x: W*0.50, y: H*0.07, drift: 0.06, alpha: 0.52,
+          puffs: [{dx:0,dy:0,r:48},{dx:38,dy:-8,r:36},{dx:-28,dy:10,r:32}] },
       ];
-      const count = Math.min(90, Math.floor(w * h / 10000));
-      particles = Array.from({ length: count }, () => {
-        const c = COLORS[Math.random() < 0.45 ? 0 : Math.random() < 0.6 ? 1 : Math.random() < 0.7 ? 2 : 3];
-        return { x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35, r: Math.random() * 1.8 + 0.6, ...c, alpha: Math.random() * 0.55 + 0.2, phase: Math.random() * Math.PI * 2 };
-      });
+      birds = Array.from({ length: 9 }, (_, i) => ({
+        x: Math.random() * W,
+        y: H * 0.20 + Math.random() * H * 0.45,
+        spd: 0.25 + Math.random() * 0.55,
+        sz:  5 + Math.random() * 16,
+        ph:  Math.random() * Math.PI * 2,
+        fp:  0.035 + Math.random() * 0.03,
+        type: (i < 6 ? 0 : 1) as 0 | 1,
+      }));
     }
 
-    function tick() {
-      renderFrame(ctx, w, h, particles, chartLines);
-      animId = requestAnimationFrame(tick);
+    function draw() {
+      t++;
+      ctx.clearRect(0, 0, W, H);
+      const hy = H * 0.70;
+
+      // Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, hy);
+      sky.addColorStop(0,    '#082e3c');
+      sky.addColorStop(0.22, '#0c5260');
+      sky.addColorStop(0.52, '#0f8878');
+      sky.addColorStop(0.80, '#18c0a8');
+      sky.addColorStop(1,    '#35d8bc');
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
+
+      // Sun glow
+      const sg = ctx.createRadialGradient(W*0.28, hy*0.78, 0, W*0.28, hy*0.78, W*0.38);
+      sg.addColorStop(0,    'rgba(255,218,110,0.30)');
+      sg.addColorStop(0.45, 'rgba(255,175,55,0.08)');
+      sg.addColorStop(1,    'transparent');
+      ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+
+      // Light rays
+      ctx.save(); ctx.globalAlpha = 0.04 + Math.sin(t * 0.008) * 0.008;
+      const rx = W*0.28, ry = hy*0.60;
+      for (let i = 0; i < 7; i++) {
+        const a = -0.42 + i*0.13 + Math.sin(t*0.007 + i*0.8)*0.025;
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx + Math.cos(a)*W*1.6,       ry + Math.sin(a)*H*1.4);
+        ctx.lineTo(rx + Math.cos(a+0.055)*W*1.6, ry + Math.sin(a+0.055)*H*1.4);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255,240,165,1)'; ctx.fill();
+      }
+      ctx.restore();
+
+      // Clouds
+      for (const c of clouds) {
+        const ox = Math.sin(t*0.006*c.drift + c.x*0.001)*10;
+        const oy = Math.sin(t*0.004*c.drift)*4;
+        for (const p of c.puffs) {
+          const px = c.x + p.dx + ox, py = c.y + p.dy + oy;
+          const g = ctx.createRadialGradient(px, py + p.r*0.15, 0, px, py, p.r);
+          g.addColorStop(0,    `rgba(255,242,205,${c.alpha})`);
+          g.addColorStop(0.35, `rgba(250,228,158,${c.alpha*0.88})`);
+          g.addColorStop(0.70, `rgba(200,225,230,${c.alpha*0.44})`);
+          g.addColorStop(1,    'rgba(140,200,212,0)');
+          ctx.beginPath(); ctx.arc(px, py, p.r, 0, Math.PI*2);
+          ctx.fillStyle = g; ctx.fill();
+        }
+      }
+
+      // Water
+      const wg = ctx.createLinearGradient(0, hy, 0, H);
+      wg.addColorStop(0,   '#28cfbc');
+      wg.addColorStop(0.5, '#18aaa0');
+      wg.addColorStop(1,   '#0a6c60');
+      ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
+
+      // Shimmer
+      ctx.save();
+      for (let i = 0; i < 38; i++) {
+        const sx = ((i*137.5 + t*0.4) % W);
+        const sy = hy + ((i*73.1) % ((H-hy)*0.55));
+        const sa = (Math.sin(t*0.06 + i*1.7)*0.5 + 0.5)*0.48;
+        ctx.beginPath(); ctx.ellipse(sx, sy, 9+(i%4)*3, 1.5, 0, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,200,${sa})`; ctx.fill();
+      }
+      ctx.restore();
+
+      // Grass
+      const gg = ctx.createLinearGradient(0, H*0.86, 0, H);
+      gg.addColorStop(0, '#52b018'); gg.addColorStop(1, '#2c6e10');
+      ctx.fillStyle = gg;
+      ctx.beginPath(); ctx.moveTo(0, H*0.88);
+      for (let x = 0; x <= W; x += 40) ctx.lineTo(x, H*0.86 + Math.sin(x*0.04 + t*0.015)*6);
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+
+      // Creatures
+      for (const b of birds) {
+        b.x += b.spd;
+        if (b.x > W + 100) b.x = -100;
+        b.ph += b.fp;
+        const wing = Math.sin(b.ph) * b.sz * 0.65;
+        ctx.save();
+        ctx.globalAlpha = 0.50;
+        ctx.fillStyle = ctx.strokeStyle = '#0a2830';
+        ctx.lineWidth = b.sz * 0.16;
+        if (b.type === 0) {
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y);
+          ctx.bezierCurveTo(b.x-b.sz*1.6, b.y-wing,      b.x-b.sz*3.0, b.y+wing*0.25, b.x-b.sz*3.8, b.y+wing*0.45);
+          ctx.bezierCurveTo(b.x-b.sz*2.6, b.y+wing*0.75, b.x-b.sz*0.4, b.y+b.sz*0.3,  b.x, b.y);
+          ctx.bezierCurveTo(b.x+b.sz*0.4, b.y+b.sz*0.3,  b.x+b.sz*2.6, b.y+wing*0.75, b.x+b.sz*3.8, b.y+wing*0.45);
+          ctx.bezierCurveTo(b.x+b.sz*3.0, b.y+wing*0.25, b.x+b.sz*1.6, b.y-wing,      b.x, b.y);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(b.x-b.sz*0.3, b.y+b.sz*0.2);
+          ctx.bezierCurveTo(b.x-b.sz*0.6, b.y+b.sz*1.1, b.x-b.sz*0.2, b.y+b.sz*1.9, b.x-b.sz*0.15, b.y+b.sz*2.3);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(b.x-b.sz*0.1, b.y); ctx.quadraticCurveTo(b.x-b.sz*0.9, b.y-wing, b.x-b.sz*1.7, b.y-wing*0.4);
+          ctx.moveTo(b.x+b.sz*0.1, b.y); ctx.quadraticCurveTo(b.x+b.sz*0.9, b.y-wing, b.x+b.sz*1.7, b.y-wing*0.4);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // Text-legibility overlay
+      const ov = ctx.createLinearGradient(0, 0, 0, H);
+      ov.addColorStop(0,    'rgba(0,0,0,0.54)');
+      ov.addColorStop(0.40, 'rgba(0,0,0,0.18)');
+      ov.addColorStop(0.65, 'rgba(0,0,0,0.06)');
+      ov.addColorStop(1,    'rgba(0,0,0,0.42)');
+      ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
+
+      animId = requestAnimationFrame(draw);
     }
 
-    setup();
-    animId = requestAnimationFrame(tick);
-
-    const ro = new ResizeObserver(() => { setup(); });
-    ro.observe(cvs);
+    init(); animId = requestAnimationFrame(draw);
+    const ro = new ResizeObserver(init);
+    ro.observe(el);
     return () => { cancelAnimationFrame(animId); ro.disconnect(); };
   }, []);
 
@@ -277,13 +315,6 @@ export default function LandingPage() {
 
         {/* Canvas animation layer */}
         <HeroCanvas />
-
-        {/* Ambient glow orbs */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
-          <div style={{ position: 'absolute', top: '15%', left: '10%', width: 560, height: 560, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,130,31,0.18) 0%, transparent 65%)', animation: 'orb-drift-1 14s ease-in-out infinite', filter: 'blur(2px)' }} />
-          <div style={{ position: 'absolute', top: '30%', right: '8%', width: 440, height: 440, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 65%)', animation: 'orb-drift-2 18s ease-in-out infinite', filter: 'blur(2px)' }} />
-          <div style={{ position: 'absolute', bottom: '10%', left: '35%', width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 65%)', animation: 'orb-drift-1 22s ease-in-out infinite reverse', filter: 'blur(2px)' }} />
-        </div>
 
         {/* Bottom gradient fade */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, #000 0%, transparent 100%)', zIndex: 2 }} />
