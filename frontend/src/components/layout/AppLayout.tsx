@@ -8,8 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
-import CapaCIcon from '../ui/CapaCIcon';
-
+import CapaLogo from '../ui/CapaLogo';
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -67,9 +66,8 @@ export default function AppLayout() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
-          <CapaCIcon size={40} />
-          <span style={{ fontSize: 17, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em' }}>Capa</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
+          <CapaLogo size={44} />
         </div>
 
         {/* Nav */}
@@ -143,7 +141,7 @@ export default function AppLayout() {
           <button onClick={() => setOpen(true)} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
             <Menu size={20} />
           </button>
-          <CapaCIcon size={32} />
+          <CapaLogo size={40} />
           <div style={{ width: 20 }} />
         </header>
 
