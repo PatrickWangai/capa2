@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, Settings2, ChevronDown
+  CreditCard, ShieldCheck, LogOut, Menu, User, ShieldAlert, SlidersHorizontal, X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
@@ -25,12 +25,10 @@ const nav = [
 export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [customOpen, setCustomOpen] = useState(false);
+  const [open, setOpen]           = useState(false);
+  const [paletteOpen, setPalette] = useState(false);
+  const { theme, setTheme }       = useTheme();
 
-  // Refresh user profile on mount so adminRole is always up to date
-  // even for sessions that predate the adminRole field being added.
   useEffect(() => {
     api.get('/api/auth/me').then(r => {
       if (r.data?.user && accessToken && refreshToken) {
@@ -50,11 +48,78 @@ export default function AppLayout() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
+      {/* Mobile nav overlay */}
       {open && (
         <div className="fixed inset-0 z-20 lg:hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setOpen(false)} />
       )}
 
-      {/* Sidebar — Apple frosted glass */}
+      {/* Customizations drawer overlay */}
+      {paletteOpen && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 50 }}
+          onClick={() => setPalette(false)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position: 'absolute', top: 0, right: 0, width: 300, height: '100%',
+              backgroundColor: 'rgba(8,16,40,0.97)',
+              backdropFilter: 'saturate(180%) blur(32px)',
+              WebkitBackdropFilter: 'saturate(180%) blur(32px)',
+              borderLeft: '1px solid rgba(255,255,255,0.10)',
+              display: 'flex', flexDirection: 'column',
+              boxShadow: '-8px 0 40px rgba(0,0,0,0.4)',
+            }}
+          >
+            {/* Drawer header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <span style={{ fontSize: 16, fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <SlidersHorizontal size={16} style={{ color: 'var(--accent)' }} />
+                Customizations
+              </span>
+              <button onClick={() => setPalette(false)} style={{ color: 'rgba(235,235,245,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Colour theme grid */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(235,235,245,0.38)', letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 16px' }}>Colour Theme</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => {
+                  const active = theme === name;
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => setTheme(name)}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7,
+                        padding: '12px 6px', borderRadius: 14,
+                        backgroundColor: active ? 'rgba(255,255,255,0.08)' : 'transparent',
+                        border: active ? `1.5px solid ${t.swatch}` : '1.5px solid rgba(255,255,255,0.06)',
+                        cursor: 'pointer', transition: 'all 0.15s',
+                      }}
+                      onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
+                      onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    >
+                      <div style={{
+                        width: 34, height: 34, borderRadius: '50%', background: t.swatch,
+                        boxShadow: active ? `0 0 0 2.5px #fff, 0 0 0 4.5px ${t.swatch}` : `0 2px 8px rgba(0,0,0,0.35)`,
+                        transition: 'box-shadow 0.15s',
+                      }} />
+                      <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, color: active ? '#fff' : 'rgba(235,235,245,0.45)', letterSpacing: '0.02em' }}>
+                        {t.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar */}
       <aside
         className={clsx(
           'fixed inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto',
@@ -68,9 +133,18 @@ export default function AppLayout() {
           boxShadow: '1px 0 0 rgba(0,0,0,0.2)',
         }}
       >
-        {/* Logo */}
+        {/* Logo + Customizations button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
+          <button
+            onClick={() => { setPalette(true); setOpen(false); }}
+            title="Customizations"
+            style={{ marginLeft: 'auto', color: 'rgba(235,235,245,0.45)', background: 'none', border: 'none', cursor: 'pointer', padding: 5, borderRadius: 8, display: 'flex', transition: 'color 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(235,235,245,0.45)'; }}
+          >
+            <SlidersHorizontal size={16} />
+          </button>
         </div>
 
         {/* Nav */}
@@ -116,57 +190,6 @@ export default function AppLayout() {
               )}
             </NavLink>
           ))}
-
-          {/* Customizations accordion */}
-          <button
-            onClick={() => setCustomOpen(o => !o)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-              padding: '9px 12px', borderRadius: 10, marginTop: 2,
-              fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
-              cursor: 'pointer', color: 'rgba(235,235,245,0.85)', transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-          >
-            <Settings2 size={18} strokeWidth={1.8} />
-            Customizations
-            <ChevronDown
-              size={14}
-              style={{ marginLeft: 'auto', transition: 'transform 0.2s', transform: customOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            />
-          </button>
-
-          {customOpen && (
-            <div style={{ padding: '10px 14px 6px', borderRadius: 10, marginTop: 2, backgroundColor: 'rgba(255,255,255,0.04)' }}>
-              <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(235,235,245,0.38)', letterSpacing: '0.09em', textTransform: 'uppercase', margin: '0 0 10px' }}>Colour Theme</p>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
-                  <button
-                    key={name}
-                    title={t.label}
-                    onClick={() => setTheme(name)}
-                    style={{
-                      width: 24, height: 24, borderRadius: '50%',
-                      background: t.swatch,
-                      border: theme === name ? '2.5px solid #fff' : '2.5px solid transparent',
-                      outline: theme === name ? `2px solid ${t.swatch}` : 'none',
-                      outlineOffset: 1,
-                      cursor: 'pointer', flexShrink: 0, padding: 0,
-                      transition: 'transform 0.15s',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.22)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
-                  />
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
-                {(Object.entries(THEMES) as [ThemeName, typeof THEMES[ThemeName]][]).map(([name, t]) => (
-                  <span key={name} style={{ fontSize: 10, color: theme === name ? 'var(--accent)' : 'rgba(235,235,245,0.35)', fontWeight: theme === name ? 600 : 400 }}>{t.label}</span>
-                ))}
-              </div>
-            </div>
-          )}
         </nav>
 
         {/* User */}
@@ -196,7 +219,9 @@ export default function AppLayout() {
             <Menu size={20} />
           </button>
           <CapaLogo size={40} />
-          <div style={{ width: 20 }} />
+          <button onClick={() => setPalette(true)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
+            <SlidersHorizontal size={18} />
+          </button>
         </header>
 
         <main style={{ flex: 1, overflowY: 'auto', padding: '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>

@@ -36,14 +36,27 @@ function HeroCanvas() {
         { x: W*0.50, y: H*0.07, drift: 0.06, alpha: 0.52,
           puffs: [{dx:0,dy:0,r:48},{dx:38,dy:-8,r:36},{dx:-28,dy:10,r:32}] },
       ];
-      birds = Array.from({ length: 11 }, () => ({
-        x: Math.random() * W,
-        y: H * 0.10 + Math.random() * H * 0.50,
-        spd: 0.20 + Math.random() * 0.60,
-        sz:  6 + Math.random() * 14,
-        ph:  Math.random() * Math.PI * 2,
-        fp:  0.030 + Math.random() * 0.028,
-      }));
+      const rng = () => Math.random();
+      birds = [
+        // 3 large close birds — slow majestic flap, fast horizontal drift
+        ...Array.from({ length: 3 }, () => ({
+          x: rng() * W, y: H * 0.10 + rng() * H * 0.22,
+          spd: 0.55 + rng() * 0.50, sz: 20 + rng() * 9,
+          ph: rng() * Math.PI * 2,  fp: 0.016 + rng() * 0.010,
+        })),
+        // 4 medium birds — moderate flap
+        ...Array.from({ length: 4 }, () => ({
+          x: rng() * W, y: H * 0.14 + rng() * H * 0.34,
+          spd: 0.30 + rng() * 0.35, sz: 11 + rng() * 7,
+          ph: rng() * Math.PI * 2,  fp: 0.026 + rng() * 0.014,
+        })),
+        // 5 small distant birds — fast flap, slow drift
+        ...Array.from({ length: 5 }, () => ({
+          x: rng() * W, y: H * 0.06 + rng() * H * 0.30,
+          spd: 0.14 + rng() * 0.22, sz: 4 + rng() * 6,
+          ph: rng() * Math.PI * 2,  fp: 0.042 + rng() * 0.024,
+        })),
+      ];
     }
 
     function draw() {
@@ -105,76 +118,95 @@ function HeroCanvas() {
       wg.addColorStop(1,   cs.getPropertyValue('--bg-2').trim() || '#0f2d5c');
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
-      // Shimmer
+      // Water shimmer (light glints on surface)
       ctx.save();
-      for (let i = 0; i < 38; i++) {
-        const sx = ((i*137.5 + t*0.4) % W);
-        const sy = hy + ((i*73.1) % ((H-hy)*0.55));
-        const sa = (Math.sin(t*0.06 + i*1.7)*0.5 + 0.5)*0.48;
-        ctx.beginPath(); ctx.ellipse(sx, sy, 9+(i%4)*3, 1.5, 0, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(255,255,200,${sa})`; ctx.fill();
+      for (let i = 0; i < 42; i++) {
+        const sx = ((i * 137.5 + t * 0.35) % W);
+        const sy = hy + ((i * 79.3) % ((H - hy) * 0.65));
+        const sa = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.44;
+        ctx.beginPath(); ctx.ellipse(sx, sy, 10 + (i % 5) * 3, 1.4, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,230,${sa})`; ctx.fill();
       }
       ctx.restore();
 
-      // Grass
-      const gg = ctx.createLinearGradient(0, H*0.86, 0, H);
-      gg.addColorStop(0, '#52b018'); gg.addColorStop(1, '#2c6e10');
-      ctx.fillStyle = gg;
-      ctx.beginPath(); ctx.moveTo(0, H*0.88);
-      for (let x = 0; x <= W; x += 40) ctx.lineTo(x, H*0.86 + Math.sin(x*0.04 + t*0.015)*6);
-      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+      // Horizon glow where sky meets water
+      const hg = ctx.createLinearGradient(0, hy - 18, 0, hy + 24);
+      hg.addColorStop(0,   'rgba(255,255,255,0.00)');
+      hg.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+      hg.addColorStop(1,   'rgba(255,255,255,0.00)');
+      ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
 
-      // Birds — side-view silhouettes (body + head + beak + flapping wing + forked tail)
+      // Birds — jointed wing anatomy: shoulder → elbow → wrist → tip
       for (const b of birds) {
         b.x += b.spd;
-        if (b.x > W + 140) b.x = -140;
+        if (b.x > W + 180) b.x = -180;
         b.ph += b.fp;
 
-        const s  = b.sz;
-        const fl = Math.sin(b.ph);           // -1 (down) → +1 (up)
-        const tipX = -s * 2.5;
-        const tipY =  fl * s * 1.55;
+        const s   = b.sz;
+        const fl  = Math.sin(b.ph);                 // -1 downstroke, +1 upstroke
+        // Upstroke goes higher than downstroke (realistic bird biomechanics)
+        const wy  = fl > 0 ? fl * s * 1.30 : fl * s * 0.80;
+
+        // Wing joint positions relative to shoulder (0,0)
+        const eX = -s * 0.95, eY = fl * s * 0.48;  // elbow tracks ½ the flap
+        const wX = -s * 1.82, wY = wy * 0.88;       // wrist tracks most of flap
+        const tX = -s * 2.72, tY = wy;              // tip = full flap extent
+        const shX = s * 0.06, shY = -s * 0.15;      // shoulder on upper body
 
         ctx.save();
         ctx.translate(b.x, b.y);
-        ctx.globalAlpha = 0.62;
-        ctx.fillStyle = 'rgba(4,8,36,0.88)';
+        ctx.globalAlpha = 0.60 + Math.min(s / 80, 0.22);  // larger = more opaque
+        ctx.fillStyle = 'rgba(3,6,28,0.92)';
 
-        // Wing (filled swept shape, tip goes up on upstroke)
+        // Wing — leading edge (top) then trailing edge (bottom), closed shape
         ctx.beginPath();
-        ctx.moveTo(s * 0.1, -s * 0.12);
-        ctx.bezierCurveTo(tipX * 0.22, tipY * 0.38 - s * 0.32, tipX * 0.72, tipY * 0.88, tipX, tipY);
-        ctx.bezierCurveTo(tipX * 0.78, tipY * 0.38 + s * 0.36, s * 0.04, s * 0.30, s * 0.1, -s * 0.12);
+        ctx.moveTo(shX, shY);
+        ctx.bezierCurveTo(
+          shX + eX * 0.38, shY + eY * 0.52 - s * 0.22,
+          shX + wX * 0.74, shY + wY * 0.84 - s * 0.10,
+          shX + tX,        shY + tY
+        );
+        ctx.bezierCurveTo(
+          shX + wX * 0.86, shY + wY * 0.56 + s * 0.28,
+          shX + eX * 0.55, shY + eY * 0.38 + s * 0.32,
+          shX,             shY + s * 0.24
+        );
+        ctx.closePath();
         ctx.fill();
 
-        // Body oval (drawn on top so wing tucks under it)
+        // Body — streamlined oval over wing root
         ctx.beginPath();
-        ctx.ellipse(0, 0, s * 1.32, s * 0.34, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, s * 1.28, s * 0.31, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Neck — short oval bridging body to head
+        ctx.beginPath();
+        ctx.ellipse(s * 1.02, -s * 0.08, s * 0.43, s * 0.22, -0.25, 0, Math.PI * 2);
         ctx.fill();
 
         // Head
         ctx.beginPath();
-        ctx.arc(s * 1.18, -s * 0.10, s * 0.37, 0, Math.PI * 2);
+        ctx.arc(s * 1.38, -s * 0.20, s * 0.27, 0, Math.PI * 2);
         ctx.fill();
 
-        // Beak
+        // Beak — slim pointed triangle
         ctx.beginPath();
-        ctx.moveTo(s * 1.52, -s * 0.10);
-        ctx.lineTo(s * 1.94,  s * 0.00);
-        ctx.lineTo(s * 1.52,  s * 0.16);
+        ctx.moveTo(s * 1.62, -s * 0.20);
+        ctx.lineTo(s * 2.05, -s * 0.12);
+        ctx.lineTo(s * 1.62, -s * 0.04);
         ctx.closePath();
         ctx.fill();
 
-        // Tail — forked (two lobes)
+        // Tail — forked, two fan lobes
         ctx.beginPath();
-        ctx.moveTo(-s * 1.25, -s * 0.02);
-        ctx.bezierCurveTo(-s * 1.50, -s * 0.06, -s * 1.92, -s * 0.50, -s * 2.05, -s * 0.64);
-        ctx.bezierCurveTo(-s * 1.70, -s * 0.08, -s * 1.32,  s * 0.06, -s * 1.25, -s * 0.02);
+        ctx.moveTo(-s * 1.22,  s * 0.02);
+        ctx.bezierCurveTo(-s * 1.42, -s * 0.02, -s * 1.84, -s * 0.44, -s * 1.96, -s * 0.57);
+        ctx.bezierCurveTo(-s * 1.64, -s * 0.04, -s * 1.30,  s * 0.10, -s * 1.22,  s * 0.02);
         ctx.fill();
         ctx.beginPath();
-        ctx.moveTo(-s * 1.25,  s * 0.02);
-        ctx.bezierCurveTo(-s * 1.50,  s * 0.06, -s * 1.92,  s * 0.44, -s * 2.05,  s * 0.58);
-        ctx.bezierCurveTo(-s * 1.70,  s * 0.08, -s * 1.32, -s * 0.06, -s * 1.25,  s * 0.02);
+        ctx.moveTo(-s * 1.22,  s * 0.02);
+        ctx.bezierCurveTo(-s * 1.42,  s * 0.10, -s * 1.84,  s * 0.36, -s * 1.96,  s * 0.49);
+        ctx.bezierCurveTo(-s * 1.64,  s * 0.10, -s * 1.30, -s * 0.04, -s * 1.22,  s * 0.02);
         ctx.fill();
 
         ctx.restore();
