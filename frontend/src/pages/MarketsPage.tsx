@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { Search, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
 // Symbols that have a local logo file in /public/logos/
 const LOCAL_LOGOS = new Set([
-  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
-  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','FMLY','FTGH',
-  'GOOGL','IMH','ISF','JPM','JUB','KCB','KEGN','KNRE','KPC','KPLC','KQ',
-  'KUKZ','LBTY','LKL','LLOY','META','MSFT','NCBA','NMG','NSE','NVDA',
-  'QQQ','SASN','SBIC','SCAN','SCBK','SCOM','SGL','SHEL','SLAM','SMER',
-  'SMWF','SPY','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO','XPRS',
+  'AAPL','ABSA','AMAC','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
+  'CGEN','CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','EVRD','FMLY','FTGH',
+  'GOOGL','HAFR','HFCK','IMH','ISF','JPM','JUB','KAPC','KCB','KEGN','KNRE','KPC','KPLC','KQ',
+  'KUKZ','LBTY','LIMT','LKL','LLOY','META','MSFT','NBV','NCBA','NMG','NSE','NVDA',
+  'OCH','PORT','QQQ','SASN','SBIC','SCAN','SCBK','SCOM','SGL','SHEL','SKL','SLAM','SMER',
+  'SMWF','SPY','TOTL','TPSE','TSLA','UCHM','UMME','UNGA','VOD','VTI','VUKE','VWO','WTK','XPRS',
 ]);
 
 const SYMBOL_COLORS = [
@@ -122,8 +122,7 @@ export default function MarketsPage() {
           {/* Search + period toggle */}
           <div className="flex items-center gap-3 flex-wrap">
             <div className="relative max-w-sm flex-1">
-              <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
-              <input className="input pl-9 w-full" placeholder="Search by name or symbol…" value={search} onChange={e => setSearch(e.target.value)} />
+              <input className="input w-full" placeholder="Search by name or symbol…" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
             <div className="flex items-center gap-1 bg-gray-800 rounded-lg p-1 shrink-0">
               {PERIODS.map(p => (
