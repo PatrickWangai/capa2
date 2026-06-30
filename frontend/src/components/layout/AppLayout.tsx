@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import CapaLogo from '../ui/CapaLogo';
-import { useTheme, THEMES, COLOUR_THEMES, type ThemeName } from '../../context/ThemeContext';
+import { useTheme, THEMES, COLOUR_THEMES } from '../../context/ThemeContext';
 
 const nav = [
   { to: '/dashboard',     label: 'Dashboard',    icon: LayoutDashboard },
@@ -21,17 +21,13 @@ const nav = [
   { to: '/profile',       label: 'Profile',      icon: User },
 ];
 
-const APPEARANCES: { name: ThemeName; label: string; bg: string; fg: string }[] = [
-  { name: 'white', label: 'White', bg: '#f5f5f7', fg: '#1d1d1f' },
-  { name: 'black', label: 'Black', bg: '#181818', fg: '#f5f5f7' },
-];
 
 export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
   const [paletteOpen, setPalette] = useState(false);
   const { theme, setTheme }       = useTheme();
-  const isLight = THEMES[theme]?.isLight ?? false;
+  const isLight = false;
 
   useEffect(() => {
     api.get('/api/auth/me').then(r => {
@@ -87,47 +83,24 @@ export default function AppLayout() {
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
 
-              {/* ── Appearance (Black / White) ── */}
+              {/* ── Appearance (Black) ── */}
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Appearance</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 24 }}>
-                {APPEARANCES.map(({ name, label, bg, fg }) => {
-                  const active = theme === name;
-                  const isLightCard = name === 'white';
-                  const activeBorder = isLightCard ? '#0071e3' : '#f5f5f7';
-                  return (
-                    <button
-                      key={name}
-                      onClick={() => setTheme(name)}
-                      style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                        padding: '14px 10px', borderRadius: 16, cursor: 'pointer',
-                        backgroundColor: active
-                          ? (isLightCard ? 'rgba(0,113,227,0.08)' : 'rgba(255,255,255,0.08)')
-                          : (isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)'),
-                        border: active
-                          ? `2px solid ${activeBorder}`
-                          : `1.5px solid ${isLight ? 'rgba(0,0,0,0.10)' : 'rgba(255,255,255,0.08)'}`,
-                        transition: 'all 0.15s',
-                      }}
-                      onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)'; }}
-                      onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)'; }}
-                    >
-                      {/* Colour preview swatch */}
-                      <div style={{
-                        width: 60, height: 36, borderRadius: 10,
-                        background: bg,
-                        border: `1px solid ${isLightCard ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.10)'}`,
-                        boxShadow: active ? `0 0 0 2px ${activeBorder}` : '0 1px 4px rgba(0,0,0,0.2)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <div style={{ width: 28, height: 14, borderRadius: 4, background: fg, opacity: 0.25 }} />
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? activeBorder : drawerLabelClr }}>
-                        {label}
-                      </span>
-                    </button>
-                  );
-                })}
+              <div style={{ marginBottom: 24 }}>
+                <button
+                  onClick={() => setTheme('black')}
+                  style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                    padding: '14px 10px', borderRadius: 16, cursor: 'pointer', width: '48%',
+                    backgroundColor: theme === 'black' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
+                    border: theme === 'black' ? '2px solid #f5f5f7' : '1.5px solid rgba(255,255,255,0.08)',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <div style={{ width: 60, height: 36, borderRadius: 10, background: '#181818', border: '1px solid rgba(255,255,255,0.10)', boxShadow: theme === 'black' ? '0 0 0 2px #f5f5f7' : '0 1px 4px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 28, height: 14, borderRadius: 4, background: '#f5f5f7', opacity: 0.25 }} />
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: theme === 'black' ? 600 : 500, color: theme === 'black' ? '#f5f5f7' : drawerLabelClr }}>Black</span>
+                </button>
               </div>
 
               {/* ── Colour Theme ── */}
