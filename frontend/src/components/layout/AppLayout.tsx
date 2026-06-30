@@ -4,7 +4,6 @@ import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
   CreditCard, ShieldCheck, LogOut, User, ShieldAlert, X, Palette,
-  Sun, Moon,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -22,9 +21,9 @@ const nav = [
   { to: '/profile',       label: 'Profile',      icon: User },
 ];
 
-const APPEARANCES: { name: ThemeName; label: string; sub: string; icon: typeof Sun; preview: string }[] = [
-  { name: 'white', label: 'Light',  sub: 'Day',   icon: Sun,  preview: '#f5f5f7' },
-  { name: 'black', label: 'Dark',   sub: 'Night', icon: Moon, preview: '#1c1c1e' },
+const APPEARANCES: { name: ThemeName; label: string; bg: string; fg: string }[] = [
+  { name: 'white', label: 'White', bg: '#f5f5f7', fg: '#1d1d1f' },
+  { name: 'black', label: 'Black', bg: '#181818', fg: '#f5f5f7' },
 ];
 
 export default function AppLayout() {
@@ -91,9 +90,10 @@ export default function AppLayout() {
               {/* ── Appearance (Black / White) ── */}
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Appearance</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 24 }}>
-                {APPEARANCES.map(({ name, label, sub, icon: Icon, preview }) => {
+                {APPEARANCES.map(({ name, label, bg, fg }) => {
                   const active = theme === name;
                   const isLightCard = name === 'white';
+                  const activeBorder = isLightCard ? '#0071e3' : '#f5f5f7';
                   return (
                     <button
                       key={name}
@@ -105,30 +105,26 @@ export default function AppLayout() {
                           ? (isLightCard ? 'rgba(0,113,227,0.08)' : 'rgba(255,255,255,0.08)')
                           : (isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)'),
                         border: active
-                          ? `2px solid ${isLightCard ? '#0071e3' : '#f5f5f7'}`
+                          ? `2px solid ${activeBorder}`
                           : `1.5px solid ${isLight ? 'rgba(0,0,0,0.10)' : 'rgba(255,255,255,0.08)'}`,
                         transition: 'all 0.15s',
                       }}
                       onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)'; }}
                       onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)'; }}
                     >
-                      {/* Mini preview card */}
+                      {/* Colour preview swatch */}
                       <div style={{
-                        width: 60, height: 40, borderRadius: 10, overflow: 'hidden',
-                        background: name === 'white' ? '#f5f5f7' : '#000000',
-                        border: '1px solid rgba(0,0,0,0.12)',
+                        width: 60, height: 36, borderRadius: 10,
+                        background: bg,
+                        border: `1px solid ${isLightCard ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.10)'}`,
+                        boxShadow: active ? `0 0 0 2px ${activeBorder}` : '0 1px 4px rgba(0,0,0,0.2)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: active ? `0 0 0 2px ${isLightCard ? '#0071e3' : '#fff'}` : '0 1px 4px rgba(0,0,0,0.2)',
-                        position: 'relative',
                       }}>
-                        <Icon size={16} color={name === 'white' ? '#1d1d1f' : '#f5f5f7'} strokeWidth={1.8} />
+                        <div style={{ width: 28, height: 14, borderRadius: 4, background: fg, opacity: 0.25 }} />
                       </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? (isLightCard ? '#0071e3' : drawerHeadText) : drawerLabelClr }}>
-                          {label}
-                        </div>
-                        <div style={{ fontSize: 10, color: drawerLabelClr, marginTop: 1 }}>{sub}</div>
-                      </div>
+                      <span style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? activeBorder : drawerLabelClr }}>
+                        {label}
+                      </span>
                     </button>
                   );
                 })}

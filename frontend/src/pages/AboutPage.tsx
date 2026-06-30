@@ -93,6 +93,50 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Rules & Guidelines */}
+      <section style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 64px' }}>
+        <h2 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 8, textAlign: 'center' }}>Rules &amp; Guidelines</h2>
+        <p style={{ fontSize: 15, color: SEC, textAlign: 'center', marginBottom: 32 }}>Everything you need to know to get started on Capa.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {[
+            {
+              step: '01',
+              title: 'How to Open an Account',
+              sub: 'If you are new!',
+              body: 'Requirements: Email address, phone number, KRA PIN, and your preferred mode of payment and deposit.',
+            },
+            {
+              step: '02',
+              title: 'Deposit Money',
+              sub: null,
+              body: 'Deposit money using your preferred mobile banking app, then refresh this page — your balance will update automatically. If you encounter any errors, contact our support team. After depositing, you will need to convert currencies based on the country in which each stock is listed.',
+            },
+            {
+              step: '03',
+              title: 'Changing Currencies',
+              sub: null,
+              body: 'Select your preferred country and your mobile wallet balance will be converted automatically using the live exchange rate for that country.',
+            },
+            {
+              step: '04',
+              title: 'Buying Stocks',
+              sub: null,
+              body: 'Select a country to view its stock exchanges and market listings, including publicly traded companies and their current prices. You can choose to invest in individual stocks or in our index fund.',
+            },
+          ].map(({ step, title, sub, body }) => (
+            <div key={step} style={{ backgroundColor: CARD, borderRadius: 18, padding: '28px 32px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: ACCENT, opacity: 0.7, minWidth: 40, lineHeight: 1 }}>{step}</div>
+              <div>
+                <h3 style={{ fontSize: 17, fontWeight: 600, margin: '0 0 2px', letterSpacing: '-0.02em' }}>
+                  {title}{sub && <span style={{ fontSize: 13, fontWeight: 400, color: SEC, marginLeft: 8 }}>— {sub}</span>}
+                </h3>
+                <p style={{ fontSize: 14, color: SEC, margin: '8px 0 0', lineHeight: 1.7 }}>{body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
       <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', marginTop: 24 }}>
         <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>Join thousands of investors</h2>

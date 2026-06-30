@@ -64,13 +64,12 @@ function HeroCanvas() {
       ctx.clearRect(0, 0, W, H);
       const hy = H * 0.70;
 
-      const cs = getComputedStyle(document.documentElement);
       const sky = ctx.createLinearGradient(0, 0, 0, hy);
-      sky.addColorStop(0,    cs.getPropertyValue('--bg-1').trim() || '#0a1628');
-      sky.addColorStop(0.22, cs.getPropertyValue('--bg-2').trim() || '#0f2d5c');
-      sky.addColorStop(0.52, cs.getPropertyValue('--bg-3').trim() || '#1a4aad');
-      sky.addColorStop(0.80, cs.getPropertyValue('--bg-4').trim() || '#2563eb');
-      sky.addColorStop(1,    cs.getPropertyValue('--bg-5').trim() || '#3b82f6');
+      sky.addColorStop(0,    '#0a1628');
+      sky.addColorStop(0.22, '#0f2d5c');
+      sky.addColorStop(0.52, '#1a4aad');
+      sky.addColorStop(0.80, '#2563eb');
+      sky.addColorStop(1,    '#3b82f6');
       ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
 
       // Sun glow
@@ -110,11 +109,11 @@ function HeroCanvas() {
         }
       }
 
-      // Water — matches sky theme colours
+      // Water — always sunny blue
       const wg = ctx.createLinearGradient(0, hy, 0, H);
-      wg.addColorStop(0,   cs.getPropertyValue('--bg-4').trim() || '#2563eb');
-      wg.addColorStop(0.5, cs.getPropertyValue('--bg-3').trim() || '#1a4aad');
-      wg.addColorStop(1,   cs.getPropertyValue('--bg-2').trim() || '#0f2d5c');
+      wg.addColorStop(0,   '#2563eb');
+      wg.addColorStop(0.5, '#1a4aad');
+      wg.addColorStop(1,   '#0f2d5c');
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
       // Water shimmer (light glints on surface)
