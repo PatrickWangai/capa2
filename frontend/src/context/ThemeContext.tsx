@@ -52,12 +52,12 @@ function applyTheme(name: ThemeName) {
 
 type ThemeCtx = { theme: ThemeName; setTheme: (t: ThemeName) => void };
 
-const ThemeContext = createContext<ThemeCtx>({ theme: 'blue', setTheme: () => {} });
+const ThemeContext = createContext<ThemeCtx>({ theme: 'teal', setTheme: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
     const saved = localStorage.getItem('capa-theme') as ThemeName | null;
-    return saved && saved in THEMES ? saved : 'blue';
+    return saved && saved in THEMES ? saved : 'teal';
   });
 
   useEffect(() => { applyTheme(theme); }, [theme]);
