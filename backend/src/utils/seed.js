@@ -48,6 +48,32 @@ async function seed() {
   });
   console.log('✅ Admin user ready: admin@capa.invest');
 
+  // ── Second admin ─────────────────────────────────────────────
+  const admin2Password = process.env.ADMIN2_PASSWORD;
+  const existingAdmin2 = await prisma.user.findUnique({ where: { email: 'admin2@capa.invest' } });
+  const admin2Hash = (!existingAdmin2 || admin2Password)
+    ? await bcrypt.hash(admin2Password || 'Admin2Capa!', 12)
+    : existingAdmin2.passwordHash;
+  const admin2 = await prisma.user.upsert({
+    where: { email: 'admin2@capa.invest' },
+    create: {
+      email: 'admin2@capa.invest',
+      passwordHash: admin2Hash,
+      firstName: 'Admin',
+      lastName: 'Two',
+      status: 'ACTIVE',
+      kycStatus: 'APPROVED',
+      referralCode: 'ADMIN0002',
+    },
+    update: admin2Password ? { passwordHash: admin2Hash } : {},
+  });
+  await prisma.userRole.upsert({
+    where: { userId: admin2.id },
+    create: { userId: admin2.id, role: 'SUPERADMIN', permissions: ['*'] },
+    update: {},
+  });
+  console.log('✅ Admin2 user ready: admin2@capa.invest');
+
   // ── Assets — skip entirely if already seeded ───────────────
   const assetCount = await prisma.asset.count();
   if (assetCount >= 60) {
