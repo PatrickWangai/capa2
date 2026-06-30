@@ -15,30 +15,30 @@
     --text-secondary:rgba(235,235,245,0.60);
     --text-tertiary: rgba(235,235,245,0.30);
 
-    /* ── Theme colours (set by ThemeContext; defaults match 'black' theme) ── */
-    --accent:             #ffffff;
-    --accent-dark:        #e0e0e0;
-    --accent-rgb:         255,255,255;
-    --accent-dim:         rgba(255,255,255,0.18);
-    --accent-glow:        rgba(255,255,255,0.22);
-    --accent-text:        #000000;
-    --color-primary-from: #ffffff;
-    --color-primary-to:   #e0e0e0;
+    /* ── Theme colours (set by ThemeContext; defaults match 'blue' theme) ── */
+    --accent:             #3b82f6;
+    --accent-dark:        #1d4ed8;
+    --accent-rgb:         59,130,246;
+    --accent-dim:         rgba(59,130,246,0.18);
+    --accent-glow:        rgba(59,130,246,0.22);
+    --accent-text:        #ffffff;
+    --color-primary-from: #3b82f6;
+    --color-primary-to:   #1d4ed8;
 
     /* Surface variables (overridden per theme) */
-    --card-bg:     rgba(31,31,31,0.95);
-    --card-border: rgba(255,255,255,0.07);
-    --sidebar-bg:  rgba(15,15,15,0.97);
-    --input-bg:    rgba(40,40,40,0.95);
-    --nav-text:    rgba(235,235,245,0.80);
+    --card-bg:     rgba(28,28,30,0.72);
+    --card-border: rgba(255,255,255,0.08);
+    --sidebar-bg:  rgba(6,38,52,0.62);
+    --input-bg:    rgba(44,44,46,0.85);
+    --nav-text:    rgba(235,235,245,0.85);
 
-    /* Background gradient stops — defaults match 'black' theme */
-    --bg-1: #0f0f0f;
-    --bg-2: #111111;
-    --bg-3: #181818;
-    --bg-4: #1f1f1f;
-    --bg-5: #282828;
-    --bg-6: #0f0f0f;
+    /* Background gradient stops — defaults match 'blue' theme */
+    --bg-1: #0a1628;
+    --bg-2: #0f2d5c;
+    --bg-3: #1a4aad;
+    --bg-4: #2563eb;
+    --bg-5: #3b82f6;
+    --bg-6: #1d4ed8;
     --bg-gradient: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 18%, var(--bg-3) 45%, var(--bg-4) 72%, var(--bg-5) 88%, var(--bg-6) 100%);
   }
 
