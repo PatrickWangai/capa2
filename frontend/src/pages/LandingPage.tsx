@@ -4,13 +4,10 @@ import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, Ba
 import CapaLogo from '../components/ui/CapaLogo';
 
 const ACCENT = 'var(--accent)';
-const TEXT    = '#ffffff';
-const SEC     = 'rgba(235,235,245,0.6)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 
-// ── Dreamy sky canvas ────────────────────────────────────────
-interface SkyCloud { x: number; y: number; drift: number; alpha: number; puffs: { dx: number; dy: number; r: number }[]; }
-interface SkyBird  { x: number; y: number; spd: number; sz: number; ph: number; fp: number; }
-
+// ── Sky + water canvas ───────────────────────────────────────
 function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -21,42 +18,10 @@ function HeroCanvas() {
     const el  = elRaw  as HTMLCanvasElement;
     const ctx = ctxRaw as CanvasRenderingContext2D;
     let animId: number, t = 0, W = 0, H = 0;
-    let clouds: SkyCloud[] = [], birds: SkyBird[] = [];
 
     function init() {
       W = el.width  = el.offsetWidth;
       H = el.height = el.offsetHeight;
-      clouds = [
-        { x: W*0.10, y: H*0.18, drift: 0.08, alpha: 0.88,
-          puffs: [{dx:0,dy:0,r:96},{dx:82,dy:-24,r:74},{dx:-52,dy:18,r:68},
-                  {dx:148,dy:6,r:58},{dx:-98,dy:32,r:52},{dx:50,dy:-60,r:64},{dx:188,dy:-8,r:46}] },
-        { x: W*0.73, y: H*0.30, drift: 0.05, alpha: 0.78,
-          puffs: [{dx:0,dy:0,r:72},{dx:62,dy:-16,r:58},{dx:-40,dy:22,r:52},
-                  {dx:102,dy:8,r:46},{dx:-78,dy:14,r:44}] },
-        { x: W*0.50, y: H*0.07, drift: 0.06, alpha: 0.52,
-          puffs: [{dx:0,dy:0,r:48},{dx:38,dy:-8,r:36},{dx:-28,dy:10,r:32}] },
-      ];
-      const rng = () => Math.random();
-      birds = [
-        // 3 large close birds — slow majestic flap, fast horizontal drift
-        ...Array.from({ length: 3 }, () => ({
-          x: rng() * W, y: H * 0.10 + rng() * H * 0.22,
-          spd: 0.55 + rng() * 0.50, sz: 20 + rng() * 9,
-          ph: rng() * Math.PI * 2,  fp: 0.016 + rng() * 0.010,
-        })),
-        // 4 medium birds — moderate flap
-        ...Array.from({ length: 4 }, () => ({
-          x: rng() * W, y: H * 0.14 + rng() * H * 0.34,
-          spd: 0.30 + rng() * 0.35, sz: 11 + rng() * 7,
-          ph: rng() * Math.PI * 2,  fp: 0.026 + rng() * 0.014,
-        })),
-        // 5 small distant birds — fast flap, slow drift
-        ...Array.from({ length: 5 }, () => ({
-          x: rng() * W, y: H * 0.06 + rng() * H * 0.30,
-          spd: 0.14 + rng() * 0.22, sz: 4 + rng() * 6,
-          ph: rng() * Math.PI * 2,  fp: 0.042 + rng() * 0.024,
-        })),
-      ];
     }
 
     function draw() {
@@ -64,6 +29,7 @@ function HeroCanvas() {
       ctx.clearRect(0, 0, W, H);
       const hy = H * 0.70;
 
+      // Sky
       const sky = ctx.createLinearGradient(0, 0, 0, hy);
       sky.addColorStop(0,    '#0a1628');
       sky.addColorStop(0.22, '#0f2d5c');
@@ -93,30 +59,14 @@ function HeroCanvas() {
       }
       ctx.restore();
 
-      // Clouds
-      for (const c of clouds) {
-        const ox = Math.sin(t*0.006*c.drift + c.x*0.001)*10;
-        const oy = Math.sin(t*0.004*c.drift)*4;
-        for (const p of c.puffs) {
-          const px = c.x + p.dx + ox, py = c.y + p.dy + oy;
-          const g = ctx.createRadialGradient(px, py + p.r*0.15, 0, px, py, p.r);
-          g.addColorStop(0,    `rgba(255,242,205,${c.alpha})`);
-          g.addColorStop(0.35, `rgba(250,228,158,${c.alpha*0.88})`);
-          g.addColorStop(0.70, `rgba(200,225,230,${c.alpha*0.44})`);
-          g.addColorStop(1,    'rgba(140,200,212,0)');
-          ctx.beginPath(); ctx.arc(px, py, p.r, 0, Math.PI*2);
-          ctx.fillStyle = g; ctx.fill();
-        }
-      }
-
-      // Water — always sunny blue
+      // Water
       const wg = ctx.createLinearGradient(0, hy, 0, H);
       wg.addColorStop(0,   '#2563eb');
       wg.addColorStop(0.5, '#1a4aad');
       wg.addColorStop(1,   '#0f2d5c');
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
-      // Water shimmer (light glints on surface)
+      // Water shimmer
       ctx.save();
       for (let i = 0; i < 42; i++) {
         const sx = ((i * 137.5 + t * 0.35) % W);
@@ -127,88 +77,12 @@ function HeroCanvas() {
       }
       ctx.restore();
 
-      // Horizon glow where sky meets water
+      // Horizon glow
       const hg = ctx.createLinearGradient(0, hy - 18, 0, hy + 24);
       hg.addColorStop(0,   'rgba(255,255,255,0.00)');
       hg.addColorStop(0.5, 'rgba(255,255,255,0.08)');
       hg.addColorStop(1,   'rgba(255,255,255,0.00)');
       ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
-
-      // Birds — jointed wing anatomy: shoulder → elbow → wrist → tip
-      for (const b of birds) {
-        b.x += b.spd;
-        if (b.x > W + 180) b.x = -180;
-        b.ph += b.fp;
-
-        const s   = b.sz;
-        const fl  = Math.sin(b.ph);                 // -1 downstroke, +1 upstroke
-        // Upstroke goes higher than downstroke (realistic bird biomechanics)
-        const wy  = fl > 0 ? fl * s * 1.30 : fl * s * 0.80;
-
-        // Wing joint positions relative to shoulder (0,0)
-        const eX = -s * 0.95, eY = fl * s * 0.48;  // elbow tracks ½ the flap
-        const wX = -s * 1.82, wY = wy * 0.88;       // wrist tracks most of flap
-        const tX = -s * 2.72, tY = wy;              // tip = full flap extent
-        const shX = s * 0.06, shY = -s * 0.15;      // shoulder on upper body
-
-        ctx.save();
-        ctx.translate(b.x, b.y);
-        ctx.globalAlpha = 0.60 + Math.min(s / 80, 0.22);  // larger = more opaque
-        ctx.fillStyle = 'rgba(3,6,28,0.92)';
-
-        // Wing — leading edge (top) then trailing edge (bottom), closed shape
-        ctx.beginPath();
-        ctx.moveTo(shX, shY);
-        ctx.bezierCurveTo(
-          shX + eX * 0.38, shY + eY * 0.52 - s * 0.22,
-          shX + wX * 0.74, shY + wY * 0.84 - s * 0.10,
-          shX + tX,        shY + tY
-        );
-        ctx.bezierCurveTo(
-          shX + wX * 0.86, shY + wY * 0.56 + s * 0.28,
-          shX + eX * 0.55, shY + eY * 0.38 + s * 0.32,
-          shX,             shY + s * 0.24
-        );
-        ctx.closePath();
-        ctx.fill();
-
-        // Body — streamlined oval over wing root
-        ctx.beginPath();
-        ctx.ellipse(0, 0, s * 1.28, s * 0.31, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Neck — short oval bridging body to head
-        ctx.beginPath();
-        ctx.ellipse(s * 1.02, -s * 0.08, s * 0.43, s * 0.22, -0.25, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Head
-        ctx.beginPath();
-        ctx.arc(s * 1.38, -s * 0.20, s * 0.27, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Beak — slim pointed triangle
-        ctx.beginPath();
-        ctx.moveTo(s * 1.62, -s * 0.20);
-        ctx.lineTo(s * 2.05, -s * 0.12);
-        ctx.lineTo(s * 1.62, -s * 0.04);
-        ctx.closePath();
-        ctx.fill();
-
-        // Tail — forked, two fan lobes
-        ctx.beginPath();
-        ctx.moveTo(-s * 1.22,  s * 0.02);
-        ctx.bezierCurveTo(-s * 1.42, -s * 0.02, -s * 1.84, -s * 0.44, -s * 1.96, -s * 0.57);
-        ctx.bezierCurveTo(-s * 1.64, -s * 0.04, -s * 1.30,  s * 0.10, -s * 1.22,  s * 0.02);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(-s * 1.22,  s * 0.02);
-        ctx.bezierCurveTo(-s * 1.42,  s * 0.10, -s * 1.84,  s * 0.36, -s * 1.96,  s * 0.49);
-        ctx.bezierCurveTo(-s * 1.64,  s * 0.10, -s * 1.30, -s * 0.04, -s * 1.22,  s * 0.02);
-        ctx.fill();
-
-        ctx.restore();
-      }
 
       // Text-legibility overlay
       const ov = ctx.createLinearGradient(0, 0, 0, H);

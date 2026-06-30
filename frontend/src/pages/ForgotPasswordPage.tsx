@@ -4,8 +4,8 @@ import { api } from '../services/api';
 import toast from 'react-hot-toast';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const TEXT = '#ffffff';
-const SEC = 'rgba(235,235,245,0.6)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 const ACCENT = 'var(--accent)';
 
 export default function ForgotPasswordPage() {

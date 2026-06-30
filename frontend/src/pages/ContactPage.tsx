@@ -4,8 +4,8 @@ import { Mail, MessageSquare, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import toast from 'react-hot-toast';
 
-const TEXT = '#ffffff';
-const SEC = 'rgba(235,235,245,0.6)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 const ACCENT = 'var(--accent)';
 const CARD = '#1c1c1e';
 

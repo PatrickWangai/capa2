@@ -5,8 +5,8 @@ import { User, Lock, Shield, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const TEXT = '#ffffff';
-const SEC = 'rgba(235,235,245,0.6)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 const ACCENT = 'var(--accent)';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

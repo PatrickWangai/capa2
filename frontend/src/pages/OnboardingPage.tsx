@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, BarChart2, Clock, Target } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const TEXT = '#ffffff';
-const SEC = 'rgba(235,235,245,0.6)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 const ACCENT = 'var(--accent)';
 
 const RISK_OPTIONS = [
