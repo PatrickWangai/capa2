@@ -43,7 +43,6 @@ export default function AppLayout() {
   };
 
   const kycBadge = user?.kycStatus !== 'APPROVED';
-  const isLight  = theme === 'white';
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
@@ -110,15 +109,15 @@ export default function AppLayout() {
         style={{
           width: 256, flexShrink: 0, display: 'flex', flexDirection: 'column',
           height: '100vh', overflowY: 'auto',
-          backgroundColor: 'var(--sidebar-bg)',
+          backgroundColor: 'rgba(6,38,52,0.62)',
           backdropFilter: 'saturate(160%) blur(28px)',
           WebkitBackdropFilter: 'saturate(160%) blur(28px)',
-          borderRight: isLight ? '1px solid rgba(0,0,0,0.10)' : '1px solid rgba(255,255,255,0.10)',
+          borderRight: '1px solid rgba(255,255,255,0.10)',
           boxShadow: '1px 0 0 rgba(0,0,0,0.08)',
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.10)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.10)' }}>
           <CapaLogo size={44} />
         </div>
 
@@ -133,7 +132,7 @@ export default function AppLayout() {
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
                 backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent',
-                color: isActive ? '#c084fc' : 'var(--nav-text)',
+                color: isActive ? '#c084fc' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
@@ -148,7 +147,7 @@ export default function AppLayout() {
                 fontSize: 15, fontWeight: 500, textDecoration: 'none',
                 transition: 'background 0.15s',
                 backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent',
-                color: isActive ? 'var(--accent)' : 'var(--nav-text)',
+                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
               })}
             >
               {({ isActive }) => (
@@ -170,10 +169,10 @@ export default function AppLayout() {
               display: 'flex', alignItems: 'center', gap: 10, width: '100%',
               padding: '9px 12px', borderRadius: 10, marginTop: 2,
               fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
-              cursor: 'pointer', color: 'var(--nav-text)', transition: 'background 0.15s',
+              cursor: 'pointer', color: 'rgba(235,235,245,0.85)', transition: 'background 0.15s',
               textAlign: 'left',
             }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.06)'; }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
             onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             <Palette size={18} strokeWidth={1.8} />
@@ -182,8 +181,8 @@ export default function AppLayout() {
         </nav>
 
         {/* User */}
-        <div style={{ padding: 12, borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.10)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: 12, borderTop: '1px solid rgba(255,255,255,0.10)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
@@ -193,9 +192,9 @@ export default function AppLayout() {
             </div>
             <button
               onClick={handleLogout}
-              style={{ color: isLight ? '#86868b' : '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+              style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-              onMouseLeave={e => (e.currentTarget.style.color = isLight ? '#86868b' : '#aeaeb2')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}
             >
               <LogOut size={15} />
             </button>

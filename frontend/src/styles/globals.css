@@ -25,12 +25,6 @@
     --color-primary-from: #3b82f6;
     --color-primary-to:   #1d4ed8;
 
-    /* Surface variables (set by ThemeContext for White/Black themes) */
-    --card-bg:     rgba(28,28,30,0.72);
-    --card-border: rgba(255,255,255,0.08);
-    --sidebar-bg:  rgba(6,38,52,0.62);
-    --input-bg:    rgba(44,44,46,0.85);
-    --nav-text:    rgba(235,235,245,0.85);
 
     /* Background gradient stops */
     --bg-1: #0a1628;
@@ -65,13 +59,13 @@
 
 /* ── Components ── */
 .card {
-  background: var(--card-bg);
+  background: rgba(28,28,30,0.72);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 18px;
   padding: 24px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.10);
-  border: 1px solid var(--card-border);
+  box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .btn-primary {
@@ -125,7 +119,7 @@
   width: 100%;
   transition: border-color 150ms cubic-bezier(0.4,0,0.2,1),
               box-shadow 150ms cubic-bezier(0.4,0,0.2,1);
-  background-color: var(--input-bg);
+  background-color: rgba(44,44,46,0.85);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -169,46 +163,3 @@
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-/* ── White (Day) theme — Apple light mode text overrides ── */
-html[data-theme="light"] {
-  color-scheme: light;
-}
-html[data-theme="light"] body {
-  color: #1d1d1f;
-}
-/* Force dark text on light background for all common text elements */
-html[data-theme="light"] main p,
-html[data-theme="light"] main h1,
-html[data-theme="light"] main h2,
-html[data-theme="light"] main h3,
-html[data-theme="light"] main h4,
-html[data-theme="light"] main h5,
-html[data-theme="light"] main span,
-html[data-theme="light"] main label,
-html[data-theme="light"] main td,
-html[data-theme="light"] main th,
-html[data-theme="light"] main li,
-html[data-theme="light"] main a:not(.btn-primary):not(.btn-secondary) {
-  color: #1d1d1f !important;
-}
-/* Secondary text */
-html[data-theme="light"] .text-white    { color: #1d1d1f !important; }
-html[data-theme="light"] .text-gray-100 { color: #3a3a3c !important; }
-html[data-theme="light"] .text-gray-200 { color: #3a3a3c !important; }
-html[data-theme="light"] .text-gray-300 { color: #6e6e73 !important; }
-html[data-theme="light"] .text-gray-400 { color: #6e6e73 !important; }
-html[data-theme="light"] .text-gray-500 { color: #86868b !important; }
-/* Keep coloured badges/indicators unchanged */
-html[data-theme="light"] .badge-green  { color: #1a7f37 !important; background: rgba(52,199,89,0.14) !important; }
-html[data-theme="light"] .badge-red    { color: #cf222e !important; background: rgba(255,69,58,0.12) !important; }
-html[data-theme="light"] .badge-yellow { color: #9a6700 !important; background: rgba(255,159,10,0.14) !important; }
-html[data-theme="light"] .badge-gray   { color: #6e6e73 !important; background: rgba(0,0,0,0.06) !important; }
-/* Scrollbar for light mode */
-html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
-html[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
-/* Card shadow on light bg */
-html[data-theme="light"] .card {
-  box-shadow: 0 1px 8px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
-}
-/* Border override for light mode */
-html[data-theme="light"] * { border-color: rgba(0,0,0,0.10); }
