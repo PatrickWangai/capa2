@@ -41,7 +41,7 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
   indigo:  { label: 'Indigo',  swatch: '#6366f1', accent: '#6366f1', accentDark: '#4338ca', accentRgb: '99,102,241',   bg: ['#0d0d28','#16164a','#2525a0','#3730a3','#6366f1','#4338ca'] },
   black: {
     label: 'Black', swatch: '#181818',
-    accent: '#ffffff', accentDark: '#e0e0e0', accentRgb: '255,255,255',
+    accent: '#a0a0a0', accentDark: '#707070', accentRgb: '160,160,160',
     bg: ['#0f0f0f','#111111','#181818','#1f1f1f','#282828','#0f0f0f'],
     accentText: '#000000',
     cardBg:    'rgba(31,31,31,0.95)',
