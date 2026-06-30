@@ -50,8 +50,9 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
   // ── Black & White ───────────────────────────────────────────────────────────
   black: {
     label: 'Black', swatch: '#181818',
-    accent: '#20d4b8', accentDark: '#17b8a2', accentRgb: '32,212,184',
+    accent: '#ffffff', accentDark: '#e0e0e0', accentRgb: '255,255,255',
     bg: ['#0f0f0f','#111111','#181818','#1f1f1f','#282828','#0f0f0f'],
+    accentText: '#000000',
     cardBg:    'rgba(31,31,31,0.95)',
     cardBorder:'rgba(255,255,255,0.07)',
     sidebarBg: 'rgba(15,15,15,0.97)',
@@ -107,12 +108,12 @@ function applyTheme(name: ThemeName) {
 
 type ThemeCtx = { theme: ThemeName; setTheme: (t: ThemeName) => void };
 
-const ThemeContext = createContext<ThemeCtx>({ theme: 'teal', setTheme: () => {} });
+const ThemeContext = createContext<ThemeCtx>({ theme: 'black', setTheme: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
     const saved = localStorage.getItem('capa-theme') as ThemeName | null;
-    return saved && saved in THEMES ? saved : 'teal';
+    return saved && saved in THEMES ? saved : 'black';
   });
 
   useEffect(() => { applyTheme(theme); }, [theme]);
