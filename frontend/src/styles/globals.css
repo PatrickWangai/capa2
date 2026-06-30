@@ -173,30 +173,28 @@
 html[data-theme="light"] { color-scheme: light; }
 html[data-theme="light"] body { color: #1d1d1f; }
 
-html[data-theme="light"] main p,
-html[data-theme="light"] main h1,
-html[data-theme="light"] main h2,
-html[data-theme="light"] main h3,
-html[data-theme="light"] main h4,
-html[data-theme="light"] main h5,
-html[data-theme="light"] main span,
-html[data-theme="light"] main label,
-html[data-theme="light"] main td,
-html[data-theme="light"] main th,
-html[data-theme="light"] main li,
-html[data-theme="light"] main a:not(.btn-primary):not(.btn-secondary) {
-  color: #1d1d1f !important;
-}
+/* Force ALL text inside main to dark — catches divs with inline white styles */
+html[data-theme="light"] main,
+html[data-theme="light"] main * { color: #1d1d1f !important; }
+
+/* Restore intentionally coloured elements inside main */
+html[data-theme="light"] main .btn-primary  { color: var(--accent-text, #ffffff) !important; }
+html[data-theme="light"] main .btn-danger   { color: #ffffff !important; }
+html[data-theme="light"] main .badge-green  { color: #1a7f37 !important; background: rgba(52,199,89,0.14)  !important; }
+html[data-theme="light"] main .badge-red    { color: #cf222e !important; background: rgba(255,69,58,0.12)  !important; }
+html[data-theme="light"] main .badge-yellow { color: #9a6700 !important; background: rgba(255,159,10,0.14) !important; }
+html[data-theme="light"] main .badge-blue   { color: var(--accent)       !important; }
+html[data-theme="light"] main .badge-gray   { color: #6e6e73 !important; background: rgba(0,0,0,0.06)      !important; }
+html[data-theme="light"] main .gradient-text { -webkit-text-fill-color: transparent !important; }
+
+/* Tailwind text utilities */
 html[data-theme="light"] .text-white    { color: #1d1d1f !important; }
 html[data-theme="light"] .text-gray-100 { color: #3a3a3c !important; }
 html[data-theme="light"] .text-gray-200 { color: #3a3a3c !important; }
 html[data-theme="light"] .text-gray-300 { color: #6e6e73 !important; }
 html[data-theme="light"] .text-gray-400 { color: #6e6e73 !important; }
 html[data-theme="light"] .text-gray-500 { color: #86868b !important; }
-html[data-theme="light"] .badge-green  { color: #1a7f37 !important; background: rgba(52,199,89,0.14) !important; }
-html[data-theme="light"] .badge-red    { color: #cf222e !important; background: rgba(255,69,58,0.12) !important; }
-html[data-theme="light"] .badge-yellow { color: #9a6700 !important; background: rgba(255,159,10,0.14) !important; }
-html[data-theme="light"] .badge-gray   { color: #6e6e73 !important; background: rgba(0,0,0,0.06) !important; }
+
 html[data-theme="light"] * { border-color: rgba(0,0,0,0.10); }
 html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
 html[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
