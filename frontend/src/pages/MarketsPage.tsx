@@ -5,11 +5,14 @@ import { api } from '../services/api';
 import { TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
-// Symbols that have a local logo file in /public/logos/
+// Symbols stored as .svg in /public/logos/
+const SVG_LOGOS = new Set(['ABSA','BOC','EVRD','ISF','JUB']);
+
+// All symbols that have a real logo file in /public/logos/
 const LOCAL_LOGOS = new Set([
-  'AAPL','AMZN','AZN','BARC','BATK','BKG','BP','BRIT','CARB',
-  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','FMLY','FTGH',
-  'GOOGL','IMH','JPM','KCB','KEGN','KNRE','KPC','KPLC','KQ',
+  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
+  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','EVRD','FMLY','FTGH',
+  'GOOGL','IMH','ISF','JPM','JUB','KCB','KEGN','KNRE','KPC','KPLC','KQ',
   'KUKZ','LBTY','LKL','LLOY','META','MSFT','NCBA','NMG','NSE','NVDA',
   'QQQ','SASN','SCAN','SCBK','SCOM','SGL','SHEL','SLAM','SMER',
   'SMWF','SPY','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO','XPRS',
@@ -28,10 +31,11 @@ function StockLogo({ symbol }: { symbol: string }) {
   const [failed, setFailed] = useState(false);
 
   if (LOCAL_LOGOS.has(symbol) && !failed) {
+    const ext = SVG_LOGOS.has(symbol) ? 'svg' : 'png';
     return (
       <div className="w-9 h-9 rounded-lg bg-white overflow-hidden flex items-center justify-center p-0.5 shrink-0">
         <img
-          src={`/logos/${symbol}.png`}
+          src={`/logos/${symbol}.${ext}`}
           alt={symbol}
           className="w-full h-full object-contain"
           onError={() => setFailed(true)}
