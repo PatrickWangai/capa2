@@ -7,12 +7,12 @@ import clsx from 'clsx';
 
 // Symbols that have a local logo file in /public/logos/
 const LOCAL_LOGOS = new Set([
-  'AAPL','ABSA','AMAC','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
-  'CGEN','CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','EVRD','FMLY','FTGH',
-  'GOOGL','HAFR','HFCK','IMH','ISF','JPM','JUB','KAPC','KCB','KEGN','KNRE','KPC','KPLC','KQ',
-  'KUKZ','LBTY','LIMT','LKL','LLOY','META','MSFT','NBV','NCBA','NMG','NSE','NVDA',
-  'OCH','PORT','QQQ','SASN','SBIC','SCAN','SCBK','SCOM','SGL','SHEL','SKL','SLAM','SMER',
-  'SMWF','SPY','TOTL','TPSE','TSLA','UCHM','UMME','UNGA','VOD','VTI','VUKE','VWO','WTK','XPRS',
+  'AAPL','AMZN','AZN','BARC','BATK','BKG','BP','BRIT','CARB',
+  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','FMLY','FTGH',
+  'GOOGL','IMH','JPM','KCB','KEGN','KNRE','KPC','KPLC','KQ',
+  'KUKZ','LBTY','LKL','LLOY','META','MSFT','NCBA','NMG','NSE','NVDA',
+  'QQQ','SASN','SCAN','SCBK','SCOM','SGL','SHEL','SLAM','SMER',
+  'SMWF','SPY','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO','XPRS',
 ]);
 
 const SYMBOL_COLORS = [
