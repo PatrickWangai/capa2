@@ -64,10 +64,15 @@ export default function DashboardPage() {
         </div>
         <div className="text-right hidden sm:block">
           <p className="text-xs text-gray-500">{new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          <p className="text-xs text-green-400 mt-0.5 flex items-center gap-1 justify-end">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" />
-            NSE Markets Open
-          </p>
+          {(() => {
+            const open = isNSEOpen();
+            return (
+              <p className={clsx('text-xs mt-0.5 flex items-center gap-1 justify-end', open ? 'text-green-400' : 'text-gray-500')}>
+                <span className={clsx('w-1.5 h-1.5 rounded-full inline-block', open ? 'bg-green-400 animate-pulse' : 'bg-gray-600')} />
+                {open ? 'NSE Markets Open' : 'NSE Markets Closed'}
+              </p>
+            );
+          })()}
         </div>
       </div>
 
@@ -255,4 +260,14 @@ function getGreeting() {
   if (h < 12) return 'morning';
   if (h < 17) return 'afternoon';
   return 'evening';
+}
+
+// NSE trades Mon–Fri, 09:00–15:00 East Africa Time (UTC+3)
+function isNSEOpen(): boolean {
+  const now = new Date();
+  const eat = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Nairobi' }));
+  const day = eat.getDay(); // 0=Sun, 6=Sat
+  if (day === 0 || day === 6) return false;
+  const minutes = eat.getHours() * 60 + eat.getMinutes();
+  return minutes >= 9 * 60 && minutes < 15 * 60;
 }
