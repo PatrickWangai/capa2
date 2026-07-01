@@ -20,7 +20,7 @@ export default function AdminLayout() {
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}
     logout();
-    navigate('/login');
+    navigate('/');
     toast.success('Logged out');
   };
 

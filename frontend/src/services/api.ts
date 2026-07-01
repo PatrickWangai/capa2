@@ -52,7 +52,7 @@ api.interceptors.response.use(
       queue.forEach(p => p.reject(e));
       queue = [];
       useAuthStore.getState().logout();
-      window.location.href = '/login';
+      window.location.href = '/';
       return Promise.reject(e);
     } finally {
       isRefreshing = false;
