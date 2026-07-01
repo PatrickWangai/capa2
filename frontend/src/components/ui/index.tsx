@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+export { StockLogo } from './StockLogo';
 
 // ─── Badge ─────────────────────────────────────────────────
 type BadgeVariant = 'green' | 'red' | 'yellow' | 'blue' | 'gray';

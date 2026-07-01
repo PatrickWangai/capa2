@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
-import { TrendingUp, TrendingDown, DollarSign, Briefcase, Bell, ShieldCheck, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Briefcase, Bell, ShieldCheck, ArrowRight, CreditCard, BarChart2, RefreshCw } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
+import { StockLogo } from '../components/ui/StockLogo';
 
 function StatCard({ label, value, sub, positive }: { label: string; value: string; sub?: string; positive?: boolean }) {
   return (
@@ -21,6 +22,13 @@ function StatCard({ label, value, sub, positive }: { label: string; value: strin
     </div>
   );
 }
+
+const MARKET_HIGHLIGHTS = [
+  { sym: 'SCOM', name: 'Safaricom',   price: 'KES 26.15', change: '+1.82%', up: true  },
+  { sym: 'AAPL', name: 'Apple',       price: '$198.45',   change: '+0.92%', up: true  },
+  { sym: 'NVDA', name: 'NVIDIA',      price: '$1,312.50', change: '+5.23%', up: true  },
+  { sym: 'EQTY', name: 'Equity Bank', price: 'KES 42.50', change: '-0.61%', up: false },
+];
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -49,9 +57,18 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">Good {getGreeting()}, {user?.firstName} 👋</h1>
-        <p className="text-gray-400 mt-1">Here's your portfolio overview</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Good {getGreeting()}, {user?.firstName} 👋</h1>
+          <p className="text-gray-400 mt-1">Here's your portfolio overview</p>
+        </div>
+        <div className="text-right hidden sm:block">
+          <p className="text-xs text-gray-500">{new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p className="text-xs text-green-400 mt-0.5 flex items-center gap-1 justify-end">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" />
+            NSE Markets Open
+          </p>
+        </div>
       </div>
 
       {/* KYC banner */}
@@ -66,14 +83,73 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { icon: CreditCard,  label: 'Deposit',      sub: 'via M-Pesa',      to: '/deposit',    color: '#30d158' },
+          { icon: TrendingUp,  label: 'Trade',        sub: 'Buy & sell',       to: '/markets',    color: 'var(--accent)' },
+          { icon: BarChart2,   label: 'Portfolio',    sub: 'View holdings',    to: '/portfolio',  color: '#bf5af2' },
+          { icon: RefreshCw,   label: 'Withdraw',     sub: 'Cash out',         to: '/deposit',    color: '#ff9f0a' },
+        ].map(({ icon: Icon, label, sub, to, color }) => (
+          <Link key={label} to={to} style={{ textDecoration: 'none' }}>
+            <div className="card hover:border-gray-700 transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{ backgroundColor: `${color}18` }}>
+                <Icon size={18} style={{ color }} strokeWidth={1.8} />
+              </div>
+              <p className="font-semibold text-white text-sm">{label}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{sub}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Market snapshot */}
+      <div className="card" style={{ padding: '16px 20px' }}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-white text-sm">Market Snapshot</h2>
+          <Link to="/markets" className="text-blue-400 text-xs hover:text-blue-300 flex items-center gap-1">
+            All markets <ArrowRight size={12} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {MARKET_HIGHLIGHTS.map(m => (
+            <div key={m.sym} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-800/50">
+              <StockLogo symbol={m.sym} size="sm" />
+              <div className="min-w-0">
+                <p className="text-white text-xs font-semibold">{m.sym}</p>
+                <p className="text-gray-400 text-xs truncate">{m.price}</p>
+              </div>
+              <span className={clsx('text-xs font-semibold ml-auto shrink-0', m.up ? 'text-green-400' : 'text-red-400')}>
+                {m.change}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Value" value={`$${Number(summary?.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          sub={summary ? `${isUp ? '+' : ''}$${Number(summary.dailyChange).toFixed(2)} today` : undefined} positive={isUp} />
-        <StatCard label="Total Invested" value={`$${Number(summary?.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
-        <StatCard label="Total P&L" value={`${Number(summary?.totalGainLoss || 0) >= 0 ? '+' : ''}$${Number(summary?.totalGainLoss || 0).toFixed(2)}`}
-          sub={summary ? `${summary.totalGainLossPct}%` : undefined} positive={Number(summary?.totalGainLoss || 0) >= 0} />
-        <StatCard label="Positions" value={String(portfolio?.positions?.length || 0)} sub="Active holdings" />
+        <StatCard
+          label="Total Value"
+          value={`$${Number(summary?.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          sub={summary ? `${isUp ? '+' : ''}$${Number(summary.dailyChange).toFixed(2)} today` : undefined}
+          positive={isUp}
+        />
+        <StatCard
+          label="Total Invested"
+          value={`$${Number(summary?.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        />
+        <StatCard
+          label="Total P&L"
+          value={`${Number(summary?.totalGainLoss || 0) >= 0 ? '+' : ''}$${Number(summary?.totalGainLoss || 0).toFixed(2)}`}
+          sub={summary ? `${summary.totalGainLossPct}%` : undefined}
+          positive={Number(summary?.totalGainLoss || 0) >= 0}
+        />
+        <StatCard
+          label="Positions"
+          value={String(portfolio?.positions?.length || 0)}
+          sub="Active holdings"
+        />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -89,10 +165,13 @@ export default function DashboardPage() {
                     <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }} tickFormatter={d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })} />
+                <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }}
+                  tickFormatter={d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })} />
                 <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} tickFormatter={v => `$${Number(v).toFixed(0)}`} />
-                <Tooltip contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
-                  formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Value']} />
+                <Tooltip
+                  contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
+                  formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Value']}
+                />
                 <Area type="monotone" dataKey="value" stroke="#2563EB" strokeWidth={2} fill="url(#grad)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -136,29 +215,35 @@ export default function DashboardPage() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-white">Top Holdings</h2>
-            <Link to="/portfolio" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-1">View all <ArrowRight size={14} /></Link>
+            <Link to="/portfolio" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-1">
+              View all <ArrowRight size={14} />
+            </Link>
           </div>
           <div className="space-y-3">
             {portfolio.positions.slice(0, 5).map((pos: any) => (
-              <div key={pos.id} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-xs font-bold text-blue-400">
-                    {pos.symbol.slice(0, 2)}
+              <Link to={`/markets/${pos.assetId}`} key={pos.id} style={{ textDecoration: 'none' }}>
+                <div className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0 hover:bg-gray-800/30 -mx-2 px-2 rounded-lg transition-colors">
+                  <div className="flex items-center gap-3">
+                    <StockLogo symbol={pos.symbol} size="md" />
+                    <div>
+                      <p className="font-medium text-white text-sm">{pos.symbol}</p>
+                      <p className="text-xs text-gray-400">{pos.quantity} shares</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-white text-sm">{pos.symbol}</p>
-                    <p className="text-xs text-gray-400">{pos.quantity} shares</p>
+                  <div className="text-right">
+                    <p className="font-medium text-white text-sm">{pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+                    <p className={clsx('text-xs', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
+                      {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
+                    </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium text-white text-sm">{pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
-                  <p className={clsx('text-xs', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
-                    {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
-                  </p>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
+          <Link to="/markets" className="btn-primary w-full mt-4 text-center text-sm py-2.5" style={{ display: 'block' }}>
+            <DollarSign size={14} className="inline mr-1.5" />
+            Browse Markets &amp; Trade
+          </Link>
         </div>
       )}
     </div>
