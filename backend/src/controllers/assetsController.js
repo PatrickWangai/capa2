@@ -92,6 +92,39 @@ export async function getPriceHistory(req, res) {
   res.json(response);
 }
 
+// GET /api/assets/movers?type=gainers|losers|active&exchange=NSE&limit=10
+export async function getMovers(req, res) {
+  const { type = 'gainers', exchange, limit = 10 } = req.query;
+
+  const assets = await prisma.asset.findMany({
+    where: {
+      isActive: true,
+      ...(exchange && { exchange }),
+    },
+    include: { price: true },
+    take: 500,
+  });
+
+  const withPrice = assets.filter(a => a.price?.changePercent != null);
+
+  let sorted;
+  switch (type) {
+    case 'gainers':
+      sorted = [...withPrice].sort((a, b) => Number(b.price.changePercent) - Number(a.price.changePercent));
+      break;
+    case 'losers':
+      sorted = [...withPrice].sort((a, b) => Number(a.price.changePercent) - Number(b.price.changePercent));
+      break;
+    case 'active':
+      sorted = [...withPrice].sort((a, b) => Number(b.price.volume || 0) - Number(a.price.volume || 0));
+      break;
+    default:
+      sorted = withPrice;
+  }
+
+  res.json({ assets: sorted.slice(0, Number(limit)) });
+}
+
 // GET /api/assets/watchlist
 export async function getWatchlist(req, res) {
   const watchlist = await prisma.watchlist.findFirst({

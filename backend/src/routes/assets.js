@@ -3,6 +3,7 @@ const router = Router();
 import * as c from '../controllers/assetsController.js';
 import auth from '../middleware/authenticate.js';
 router.get('/', auth, c.listAssets);
+router.get('/movers', auth, c.getMovers);
 router.get('/watchlist', auth, c.getWatchlist);
 router.post('/watchlist/:assetId', auth, c.addToWatchlist);
 router.delete('/watchlist/:assetId', auth, c.removeFromWatchlist);
