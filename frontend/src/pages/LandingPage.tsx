@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme, THEMES } from '../context/ThemeContext';
 
 const ACCENT = 'var(--accent)';
 const TEXT = 'var(--text)';
@@ -21,17 +21,14 @@ function HeroCanvas({ theme }: { theme: string }) {
     const ctx = ctxRaw as CanvasRenderingContext2D;
     let animId: number, t = 0, W = 0, H = 0;
 
-    // Read theme colours once per theme change.
-    // Black theme keeps the original blue ocean.
     let skyC: string[], waterC: string[];
     if (theme === 'black') {
       skyC   = ['#0a1628','#0f2d5c','#1a4aad','#2563eb','#3b82f6'];
       waterC = ['#2563eb','#1a4aad','#0f2d5c'];
     } else {
-      const s = getComputedStyle(document.documentElement);
-      const g = (v: string) => s.getPropertyValue(v).trim();
-      skyC   = [g('--bg-1'), g('--bg-2'), g('--bg-3'), g('--bg-4'), g('--bg-5')];
-      waterC = [g('--bg-5'), g('--bg-3'), g('--bg-1')];
+      const bg = (THEMES[theme as keyof typeof THEMES] ?? THEMES.blue).bg;
+      skyC   = [bg[0], bg[1], bg[2], bg[3], bg[4]];
+      waterC = [bg[4], bg[2], bg[0]];
     }
 
     function init() {
