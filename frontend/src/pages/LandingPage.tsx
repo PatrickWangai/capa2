@@ -2,14 +2,16 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
+import { useTheme } from '../context/ThemeContext';
 
 const ACCENT = 'var(--accent)';
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
 
 // ── Sky + water canvas ───────────────────────────────────────
-function HeroCanvas() {
+function HeroCanvas({ theme }: { theme: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const elRaw = canvasRef.current;
     if (!elRaw) return;
@@ -18,6 +20,19 @@ function HeroCanvas() {
     const el  = elRaw  as HTMLCanvasElement;
     const ctx = ctxRaw as CanvasRenderingContext2D;
     let animId: number, t = 0, W = 0, H = 0;
+
+    // Read theme colours once per theme change.
+    // Black theme keeps the original blue ocean.
+    let skyC: string[], waterC: string[];
+    if (theme === 'black') {
+      skyC   = ['#0a1628','#0f2d5c','#1a4aad','#2563eb','#3b82f6'];
+      waterC = ['#2563eb','#1a4aad','#0f2d5c'];
+    } else {
+      const s = getComputedStyle(document.documentElement);
+      const g = (v: string) => s.getPropertyValue(v).trim();
+      skyC   = [g('--bg-1'), g('--bg-2'), g('--bg-3'), g('--bg-4'), g('--bg-5')];
+      waterC = [g('--bg-5'), g('--bg-3'), g('--bg-1')];
+    }
 
     function init() {
       W = el.width  = el.offsetWidth;
@@ -31,11 +46,11 @@ function HeroCanvas() {
 
       // Sky
       const sky = ctx.createLinearGradient(0, 0, 0, hy);
-      sky.addColorStop(0,    '#0a1628');
-      sky.addColorStop(0.22, '#0f2d5c');
-      sky.addColorStop(0.52, '#1a4aad');
-      sky.addColorStop(0.80, '#2563eb');
-      sky.addColorStop(1,    '#3b82f6');
+      sky.addColorStop(0,    skyC[0]);
+      sky.addColorStop(0.22, skyC[1]);
+      sky.addColorStop(0.52, skyC[2]);
+      sky.addColorStop(0.80, skyC[3]);
+      sky.addColorStop(1,    skyC[4]);
       ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
 
       // Sun glow
@@ -61,9 +76,9 @@ function HeroCanvas() {
 
       // Water
       const wg = ctx.createLinearGradient(0, hy, 0, H);
-      wg.addColorStop(0,   '#2563eb');
-      wg.addColorStop(0.5, '#1a4aad');
-      wg.addColorStop(1,   '#0f2d5c');
+      wg.addColorStop(0,   waterC[0]);
+      wg.addColorStop(0.5, waterC[1]);
+      wg.addColorStop(1,   waterC[2]);
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
       // Water shimmer
@@ -99,7 +114,7 @@ function HeroCanvas() {
     const ro = new ResizeObserver(init);
     ro.observe(el);
     return () => { cancelAnimationFrame(animId); ro.disconnect(); };
-  }, []);
+  }, [theme]); // restart whenever theme changes
 
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />;
 }
@@ -158,6 +173,7 @@ const testimonials = [
 
 // ── Page ─────────────────────────────────────────────────────
 export default function LandingPage() {
+  const { theme } = useTheme();
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
@@ -194,7 +210,7 @@ export default function LandingPage() {
       <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
         {/* Canvas animation layer */}
-        <HeroCanvas />
+        <HeroCanvas theme={theme} />
 
         {/* Bottom gradient fade */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
