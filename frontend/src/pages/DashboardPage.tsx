@@ -23,12 +23,6 @@ function StatCard({ label, value, sub, positive }: { label: string; value: strin
   );
 }
 
-const MARKET_HIGHLIGHTS = [
-  { sym: 'SCOM', name: 'Safaricom',   price: 'KES 26.15', change: '+1.82%', up: true  },
-  { sym: 'AAPL', name: 'Apple',       price: '$198.45',   change: '+0.92%', up: true  },
-  { sym: 'NVDA', name: 'NVIDIA',      price: '$1,312.50', change: '+5.23%', up: true  },
-  { sym: 'EQTY', name: 'Equity Bank', price: 'KES 42.50', change: '-0.61%', up: false },
-];
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -108,29 +102,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Market snapshot */}
-      <div className="card" style={{ padding: '16px 20px' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-white text-sm">Market Snapshot</h2>
-          <Link to="/markets" className="text-blue-400 text-xs hover:text-blue-300 flex items-center gap-1">
-            All markets <ArrowRight size={12} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {MARKET_HIGHLIGHTS.map(m => (
-            <div key={m.sym} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-800/50">
-              <StockLogo symbol={m.sym} size="sm" />
-              <div className="min-w-0">
-                <p className="text-white text-xs font-semibold">{m.sym}</p>
-                <p className="text-gray-400 text-xs truncate">{m.price}</p>
-              </div>
-              <span className={clsx('text-xs font-semibold ml-auto shrink-0', m.up ? 'text-green-400' : 'text-red-400')}>
-                {m.change}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
