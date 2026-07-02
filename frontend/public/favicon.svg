@@ -1,21 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark rounded bg -->
   <rect width="100" height="100" rx="20" fill="#0f0f0f"/>
-  <g fill="white">
-    <!-- Fist body -->
-    <rect x="8"  y="50" width="52" height="24" rx="6"/>
-    <!-- Knuckle caps -->
-    <path d="M 8,50  A 5,7  0 0,0 19,50 Z"/>
-    <path d="M 19,50 A 7,14 0 0,0 33,50 Z"/>
-    <path d="M 33,50 A 7,17 0 0,0 48,50 Z"/>
-    <path d="M 48,50 A 5,12 0 0,0 60,50 Z"/>
-    <!-- Thumb -->
-    <rect x="0"  y="40" width="12" height="18" rx="5"/>
-    <!-- Wrist tabs -->
-    <rect x="12" y="74" width="11" height="9" rx="3"/>
-    <rect x="38" y="74" width="11" height="9" rx="3"/>
+
+  <!-- ── Cartoon hand pointing up (tattoo flash style) ── -->
+  <g stroke="#0f0f0f" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Palm / body -->
+    <path d="M 35,90 Q 30,88 29,80 L 28,58 Q 28,53 33,53 L 33,48 Q 33,43 38,43 L 38,35 Q 38,30 43,30 L 43,24 Q 43,18 48,18 Q 53,18 53,24 L 53,44 Q 55,42 58,42 Q 63,42 63,47 L 63,52 Q 65,50 68,50 Q 73,50 73,55 L 73,65 Q 73,78 65,85 L 60,90 Z"
+          fill="white" stroke-width="3"/>
+
+    <!-- Ring finger hint (folded, adds volume) -->
+    <path d="M 63,52 Q 63,57 60,58 L 58,58" fill="none" stroke="white" stroke-width="2"/>
+
+    <!-- Knuckle lines on index finger -->
+    <line x1="44" y1="32" x2="52" y2="32" stroke="#ccc" stroke-width="1.2"/>
+    <line x1="44" y1="38" x2="52" y2="38" stroke="#ccc" stroke-width="1.2"/>
+
+    <!-- Arrow tattooed on the finger (pointing up) -->
+    <line x1="48" y1="24" x2="48" y2="10" stroke="#0f0f0f" stroke-width="2"/>
+    <polyline points="43,16 48,10 53,16" stroke="#0f0f0f" stroke-width="2" fill="none"/>
   </g>
-  <!-- Upward arrow -->
-  <path d="M 78,72 L 78,24 M 66,36 L 78,24 L 90,36"
-        stroke="white" stroke-width="6"
-        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>
