@@ -96,55 +96,6 @@ function HeroCanvas({ theme }: { theme: string }) {
       hg.addColorStop(1,   'rgba(255,255,255,0.00)');
       ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
 
-      // ── Boats ──────────────────────────────────────────────
-      const boatColor = 'rgba(8,18,45,0.88)';
-      ctx.fillStyle = boatColor;
-      ctx.strokeStyle = boatColor;
-
-      // Advance boat positions
-      for (const b of boats) {
-        b.x -= b.spd;
-        if (b.x < -b.w * 2) b.x = W + b.w;
-      }
-
-      // Draw sailboat
-      const [sb] = boats;
-      ctx.save();
-      ctx.translate(sb.x, hy + sb.yo);
-      ctx.scale(sb.sc, sb.sc);
-      ctx.beginPath(); // hull
-      ctx.moveTo(-18, 0); ctx.lineTo(18, 0); ctx.lineTo(13, 7); ctx.lineTo(-13, 7); ctx.closePath(); ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -34); ctx.stroke(); // mast
-      ctx.beginPath(); ctx.moveTo(0, -33); ctx.lineTo(0, 0); ctx.lineTo(17, -16); ctx.closePath(); ctx.fill(); // main sail
-      ctx.beginPath(); ctx.moveTo(0, -28); ctx.lineTo(0, 0); ctx.lineTo(-11, -6); ctx.closePath(); ctx.fill(); // jib
-      ctx.restore();
-
-      // Draw dhow (traditional lateen sail)
-      const [, dh] = boats;
-      ctx.save();
-      ctx.translate(dh.x, hy + dh.yo);
-      ctx.scale(dh.sc, dh.sc);
-      ctx.beginPath(); // curved hull
-      ctx.moveTo(-28, 0); ctx.quadraticCurveTo(0, 9, 28, 0); ctx.lineTo(22, 6); ctx.quadraticCurveTo(0, 14, -22, 6); ctx.closePath(); ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-10, -30); ctx.stroke(); // mast
-      ctx.beginPath(); ctx.moveTo(-10, -30); ctx.lineTo(-10, 0); ctx.lineTo(26, -10); ctx.closePath(); ctx.fill(); // lateen sail
-      ctx.restore();
-
-      // Draw cargo ship
-      const [,, cg] = boats;
-      ctx.save();
-      ctx.translate(cg.x, hy + cg.yo);
-      ctx.scale(cg.sc, cg.sc);
-      ctx.beginPath(); // long hull
-      ctx.moveTo(-45, 0); ctx.lineTo(45, 0); ctx.lineTo(40, 9); ctx.lineTo(-40, 9); ctx.closePath(); ctx.fill();
-      ctx.fillRect(-38, -10, 60, 10); // deck
-      ctx.fillRect(10, -22, 22, 12); // bridge
-      ctx.fillRect(-20, -18, 8, 18); // funnel 1
-      ctx.fillRect(-5, -14, 6, 14);  // funnel 2
-      ctx.restore();
-
       // Text-legibility overlay
       const ov = ctx.createLinearGradient(0, 0, 0, H);
       ov.addColorStop(0,    'rgba(0,0,0,0.54)');
@@ -155,13 +106,6 @@ function HeroCanvas({ theme }: { theme: string }) {
 
       animId = requestAnimationFrame(draw);
     }
-
-    // Sailboat, dhow, cargo ship — different speeds, depths, y-offsets
-    const boats = [
-      { x: W * 0.65, yo: -3, sc: 0.85, spd: 0.22, w: 36 },  // sailboat
-      { x: W * 0.25, yo: -1, sc: 1.10, spd: 0.13, w: 56 },  // dhow (bigger, slower)
-      { x: W * 0.45, yo: -2, sc: 0.70, spd: 0.16, w: 90 },  // cargo ship (far)
-    ];
 
     init(); animId = requestAnimationFrame(draw);
     const ro = new ResizeObserver(init);
