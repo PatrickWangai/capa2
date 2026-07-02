@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import {
-  TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle,
+  TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle, Bell, BellRing, X,
 } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
@@ -189,12 +189,16 @@ export default function AssetDetailPage() {
   const [inMode, setInMode]     = useState<InMode>('SHARES');
   const [amount, setAmount]     = useState('');
   const [limitPrice, setLimitP] = useState('');
-  const [watched, setWatched]   = useState(false);
+  const [watched, setWatched]     = useState(false);
   const [showPreview, setPreview] = useState(false);
-  const [placing, setPlacing]   = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const [flashKey, setFlash]    = useState(0);
-  const prevPriceRef            = useRef<number | null>(null);
+  const [placing, setPlacing]     = useState(false);
+  const [success, setSuccess]     = useState(false);
+  const [flashKey, setFlash]      = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertCond, setAlertCond] = useState<'above' | 'below'>('above');
+  const [alertPrice, setAlertPriceVal] = useState('');
+  const [savingAlert, setSavingAlert] = useState(false);
+  const prevPriceRef              = useRef<number | null>(null);
 
   // ── Queries ──────────────────────────────────────────────
   const { data: assetData, refetch: refetchAsset } = useQuery({
@@ -225,6 +229,32 @@ export default function AssetDetailPage() {
     queryKey: ['watchlist'],
     queryFn: () => api.get('/api/assets/watchlist').then(r => r.data),
   });
+
+  const { data: alertsData, refetch: refetchAlerts } = useQuery({
+    queryKey: ['alerts', id],
+    queryFn: () => api.get('/api/alerts').then(r => r.data),
+  });
+  const assetAlerts = (alertsData?.alerts ?? []).filter((a: any) => a.assetId === id && a.isActive);
+
+  const createAlert = async () => {
+    if (!alertPrice) return;
+    setSavingAlert(true);
+    try {
+      await api.post('/api/alerts', { assetId: id, condition: alertCond, targetPrice: alertPrice });
+      toast.success(`Alert set — notify when price goes ${alertCond} ${alertPrice}`);
+      setShowAlert(false);
+      setAlertPriceVal('');
+      refetchAlerts();
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to create alert');
+    } finally { setSavingAlert(false); }
+  };
+
+  const deleteAlert = async (alertId: string) => {
+    await api.delete(`/api/alerts/${alertId}`);
+    toast.success('Alert removed');
+    refetchAlerts();
+  };
 
   // ── Effects ──────────────────────────────────────────────
   const asset    = assetData?.asset;
@@ -350,6 +380,79 @@ export default function AssetDetailPage() {
   // ── Render ────────────────────────────────────────────────
   return (
     <>
+      {/* Price Alert Modal */}
+      {showAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowAlert(false)} />
+          <div className="relative w-full max-w-sm" style={{ background: 'rgba(20,20,22,0.97)', backdropFilter: 'blur(24px)', borderRadius: 20, border: '1px solid rgba(255,255,255,0.12)', padding: 24 }}>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-semibold text-white flex items-center gap-2"><Bell size={16} style={{ color: 'var(--accent)' }} /> Set Price Alert</h3>
+              <button onClick={() => setShowAlert(false)} className="text-gray-500 hover:text-white transition-colors"><X size={18} /></button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="label">Condition</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['above', 'below'] as const).map(c => (
+                    <button key={c} onClick={() => setAlertCond(c)}
+                      className="py-2.5 rounded-xl text-sm font-semibold capitalize transition-all"
+                      style={{
+                        background: alertCond === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
+                        color: alertCond === c ? '#fff' : 'rgba(235,235,245,0.5)',
+                        border: alertCond === c ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                      }}>
+                      Price goes {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="label">Target Price ({currency})</label>
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={alertPrice}
+                  onChange={e => setAlertPriceVal(e.target.value)}
+                  placeholder={currentPrice.toFixed(2)}
+                />
+                <p className="text-xs text-gray-500 mt-1">Current price: {currency} {currentPrice.toFixed(2)}</p>
+              </div>
+
+              {/* Existing alerts for this asset */}
+              {assetAlerts.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-400 mb-2">Active alerts for {asset?.symbol}</p>
+                  <div className="space-y-1.5">
+                    {assetAlerts.map((a: any) => (
+                      <div key={a.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                        <span className="text-xs text-gray-300">
+                          <span style={{ color: 'var(--accent)' }}>{a.condition}</span> {currency} {Number(a.targetPrice).toFixed(2)}
+                        </span>
+                        <button onClick={() => deleteAlert(a.id)} className="text-gray-600 hover:text-red-400 transition-colors"><X size={13} /></button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-1">
+                <button onClick={() => setShowAlert(false)} className="btn-secondary flex-1" style={{ fontSize: 14, padding: '10px' }}>Cancel</button>
+                <button
+                  onClick={createAlert}
+                  disabled={!alertPrice || savingAlert}
+                  className="btn-primary flex-1"
+                  style={{ fontSize: 14, padding: '10px' }}
+                >
+                  {savingAlert ? 'Setting…' : 'Set Alert'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showPreview && (
         <PreviewModal
           asset={asset} side={side} ordType={ordType}
@@ -392,6 +495,17 @@ export default function AssetDetailPage() {
                 <span className="font-normal opacity-70">({isUp ? '+' : ''}{fmtNum(changeAmt)})</span>
               </p>
             </div>
+            <button
+              onClick={() => { setAlertPriceVal(currentPrice.toFixed(2)); setShowAlert(true); }}
+              className="p-2.5 rounded-xl transition-all"
+              title="Set price alert"
+              style={{
+                background: assetAlerts.length > 0 ? 'rgba(var(--accent-rgb),0.12)' : 'rgba(255,255,255,0.06)',
+                color: assetAlerts.length > 0 ? 'var(--accent)' : 'rgba(235,235,245,0.4)',
+              }}
+            >
+              {assetAlerts.length > 0 ? <BellRing size={18} /> : <Bell size={18} />}
+            </button>
             <button
               onClick={toggleWatchlist}
               className="p-2.5 rounded-xl transition-all"
