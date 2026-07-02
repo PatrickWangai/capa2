@@ -82,7 +82,7 @@ function LoadingSpinner() {
         {/* Fist icon — pulse */}
         <div style={{ animation: 'capa-pulse 2.4s ease-in-out infinite', marginBottom: 20 }}>
           <img
-            src="/favicon.svg" alt="CAPA"
+            src="/capa-icon.png" alt="CAPA"
             width={110} height={110}
             draggable={false}
             style={{ display: 'block', userSelect: 'none' }}
