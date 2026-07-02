@@ -3,9 +3,9 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  CreditCard, ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu,
+  CreditCard, ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import CapaLogo from '../ui/CapaLogo';
 import { useTheme, THEMES, COLOUR_THEMES } from '../../context/ThemeContext';
@@ -27,7 +27,6 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [paletteOpen, setPalette] = useState(false);
   const [searchOpen, setSearch] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -50,8 +49,7 @@ export default function AppLayout() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // Close mobile sidebar on route change
-  const closeMobile = useCallback(() => setMobileOpen(false), []);
+  const closeMobile = () => {};
 
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}
@@ -73,16 +71,8 @@ export default function AppLayout() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${sidebarBorder}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: `1px solid ${sidebarBorder}` }}>
         <CapaLogo size={44} />
-        {/* Mobile close button */}
-        <button
-          onClick={closeMobile}
-          className="lg:hidden text-gray-400 hover:text-white transition-colors"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
-        >
-          <X size={20} />
-        </button>
       </div>
 
       {/* Search button */}
@@ -266,16 +256,7 @@ export default function AppLayout() {
         </div>
       )}
 
-      {/* ── Mobile Overlay Backdrop ── */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden"
-          style={{ position: 'fixed', inset: 0, zIndex: 40, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
-          onClick={closeMobile}
-        />
-      )}
-
-      {/* ── Sidebar — desktop always visible, mobile slide-over ── */}
+      {/* ── Sidebar — always visible ── */}
       <aside
         style={{
           width: 256,
@@ -289,34 +270,6 @@ export default function AppLayout() {
           WebkitBackdropFilter: 'saturate(160%) blur(28px)',
           borderRight: `1px solid ${sidebarBorder}`,
           boxShadow: '1px 0 0 rgba(0,0,0,0.08)',
-          // Mobile: fixed overlay; Desktop: static in flex flow
-          position: undefined,
-        }}
-        className="hidden lg:flex lg:flex-col"
-      >
-        <SidebarContent />
-      </aside>
-
-      {/* Mobile slide-over sidebar */}
-      <aside
-        className="lg:hidden"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: 280,
-          height: '100vh',
-          zIndex: 50,
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--sidebar-bg)',
-          backdropFilter: 'saturate(160%) blur(28px)',
-          WebkitBackdropFilter: 'saturate(160%) blur(28px)',
-          borderRight: `1px solid ${sidebarBorder}`,
-          boxShadow: '4px 0 24px rgba(0,0,0,0.4)',
-          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.25s cubic-bezier(0.4,0,0.2,1)',
-          overflowY: 'auto',
         }}
       >
         <SidebarContent />
@@ -324,38 +277,6 @@ export default function AppLayout() {
 
       {/* ── Main content area ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-        {/* Mobile top bar */}
-        <header
-          className="lg:hidden"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            height: 56,
-            backgroundColor: 'var(--sidebar-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: `1px solid ${sidebarBorder}`,
-            flexShrink: 0,
-            gap: 12,
-          }}
-        >
-          <button
-            onClick={() => setMobileOpen(true)}
-            style={{ color: 'rgba(235,235,245,0.7)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}
-          >
-            <Menu size={22} />
-          </button>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <CapaLogo size={36} />
-          </div>
-          <button
-            onClick={() => setSearch(true)}
-            style={{ color: 'rgba(235,235,245,0.7)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}
-          >
-            <Search size={20} />
-          </button>
-        </header>
 
         <main
           style={{
@@ -369,53 +290,6 @@ export default function AppLayout() {
           <Outlet />
         </main>
 
-        {/* Mobile bottom nav */}
-        <nav
-          className="lg:hidden"
-          style={{
-            display: 'flex',
-            borderTop: `1px solid ${sidebarBorder}`,
-            backgroundColor: 'var(--sidebar-bg)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            flexShrink: 0,
-          }}
-        >
-          {[
-            { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
-            { to: '/markets',   label: 'Markets', icon: TrendingUp },
-            { to: '/portfolio', label: 'Portfolio', icon: Briefcase },
-            { to: '/orders',    label: 'Orders', icon: ArrowDownUp },
-            { to: '/profile',   label: 'Profile', icon: User },
-          ].map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={closeMobile}
-              style={({ isActive }) => ({
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '10px 4px',
-                gap: 3,
-                textDecoration: 'none',
-                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.45)',
-                fontSize: 10,
-                fontWeight: isActive ? 600 : 400,
-                transition: 'color 0.15s',
-              })}
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon size={20} strokeWidth={isActive ? 2.2 : 1.6} />
-                  {label}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
       </div>
     </div>
   );
