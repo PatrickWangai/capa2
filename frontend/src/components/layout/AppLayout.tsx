@@ -27,6 +27,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [paletteOpen, setPalette] = useState(false);
   const [searchOpen, setSearch] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -35,6 +36,12 @@ export default function AppLayout() {
         setAuth(r.data.user, accessToken, refreshToken);
       }
     }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   // Cmd+K / Ctrl+K → open search
@@ -49,8 +56,6 @@ export default function AppLayout() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const closeMobile = () => {};
-
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}
     logout();
@@ -59,6 +64,7 @@ export default function AppLayout() {
   };
 
   const kycBadge = user?.kycStatus !== 'APPROVED';
+  const sidebarW = isMobile ? 60 : 256;
 
   const sidebarBorder  = 'rgba(255,255,255,0.10)';
   const navInactive    = 'var(--nav-text)';
@@ -67,116 +73,6 @@ export default function AppLayout() {
   const drawerHeadText = '#ffffff';
   const drawerLabelClr = 'rgba(235,235,245,0.38)';
   const drawerCloseClr = 'rgba(235,235,245,0.5)';
-
-  const SidebarContent = () => (
-    <>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: `1px solid ${sidebarBorder}` }}>
-        <CapaLogo size={44} />
-      </div>
-
-      {/* Search button */}
-      <div style={{ padding: '10px 12px 4px' }}>
-        <button
-          onClick={() => { setSearch(true); closeMobile(); }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-            padding: '8px 12px', borderRadius: 10,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-            color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit',
-            fontSize: 14, textAlign: 'left', transition: 'all 0.15s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(235,235,245,0.8)'; }}
-          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}
-        >
-          <Search size={15} />
-          <span style={{ flex: 1 }}>Search stocks…</span>
-          <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(235,235,245,0.4)' }}>⌘K</kbd>
-        </button>
-      </div>
-
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
-        {user?.adminRole && (
-          <NavLink
-            to="/admin/dashboard"
-            onClick={closeMobile}
-            style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '9px 12px', borderRadius: 10, marginBottom: 2,
-              fontSize: 15, fontWeight: 500, textDecoration: 'none',
-              transition: 'background 0.15s',
-              backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent',
-              color: isActive ? '#c084fc' : navInactive,
-            })}
-          >
-            {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
-          </NavLink>
-        )}
-        {nav.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to} to={to}
-            onClick={closeMobile}
-            style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '9px 12px', borderRadius: 10, marginBottom: 2,
-              fontSize: 15, fontWeight: 500, textDecoration: 'none',
-              transition: 'background 0.15s',
-              backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent',
-              color: isActive ? 'var(--accent)' : navInactive,
-            })}
-          >
-            {({ isActive }) => (
-              <>
-                <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
-                {label}
-                {label === 'Verification' && kycBadge && (
-                  <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />
-                )}
-              </>
-            )}
-          </NavLink>
-        ))}
-
-        {/* Customizations */}
-        <button
-          onClick={() => setPalette(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-            padding: '9px 12px', borderRadius: 10, marginTop: 2,
-            fontSize: 15, fontWeight: 500, background: 'none', border: 'none',
-            cursor: 'pointer', color: navInactive, transition: 'background 0.15s', textAlign: 'left',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
-          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-        >
-          <Palette size={18} strokeWidth={1.8} />
-          Customizations
-        </button>
-      </nav>
-
-      {/* User panel */}
-      <div style={{ padding: 12, borderTop: `1px solid ${sidebarBorder}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
-            {user?.firstName?.[0]}{user?.lastName?.[0]}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-            <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}
-          >
-            <LogOut size={15} />
-          </button>
-        </div>
-      </div>
-    </>
-  );
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
@@ -205,7 +101,6 @@ export default function AppLayout() {
                 <X size={18} />
               </button>
             </div>
-
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Appearance</p>
               <div style={{ marginBottom: 24 }}>
@@ -225,7 +120,6 @@ export default function AppLayout() {
                   <span style={{ fontSize: 12, fontWeight: theme === 'black' ? 600 : 500, color: theme === 'black' ? '#f5f5f7' : drawerLabelClr }}>Black</span>
                 </button>
               </div>
-
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Colour Theme</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {COLOUR_THEMES.map(name => {
@@ -256,40 +150,159 @@ export default function AppLayout() {
         </div>
       )}
 
-      {/* ── Sidebar — always visible ── */}
+      {/* ── Sidebar ── */}
       <aside
         style={{
-          width: 256,
+          width: sidebarW,
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           height: '100vh',
           overflowY: 'auto',
+          overflowX: 'hidden',
           backgroundColor: 'var(--sidebar-bg)',
           backdropFilter: 'saturate(160%) blur(28px)',
           WebkitBackdropFilter: 'saturate(160%) blur(28px)',
           borderRight: `1px solid ${sidebarBorder}`,
           boxShadow: '1px 0 0 rgba(0,0,0,0.08)',
+          transition: 'width 0.25s ease',
         }}
       >
-        <SidebarContent />
+        {isMobile ? (
+          /* ── Collapsed (icon-only) ── */
+          <>
+            {/* Logo mark */}
+            <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: `1px solid ${sidebarBorder}`, flexShrink: 0 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: 'var(--accent-text)', letterSpacing: '-0.02em' }}>C</div>
+            </div>
+
+            {/* Search icon */}
+            <div style={{ padding: '8px 0', display: 'flex', justifyContent: 'center', borderBottom: `1px solid ${sidebarBorder}` }}>
+              <button
+                onClick={() => setSearch(true)}
+                title="Search"
+                style={{ width: 40, height: 40, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer' }}
+              >
+                <Search size={16} />
+              </button>
+            </div>
+
+            {/* Nav icons */}
+            <nav style={{ flex: 1, padding: '6px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, overflowY: 'auto' }}>
+              {user?.adminRole && (
+                <NavLink to="/admin/dashboard" title="Admin"
+                  style={({ isActive }) => ({ width: 40, height: 40, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive, transition: 'background 0.15s' })}>
+                  {({ isActive }) => <ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />}
+                </NavLink>
+              )}
+              {nav.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to} title={label}
+                  style={({ isActive }) => ({ width: 40, height: 40, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive, transition: 'background 0.15s', position: 'relative' })}>
+                  {({ isActive }) => (
+                    <>
+                      <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                      {label === 'Verification' && kycBadge && (
+                        <span style={{ position: 'absolute', top: 6, right: 6, width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+              <button onClick={() => setPalette(true)} title="Customizations"
+                style={{ width: 40, height: 40, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: navInactive, marginTop: 2 }}>
+                <Palette size={18} strokeWidth={1.8} />
+              </button>
+            </nav>
+
+            {/* Avatar + logout */}
+            <div style={{ padding: '10px 0', borderTop: `1px solid ${sidebarBorder}`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 11, fontWeight: 700 }}>
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
+              </div>
+              <button onClick={handleLogout} title="Log out"
+                style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                <LogOut size={15} />
+              </button>
+            </div>
+          </>
+        ) : (
+          /* ── Full sidebar ── */
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: `1px solid ${sidebarBorder}` }}>
+              <CapaLogo size={44} />
+            </div>
+
+            <div style={{ padding: '10px 12px 4px' }}>
+              <button
+                onClick={() => setSearch(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, textAlign: 'left', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(235,235,245,0.8)'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}
+              >
+                <Search size={15} />
+                <span style={{ flex: 1 }}>Search stocks…</span>
+                <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(235,235,245,0.4)' }}>⌘K</kbd>
+              </button>
+            </div>
+
+            <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
+              {user?.adminRole && (
+                <NavLink to="/admin/dashboard"
+                  style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive })}>
+                  {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
+                </NavLink>
+              )}
+              {nav.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive })}>
+                  {({ isActive }) => (
+                    <>
+                      <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                      {label}
+                      {label === 'Verification' && kycBadge && (
+                        <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+              <button onClick={() => setPalette(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', borderRadius: 10, marginTop: 2, fontSize: 15, fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', color: navInactive, transition: 'background 0.15s', textAlign: 'left' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
+                <Palette size={18} strokeWidth={1.8} />
+                Customizations
+              </button>
+            </nav>
+
+            <div style={{ padding: 12, borderTop: `1px solid ${sidebarBorder}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
+                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+                </div>
+                <button onClick={handleLogout}
+                  style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                  <LogOut size={15} />
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </aside>
 
       {/* ── Main content area ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-
-        <main
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '24px',
-            background: 'var(--bg-gradient)',
-            backgroundAttachment: 'fixed',
-          }}
-        >
+        <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '16px 12px' : '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
           <Outlet />
         </main>
-
       </div>
     </div>
   );
