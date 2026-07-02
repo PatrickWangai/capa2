@@ -182,12 +182,12 @@ function applyTheme(name: ThemeName) {
 }
 
 type ThemeCtx = { theme: ThemeName; setTheme: (t: ThemeName) => void };
-const ThemeContext = createContext<ThemeCtx>({ theme: 'blue', setTheme: () => {} });
+const ThemeContext = createContext<ThemeCtx>({ theme: 'indigo', setTheme: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
     const saved = localStorage.getItem('capa-theme') as ThemeName | null;
-    const t = (saved && saved in THEMES ? saved : 'blue') as ThemeName;
+    const t = (saved && saved in THEMES ? saved : 'indigo') as ThemeName;
     applyTheme(t); // apply before first render so loading screen inherits theme
     return t;
   });
