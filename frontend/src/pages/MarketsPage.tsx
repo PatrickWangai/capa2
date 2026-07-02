@@ -3,8 +3,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import {
-  TrendingUp, TrendingDown, Flame, Search, Star,
-  BarChart2, X, Activity,
+  TrendingUp, TrendingDown, Flame, Star,
+  BarChart2, Activity, Clock,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
@@ -31,10 +31,10 @@ function isNSEOpen(): boolean {
 
 // ── Config ────────────────────────────────────────────────────
 const EXCHANGES = [
-  { id: 'NSE',    label: 'Nairobi',   flag: '🇰🇪', currency: 'KES' },
-  { id: 'NYSE',   label: 'New York',  flag: '🇺🇸', currency: 'USD' },
-  { id: 'NASDAQ', label: 'NASDAQ',    flag: '🇺🇸', currency: 'USD' },
-  { id: 'LSE',    label: 'London',    flag: '🇬🇧', currency: 'GBP' },
+  { id: 'NSE',    label: 'Nairobi',   flag: '🇰🇪', currency: 'KES', comingSoon: false },
+  { id: 'NYSE',   label: 'New York',  flag: '🇺🇸', currency: 'USD', comingSoon: true  },
+  { id: 'NASDAQ', label: 'NASDAQ',    flag: '🇺🇸', currency: 'USD', comingSoon: true  },
+  { id: 'LSE',    label: 'London',    flag: '🇬🇧', currency: 'GBP', comingSoon: true  },
 ];
 
 type View = 'all' | 'gainers' | 'losers' | 'active';
@@ -49,27 +49,20 @@ const VIEWS: { id: View; label: string; icon: React.ElementType }[] = [
 export default function MarketsPage() {
   const [exchange, setExchange] = useState('NSE');
   const [view, setView]         = useState<View>('all');
-  const [rawSearch, setRaw]     = useState('');
-  const [search, setSearch]     = useState('');
   const [watchlistIds, setWIds] = useState<Set<string>>(new Set());
   const qc = useQueryClient();
 
-  // Debounce search
-  useEffect(() => {
-    const t = setTimeout(() => setSearch(rawSearch), 280);
-    return () => clearTimeout(t);
-  }, [rawSearch]);
+  const switchExchange = (ex: string) => { setExchange(ex); setView('all'); };
 
-  const switchExchange = (ex: string) => { setExchange(ex); setView('all'); setRaw(''); };
+  const currEx = EXCHANGES.find(e => e.id === exchange)!;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['assets', exchange, search],
+    queryKey: ['assets', exchange],
     queryFn: () =>
-      api.get('/api/assets', {
-        params: { exchange, ...(search && { search }), limit: 300 },
-      }).then(r => r.data),
+      api.get('/api/assets', { params: { exchange, limit: 300 } }).then(r => r.data),
     staleTime: 15_000,
     refetchInterval: 30_000,
+    enabled: !currEx.comingSoon,
   });
 
   const { data: wlData } = useQuery({
@@ -132,8 +125,7 @@ export default function MarketsPage() {
     }
   };
 
-  const nseOpen = isNSEOpen();
-  const currEx  = EXCHANGES.find(e => e.id === exchange)!;
+  const nseOpen = isNSEOpen();;
 
   return (
     <div className="max-w-6xl mx-auto space-y-5">
@@ -167,20 +159,28 @@ export default function MarketsPage() {
               'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
               exchange === ex.id
                 ? 'text-white shadow-lg'
-                : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60',
+                : ex.comingSoon
+                  ? 'bg-gray-800/40 text-gray-600 cursor-pointer'
+                  : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60',
             )}
-            style={exchange === ex.id ? { backgroundColor: 'var(--accent)' } : {}}
+            style={exchange === ex.id ? { backgroundColor: ex.comingSoon ? 'rgba(255,255,255,0.08)' : 'var(--accent)' } : {}}
           >
             <span role="img" aria-label={ex.label}>{ex.flag}</span>
             {ex.label}
+            {ex.comingSoon && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wide"
+                style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.35)' }}>
+                SOON
+              </span>
+            )}
           </button>
         ))}
       </div>
 
-      {/* View tabs + Search */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+      {/* View tabs — hidden when exchange is Coming Soon */}
+      {!currEx.comingSoon && (
         <div
-          className="flex gap-0.5 p-1 rounded-xl"
+          className="flex gap-0.5 p-1 rounded-xl self-start"
           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
         >
           {VIEWS.map(v => {
@@ -201,27 +201,22 @@ export default function MarketsPage() {
             );
           })}
         </div>
+      )}
 
-        <div className="flex-1 relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-          <input
-            value={rawSearch}
-            onChange={e => setRaw(e.target.value)}
-            placeholder={`Search ${currEx.label} stocks...`}
-            className="input pl-9 text-sm"
-            style={{ height: 38 }}
-          />
-          {rawSearch && (
-            <button
-              onClick={() => setRaw('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
-            >
-              <X size={13} />
-            </button>
-          )}
+      {/* Coming Soon placeholder */}
+      {currEx.comingSoon ? (
+        <div className="card py-24 flex flex-col items-center text-center">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
+            style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <Clock size={26} className="text-gray-500" />
+          </div>
+          <p className="text-lg font-semibold text-white">{currEx.label} — Coming Soon</p>
+          <p className="text-sm text-gray-500 mt-2 max-w-xs">
+            We're working on bringing {currEx.label} ({currEx.id}) stocks to CAPA. Stay tuned for updates.
+          </p>
         </div>
-      </div>
-
+      ) : (
+        <>
       {/* Stock list */}
       <div className="card overflow-hidden p-0">
         {/* Table header */}
@@ -248,9 +243,7 @@ export default function MarketsPage() {
           <div className="py-20 text-center">
             <Activity size={32} className="mx-auto mb-3 text-gray-700" />
             <p className="text-gray-400 font-semibold">No stocks found</p>
-            <p className="text-gray-600 text-sm mt-1">
-              {search ? `No results for "${search}"` : 'No data available for this exchange yet'}
-            </p>
+            <p className="text-gray-600 text-sm mt-1">No data available for this exchange yet</p>
           </div>
         ) : (
           displayed.map((asset: any, idx: number) => {
@@ -353,6 +346,8 @@ export default function MarketsPage() {
         <p className="text-center text-xs pb-1" style={{ color: 'rgba(235,235,245,0.25)' }}>
           {displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · {currEx.label}
         </p>
+      )}
+        </>
       )}
     </div>
   );
