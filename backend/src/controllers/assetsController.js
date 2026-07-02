@@ -134,9 +134,15 @@ export async function getWatchlist(req, res) {
   res.json({ watchlist });
 }
 
+async function getOrCreateWatchlist(userId) {
+  const existing = await prisma.watchlist.findFirst({ where: { userId, isDefault: true } });
+  if (existing) return existing;
+  return prisma.watchlist.create({ data: { userId, name: 'My Watchlist', isDefault: true } });
+}
+
 // POST /api/assets/watchlist/:assetId
 export async function addToWatchlist(req, res) {
-  const watchlist = await prisma.watchlist.findFirst({ where: { userId: req.user.id, isDefault: true } });
+  const watchlist = await getOrCreateWatchlist(req.user.id);
   await prisma.watchlistItem.upsert({
     where: { watchlistId_assetId: { watchlistId: watchlist.id, assetId: req.params.assetId } },
     create: { watchlistId: watchlist.id, assetId: req.params.assetId },
@@ -147,7 +153,7 @@ export async function addToWatchlist(req, res) {
 
 // DELETE /api/assets/watchlist/:assetId
 export async function removeFromWatchlist(req, res) {
-  const watchlist = await prisma.watchlist.findFirst({ where: { userId: req.user.id, isDefault: true } });
+  const watchlist = await getOrCreateWatchlist(req.user.id);
   await prisma.watchlistItem.deleteMany({
     where: { watchlistId: watchlist.id, assetId: req.params.assetId },
   });
