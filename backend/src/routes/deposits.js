@@ -4,7 +4,7 @@ import * as c from '../controllers/depositsController.js';
 import auth from '../middleware/authenticate.js';
 import requireKyc from '../middleware/requireKyc.js';
 router.get('/history', auth, c.getHistory);
-router.post('/mpesa', auth, requireKyc, c.mpesaDeposit);
+router.post('/mpesa', auth, c.mpesaDeposit);
 router.post('/bank', auth, requireKyc, c.bankDeposit);
 router.post('/withdraw', auth, requireKyc, c.withdraw);
 router.post('/confirm', auth, c.confirmDeposit);
