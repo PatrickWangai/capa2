@@ -27,9 +27,14 @@ export default class ErrorBoundary extends Component<Props, State> {
       <div style={{ minHeight: '40vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, textAlign: 'center', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif' }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>⚠️</div>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: TEXT, marginBottom: 8 }}>Something went wrong</h2>
-        <p style={{ fontSize: 14, color: SEC, marginBottom: 24, maxWidth: 380, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 14, color: SEC, marginBottom: 8, maxWidth: 380, lineHeight: 1.6 }}>
           This section encountered an unexpected error. Your account and investments are safe.
         </p>
+        {this.state.message && (
+          <p style={{ fontSize: 12, color: 'rgba(255,100,100,0.85)', marginBottom: 20, maxWidth: 480, fontFamily: 'monospace', background: 'rgba(255,60,60,0.08)', padding: '8px 14px', borderRadius: 8, wordBreak: 'break-word' }}>
+            {this.state.message}
+          </p>
+        )}
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <button
             onClick={() => this.setState({ hasError: false, message: '' })}

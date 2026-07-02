@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import 'express-async-errors';
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled rejection:', reason);
