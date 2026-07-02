@@ -152,10 +152,8 @@ export default function App() {
             <Route path="/login"          element={<PublicRoute><PageTitle title="Sign In" /><LoginPage /></PublicRoute>} />
             <Route path="/register"       element={<PublicRoute><PageTitle title="Create Account" /><RegisterPage /></PublicRoute>} />
             <Route path="/forgot-password" element={<PublicRoute><PageTitle title="Reset Password" /><ForgotPasswordPage /></PublicRoute>} />
-            <Route path="/reset-password"  element={<PageTitle title="Set New Password" />} />
-            <Route path="/reset-password"  element={<ResetPasswordPage />} />
-            <Route path="/verify-email"    element={<PageTitle title="Verify Email" />} />
-            <Route path="/verify-email"    element={<VerifyEmailPage />} />
+            <Route path="/reset-password"  element={<><PageTitle title="Set New Password" /><ResetPasswordPage /></>} />
+            <Route path="/verify-email"    element={<><PageTitle title="Verify Email" /><VerifyEmailPage /></>} />
 
             {/* Onboarding (after signup) */}
             <Route path="/onboarding" element={<PrivateRoute><PageTitle title="Welcome" /><OnboardingPage /></PrivateRoute>} />
