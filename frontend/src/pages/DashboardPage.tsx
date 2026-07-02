@@ -1,11 +1,18 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
-import { TrendingUp, TrendingDown, DollarSign, Briefcase, Bell, ShieldCheck, ArrowRight, CreditCard, BarChart2, RefreshCw } from 'lucide-react';
+import {
+  TrendingUp, TrendingDown, DollarSign, Briefcase, ShieldCheck,
+  ArrowRight, CreditCard, BarChart2, RefreshCw, Star, Clock,
+} from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
+import { Badge } from '../components/ui';
+
+type MoverTab = 'gainers' | 'losers' | 'active';
 
 function StatCard({ label, value, sub, positive }: { label: string; value: string; sub?: string; positive?: boolean }) {
   return (
@@ -13,7 +20,8 @@ function StatCard({ label, value, sub, positive }: { label: string; value: strin
       <p className="text-sm text-gray-400">{label}</p>
       <p className="text-2xl font-bold text-white mt-1">{value}</p>
       {sub && (
-        <p className={clsx('text-sm mt-1 flex items-center gap-1', positive ? 'text-green-400' : positive === false ? 'text-red-400' : 'text-gray-400')}>
+        <p className={clsx('text-sm mt-1 flex items-center gap-1',
+          positive === true ? 'text-green-400' : positive === false ? 'text-red-400' : 'text-gray-400')}>
           {positive === true && <TrendingUp size={14} />}
           {positive === false && <TrendingDown size={14} />}
           {sub}
@@ -23,9 +31,9 @@ function StatCard({ label, value, sub, positive }: { label: string; value: strin
   );
 }
 
-
 export default function DashboardPage() {
   const { user } = useAuthStore();
+  const [moverTab, setMoverTab] = useState<MoverTab>('gainers');
 
   const { data: portfolio } = useQuery({
     queryKey: ['portfolio'],
@@ -39,35 +47,55 @@ export default function DashboardPage() {
     retry: false,
   });
 
-  const { data: notifs } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: () => api.get('/api/notifications?limit=5').then(r => r.data),
+  const { data: wlData } = useQuery({
+    queryKey: ['watchlist'],
+    queryFn: () => api.get('/api/assets/watchlist').then(r => r.data),
+    refetchInterval: 30_000,
+    retry: false,
+  });
+
+  const { data: moversData } = useQuery({
+    queryKey: ['movers', moverTab],
+    queryFn: () => api.get(`/api/assets/movers?type=${moverTab}&limit=8`).then(r => r.data),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: false,
+  });
+
+  const { data: ordersData } = useQuery({
+    queryKey: ['orders-recent'],
+    queryFn: () => api.get('/api/orders?limit=5').then(r => r.data),
     retry: false,
   });
 
   const summary = portfolio?.summary;
   const isUp = summary ? Number(summary.dailyChange) >= 0 : true;
+  const watchlistItems: any[] = wlData?.watchlist?.items ?? [];
+  const movers: any[] = moversData?.assets ?? [];
+  const recentOrders: any[] = ordersData?.orders ?? [];
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Good {getGreeting()}, {user?.firstName} 👋</h1>
-          <p className="text-gray-400 mt-1">Here's your portfolio overview</p>
+          <h1 className="text-2xl font-bold text-white">Good {getGreeting()}, {user?.firstName}</h1>
+          <p className="text-gray-400 mt-1 text-sm">
+            {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
         </div>
-        <div className="text-right hidden sm:block">
-          <p className="text-xs text-gray-500">{new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          {(() => {
-            const open = isNSEOpen();
-            return (
-              <p className={clsx('text-xs mt-0.5 flex items-center gap-1 justify-end', open ? 'text-green-400' : 'text-gray-500')}>
-                <span className={clsx('w-1.5 h-1.5 rounded-full inline-block', open ? 'bg-green-400 animate-pulse' : 'bg-gray-600')} />
-                {open ? 'NSE Markets Open' : 'NSE Markets Closed'}
-              </p>
-            );
-          })()}
-        </div>
+        {(() => {
+          const open = isNSEOpen();
+          return (
+            <div className={clsx(
+              'hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border',
+              open ? 'bg-green-900/20 text-green-400 border-green-800/40' : 'bg-gray-800/60 text-gray-500 border-gray-700/40',
+            )}>
+              <span className={clsx('w-1.5 h-1.5 rounded-full', open ? 'bg-green-400 animate-pulse' : 'bg-gray-600')} />
+              NSE {open ? 'Open · 09:00–15:00 EAT' : 'Closed'}
+            </div>
+          );
+        })()}
       </div>
 
       {/* KYC banner */}
@@ -78,17 +106,17 @@ export default function DashboardPage() {
             <p className="font-medium text-yellow-300">Complete Identity Verification</p>
             <p className="text-sm text-yellow-400/80 mt-0.5">Verify your identity to unlock deposits, withdrawals and trading.</p>
           </div>
-          <Link to="/kyc" className="btn-primary text-sm whitespace-nowrap">Verify Now</Link>
+          <Link to="/kyc" className="btn-primary whitespace-nowrap" style={{ fontSize: 14, padding: '8px 16px' }}>Verify Now</Link>
         </div>
       )}
 
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: CreditCard,  label: 'Deposit',      sub: 'via M-Pesa',      to: '/deposit',    color: '#30d158' },
-          { icon: TrendingUp,  label: 'Trade',        sub: 'Buy & sell',       to: '/markets',    color: 'var(--accent)' },
-          { icon: BarChart2,   label: 'Portfolio',    sub: 'View holdings',    to: '/portfolio',  color: '#bf5af2' },
-          { icon: RefreshCw,   label: 'Withdraw',     sub: 'Cash out',         to: '/deposit',    color: '#ff9f0a' },
+          { icon: CreditCard, label: 'Deposit',   sub: 'Add funds',     to: '/deposit',   color: '#30d158' },
+          { icon: TrendingUp, label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--accent)' },
+          { icon: BarChart2,  label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: '#bf5af2' },
+          { icon: RefreshCw,  label: 'Withdraw',  sub: 'Cash out',      to: '/deposit',   color: '#ff9f0a' },
         ].map(({ icon: Icon, label, sub, to, color }) => (
           <Link key={label} to={to} style={{ textDecoration: 'none' }}>
             <div className="card hover:border-gray-700 transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
@@ -101,7 +129,6 @@ export default function DashboardPage() {
           </Link>
         ))}
       </div>
-
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -128,17 +155,22 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Performance chart + Watchlist */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Chart */}
         <div className="card lg:col-span-2">
-          <h2 className="font-semibold text-white mb-4">Portfolio Performance</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-white">Portfolio Performance</h2>
+            <Link to="/portfolio" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
+              Details <ArrowRight size={14} />
+            </Link>
+          </div>
           {history?.history?.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={history.history}>
                 <defs>
-                  <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                  <linearGradient id="dash-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }}
@@ -148,80 +180,223 @@ export default function DashboardPage() {
                   contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
                   formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Value']}
                 />
-                <Area type="monotone" dataKey="value" stroke="#2563EB" strokeWidth={2} fill="url(#grad)" />
+                <Area type="monotone" dataKey="value" stroke="var(--accent)" strokeWidth={2} fill="url(#dash-grad)" />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[220px] flex items-center justify-center text-gray-500">
-              <div className="text-center">
+            <div className="h-[220px] flex items-center justify-center">
+              <div className="text-center text-gray-500">
                 <Briefcase size={36} className="mx-auto mb-2 opacity-30" />
-                <p>No history yet. Make your first trade!</p>
-                <Link to="/markets" className="text-blue-400 text-sm mt-2 inline-block">Browse Markets →</Link>
+                <p className="text-sm">No history yet. Make your first trade!</p>
+                <Link to="/markets" className="text-sm mt-2 inline-block" style={{ color: 'var(--accent)' }}>
+                  Browse Markets →
+                </Link>
               </div>
             </div>
           )}
         </div>
 
-        {/* Notifications */}
+        {/* Watchlist */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white">Recent Alerts</h2>
-            <Link to="/notifications" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-1">
-              All <ArrowRight size={14} />
+            <h2 className="font-semibold text-white flex items-center gap-2">
+              <Star size={14} className="text-yellow-400" fill="currentColor" />
+              Watchlist
+            </h2>
+            <Link to="/markets" className="text-sm flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+              Markets <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="space-y-3">
-            {notifs?.notifications?.length > 0 ? notifs.notifications.map((n: any) => (
-              <div key={n.id} className={clsx('p-3 rounded-lg text-sm', n.isRead ? 'bg-gray-800/50' : 'bg-blue-500/10 border border-blue-600/20')}>
-                <p className="font-medium text-white">{n.title}</p>
-                <p className="text-gray-400 mt-0.5 text-xs">{n.body}</p>
-              </div>
-            )) : (
-              <div className="text-center py-6 text-gray-500">
-                <Bell size={28} className="mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No notifications yet</p>
-              </div>
-            )}
+          {watchlistItems.length === 0 ? (
+            <div className="text-center py-8">
+              <Star size={28} className="mx-auto mb-2 text-gray-700" />
+              <p className="text-sm text-gray-500">No watchlist items yet</p>
+              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--accent)' }}>
+                Star stocks in Markets →
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {watchlistItems.slice(0, 7).map((item: any) => {
+                const a = item.asset;
+                const chg = Number(a.price?.changePercent ?? 0);
+                const up = chg >= 0;
+                return (
+                  <Link key={item.id ?? a.id} to={`/markets/${a.id}`} style={{ textDecoration: 'none' }}>
+                    <div className="flex items-center justify-between py-2 px-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors">
+                      <div className="flex items-center gap-2.5">
+                        <StockLogo symbol={a.symbol} size="sm" />
+                        <div>
+                          <p className="text-sm font-semibold text-white">{a.symbol}</p>
+                          <p className="text-[11px] text-gray-500 truncate max-w-[90px]">{a.name}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-white">
+                          {a.price?.price != null ? Number(a.price.price).toFixed(2) : '—'}
+                        </p>
+                        <p className={clsx('text-xs font-medium', up ? 'text-green-400' : 'text-red-400')}>
+                          {up ? '+' : ''}{chg.toFixed(2)}%
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Top Movers */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-white">Top Movers</h2>
+          <div className="flex gap-1 p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+            {(['gainers', 'losers', 'active'] as MoverTab[]).map(t => (
+              <button key={t} onClick={() => setMoverTab(t)}
+                className={clsx(
+                  'px-3 py-1 text-xs font-semibold rounded-md transition-all',
+                  moverTab === t ? 'text-white' : 'text-gray-500 hover:text-gray-300',
+                )}
+                style={moverTab === t ? { backgroundColor: 'rgba(255,255,255,0.10)' } : {}}>
+                {t === 'gainers' ? 'Gainers' : t === 'losers' ? 'Losers' : 'Active'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="overflow-x-auto -mx-6 px-6">
+          <div className="flex gap-3 min-w-max pb-1">
+            {movers.length === 0 ? (
+              <p className="text-sm text-gray-500 py-2">No data available</p>
+            ) : movers.map((asset: any) => {
+              const chg = Number(asset.price?.changePercent ?? 0);
+              const up = chg >= 0;
+              return (
+                <Link key={asset.id} to={`/markets/${asset.id}`} style={{ textDecoration: 'none' }}>
+                  <div
+                    className="flex flex-col gap-1.5 px-4 py-3 rounded-xl border transition-all hover:-translate-y-0.5 min-w-[120px]"
+                    style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.08)' }}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <StockLogo symbol={asset.symbol} size="sm" />
+                      <span className="text-sm font-bold text-white">{asset.symbol}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-white">
+                      {asset.price?.price != null
+                        ? `${asset.currency} ${Number(asset.price.price).toFixed(2)}`
+                        : '—'}
+                    </p>
+                    <span className={clsx(
+                      'text-xs font-semibold px-2 py-0.5 rounded-full self-start',
+                      up ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400',
+                    )}>
+                      {up ? '+' : ''}{chg.toFixed(2)}%
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Top positions */}
-      {portfolio?.positions?.length > 0 && (
+      {/* Bottom: Top Holdings + Recent Orders */}
+      <div className="grid lg:grid-cols-2 gap-6">
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-white">Top Holdings</h2>
-            <Link to="/portfolio" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-1">
+            <Link to="/portfolio" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
               View all <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="space-y-3">
-            {portfolio.positions.slice(0, 5).map((pos: any) => (
-              <Link to={`/markets/${pos.assetId}`} key={pos.id} style={{ textDecoration: 'none' }}>
-                <div className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0 hover:bg-gray-800/30 -mx-2 px-2 rounded-lg transition-colors">
+          {portfolio?.positions?.length > 0 ? (
+            <div className="space-y-1">
+              {portfolio.positions.slice(0, 5).map((pos: any) => (
+                <Link to={`/markets/${pos.assetId}`} key={pos.id} style={{ textDecoration: 'none' }}>
+                  <div className="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <StockLogo symbol={pos.symbol} size="sm" />
+                      <div>
+                        <p className="text-sm font-semibold text-white">{pos.symbol}</p>
+                        <p className="text-xs text-gray-500">
+                          {Number(pos.quantity).toFixed(Number(pos.quantity) % 1 ? 4 : 0)} shares
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-white">
+                        {pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}
+                      </p>
+                      <p className={clsx('text-xs', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
+                        {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Briefcase size={28} className="mx-auto mb-2 text-gray-700" />
+              <p className="text-sm text-gray-500">No holdings yet</p>
+              <Link to="/markets" className="btn-primary inline-flex items-center gap-1.5 mt-3"
+                style={{ fontSize: 13, padding: '7px 16px' }}>
+                <DollarSign size={13} />
+                Browse Markets
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-white flex items-center gap-2">
+              <Clock size={15} className="text-gray-500" />
+              Recent Orders
+            </h2>
+            <Link to="/orders" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
+              All orders <ArrowRight size={14} />
+            </Link>
+          </div>
+          {recentOrders.length === 0 ? (
+            <div className="text-center py-8">
+              <Clock size={28} className="mx-auto mb-2 text-gray-700" />
+              <p className="text-sm text-gray-500">No orders yet</p>
+              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--accent)' }}>
+                Start trading →
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {recentOrders.map((order: any) => (
+                <div key={order.id} className="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors">
                   <div className="flex items-center gap-3">
-                    <StockLogo symbol={pos.symbol} size="md" />
+                    <StockLogo symbol={order.asset?.symbol ?? '?'} size="sm" />
                     <div>
-                      <p className="font-medium text-white text-sm">{pos.symbol}</p>
-                      <p className="text-xs text-gray-400">{pos.quantity} shares</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold text-white">{order.asset?.symbol}</span>
+                        <Badge variant={order.side === 'BUY' ? 'blue' : 'red'}>{order.side}</Badge>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short' })}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-white text-sm">{pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
-                    <p className={clsx('text-xs', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
-                      {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
+                    <p className="text-sm font-semibold text-white">
+                      {order.currency} {Number(order.estimatedTotal).toFixed(2)}
                     </p>
+                    <Badge variant={order.status === 'FILLED' ? 'green' : order.status === 'CANCELLED' ? 'red' : 'yellow'}>
+                      {order.status}
+                    </Badge>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-          <Link to="/markets" className="btn-primary w-full mt-4 text-center text-sm py-2.5" style={{ display: 'block' }}>
-            <DollarSign size={14} className="inline mr-1.5" />
-            Browse Markets &amp; Trade
-          </Link>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -233,11 +408,10 @@ function getGreeting() {
   return 'evening';
 }
 
-// NSE trades Mon–Fri, 09:00–15:00 East Africa Time (UTC+3)
 function isNSEOpen(): boolean {
   const now = new Date();
   const eat = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Nairobi' }));
-  const day = eat.getDay(); // 0=Sun, 6=Sat
+  const day = eat.getDay();
   if (day === 0 || day === 6) return false;
   const minutes = eat.getHours() * 60 + eat.getMinutes();
   return minutes >= 9 * 60 && minutes < 15 * 60;

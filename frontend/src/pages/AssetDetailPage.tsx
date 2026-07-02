@@ -439,7 +439,7 @@ export default function AssetDetailPage() {
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="time" hide />
-                    <YAxis domain={[chartMin, chartMax]} hide />
+                    <YAxis domain={[chartMin ?? 'auto', chartMax ?? 'auto']} hide />
                     <Tooltip content={<ChartTip currency={currency} />} />
                     <Area
                       type="monotone" dataKey="value"
