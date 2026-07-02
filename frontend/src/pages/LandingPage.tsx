@@ -162,12 +162,6 @@ const steps = [
   { icon: DollarSign, num: '03', title: 'Fund your account',    desc: 'Deposit via M-Pesa, bank transfer, or card. Funds appear instantly.' },
   { icon: BarChart2,  num: '04', title: 'Start investing',      desc: 'Browse global markets and place your first trade in seconds.' },
 ];
-const testimonials = [
-  { name: 'Amara K.',  location: 'Nairobi, Kenya',  text: 'I never thought I could invest in Apple or Tesla from Kenya. Capa made it simple — I was trading in 20 minutes.',                  initials: 'AK' },
-  { name: 'James O.',  location: 'Lagos, Nigeria',   text: 'The zero monthly fee model won me over. Other platforms were charging me just to exist. Capa only charges when I trade.',          initials: 'JO' },
-  { name: 'Fatima M.', location: 'Kampala, Uganda',  text: 'KYC was painless — done in a day. The interface is clean and the portfolio tracking is excellent.',                                 initials: 'FM' },
-];
-
 // ── Page ─────────────────────────────────────────────────────
 export default function LandingPage() {
   const { theme } = useTheme();
@@ -294,31 +288,6 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      </FadeSection>
-
-      {/* TESTIMONIALS */}
-      <FadeSection>
-        <section style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
-            Trusted by investors across Africa
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
-            {testimonials.map(t => (
-              <div key={t.name} style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 28, border: '1px solid var(--card-border)', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <p style={{ fontSize: 15, color: SEC, lineHeight: 1.7, margin: 0, fontStyle: 'italic' }}>"{t.text}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 'auto' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: TEXT }}>{t.name}</p>
-                    <p style={{ margin: 0, fontSize: 12, color: SEC }}>{t.location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </section>
       </FadeSection>
