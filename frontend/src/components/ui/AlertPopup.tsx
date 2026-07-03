@@ -97,26 +97,12 @@ export default function AlertPopup() {
     <>
       <style>{`
         @keyframes nb-pop-in {
-          0%   { opacity: 0; transform: translate(-50%, -54%) scale(0.88); }
-          65%  { transform: translate(-50%, -48%) scale(1.03); }
-          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          0%   { opacity: 0; transform: translateX(-50%) translateY(-24px) scale(0.92); }
+          65%  { transform: translateX(-50%) translateY(4px) scale(1.02); }
+          100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
         }
-        @keyframes nb-backdrop-in {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-      `}</style>
 
-      {/* Backdrop */}
-      <div
-        onClick={hide}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 9998,
-          backgroundColor: 'rgba(0,0,0,0.45)',
-          backdropFilter: 'blur(2px)',
-          animation: 'nb-backdrop-in 0.2s ease forwards',
-        }}
-      />
+      `}</style>
 
       {/* Card */}
       <div
@@ -125,7 +111,7 @@ export default function AlertPopup() {
         aria-label={alert.title}
         style={{
           position: 'fixed',
-          top: '50%',
+          top: 24,
           left: '50%',
           zIndex: 9999,
           width: 'min(360px, calc(100vw - 48px))',
