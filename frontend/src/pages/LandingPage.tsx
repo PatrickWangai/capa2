@@ -57,20 +57,6 @@ function HeroCanvas({ theme }: { theme: string }) {
       sg.addColorStop(1,    'transparent');
       ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
 
-      // Light rays
-      ctx.save(); ctx.globalAlpha = 0.04 + Math.sin(t * 0.008) * 0.008;
-      const rx = W*0.28, ry = hy*0.60;
-      for (let i = 0; i < 7; i++) {
-        const a = -0.42 + i*0.13 + Math.sin(t*0.007 + i*0.8)*0.025;
-        ctx.beginPath();
-        ctx.moveTo(rx, ry);
-        ctx.lineTo(rx + Math.cos(a)*W*1.6,       ry + Math.sin(a)*H*1.4);
-        ctx.lineTo(rx + Math.cos(a+0.055)*W*1.6, ry + Math.sin(a+0.055)*H*1.4);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(255,240,165,1)'; ctx.fill();
-      }
-      ctx.restore();
-
       // Water
       const wg = ctx.createLinearGradient(0, hy, 0, H);
       wg.addColorStop(0,   waterC[0]);
