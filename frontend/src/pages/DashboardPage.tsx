@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   const { data: moversData } = useQuery({
     queryKey: ['movers', moverTab],
-    queryFn: () => api.get(`/api/assets/movers?type=${moverTab}&limit=8`).then(r => r.data),
+    queryFn: () => api.get(`/api/assets/movers?type=${moverTab}&limit=8&exchange=NSE`).then(r => r.data),
     staleTime: 30_000,
     refetchInterval: 60_000,
     retry: false,
