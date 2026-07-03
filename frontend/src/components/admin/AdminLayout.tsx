@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft } from 'lucide-react';
 import clsx from 'clsx';
-import toast from 'react-hot-toast';
+import { useAlertStore } from '../../store/alertStore';
 import CapaLogo from '../ui/CapaLogo';
 
 const nav = [
@@ -16,12 +16,13 @@ const nav = [
 export default function AdminLayout() {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const showAlert = useAlertStore(s => s.show);
 
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}
     logout();
+    showAlert({ variant: 'info', title: 'Signed out', message: 'You have been logged out successfully.' });
     navigate('/');
-    toast.success('Logged out');
   };
 
   return (

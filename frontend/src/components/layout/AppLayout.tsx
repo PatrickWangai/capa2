@@ -6,7 +6,7 @@ import {
   CreditCard, ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import { useAlertStore } from '../../store/alertStore';
 import CapaLogo from '../ui/CapaLogo';
 import { useTheme, THEMES, COLOUR_THEMES } from '../../context/ThemeContext';
 import { SearchPalette } from './SearchPalette';
@@ -25,6 +25,7 @@ const nav = [
 export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
+  const showAlert = useAlertStore(s => s.show);
   const [paletteOpen, setPalette] = useState(false);
   const [searchOpen, setSearch] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -60,8 +61,8 @@ export default function AppLayout() {
   const handleLogout = async () => {
     try { await api.post('/api/auth/logout'); } catch {}
     logout();
+    showAlert({ variant: 'info', title: 'Signed out', message: 'You have been logged out successfully.' });
     navigate('/');
-    toast.success('Logged out');
   };
 
   const kycBadge = user?.kycStatus !== 'APPROVED';

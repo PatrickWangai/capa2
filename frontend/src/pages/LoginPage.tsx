@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Eye, EyeOff } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useAlertStore } from '../store/alertStore';
 import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [focused, setFocused] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
+  const showAlert = useAlertStore(s => s.show);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,10 +27,10 @@ export default function LoginPage() {
       const { data } = await api.post('/api/auth/login', form);
       if (data.requiresMfa) { setNeedsMfa(true); setLoading(false); return; }
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success(`Welcome back, ${data.user.firstName}!`);
+      showAlert({ variant: 'success', title: `Welcome back, ${data.user.firstName}!`, message: 'You are now signed in.' });
       navigate('/dashboard');
     } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Login failed');
+      showAlert({ variant: 'error', title: 'Sign in failed', message: err.response?.data?.error || 'Please check your credentials and try again.' });
     } finally { setLoading(false); }
   };
 

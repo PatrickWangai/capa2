@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuthStore } from "../store/authStore";
-import toast from "react-hot-toast";
+import { useAlertStore } from '../store/alertStore';
 import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
@@ -23,21 +23,25 @@ export default function RegisterPage() {
   const [focused, setFocused] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
+  const showAlert = useAlertStore(s => s.show);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setFormData(prev => ({ ...prev, [k]: e.target.value }));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password.length < 8) return toast.error("Password must be at least 8 characters.");
+    if (formData.password.length < 8) {
+      showAlert({ variant: 'error', title: 'Password too short', message: 'Password must be at least 8 characters.' });
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await api.post("/api/auth/register", formData);
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success("Welcome to Capa! Let's get you set up.");
+      showAlert({ variant: 'success', title: 'Account created!', message: "Welcome to Capa! Let's get you set up." });
       navigate("/onboarding");
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Registration failed");
+      showAlert({ variant: 'error', title: 'Registration failed', message: err.response?.data?.error || 'Please try again.' });
     } finally { setLoading(false); }
   };
 
