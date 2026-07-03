@@ -187,7 +187,7 @@ export default function LandingPage() {
 
           /* Hero */
           .hero-logo-wrap { margin-bottom: 4px !important; }
-          .hero-logo-wrap img, .hero-logo-wrap svg { width: 120px !important; height: 120px !important; }
+          .hero-logo-wrap img { width: min(220px, 60vw) !important; height: auto !important; }
           .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
           .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
           .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
@@ -221,7 +221,7 @@ export default function LandingPage() {
 
         @media (max-width: 380px) {
           .hero-title { font-size: 22px !important; }
-          .hero-logo-wrap img, .hero-logo-wrap svg { width: 90px !important; height: 90px !important; }
+          .hero-logo-wrap img { width: min(160px, 55vw) !important; height: auto !important; }
         }
       `}</style>
 
