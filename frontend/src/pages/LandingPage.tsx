@@ -168,7 +168,7 @@ export default function LandingPage() {
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
-      {/* Inject keyframes */}
+      {/* Inject keyframes + mobile overrides */}
       <style>{`
         @keyframes hero-text-in {
           from { opacity: 0; transform: translateY(24px); }
@@ -179,10 +179,54 @@ export default function LandingPage() {
         .hero-text-2 { animation-delay: 0.3s; }
         .hero-text-3 { animation-delay: 0.5s; }
         .hero-text-4 { animation-delay: 0.7s; }
+
+        @media (max-width: 640px) {
+          /* Nav: hide middle links, tighten padding */
+          .nav-links { display: none !important; }
+          .lp-nav { padding: 0 16px !important; }
+
+          /* Hero */
+          .hero-logo-wrap { margin-bottom: 4px !important; }
+          .hero-logo-wrap img, .hero-logo-wrap svg { width: 120px !important; height: 120px !important; }
+          .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
+          .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
+          .hero-buttons a { justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
+
+          /* Stats: 2×2 */
+          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .stats-grid > div { border-right: none !important; border-bottom: 1px solid var(--card-border) !important; padding: 28px 12px !important; }
+          .stats-grid > div:nth-child(odd)  { border-right: 1px solid var(--card-border) !important; }
+          .stats-grid > div:nth-child(3),
+          .stats-grid > div:nth-child(4)    { border-bottom: none !important; }
+
+          /* Sections: less vertical padding */
+          .lp-section-pad { padding-top: 60px !important; padding-bottom: 60px !important; }
+          .lp-section-pad-sm { padding-top: 48px !important; padding-bottom: 48px !important; }
+
+          /* Features: tighter card padding */
+          .feature-card { padding: 22px !important; }
+
+          /* How it works: single column */
+          .steps-grid { grid-template-columns: 1fr !important; gap: 36px !important; text-align: left !important; }
+          .step-icon  { margin: 0 0 12px !important; }
+
+          /* CTA */
+          .cta-features { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 0 8px !important; }
+          .cta-btn { width: 100% !important; max-width: 320px !important; justify-content: center !important; padding: 14px 24px !important; font-size: 16px !important; }
+
+          /* Footer */
+          .lp-footer { padding: 40px 20px 28px !important; }
+        }
+
+        @media (max-width: 380px) {
+          .hero-title { font-size: 22px !important; }
+          .hero-logo-wrap img, .hero-logo-wrap svg { width: 90px !important; height: 90px !important; }
+        }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
+      <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <CapaLogo size={44} />
         </div>
@@ -210,16 +254,16 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ marginBottom: 8 }}>
+          <div className="hero-logo-wrap" style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
           </div>
-          <h1 className="hero-text hero-text-2" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
+          <h1 className="hero-text hero-text-2 hero-title" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
           </h1>
-          <p className="hero-text hero-text-3" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
+          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
           </p>
-          <div className="hero-text hero-text-4" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
+          <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
               Start Investing Free <ChevronRight size={16} />
             </Link>
@@ -234,7 +278,7 @@ export default function LandingPage() {
       {/* STATS */}
       <FadeSection>
         <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '56px 24px', borderTop: '1px solid var(--card-border)' }}>
-          <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
+          <div className="stats-grid" style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
             {stats.map((s, i) => (
               <div key={s.label} style={{ textAlign: 'center', padding: '0 24px', borderRight: i < 3 ? '1px solid var(--card-border)' : 'none' }}>
                 <div style={{ fontSize: 'clamp(32px,5vw,52px)', fontWeight: 700, color: TEXT, letterSpacing: '-0.03em', lineHeight: 1 }}>{s.value}</div>
@@ -247,14 +291,14 @@ export default function LandingPage() {
 
       {/* FEATURES */}
       <FadeSection>
-        <section style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
+        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
           <h2 style={{ fontSize: 'clamp(32px,5vw,54px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
             Everything you need.<br />Nothing you don't.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid var(--card-border)', transition: 'border-color 0.2s', cursor: 'default' }}
+              <div key={title} className="feature-card" style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid var(--card-border)', transition: 'border-color 0.2s', cursor: 'default' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.35)')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--card-border)')}>
                 <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
@@ -270,16 +314,16 @@ export default function LandingPage() {
 
       {/* HOW IT WORKS */}
       <FadeSection>
-        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '80px 24px', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)' }}>
+        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '80px 24px', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
             <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontSize: 'clamp(32px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
+            <h2 style={{ fontSize: 'clamp(28px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.08 }}>
               How Capa works
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
+            <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {steps.map(({ icon: Icon, num, title, desc }) => (
                 <div key={num} style={{ textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                   </div>
                   <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
@@ -304,14 +348,14 @@ export default function LandingPage() {
             <p style={{ fontSize: 17, color: SEC, marginBottom: 16, maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.55 }}>
               Open your free account in under 10 minutes. No minimum deposit.
             </p>
-            <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+            <div className="cta-features" style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
               {['No monthly fee', 'Regulated platform', 'Instant M-Pesa deposits'].map(f => (
                 <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: SEC }}>
                   <Check size={13} color={ACCENT} />{f}
                 </span>
               ))}
             </div>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(var(--accent-rgb),0.4)' }}>
+            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(var(--accent-rgb),0.4)' }}>
               Create Free Account <ChevronRight size={18} />
             </Link>
           </div>
@@ -319,7 +363,7 @@ export default function LandingPage() {
       </FadeSection>
 
       {/* FOOTER */}
-      <footer style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
+      <footer className="lp-footer" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
