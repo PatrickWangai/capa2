@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Dimensions } from 'react-native';
-import CapaLogo from '../../../../brand_assets/logo.svg';
+import GhostIcon from '../../../../brand_assets/ghost-icon.svg';
 
 const { width } = Dimensions.get('window');
 
@@ -21,7 +21,7 @@ export default function WelcomeScreen({ navigation }: any) {
       {/* Logo + headline */}
       <View style={styles.hero}>
         <View style={styles.logoWrap}>
-          <CapaLogo width={72} height={72} />
+          <GhostIcon width={56} height={56} />
         </View>
         <Text style={styles.brand}>CAPA</Text>
         <Text style={styles.tagline}>UNSTOPPABLE MINDS</Text>
