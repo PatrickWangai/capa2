@@ -12,7 +12,12 @@ const YAHOO_REFRESH_MS = 15_000;       // re-fetch Yahoo every 15 seconds
 const NSE_REFRESH_MS   = 15 * 60_000; // re-fetch NSE every 15 minutes
 const NSE_FAIL_BACKOFF_MS = 60 * 60_000;
 
-const YAHOO_SUFFIX = { LSE: '.L', NYSE: '', NASDAQ: '' };
+const YAHOO_SUFFIX = { NSE: '.NR', LSE: '.L', NYSE: '', NASDAQ: '' };
+
+// NSE symbols that differ between our DB and Yahoo Finance
+const NSE_YAHOO_MAP = { BATK: 'BAT', BKG: 'BKG', TOTL: 'TOTA' };
+
+// NSE symbols that differ from AFX's listing (our DB symbol → AFX symbol)
 const NSE_SYMBOL_MAP = { BATK: 'BAT' };
 
 // ── In-memory live price cache (what gets broadcast every second) ──
@@ -74,8 +79,11 @@ async function refreshNsePrices(nseSymbols) {
 async function fetchYahooPrice(symbol, exchange) {
   const suffix = YAHOO_SUFFIX[exchange];
   if (suffix === undefined) return null;
+  const yahooSym = exchange === 'NSE'
+    ? (NSE_YAHOO_MAP[symbol] ?? symbol) + suffix
+    : symbol + suffix;
   try {
-    const q = await yf.quote(symbol + suffix);
+    const q = await yf.quote(yahooSym);
     if (!q?.regularMarketPrice) return null;
     return {
       price:         q.regularMarketPrice,
@@ -165,19 +173,23 @@ async function fetchRealPrices() {
     let real = null;
 
     if (asset.exchange === 'NSE') {
-      const live = nseCache[asset.symbol];
-      if (live) {
-        const prev = existing?.previousClose ?? existing?.price ?? live.price;
-        real = {
-          price:         live.price,
-          open:          prev,
-          high:          Math.max(live.price, existing?.high ?? live.price),
-          low:           Math.min(live.price, existing?.low  ?? live.price),
-          previousClose: prev,
-          changeAmount:  live.change,
-          changePercent: prev > 0 ? (live.change / prev) * 100 : 0,
-          volume:        existing?.volume ?? 0,
-        };
+      // Try Yahoo Finance first (works from Frankfurt), fall back to AFX cache
+      if (doYahoo) real = await fetchYahooPrice(asset.symbol, 'NSE');
+      if (!real) {
+        const live = nseCache[asset.symbol];
+        if (live) {
+          const prev = existing?.previousClose ?? existing?.price ?? live.price;
+          real = {
+            price:         live.price,
+            open:          prev,
+            high:          Math.max(live.price, existing?.high ?? live.price),
+            low:           Math.min(live.price, existing?.low  ?? live.price),
+            previousClose: prev,
+            changeAmount:  live.change,
+            changePercent: prev > 0 ? (live.change / prev) * 100 : 0,
+            volume:        existing?.volume ?? 0,
+          };
+        }
       }
     } else if (doYahoo) {
       real = await fetchYahooPrice(asset.symbol, asset.exchange);
