@@ -5,24 +5,29 @@ import { broadcastPrice } from './socketService.js';
 import logger from '../utils/logger.js';
 
 const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
-const POLL_INTERVAL_MS = 15_000;
-const NSE_REFRESH_MS = 15 * 60_000;  // re-fetch NSE every 15 minutes
-const NSE_FAIL_BACKOFF_MS = 60 * 60_000; // back off 1 hr after consecutive failures
 
-// Yahoo Finance suffix per exchange
+const TICK_MS          = 1_000;        // broadcast every 1 second
+const DB_WRITE_MS      = 15_000;       // persist to DB every 15 seconds
+const YAHOO_REFRESH_MS = 15_000;       // re-fetch Yahoo every 15 seconds
+const NSE_REFRESH_MS   = 15 * 60_000; // re-fetch NSE every 15 minutes
+const NSE_FAIL_BACKOFF_MS = 60 * 60_000;
+
 const YAHOO_SUFFIX = { LSE: '.L', NYSE: '', NASDAQ: '' };
-
-// NSE symbols that differ from AFX's listing (our DB symbol → AFX symbol)
 const NSE_SYMBOL_MAP = { BATK: 'BAT' };
 
-// ── NSE individual-page scraper ──────────────────────────────
-// Fetches afx.kwayisi.org/nse/{symbol}.html for each stock.
-// The main listing page (afx.kwayisi.org/nseke/) times out from
-// Render's Frankfurt IPs; individual pages are lighter and work.
-let nseCache = {};
-let nseCacheAt = 0;
-let nseFailedAt = 0; // timestamp of last total failure, 0 = never failed
+// ── In-memory live price cache (what gets broadcast every second) ──
+// { assetId: { symbol, exchange, price, open, high, low, previousClose,
+//              changeAmount, changePercent, volume, anchorPrice } }
+const liveCache = new Map();
 
+// ── Timing state ──
+let lastDbWrite   = 0;
+let lastYahoo     = 0;
+let nseCache      = {};
+let nseCacheAt    = 0;
+let nseFailedAt   = 0;
+
+// ── NSE scraper ──────────────────────────────────────────────────
 async function fetchOneNseStock(dbSymbol) {
   const afxSym = (NSE_SYMBOL_MAP[dbSymbol] ?? dbSymbol).toLowerCase();
   try {
@@ -32,9 +37,10 @@ async function fetchOneNseStock(dbSymbol) {
     });
     const m = data.match(/>([\d.]+)\s*<span class=(hi|lo)>[^(]*([\d.]+)\s*\(/);
     if (!m) return null;
-    const price = parseFloat(m[1]);
-    const change = parseFloat(m[3]) * (m[2] === 'lo' ? -1 : 1);
-    return { price, change };
+    return {
+      price: parseFloat(m[1]),
+      change: parseFloat(m[3]) * (m[2] === 'lo' ? -1 : 1),
+    };
   } catch {
     return null;
   }
@@ -42,9 +48,7 @@ async function fetchOneNseStock(dbSymbol) {
 
 async function refreshNsePrices(nseSymbols) {
   const now = Date.now();
-  // Skip if cache is fresh
   if (now - nseCacheAt < NSE_REFRESH_MS) return;
-  // Back off for 1 hour after a total failure so we don't spam logs
   if (nseFailedAt && now - nseFailedAt < NSE_FAIL_BACKOFF_MS) return;
 
   logger.info(`NSE: refreshing ${nseSymbols.length} stocks via AFX`);
@@ -53,9 +57,7 @@ async function refreshNsePrices(nseSymbols) {
   );
   const prices = {};
   for (const r of results) {
-    if (r.status === 'fulfilled' && r.value.data) {
-      prices[r.value.sym] = r.value.data;
-    }
+    if (r.status === 'fulfilled' && r.value.data) prices[r.value.sym] = r.value.data;
   }
   if (Object.keys(prices).length > 0) {
     nseCache = prices;
@@ -64,11 +66,11 @@ async function refreshNsePrices(nseSymbols) {
     logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} live prices`);
   } else {
     nseFailedAt = now;
-    logger.warn('NSE: live prices unavailable — using seed prices with simulation until next retry in 1 hr');
+    logger.warn('NSE: live prices unavailable — simulating until next retry in 1 hr');
   }
 }
 
-// ── Yahoo Finance (US/UK stocks) ─────────────────────────────
+// ── Yahoo Finance ─────────────────────────────────────────────────
 async function fetchYahooPrice(symbol, exchange) {
   const suffix = YAHOO_SUFFIX[exchange];
   if (suffix === undefined) return null;
@@ -76,129 +78,182 @@ async function fetchYahooPrice(symbol, exchange) {
     const q = await yf.quote(symbol + suffix);
     if (!q?.regularMarketPrice) return null;
     return {
-      price: q.regularMarketPrice,
-      open: q.regularMarketOpen ?? q.regularMarketPrice,
-      high: q.regularMarketDayHigh ?? q.regularMarketPrice,
-      low: q.regularMarketDayLow ?? q.regularMarketPrice,
+      price:         q.regularMarketPrice,
+      open:          q.regularMarketOpen          ?? q.regularMarketPrice,
+      high:          q.regularMarketDayHigh       ?? q.regularMarketPrice,
+      low:           q.regularMarketDayLow        ?? q.regularMarketPrice,
       previousClose: q.regularMarketPreviousClose ?? q.regularMarketPrice,
-      changeAmount: q.regularMarketChange ?? 0,
+      changeAmount:  q.regularMarketChange        ?? 0,
       changePercent: q.regularMarketChangePercent ?? 0,
-      volume: q.regularMarketVolume ?? 0,
-      marketCap: q.marketCap ?? null,
-      peRatio: q.trailingPE ?? null,
-      weekHigh52: q.fiftyTwoWeekHigh ?? null,
-      weekLow52: q.fiftyTwoWeekLow ?? null,
+      volume:        q.regularMarketVolume        ?? 0,
+      marketCap:     q.marketCap   ?? null,
+      peRatio:       q.trailingPE  ?? null,
+      weekHigh52:    q.fiftyTwoWeekHigh ?? null,
+      weekLow52:     q.fiftyTwoWeekLow  ?? null,
     };
   } catch {
     return null;
   }
 }
 
-// ── Simulation fallback (very small drift so seed prices stay accurate) ──
-function simulatePrice(asset, existing) {
-  const base = existing ? Number(existing.price) : 100;
-  const drift = (Math.random() - 0.495) * base * 0.0005; // ±0.05% per tick
-  const price = Math.max(0.01, base + drift);
-  const prevClose = existing?.previousClose ? Number(existing.previousClose) : price * 0.99;
+// ── Micro-drift (applied every second between real fetches) ───────
+// Tiny ±0.03% drift so prices "breathe" realistically.
+// Snaps back toward the anchor price to prevent unbounded drift.
+function applyMicroDrift(entry) {
+  const anchor = entry.anchorPrice ?? entry.price;
+  const current = entry.price;
+  // Pull 10% back toward anchor each tick to prevent runaway drift
+  const pull = (anchor - current) * 0.10;
+  const drift = (Math.random() - 0.495) * current * 0.0003;
+  const price = Math.max(0.01, current + drift + pull);
+
+  const changeAmount  = price - entry.previousClose;
+  const changePercent = entry.previousClose > 0 ? (changeAmount / entry.previousClose) * 100 : 0;
+
   return {
+    ...entry,
     price,
-    open: prevClose,
-    high: Math.max(price, Number(existing?.high ?? price)),
-    low: Math.min(price, Number(existing?.low ?? price)),
-    previousClose: prevClose,
-    changeAmount: price - prevClose,
-    changePercent: ((price - prevClose) / prevClose) * 100,
-    volume: Math.floor(Math.random() * 5_000_000) + 100_000,
+    high: Math.max(price, entry.high),
+    low:  Math.min(price, entry.low),
+    changeAmount,
+    changePercent,
   };
 }
 
-// ── Main update loop ──────────────────────────────────────────
-async function updatePrices() {
-  try {
-    const assets = await prisma.asset.findMany({ where: { isActive: true }, include: { price: true } });
+// ── Seed live cache from DB on startup ───────────────────────────
+async function seedLiveCache() {
+  const assets = await prisma.asset.findMany({ where: { isActive: true }, include: { price: true } });
+  for (const asset of assets) {
+    const p = asset.price;
+    if (!p) continue;
+    const price = Number(p.price);
+    liveCache.set(asset.id, {
+      symbol:        asset.symbol,
+      exchange:      asset.exchange,
+      price,
+      anchorPrice:   price,
+      open:          Number(p.open          ?? price),
+      high:          Number(p.high          ?? price),
+      low:           Number(p.low           ?? price),
+      previousClose: Number(p.previousClose ?? price * 0.99),
+      changeAmount:  Number(p.changeAmount  ?? 0),
+      changePercent: Number(p.changePercent ?? 0),
+      volume:        Number(p.volume        ?? 0),
+    });
+  }
+  logger.info(`Live cache seeded with ${liveCache.size} assets`);
+}
 
-    const nseSymbols = assets.filter(a => a.exchange === 'NSE').map(a => a.symbol);
-    if (nseSymbols.length > 0) {
-      await refreshNsePrices(nseSymbols); // no-op if cache is fresh
+// ── Fetch fresh real data and update live cache ──────────────────
+async function fetchRealPrices() {
+  const now = Date.now();
+  const doYahoo = now - lastYahoo >= YAHOO_REFRESH_MS;
+  const doNse   = now - nseCacheAt >= NSE_REFRESH_MS &&
+                  !(nseFailedAt && now - nseFailedAt < NSE_FAIL_BACKOFF_MS);
+
+  if (!doYahoo && !doNse) return;
+
+  const assets = await prisma.asset.findMany({ where: { isActive: true } });
+  const nseSymbols = assets.filter(a => a.exchange === 'NSE').map(a => a.symbol);
+
+  if (doNse && nseSymbols.length > 0) await refreshNsePrices(nseSymbols);
+
+  if (doYahoo) lastYahoo = now;
+
+  for (const asset of assets) {
+    const existing = liveCache.get(asset.id);
+    let real = null;
+
+    if (asset.exchange === 'NSE') {
+      const live = nseCache[asset.symbol];
+      if (live) {
+        const prev = existing?.previousClose ?? existing?.price ?? live.price;
+        real = {
+          price:         live.price,
+          open:          prev,
+          high:          Math.max(live.price, existing?.high ?? live.price),
+          low:           Math.min(live.price, existing?.low  ?? live.price),
+          previousClose: prev,
+          changeAmount:  live.change,
+          changePercent: prev > 0 ? (live.change / prev) * 100 : 0,
+          volume:        existing?.volume ?? 0,
+        };
+      }
+    } else if (doYahoo) {
+      real = await fetchYahooPrice(asset.symbol, asset.exchange);
     }
 
-    for (const asset of assets) {
-      let priceData = null;
-
-      if (asset.exchange === 'NSE') {
-        const live = nseCache[asset.symbol];
-        if (live) {
-          const prev = asset.price?.previousClose
-            ? Number(asset.price.previousClose)
-            : asset.price?.price
-            ? Number(asset.price.price)
-            : live.price;
-          priceData = {
-            price: live.price,
-            open: prev,
-            high: Math.max(live.price, prev),
-            low: Math.min(live.price, prev),
-            previousClose: prev,
-            changeAmount: live.change,
-            changePercent: prev > 0 ? (live.change / prev) * 100 : 0,
-            volume: 0,
-          };
-        }
-      } else {
-        priceData = await fetchYahooPrice(asset.symbol, asset.exchange);
-      }
-
-      if (!priceData) {
-        priceData = simulatePrice(asset, asset.price);
-      }
-
-      await prisma.assetPrice.upsert({
-        where: { assetId: asset.id },
-        create: { assetId: asset.id, ...priceData },
-        update: { ...priceData, fetchedAt: new Date() },
-      });
-
-      await prisma.priceHistory.upsert({
-        where: { assetId_interval_openTime: { assetId: asset.id, interval: '1m', openTime: roundToMinute(new Date()) } },
-        create: {
-          assetId: asset.id, interval: '1m', openTime: roundToMinute(new Date()),
-          open: priceData.open ?? priceData.price,
-          high: priceData.high ?? priceData.price,
-          low: priceData.low ?? priceData.price,
-          close: priceData.price, volume: priceData.volume ?? 0,
-        },
-        update: {
-          high: { set: Math.max(priceData.high ?? priceData.price, priceData.price) },
-          low: { set: Math.min(priceData.low ?? priceData.price, priceData.price) },
-          close: priceData.price, volume: priceData.volume ?? 0,
-        },
-      }).catch(() => {});
-
-      // Daily candle — GREATEST/LEAST preserve true intraday high/low across updates
-      const dayStart = startOfDay(new Date());
-      const dayHigh = priceData.high ?? priceData.price;
-      const dayLow  = priceData.low  ?? priceData.price;
-      const dayOpen = priceData.open ?? priceData.price;
-      const dayVol  = BigInt(Math.round(priceData.volume ?? 0));
-      await prisma.$executeRaw`
-        INSERT INTO price_history (id, asset_id, interval, open_time, open, high, low, close, volume)
-        VALUES (gen_random_uuid(), ${asset.id}::uuid, '1d', ${dayStart},
-                ${dayOpen}, ${dayHigh}, ${dayLow}, ${priceData.price}, ${dayVol})
-        ON CONFLICT (asset_id, interval, open_time) DO UPDATE SET
-          high  = GREATEST(price_history.high,  EXCLUDED.high),
-          low   = LEAST   (price_history.low,   EXCLUDED.low),
-          close = EXCLUDED.close,
-          volume = EXCLUDED.volume
-      `.catch(() => {});
-
-      broadcastPrice(asset.id, {
-        symbol: asset.symbol, price: priceData.price,
-        changePercent: priceData.changePercent, changeAmount: priceData.changeAmount,
-        volume: priceData.volume, fetchedAt: new Date().toISOString(),
+    if (real) {
+      liveCache.set(asset.id, {
+        ...(existing ?? {}),
+        ...real,
+        symbol:      asset.symbol,
+        exchange:    asset.exchange,
+        anchorPrice: real.price, // snap anchor to fresh real price
       });
     }
-  } catch (err) {
-    logger.error('Price feed update error', { error: err.message });
+  }
+}
+
+// ── Persist current live cache to DB ────────────────────────────
+async function persistToDb() {
+  const now = Date.now();
+  if (now - lastDbWrite < DB_WRITE_MS) return;
+  lastDbWrite = now;
+
+  for (const [assetId, entry] of liveCache) {
+    const priceData = {
+      price:         entry.price,
+      open:          entry.open,
+      high:          entry.high,
+      low:           entry.low,
+      previousClose: entry.previousClose,
+      changeAmount:  entry.changeAmount,
+      changePercent: entry.changePercent,
+      volume:        entry.volume,
+    };
+
+    await prisma.assetPrice.upsert({
+      where:  { assetId },
+      create: { assetId, ...priceData },
+      update: { ...priceData, fetchedAt: new Date() },
+    }).catch(() => {});
+
+    const now2 = new Date();
+    await prisma.priceHistory.upsert({
+      where:  { assetId_interval_openTime: { assetId, interval: '1m', openTime: roundToMinute(now2) } },
+      create: { assetId, interval: '1m', openTime: roundToMinute(now2), open: entry.open, high: entry.high, low: entry.low, close: entry.price, volume: entry.volume },
+      update: { high: { set: Math.max(entry.high, entry.price) }, low: { set: Math.min(entry.low, entry.price) }, close: entry.price, volume: entry.volume },
+    }).catch(() => {});
+
+    const dayStart = startOfDay(now2);
+    await prisma.$executeRaw`
+      INSERT INTO price_history (id, asset_id, interval, open_time, open, high, low, close, volume)
+      VALUES (gen_random_uuid(), ${assetId}::uuid, '1d', ${dayStart},
+              ${entry.open}, ${entry.high}, ${entry.low}, ${entry.price}, ${BigInt(Math.round(entry.volume))})
+      ON CONFLICT (asset_id, interval, open_time) DO UPDATE SET
+        high   = GREATEST(price_history.high,  EXCLUDED.high),
+        low    = LEAST   (price_history.low,   EXCLUDED.low),
+        close  = EXCLUDED.close,
+        volume = EXCLUDED.volume
+    `.catch(() => {});
+  }
+}
+
+// ── 1-second tick: drift → broadcast ─────────────────────────────
+function tick() {
+  for (const [assetId, entry] of liveCache) {
+    const updated = applyMicroDrift(entry);
+    liveCache.set(assetId, updated);
+
+    broadcastPrice(assetId, {
+      symbol:        updated.symbol,
+      price:         updated.price,
+      changePercent: updated.changePercent,
+      changeAmount:  updated.changeAmount,
+      volume:        updated.volume,
+      fetchedAt:     new Date().toISOString(),
+    });
   }
 }
 
@@ -212,8 +267,19 @@ function startOfDay(date) {
   return d;
 }
 
-export function startPriceFeed(io) {
-  logger.info('Price feed started — NSE: AFX individual pages (5 min refresh) | US/UK: Yahoo Finance');
-  updatePrices();
-  setInterval(updatePrices, POLL_INTERVAL_MS);
+export async function startPriceFeed(io) {
+  logger.info('Price feed starting — 1s broadcast | 15s DB write | 15s Yahoo | 15m NSE AFX');
+  await seedLiveCache();
+
+  // Fetch real prices immediately on startup
+  await fetchRealPrices();
+
+  // 1-second tick: apply micro-drift and broadcast
+  setInterval(tick, TICK_MS);
+
+  // Background: fetch real data + persist to DB (runs every second, internally rate-limited)
+  setInterval(async () => {
+    await fetchRealPrices().catch(() => {});
+    await persistToDb().catch(() => {});
+  }, TICK_MS);
 }

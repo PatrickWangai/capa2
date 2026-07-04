@@ -138,7 +138,7 @@ const PORT = process.env.PORT || 4000;
   await prisma.$connect();
   logger.info('PostgreSQL connected via Prisma');
   setupSocketHandlers(io);
-  startPriceFeed(io);
+  await startPriceFeed(io);
   startLimitOrderJob();
   httpServer.listen(PORT, () => logger.info(`API listening on :${PORT}`));
 })();
