@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 
-const BASE = process.env.FRONTEND_URL || 'https://capa2.onrender.com';
+const BASE = process.env.FRONTEND_URL || 'https://capa-q1nh.onrender.com';
 
 function wrap(title, body) {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

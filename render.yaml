@@ -53,9 +53,15 @@ services:
         sync: false
       - key: POLYGON_API_KEY
         sync: false
+      - key: FRONTEND_URL
+        value: https://capa-q1nh.onrender.com
       - key: SMTP_HOST
         sync: false
+      - key: SMTP_PORT
+        value: 587
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
         sync: false
