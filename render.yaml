@@ -1,3 +1,10 @@
+databases:
+  - name: capa-db
+    plan: free
+    region: frankfurt
+    databaseName: capa
+    user: capa
+
 services:
   - type: web
     name: capa
@@ -15,7 +22,9 @@ services:
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: capa-db
+          property: connectionString
       - key: REDIS_URL
         sync: false
       - key: CORS_ORIGINS
