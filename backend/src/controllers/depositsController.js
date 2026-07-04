@@ -37,9 +37,11 @@ export async function bankDeposit(req, res) {
   res.json({
     transaction: tx,
     bankDetails: {
-      bankName: 'Capa Custodian Bank',
-      accountNumber: '1234567890',
-      sortCode: '12-34-56',
+      bankName:      process.env.BANK_NAME        || 'Capa Custodian Bank',
+      accountName:   process.env.BANK_ACCOUNT_NAME || 'Capa Investments Ltd',
+      accountNumber: process.env.BANK_ACCOUNT_NO   || 'XXXXXXXXXXXX',
+      branch:        process.env.BANK_BRANCH        || '',
+      paybill:       process.env.BANK_PAYBILL       || '',
       reference: `BT-${tx.id.slice(0, 8).toUpperCase()}`,
       amount,
       currency,

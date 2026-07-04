@@ -55,6 +55,16 @@ services:
         sync: false
       - key: FRONTEND_URL
         value: https://capa-q1nh.onrender.com
+      - key: BANK_NAME
+        sync: false
+      - key: BANK_ACCOUNT_NAME
+        sync: false
+      - key: BANK_ACCOUNT_NO
+        sync: false
+      - key: BANK_BRANCH
+        sync: false
+      - key: BANK_PAYBILL
+        sync: false
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
