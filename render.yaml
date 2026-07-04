@@ -2,8 +2,6 @@ databases:
   - name: capa-db
     plan: free
     region: frankfurt
-    databaseName: capa
-    user: capa
 
 services:
   - type: web
