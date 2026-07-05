@@ -1,4 +1,3 @@
-import axios from 'axios';
 import YahooFinance from 'yahoo-finance2';
 import { prisma } from '../utils/db.js';
 import { broadcastPrice } from './socketService.js';
@@ -14,11 +13,8 @@ const NSE_FAIL_BACKOFF_MS = 60 * 60_000;
 
 const YAHOO_SUFFIX = { NSE: '.NR', LSE: '.L', NYSE: '', NASDAQ: '' };
 
-// NSE symbols that differ between our DB and Yahoo Finance
+// NSE symbols that differ between our DB and Yahoo Finance (.NR)
 const NSE_YAHOO_MAP = { BATK: 'BAT', BKG: 'BKG', TOTL: 'TOTA' };
-
-// NSE symbols that differ from AFX's listing (our DB symbol → AFX symbol)
-const NSE_SYMBOL_MAP = { BATK: 'BAT' };
 
 // ── In-memory live price cache (what gets broadcast every second) ──
 // { assetId: { symbol, exchange, price, open, high, low, previousClose,
@@ -32,46 +28,30 @@ let nseCache      = {};
 let nseCacheAt    = 0;
 let nseFailedAt   = 0;
 
-// ── NSE scraper ──────────────────────────────────────────────────
-async function fetchOneNseStock(dbSymbol) {
-  const afxSym = (NSE_SYMBOL_MAP[dbSymbol] ?? dbSymbol).toLowerCase();
-  try {
-    const { data } = await axios.get(`https://afx.kwayisi.org/nse/${afxSym}.html`, {
-      timeout: 8_000,
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
-    });
-    const m = data.match(/>([\d.]+)\s*<span class=(hi|lo)>[^(]*([\d.]+)\s*\(/);
-    if (!m) return null;
-    return {
-      price: parseFloat(m[1]),
-      change: parseFloat(m[3]) * (m[2] === 'lo' ? -1 : 1),
-    };
-  } catch {
-    return null;
-  }
-}
-
+// ── NSE batch refresh via Yahoo Finance (.NR suffix) ─────────────
 async function refreshNsePrices(nseSymbols) {
   const now = Date.now();
   if (now - nseCacheAt < NSE_REFRESH_MS) return;
   if (nseFailedAt && now - nseFailedAt < NSE_FAIL_BACKOFF_MS) return;
 
-  logger.info(`NSE: refreshing ${nseSymbols.length} stocks via AFX`);
+  logger.info(`NSE: refreshing ${nseSymbols.length} stocks via Yahoo Finance (.NR)`);
   const results = await Promise.allSettled(
-    nseSymbols.map(async sym => ({ sym, data: await fetchOneNseStock(sym) }))
+    nseSymbols.map(async sym => ({ sym, data: await fetchYahooPrice(sym, 'NSE') }))
   );
   const prices = {};
   for (const r of results) {
-    if (r.status === 'fulfilled' && r.value.data) prices[r.value.sym] = r.value.data;
+    if (r.status === 'fulfilled' && r.value.data) {
+      prices[r.value.sym] = { price: r.value.data.price, change: r.value.data.changeAmount };
+    }
   }
   if (Object.keys(prices).length > 0) {
     nseCache = prices;
     nseCacheAt = now;
     nseFailedAt = 0;
-    logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} live prices`);
+    logger.info(`NSE: cached ${Object.keys(prices).length}/${nseSymbols.length} live prices via Yahoo`);
   } else {
     nseFailedAt = now;
-    logger.warn('NSE: live prices unavailable — simulating until next retry in 1 hr');
+    logger.warn('NSE: Yahoo Finance returned no NSE prices — simulating until next retry in 1 hr');
   }
 }
 
@@ -280,7 +260,7 @@ function startOfDay(date) {
 }
 
 export async function startPriceFeed(io) {
-  logger.info('Price feed starting — 1s broadcast | 15s DB write | 15s Yahoo | 15m NSE AFX');
+  logger.info('Price feed starting — 1s broadcast | 15s DB write | 15s Yahoo | 15m NSE Yahoo(.NR)');
   await seedLiveCache();
 
   // Fetch real prices immediately on startup
