@@ -33,11 +33,9 @@ import dividendsRoutes from './routes/dividends.js';
 import adminRoutes from './routes/admin.js';
 import webhooksRoutes from './routes/webhooks.js';
 import alertsRoutes from './routes/alerts.js';
-import botsRoutes from './routes/bots.js';
 import { setupSocketHandlers } from './services/socketService.js';
 import { startPriceFeed } from './services/priceFeedService.js';
 import { startLimitOrderJob } from './jobs/limitOrderJob.js';
-import { startBotJob } from './jobs/botJob.js';
 
 // Prisma can return BigInt values; JSON.stringify doesn't handle them natively
 BigInt.prototype.toJSON = function () { return this.toString(); };
@@ -102,7 +100,6 @@ app.use('/api/wallets',       walletsRoutes);
 app.use('/api/dividends',     dividendsRoutes);
 app.use('/api/admin',         adminRoutes);
 app.use('/api/alerts',        alertsRoutes);
-app.use('/api/bots',          botsRoutes);
 app.use('/api/webhooks',      webhooksRoutes);
 
 // ── Health ────────────────────────────────────────────────────
@@ -143,7 +140,6 @@ const PORT = process.env.PORT || 4000;
   setupSocketHandlers(io);
   await startPriceFeed(io);
   startLimitOrderJob();
-  startBotJob();
   httpServer.listen(PORT, () => logger.info(`API listening on :${PORT}`));
 })();
 

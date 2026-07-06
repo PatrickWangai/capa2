@@ -157,8 +157,6 @@ model User {
   auditLogs           AuditLog[]          @relation("UserAudit")
   adminAuditLogs      AuditLog[]          @relation("AdminAudit")
   adminRole           UserRole?           @relation(name: "AdminRole")
-  tradingBots         TradingBot[]
-
   @@map("users")
 }
 
@@ -255,8 +253,6 @@ model Asset {
   dividends     Dividend[]
   watchlistItems WatchlistItem[]
   priceAlerts   PriceAlert[]
-  tradingBots   TradingBot[]
-
   @@unique([symbol, exchange])
   @@map("assets")
 }
@@ -501,45 +497,6 @@ model Notification {
 
   @@index([userId, isRead, createdAt(sort: Desc)])
   @@map("notifications")
-}
-
-model TradingBot {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
-  name        String
-  assetId     String    @map("asset_id")
-  strategy    String    // PRICE_THRESHOLD | RSI | MA_CROSSOVER | STOP_LOSS_TP
-  params      Json      @default("{}")
-  status      String    @default("ACTIVE") // ACTIVE | PAUSED
-  quantity    Decimal   @db.Decimal(20, 6)
-  lastRunAt   DateTime? @map("last_run_at")
-  tradesCount Int       @default(0) @map("trades_count")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  asset       Asset     @relation(fields: [assetId], references: [id])
-  trades      BotTrade[]
-
-  @@index([userId])
-  @@index([status])
-  @@map("trading_bots")
-}
-
-model BotTrade {
-  id        String   @id @default(uuid())
-  botId     String   @map("bot_id")
-  orderId   String?  @map("order_id")
-  side      String
-  quantity  Decimal  @db.Decimal(20, 6)
-  price     Decimal  @db.Decimal(20, 6)
-  reason    String
-  createdAt DateTime @default(now()) @map("created_at")
-
-  bot       TradingBot @relation(fields: [botId], references: [id], onDelete: Cascade)
-
-  @@index([botId])
-  @@map("bot_trades")
 }
 
 model RefreshToken {

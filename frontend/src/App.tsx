@@ -21,7 +21,6 @@ import DepositPage       from './pages/DepositPage';
 import OrdersPage        from './pages/OrdersPage';
 import KycPage           from './pages/KycPage';
 import NotificationsPage from './pages/NotificationsPage';
-import BotsPage          from './pages/BotsPage';
 import ProfilePage       from './pages/ProfilePage';
 import OnboardingPage    from './pages/OnboardingPage';
 
@@ -170,7 +169,6 @@ export default function App() {
               <Route path="kyc"          element={<><PageTitle title="Verify Identity" /><ErrorBoundary><KycPage /></ErrorBoundary></>} />
               <Route path="notifications" element={<><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></>} />
               <Route path="profile"      element={<><PageTitle title="Profile" /><ErrorBoundary><ProfilePage /></ErrorBoundary></>} />
-              <Route path="bots"         element={<><PageTitle title="Trading Bots" /><ErrorBoundary><BotsPage /></ErrorBoundary></>} />
             </Route>
 
             {/* Admin */}
