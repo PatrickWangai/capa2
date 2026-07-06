@@ -269,9 +269,9 @@ export async function startPriceFeed(io) {
   // 1-second tick: apply micro-drift and broadcast
   setInterval(tick, TICK_MS);
 
-  // Background: fetch real data + persist to DB (runs every second, internally rate-limited)
-  setInterval(async () => {
-    await fetchRealPrices().catch(() => {});
-    await persistToDb().catch(() => {});
-  }, TICK_MS);
+  // Fetch real prices every 15 seconds (separate from tick to avoid overlapping calls)
+  setInterval(() => fetchRealPrices().catch(() => {}), YAHOO_REFRESH_MS);
+
+  // Persist to DB every 15 seconds
+  setInterval(() => persistToDb().catch(() => {}), DB_WRITE_MS);
 }
