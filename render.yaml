@@ -10,7 +10,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: npm ci --include=dev && npm run --workspace=frontend build && cd backend && npx prisma generate
-    startCommand: cd backend && (npx prisma migrate resolve --applied 20260705000000_add_trading_bots || true) && npx prisma migrate deploy && node src/utils/seed.js && node src/index.js
+    startCommand: cd backend && (npx prisma migrate resolve --applied 20260705000000_add_trading_bots || true) && (npx prisma migrate resolve --applied 20260706000000_fix_trading_bots || true) && npx prisma migrate deploy && node src/utils/seed.js && node src/index.js
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
