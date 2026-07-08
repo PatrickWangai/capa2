@@ -240,6 +240,14 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Greeting + date */}
+          <p className="hero-text hero-text-1" style={{ fontSize: 13, fontWeight: 500, color: 'rgba(235,235,245,0.60)', letterSpacing: '0.03em', marginBottom: 18, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.11)', borderRadius: 980, padding: '5px 16px', display: 'inline-block' }}>
+            {(() => {
+              const h = new Date().getHours();
+              const g = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+              return `Good ${g} · ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+            })()}
+          </p>
           <div className="hero-logo-wrap" style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
           </div>
