@@ -91,12 +91,12 @@ export default function KycPage() {
         <div className="space-y-3">
           {STEPS.map(step => {
             const doc = docs.find((d: any) => d.documentType === step.id);
-            const icon = doc?.status === 'APPROVED' ? CheckCircle : doc?.status === 'REJECTED' ? XCircle : doc ? Clock : FileText;
+            const Icon = doc?.status === 'APPROVED' ? CheckCircle : doc?.status === 'REJECTED' ? XCircle : doc ? Clock : FileText;
             const color = doc?.status === 'APPROVED' ? 'text-green-400' : doc?.status === 'REJECTED' ? 'text-red-400' : doc ? 'text-yellow-400' : 'text-gray-500';
             return (
               <div key={step.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  {icon && <span className={color}>{icon({ size: 18 })}</span>}
+                  {Icon && <span className={color}><Icon size={18} /></span>}
                   <div>
                     <p className="text-sm font-medium text-white">{step.label} {!step.required && <span className="text-gray-500 text-xs">(optional)</span>}</p>
                     {doc?.rejectionReason && <p className="text-xs text-red-400 mt-0.5">{doc.rejectionReason}</p>}
