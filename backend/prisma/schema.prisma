@@ -348,6 +348,7 @@ model Position {
   dividendPayments DividendPayment[]
 
   @@unique([accountId, assetId])
+  @@index([assetId])
   @@map("positions")
 }
 

@@ -20,6 +20,7 @@ jest.mock('../../src/utils/db', () => ({
       findMany: jest.fn(),
       update: jest.fn(),
     },
+    userRole: { findUnique: jest.fn() },
     $transaction: jest.fn(fn => fn({
       user: { create: jest.fn() },
       investmentAccount: { create: jest.fn() },
@@ -28,7 +29,7 @@ jest.mock('../../src/utils/db', () => ({
   },
 }));
 jest.mock('../../src/utils/redis', () => ({ redis: { get: jest.fn(() => null), setex: jest.fn() } }));
-jest.mock('../../src/services/emailService', () => ({ sendEmail: jest.fn() }));
+jest.mock('../../src/services/emailService', () => ({ sendEmail: jest.fn(), sendVerifyEmail: jest.fn().mockResolvedValue() }));
 
 const { prisma } = require('../../src/utils/db');
 

@@ -3,6 +3,7 @@ import 'express-async-errors';
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled rejection:', reason);
+  if (sentryEnabled) Sentry.captureException(reason);
 });
 import fs from 'fs';
 import path from 'path';
@@ -18,6 +19,10 @@ import { fileURLToPath } from 'url';
 
 import logger from './utils/logger.js';
 import { prisma } from './utils/db.js';
+import { redis } from './utils/redis.js';
+import { initSentry, Sentry, sentryEnabled } from './utils/sentry.js';
+
+initSentry();
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import kycRoutes from './routes/kyc.js';
@@ -124,6 +129,9 @@ if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
   });
 }
 
+// ── Error monitoring ──────────────────────────────────────────
+if (sentryEnabled) Sentry.setupExpressErrorHandler(app);
+
 // ── Global error handler ──────────────────────────────────────
 app.use((err, _req, res, _next) => {
   logger.error(err.message, { stack: err.stack });
@@ -142,5 +150,31 @@ const PORT = process.env.PORT || 4000;
   startLimitOrderJob();
   httpServer.listen(PORT, () => logger.info(`API listening on :${PORT}`));
 })();
+
+// ── Graceful shutdown ─────────────────────────────────────────
+let shuttingDown = false;
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  logger.info(`${signal} received, shutting down gracefully`);
+  const forceExit = setTimeout(() => {
+    logger.error('Graceful shutdown timed out, forcing exit');
+    process.exit(1);
+  }, 10000);
+  try {
+    await new Promise(resolve => httpServer.close(resolve));
+    io.close();
+    await prisma.$disconnect();
+    await redis.quit();
+    clearTimeout(forceExit);
+    logger.info('Shutdown complete');
+    process.exit(0);
+  } catch (err) {
+    logger.error('Error during shutdown', { error: err.message });
+    process.exit(1);
+  }
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 export default app;

@@ -7,11 +7,10 @@ import { prisma } from '../utils/db.js';
 import { redis } from '../utils/redis.js';
 import logger from '../utils/logger.js';
 import { sendEmail, sendPasswordResetEmail, sendVerifyEmail } from '../services/emailService.js';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../config/jwt.js';
 
 const ACCESS_TTL = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_DAYS = 30;
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || process.env.ACCESS_TOKEN_SECRET || 'dev-access-secret';
-const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || process.env.REFRESH_TOKEN_SECRET || 'dev-refresh-secret';
 
 const sign = (sub, secret, expiresIn) =>
   jwt.sign({ sub }, secret, { expiresIn });
@@ -90,11 +89,16 @@ export async function register(req, res) {
   const { access, refresh } = issueTokens(user.id, user.email);
   await saveRefreshToken(user.id, refresh, req);
 
-  // Send email verification
-  const verifyToken = crypto.randomBytes(32).toString('hex');
-  await redis.setex(`verify:${verifyToken}`, 86400, user.id); // 24h
-  sendVerifyEmail(user.email, verifyToken, user.firstName)
-    .catch(e => logger.warn('Verification email failed', { error: e.message }));
+  // Send email verification — best-effort: registration must succeed even if
+  // Redis is temporarily unreachable (user can request verification again later).
+  try {
+    const verifyToken = crypto.randomBytes(32).toString('hex');
+    await redis.setex(`verify:${verifyToken}`, 86400, user.id); // 24h
+    sendVerifyEmail(user.email, verifyToken, user.firstName)
+      .catch(e => logger.warn('Verification email failed', { error: e.message }));
+  } catch (e) {
+    logger.warn('Could not store verification token (Redis unavailable)', { error: e.message });
+  }
 
   res.status(201).json({ user, accessToken: access, refreshToken: refresh });
 }
@@ -177,7 +181,13 @@ export async function logout(req, res) {
   if (token) {
     const decoded = jwt.decode(token);
     const ttl = (decoded?.exp || 0) - Math.floor(Date.now() / 1000);
-    if (ttl > 0) await redis.setex(`blacklist:${token}`, ttl, '1');
+    if (ttl > 0) {
+      try {
+        await redis.setex(`blacklist:${token}`, ttl, '1');
+      } catch (e) {
+        logger.warn('Could not blacklist token on logout (Redis unavailable)', { error: e.message });
+      }
+    }
   }
   const { refreshToken } = req.body;
   if (refreshToken) {

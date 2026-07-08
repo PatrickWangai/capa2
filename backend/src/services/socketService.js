@@ -1,7 +1,6 @@
 import logger from '../utils/logger.js';
 import jwt from 'jsonwebtoken';
-
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || process.env.ACCESS_TOKEN_SECRET || 'dev-access-secret';
+import { ACCESS_TOKEN_SECRET } from '../config/jwt.js';
 
 let _io = null;
 

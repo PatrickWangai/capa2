@@ -1,5 +1,6 @@
 import { prisma } from '../utils/db.js';
 import { redis } from '../utils/redis.js';
+import logger from '../utils/logger.js';
 
 // GET /api/assets
 export async function listAssets(req, res) {
@@ -73,8 +74,12 @@ export async function getAsset(req, res) {
 export async function getPriceHistory(req, res) {
   const { interval = '1d', from, to } = req.query;
   const cacheKey = `price_history:${req.params.id}:${interval}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return res.json(JSON.parse(cached));
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+  } catch (e) {
+    logger.warn('Price history cache read failed — falling back to DB', { error: e.message });
+  }
 
   const history = await prisma.priceHistory.findMany({
     where: {
@@ -88,7 +93,11 @@ export async function getPriceHistory(req, res) {
   });
 
   const response = { history }
-  await redis.setex(cacheKey, 60, JSON.stringify(response));
+  try {
+    await redis.setex(cacheKey, 60, JSON.stringify(response));
+  } catch (e) {
+    logger.warn('Price history cache write failed', { error: e.message });
+  }
   res.json(response);
 }
 
