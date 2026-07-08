@@ -3,6 +3,7 @@ import Decimal from 'decimal.js';
 import { createNotification } from '../services/notificationService.js';
 import { alpaca, submitOrder as submitAlpacaOrder, getOrder as getAlpacaOrder, cancelOrder as cancelAlpacaOrder } from '../services/alpacaService.js';
 import logger from '../utils/logger.js';
+import { clampLimit, clampOffset } from '../utils/pagination.js';
 
 // POST /api/orders
 export async function placeOrder(req, res) {
@@ -126,10 +127,10 @@ export async function fillOrder(orderId, estimatedPrice) {
 }
 
 export async function getOrders(req, res) {
-  const { status, limit = 20, offset = 0 } = req.query;
+  const { status } = req.query;
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
   if (!account) return res.json({ orders: [] });
-  const orders = await prisma.order.findMany({ where: { accountId: account.id, ...(status && { status }) }, include: { asset: { select: { symbol: true, name: true, logoUrl: true, exchange: true } } }, orderBy: { createdAt: 'desc' }, take: Number(limit), skip: Number(offset) });
+  const orders = await prisma.order.findMany({ where: { accountId: account.id, ...(status && { status }) }, include: { asset: { select: { symbol: true, name: true, logoUrl: true, exchange: true } } }, orderBy: { createdAt: 'desc' }, take: clampLimit(req.query.limit, 20), skip: clampOffset(req.query.offset) });
   res.json({ orders });
 }
 

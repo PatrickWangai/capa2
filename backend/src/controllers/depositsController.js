@@ -1,6 +1,5 @@
 import { prisma } from '../utils/db.js';
-import { initiateMpesaSTKPush, checkMpesaStatus } from '../services/mpesaService.js';
-import { createNotification } from '../services/notificationService.js';
+import { initiateMpesaSTKPush } from '../services/mpesaService.js';
 import Decimal from 'decimal.js';
 
 // POST /api/deposits/mpesa
@@ -48,27 +47,6 @@ export async function bankDeposit(req, res) {
     },
     message: 'Transfer instructions sent. Funds arrive in 1-3 business days.',
   });
-}
-
-// POST /api/deposits/confirm (called by webhook or admin)
-export async function confirmDeposit(req, res) {
-  const { transactionId } = req.body;
-  const tx = await prisma.transaction.findUnique({ where: { id: transactionId }, include: { account: true, paymentInstruction: true } });
-  if (!tx) return res.status(404).json({ error: 'Transaction not found.' });
-  if (tx.status === 'COMPLETED') return res.json({ message: 'Already completed.' });
-
-  await prisma.$transaction(async (db) => {
-    await db.transaction.update({ where: { id: tx.id }, data: { status: 'COMPLETED' } });
-    await db.paymentInstruction.update({ where: { transactionId: tx.id }, data: { status: 'COMPLETED', confirmedAt: new Date() } });
-    await db.accountBalance.upsert({
-      where: { accountId_currency: { accountId: tx.accountId, currency: tx.currency } },
-      create: { accountId: tx.accountId, currency: tx.currency, available: tx.amount },
-      update: { available: { increment: Number(tx.amount) } },
-    });
-  });
-
-  await createNotification({ userId: tx.account.userId, type: 'DEPOSIT', title: 'Deposit Confirmed', body: `${tx.currency} ${Number(tx.amount).toFixed(2)} has been added to your account.`, metadata: { transactionId } });
-  res.json({ message: 'Deposit confirmed and balance updated.' });
 }
 
 // POST /api/deposits/withdraw

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import auth from '../middleware/authenticate.js';
 import { prisma } from '../utils/db.js';
+import validate from '../middleware/validate.js';
+import { walletConvertSchema } from '../validation/schemas.js';
 const router = Router();
 
 // GET /api/wallets — return all balances for the primary account
@@ -34,7 +36,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // POST /api/wallets/convert — FX conversion between currencies (stub)
-router.post('/convert', auth, async (req, res) => {
+router.post('/convert', auth, validate(walletConvertSchema), async (req, res) => {
   const { fromCurrency, toCurrency, amount } = req.body;
   // Placeholder FX rates (production: use live FX API)
   const rates = { USD_KES: 129.5, KES_USD: 1 / 129.5, USD_GBP: 0.79, GBP_USD: 1 / 0.79, KES_GBP: 0.0061, GBP_KES: 163 }

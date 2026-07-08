@@ -1,4 +1,5 @@
 import { prisma } from '../utils/db.js';
+import { clampLimit, clampOffset } from '../utils/pagination.js';
 
 // GET /api/admin/dashboard
 export async function getDashboard(req, res) {
@@ -15,7 +16,7 @@ export async function getDashboard(req, res) {
 
 // GET /api/admin/users
 export async function listUsers(req, res) {
-  const { search, status, kycStatus, limit = 20, offset = 0 } = req.query;
+  const { search, status, kycStatus } = req.query;
   const users = await prisma.user.findMany({
     where: {
       ...(status && { status }),
@@ -24,7 +25,7 @@ export async function listUsers(req, res) {
     },
     select: { id: true, email: true, firstName: true, lastName: true, status: true, kycStatus: true, createdAt: true, lastLoginAt: true, phone: true, countryOfResidence: true },
     orderBy: { createdAt: 'desc' },
-    take: Number(limit), skip: Number(offset),
+    take: clampLimit(req.query.limit, 20), skip: clampOffset(req.query.offset),
   });
   const total = await prisma.user.count();
   res.json({ users, total });
@@ -40,12 +41,12 @@ export async function updateUser(req, res) {
 
 // GET /api/admin/transactions
 export async function listTransactions(req, res) {
-  const { type, status, limit = 50, offset = 0 } = req.query;
+  const { type, status } = req.query;
   const transactions = await prisma.transaction.findMany({
     where: { ...(type && { type }), ...(status && { status }) },
     include: { account: { include: { user: { select: { email: true, firstName: true, lastName: true } } } }, paymentInstruction: true },
     orderBy: { createdAt: 'desc' },
-    take: Number(limit), skip: Number(offset),
+    take: clampLimit(req.query.limit, 50), skip: clampOffset(req.query.offset),
   });
   res.json({ transactions });
 }

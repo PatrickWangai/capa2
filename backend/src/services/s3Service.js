@@ -1,7 +1,15 @@
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
 import logger from '../utils/logger.js';
+
+// Derive the extension from the validated mimetype rather than the
+// client-supplied filename, which can't be trusted.
+const EXT_BY_MIMETYPE = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'application/pdf': '.pdf',
+};
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -17,7 +25,7 @@ const USE_LOCAL = process.env.NODE_ENV === 'development' && !process.env.AWS_ACC
  * Returns { url, key }
  */
 export async function uploadToS3(file, prefix = 'uploads') {
-  const ext = path.extname(file.originalname) || '.bin';
+  const ext = EXT_BY_MIMETYPE[file.mimetype] || '.bin';
   const key = `${prefix}/${uuidv4()}${ext}`;
 
   if (USE_LOCAL) {
@@ -31,6 +39,7 @@ export async function uploadToS3(file, prefix = 'uploads') {
     Key: key,
     Body: file.buffer,
     ContentType: file.mimetype,
+    ContentDisposition: 'attachment', // force download rather than inline render, defense-in-depth against MIME-confusion XSS
     ServerSideEncryption: 'AES256',
     ACL: 'private',
   }).promise();

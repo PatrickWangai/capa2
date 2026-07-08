@@ -41,3 +41,31 @@ export const placeOrderSchema = Joi.object({
   limitPrice: Joi.number().positive(),
   stopPrice: Joi.number().positive(),
 });
+
+export const mpesaDepositSchema = Joi.object({
+  amount: Joi.number().positive().max(10_000_000).required(),
+  phone: Joi.string().pattern(/^\+?\d{9,15}$/).required(),
+  currency: Joi.string().valid('KES').default('KES'),
+});
+
+export const bankDepositSchema = Joi.object({
+  amount: Joi.number().positive().max(10_000_000).required(),
+  currency: Joi.string().length(3).uppercase().default('USD'),
+  bankName: Joi.string().max(100).allow('', null),
+  bankAccount: Joi.string().max(50).allow('', null),
+});
+
+export const withdrawSchema = Joi.object({
+  amount: Joi.number().positive().max(10_000_000).required(),
+  currency: Joi.string().length(3).uppercase().required(),
+  method: Joi.string().valid('BANK_TRANSFER', 'MPESA', 'AIRTEL_MONEY', 'SWIFT', 'SEPA').required(),
+  phone: Joi.string().pattern(/^\+?\d{9,15}$/).allow('', null),
+  bankAccount: Joi.string().max(50).allow('', null),
+  bankName: Joi.string().max(100).allow('', null),
+});
+
+export const walletConvertSchema = Joi.object({
+  fromCurrency: Joi.string().length(3).uppercase().required(),
+  toCurrency: Joi.string().length(3).uppercase().required(),
+  amount: Joi.number().positive().max(10_000_000).required(),
+});

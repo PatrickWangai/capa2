@@ -1,10 +1,11 @@
 import { prisma } from '../utils/db.js';
 import { redis } from '../utils/redis.js';
 import logger from '../utils/logger.js';
+import { clampLimit, clampOffset } from '../utils/pagination.js';
 
 // GET /api/assets
 export async function listAssets(req, res) {
-  const { exchange, assetClass, search, limit = 50, offset = 0 } = req.query;
+  const { exchange, assetClass, search } = req.query;
 
   const assets = await prisma.asset.findMany({
     where: {
@@ -20,8 +21,8 @@ export async function listAssets(req, res) {
     },
     include: { price: true },
     orderBy: [{ exchange: 'asc' }, { symbol: 'asc' }],
-    take: Number(limit),
-    skip: Number(offset),
+    take: clampLimit(req.query.limit, 50),
+    skip: clampOffset(req.query.offset),
   });
 
   // Batch-fetch 31 days of daily candles to compute weekly/monthly changes
