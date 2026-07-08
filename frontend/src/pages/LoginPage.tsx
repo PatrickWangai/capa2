@@ -16,17 +16,6 @@ export default function LoginPage() {
   const [needsMfa, setNeedsMfa] = useState(false);
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
-  const [dob, setDob] = useState('');
-
-  function calcAge(dobStr: string) {
-    if (!dobStr) return null;
-    const birth = new Date(dobStr);
-    const now = new Date();
-    let age = now.getFullYear() - birth.getFullYear();
-    const m = now.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-    return age;
-  }
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
   const showAlert = useAlertStore(s => s.show);
@@ -98,36 +87,6 @@ export default function LoginPage() {
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-            </div>
-
-            {/* Date of birth + live Minor/Adult check */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 500, color: SEC, letterSpacing: '-0.01em' }}>Date of Birth</label>
-                {dob && (() => {
-                  const age = calcAge(dob);
-                  if (age === null) return null;
-                  const minor = age < 18;
-                  return (
-                    <span style={{ fontSize: 12, fontWeight: 600, padding: '2px 10px', borderRadius: 20,
-                      background: minor ? 'rgba(255,69,58,0.12)' : 'rgba(48,209,88,0.10)',
-                      color: minor ? '#ff453a' : '#30d158',
-                      border: `1px solid ${minor ? 'rgba(255,69,58,0.25)' : 'rgba(48,209,88,0.22)'}`,
-                    }}>
-                      {minor ? `Minor · age ${age}` : `Adult · age ${age}`}
-                    </span>
-                  );
-                })()}
-              </div>
-              <input
-                style={inputStyle('dob')}
-                type="date"
-                value={dob}
-                max={new Date().toISOString().split('T')[0]}
-                onFocus={() => setFocused('dob')}
-                onBlur={() => setFocused(null)}
-                onChange={e => setDob(e.target.value)}
-              />
             </div>
 
             {needsMfa && (
