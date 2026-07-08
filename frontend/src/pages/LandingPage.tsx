@@ -348,17 +348,6 @@ export default function LandingPage() {
         </section>
       </FadeSection>
 
-      {/* Greeting + date */}
-      <div style={{ textAlign: 'center', padding: '32px 24px 0' }}>
-        <p style={{ fontSize: 13, fontWeight: 500, color: 'rgba(235,235,245,0.60)', letterSpacing: '0.03em', margin: 0, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.11)', borderRadius: 980, padding: '5px 16px', display: 'inline-block' }}>
-          {(() => {
-            const h = new Date().getHours();
-            const g = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
-            return `Good ${g} · ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
-          })()}
-        </p>
-      </div>
-
       {/* FOOTER */}
       <footer className="lp-footer" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
