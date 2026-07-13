@@ -1,7 +1,7 @@
 // SVG feColorMatrix filter: maps R channel → alpha.
 // Black pixels (R=0) become transparent; white pixels (R=1) stay opaque.
 // Works on any background regardless of CSS stacking context.
-const ASPECT = 1672 / 941;
+const ASPECT = 1; // new logo is square (1:1)
 
 interface Props { size?: number; className?: string; }
 

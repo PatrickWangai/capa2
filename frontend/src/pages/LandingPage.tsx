@@ -241,16 +241,8 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="hero-logo-wrap" style={{ marginBottom: 8, position: 'relative', display: 'inline-block' }}>
+          <div className="hero-logo-wrap" style={{ marginBottom: 8 }}>
             <CapaLogo size={200} />
-            {/* Ring-C overlay — white circular ring + dark inner circle, like reference */}
-            <svg
-              width="80" height="80" viewBox="0 0 100 100"
-              style={{ position: 'absolute', left: '17%', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
-            >
-              <circle cx="50" cy="50" r="32" fill="#060606" />
-              <path d="M 78 18 A 44 44 0 1 0 78 82" fill="none" stroke="white" strokeWidth="18" strokeLinecap="round" />
-            </svg>
           </div>
           <h1 className="hero-text hero-text-2 hero-title" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
