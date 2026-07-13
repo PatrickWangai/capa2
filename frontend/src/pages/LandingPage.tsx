@@ -243,21 +243,17 @@ export default function LandingPage() {
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-logo-wrap" style={{ marginBottom: 8, position: 'relative', display: 'inline-block' }}>
             <CapaLogo size={200} />
-            {/* Ghost icon inside the hollow of the C letter */}
-            <img
-              src="/ghost-256.png"
-              alt=""
-              draggable={false}
-              style={{
-                position: 'absolute',
-                left: '19%', top: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 24, height: 24,
-                pointerEvents: 'none',
-                userSelect: 'none',
-                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
-              }}
-            />
+            {/* White circle face inside the C hollow */}
+            <svg
+              width="22" height="22" viewBox="0 0 22 22"
+              style={{ position: 'absolute', left: '28%', top: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.7))' }}
+            >
+              <circle cx="11" cy="11" r="10" fill="white" />
+              <circle cx="8"  cy="10" r="1.8" fill="#111" />
+              <circle cx="14" cy="10" r="1.8" fill="#111" />
+              <circle cx="8.6"  cy="9.2" r="0.6" fill="white" opacity="0.7" />
+              <circle cx="14.6" cy="9.2" r="0.6" fill="white" opacity="0.7" />
+            </svg>
           </div>
           <h1 className="hero-text hero-text-2 hero-title" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
