@@ -250,8 +250,9 @@ export default function LandingPage() {
               draggable={false}
               style={{
                 position: 'absolute',
-                left: '19%', top: '38%',
-                width: 42, height: 42,
+                left: '20%', top: '50%',
+                transform: 'translateY(-50%)',
+                width: 36, height: 36,
                 pointerEvents: 'none',
                 userSelect: 'none',
               }}
