@@ -11,7 +11,7 @@ export default function CapaLogo({ size = 60, className = '' }: Props) {
       width={Math.round(size * ASPECT)}
       draggable={false}
       className={className}
-      style={{ display: 'block', mixBlendMode: 'screen', userSelect: 'none', flexShrink: 0 }}
+      style={{ display: 'block', userSelect: 'none', flexShrink: 0 }}
     />
   );
 }

@@ -181,7 +181,7 @@ export default function LandingPage() {
 
           /* Hero */
           .hero-logo-wrap { margin-bottom: 4px !important; }
-          .hero-logo-wrap img { width: min(360px, 88vw) !important; height: auto !important; }
+          .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
           .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
           .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
           .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
@@ -215,7 +215,7 @@ export default function LandingPage() {
 
         @media (max-width: 380px) {
           .hero-title { font-size: 22px !important; }
-          .hero-logo-wrap img { width: min(160px, 55vw) !important; height: auto !important; }
+          .hero-logo-wrap img { width: min(200px, 88vw) !important; height: auto !important; }
         }
       `}</style>
 
@@ -249,7 +249,7 @@ export default function LandingPage() {
         {/* Hero content */}
         <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 32 }}>
-            <CapaLogo size={200} />
+            <CapaLogo size={260} />
           </div>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
