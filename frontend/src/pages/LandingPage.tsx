@@ -245,16 +245,18 @@ export default function LandingPage() {
             <CapaLogo size={200} />
             {/* Ghost icon inside the hollow of the C letter */}
             <img
-              src="/ghost-icon.svg"
+              src="/ghost-256.png"
               alt=""
               draggable={false}
               style={{
                 position: 'absolute',
-                left: '20%', top: '50%',
+                left: '23%', top: '50%',
                 transform: 'translateY(-50%)',
-                width: 36, height: 36,
+                width: 46, height: 46,
                 pointerEvents: 'none',
                 userSelect: 'none',
+                imageRendering: 'crisp-edges' as const,
+                filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))',
               }}
             />
           </div>
