@@ -250,13 +250,12 @@ export default function LandingPage() {
               draggable={false}
               style={{
                 position: 'absolute',
-                left: '23%', top: '50%',
-                transform: 'translateY(-50%)',
-                width: 46, height: 46,
+                left: '19%', top: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 24, height: 24,
                 pointerEvents: 'none',
                 userSelect: 'none',
-                imageRendering: 'crisp-edges' as const,
-                filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))',
+                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
               }}
             />
           </div>
