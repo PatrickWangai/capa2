@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuthStore } from "../store/authStore";
 import { useAlertStore } from '../store/alertStore';
-import CapaCIcon from '../components/ui/CapaCIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -69,7 +69,7 @@ export default function RegisterPage() {
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <CapaCIcon size={64} borderRadius={16} bg="none" />
+          <CapaLogo size={120} />
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '20px 0 4px' }}>Create your account</h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>Start investing globally in minutes</p>
         </div>

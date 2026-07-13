@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
-import CapaCIcon from '../components/ui/CapaCIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -22,7 +22,7 @@ export default function VerifyEmailPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CapaCIcon size={64} borderRadius={16} bg="none" />
+        <CapaLogo size={120} />
         <div style={{ marginBottom: 24 }} />
 
         {status === 'loading' && (

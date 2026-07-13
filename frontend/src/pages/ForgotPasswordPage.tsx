@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
-import CapaCIcon from '../components/ui/CapaCIcon';
+import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <CapaCIcon size={64} borderRadius={16} bg="none" />
+          <CapaLogo size={120} />
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '20px 0 4px' }}>
             {sent ? 'Check your inbox' : 'Reset your password'}
           </h1>
