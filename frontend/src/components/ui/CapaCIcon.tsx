@@ -1,6 +1,6 @@
-interface Props { size?: number; animate?: boolean; borderRadius?: number; }
+interface Props { size?: number; animate?: boolean; borderRadius?: number; bg?: string; }
 
-export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10 }: Props) {
+export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10, bg = '#082e3c' }: Props) {
   const duration = '1.4s';
   const totalLen = 215;
   return (
@@ -9,7 +9,7 @@ export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10
       style={{ display: 'block', flexShrink: 0 }}
       aria-label="Capa"
     >
-      <rect width="100" height="100" rx={borderRadius * (100 / size)} fill="#082e3c" />
+      {bg !== 'none' && <rect width="100" height="100" rx={borderRadius * (100 / size)} fill={bg} />}
       <path
         d="M 78,28 A 34,34 0 1,0 78,72"
         fill="none" stroke="var(--accent)" strokeWidth="11" strokeLinecap="round"

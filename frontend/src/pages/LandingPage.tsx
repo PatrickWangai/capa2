@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
+import CapaCIcon from '../components/ui/CapaCIcon';
 import { useTheme, THEMES } from '../context/ThemeContext';
 
 const ACCENT = 'var(--accent)';
@@ -240,8 +241,12 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="hero-logo-wrap" style={{ marginBottom: 8 }}>
+          <div className="hero-logo-wrap" style={{ marginBottom: 8, position: 'relative', display: 'inline-block' }}>
             <CapaLogo size={200} />
+            {/* CapaCIcon overlaid on the C letter — C sits at ~21% from left, vertically centered */}
+            <div style={{ position: 'absolute', left: '14%', top: '26%', pointerEvents: 'none' }}>
+              <CapaCIcon size={94} bg="none" />
+            </div>
           </div>
           <h1 className="hero-text hero-text-2 hero-title" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(36px,6vw,80px)', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: TEXT, textShadow: '0 2px 40px rgba(0,0,0,0.6)', margin: '0 0 20px' }}>
             Unstoppable Minds
