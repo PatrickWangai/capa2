@@ -33,8 +33,12 @@ function HeroCanvas({ theme }: { theme: string }) {
     }
 
     function init() {
-      W = el.width  = el.offsetWidth;
-      H = el.height = el.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      W = el.offsetWidth;
+      H = el.offsetHeight;
+      el.width  = Math.round(W * dpr);
+      el.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function draw() {
@@ -172,6 +176,9 @@ export default function LandingPage() {
           .nav-links { display: none !important; }
           .lp-nav { padding: 0 16px !important; }
 
+          /* Push hero content below fixed nav */
+          .hero-content { padding-top: 52px !important; }
+
           /* Hero */
           .hero-logo-wrap { margin-bottom: 4px !important; }
           .hero-logo-wrap img { width: min(360px, 88vw) !important; height: auto !important; }
@@ -240,7 +247,7 @@ export default function LandingPage() {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, var(--sidebar-bg) 0%, transparent 100%)', zIndex: 2 }} />
 
         {/* Hero content */}
-        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 32 }}>
             <CapaLogo size={200} />
           </div>
