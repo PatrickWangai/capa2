@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, BarChart2, Clock, Target } from 'lucide-react';
-import CapaLogo from '../components/ui/CapaLogo';
+import CapaCIcon from '../components/ui/CapaCIcon';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -59,8 +59,7 @@ export default function OnboardingPage() {
       <div style={{ width: '100%', maxWidth: 480 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <CapaLogo size={110} />
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'var(--accent)', textTransform: 'uppercase', margin: '6px 0 0' }}>Unstoppable Minds</p>
+          <CapaCIcon size={64} borderRadius={16} bg="none" />
         </div>
 
         <StepIndicator current={step} total={3} />

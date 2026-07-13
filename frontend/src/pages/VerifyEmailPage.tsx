@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
-import CapaLogo from '../components/ui/CapaLogo';
+import CapaCIcon from '../components/ui/CapaCIcon';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -22,8 +22,8 @@ export default function VerifyEmailPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CapaLogo size={120} />
-        <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: ACCENT, textTransform: 'uppercase', margin: '6px 0 24px' }}>Unstoppable Minds</p>
+        <CapaCIcon size={64} borderRadius={16} bg="none" />
+        <div style={{ marginBottom: 24 }} />
 
         {status === 'loading' && (
           <>
