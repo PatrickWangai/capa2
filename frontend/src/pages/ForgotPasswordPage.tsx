@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <CapaLogo size={120} />
-          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '20px 0 4px' }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '6px 0 4px' }}>
             {sent ? 'Check your inbox' : 'Reset your password'}
           </h1>
           <p style={{ fontSize: 15, color: SEC, margin: 0 }}>

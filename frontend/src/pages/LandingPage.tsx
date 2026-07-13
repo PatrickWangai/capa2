@@ -180,7 +180,7 @@ export default function LandingPage() {
           .hero-content { padding-top: 52px !important; }
 
           /* Hero */
-          .hero-logo-wrap { margin-bottom: 4px !important; }
+          .hero-logo-wrap { margin-bottom: 0px !important; }
           .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
           .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
           .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
@@ -248,7 +248,7 @@ export default function LandingPage() {
 
         {/* Hero content */}
         <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 32 }}>
+          <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 8 }}>
             <CapaLogo size={260} />
           </div>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>

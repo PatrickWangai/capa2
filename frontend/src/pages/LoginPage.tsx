@@ -57,7 +57,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <CapaLogo size={110} />
-          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '20px 0 4px' }}>Sign in to Capa</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '6px 0 4px' }}>Sign in to Capa</h1>
           <p style={{ fontSize: 14, color: SEC, margin: 0 }}>Enter your details to continue</p>
         </div>
 
