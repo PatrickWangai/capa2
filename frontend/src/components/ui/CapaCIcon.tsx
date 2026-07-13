@@ -46,6 +46,8 @@ export default function CapaCIcon({ size = 44, animate = true, borderRadius = 10
           <animate attributeName="opacity" values="0;0.9;0.9;0" keyTimes="0;0.1;0.55;0.65" dur={duration} repeatCount="indefinite" />
         </circle>
       )}
+      {/* White shine spot on inner upper curve of C */}
+      <ellipse cx="34" cy="27" rx="5" ry="3.2" fill="white" opacity="0.55" transform="rotate(-42 34 27)" />
     </svg>
   );
 }
