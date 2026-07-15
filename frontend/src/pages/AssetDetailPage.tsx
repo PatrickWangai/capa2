@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle, Bell, BellRing, X,
+  Smartphone, Building2, ChevronRight,
 } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
@@ -178,7 +179,12 @@ function PreviewModal({
   );
 }
 
-// ── Buy Flow Modal — order review + confirm ────────────────────
+// ── Buy Flow Modal ─────────────────────────────────────────────
+// Step 1: choose payment source (M-Pesa or Bank)
+// Step 2a (M-Pesa): enter phone → STK push → enter PIN → confirm order
+// Step 2b (Bank): see bank details (order placed when funds arrive)
+type BuyStep = 'pay' | 'mpesa' | 'mpesa-sent' | 'bank' | 'review' | 'done';
+
 function BuyFlowModal({
   asset, qty, ordType, limitPriceStr, currentPrice, fee, total, currency,
   onClose, onOrderSuccess,
@@ -187,110 +193,261 @@ function BuyFlowModal({
   currentPrice: number; fee: number; total: number; currency: string;
   onClose: () => void; onOrderSuccess: () => void;
 }) {
-  const [placing, setPlacing] = useState(false);
-  const [ordered, setOrdered] = useState(false);
+  const [step, setStep]           = useState<BuyStep>('pay');
+  const [mpesaPhone, setPhone]    = useState('');
+  const [mpesaAmount, setMpesaAmt]= useState(String(Math.ceil(total * 130))); // rough KES estimate
+  const [bankAmount, setBankAmt]  = useState(String(Math.ceil(total)));
+  const [bankCur, setBankCur]     = useState(currency === 'KES' ? 'KES' : 'USD');
+  const [bankDetails, setBankDetails] = useState<any>(null);
+  const [loading, setLoading]     = useState(false);
+  const [placing, setPlacing]     = useState(false);
+
   const effPrice = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
   const subtotal = qty * effPrice;
+
+  // shared styles
+  const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 };
+  const card: React.CSSProperties   = { background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 22, padding: 26, maxWidth: 400, width: '100%', backdropFilter: 'blur(24px)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)', maxHeight: '92vh', overflowY: 'auto' };
+  const btnGreen: React.CSSProperties  = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', backgroundColor: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
+  const btnAccent: React.CSSProperties = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', backgroundColor: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
+  const btnGhost: React.CSSProperties  = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.65)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
+
+  const Header = ({ title, sub, back }: { title: string; sub?: string; back?: () => void }) => (
+    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 22 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {back && <button onClick={back} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1, marginTop: -1 }}>‹</button>}
+        <div>
+          <p style={{ fontWeight: 700, color: '#fff', fontSize: 17, margin: 0 }}>{title}</p>
+          {sub && <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.42)', margin: '3px 0 0' }}>{sub}</p>}
+        </div>
+      </div>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.38)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>✕</button>
+    </div>
+  );
+
+  const OrderSummaryRows = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 9, fontSize: 13, marginBottom: 18 }}>
+      {([
+        ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
+        [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
+        ['Subtotal', `${currency} ${fmtNum(subtotal)}`],
+        ['Fee (0.1%)', `${currency} ${fmtNum(fee)}`],
+      ] as [string, string][]).map(([k, v]) => (
+        <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ color: 'rgba(235,235,245,0.45)' }}>{k}</span>
+          <span style={{ color: '#fff' }}>{v}</span>
+        </div>
+      ))}
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 9, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+        <span style={{ color: '#fff' }}>Total</span>
+        <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
+      </div>
+    </div>
+  );
+
+  const submitMpesa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await api.post('/api/deposits/mpesa', { phone: mpesaPhone, amount: Number(mpesaAmount), currency: 'KES' });
+      setStep('mpesa-sent');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'M-Pesa request failed');
+    } finally { setLoading(false); }
+  };
+
+  const submitBank = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/deposits/bank', { amount: Number(bankAmount), currency: bankCur });
+      setBankDetails(data.bankDetails);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Bank deposit failed');
+    } finally { setLoading(false); }
+  };
 
   const placeOrder = async () => {
     setPlacing(true);
     try {
       await api.post('/api/orders', {
-        assetId: asset.id,
-        side: 'BUY',
-        orderType: ordType,
+        assetId: asset.id, side: 'BUY', orderType: ordType,
         quantity: asset.isFractional ? qty.toFixed(6) : String(Math.round(qty)),
         ...(ordType === 'LIMIT' && { limitPrice: Number(limitPriceStr).toFixed(2) }),
       });
-      setOrdered(true);
+      setStep('done');
       onOrderSuccess();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Order failed. Please try again.');
+      toast.error(err.response?.data?.error || 'Order failed — make sure your PIN was accepted then try again.');
     } finally { setPlacing(false); }
   };
 
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      backgroundColor: 'rgba(0,0,0,0.80)', backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-    }}>
-      <div style={{
-        background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-        borderRadius: 22, padding: 28, maxWidth: 400, width: '100%',
-        backdropFilter: 'blur(24px)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
-      }}>
-        {ordered ? (
-          <div style={{ textAlign: 'center', padding: '12px 0' }}>
-            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <CheckCircle size={30} style={{ color: '#4ade80' }} />
-            </div>
-            <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 20, margin: '0 0 8px' }}>Order Placed!</h3>
-            <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13 }}>
-              Your BUY order for {qty % 1 === 0 ? qty : qty.toFixed(4)} {asset.symbol} has been submitted.
-            </p>
-            <button onClick={onClose} style={{ marginTop: 24, width: '100%', padding: '13px', borderRadius: 12, border: 'none', backgroundColor: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-              Done
-            </button>
-          </div>
-        ) : (
-          <>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <h3 style={{ fontWeight: 700, color: '#fff', fontSize: 17, margin: 0 }}>Order Review</h3>
-              <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.4)', cursor: 'pointer', fontSize: 18, padding: 2, lineHeight: 1 }}>✕</button>
-            </div>
+  /* ── STEP: choose payment ── */
+  if (step === 'pay') return (
+    <div style={overlay}><div style={card}>
+      <Header title="How would you like to pay?" sub={`Buying ${qty % 1 === 0 ? qty : qty.toFixed(4)} ${asset.symbol} · ${currency} ${fmtNum(total)}`} />
 
-            {/* Stock identity */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-              <StockLogo symbol={asset.symbol} size="md" />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: 700, color: '#fff', margin: 0 }}>{asset.symbol}</p>
-                <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.4)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {[
+          { id: 'mpesa' as BuyStep, Icon: Smartphone, label: 'M-Pesa', sub: 'Instant · enter phone number', iconBg: 'rgba(34,197,94,0.15)', iconColor: '#4ade80' },
+          { id: 'bank'  as BuyStep, Icon: Building2,  label: 'Bank Transfer', sub: 'USD · GBP · KES · 1–3 days', iconBg: 'rgba(99,102,241,0.15)', iconColor: 'rgba(165,180,252,1)' },
+        ].map(({ id, Icon, label, sub, iconBg, iconColor }) => (
+          <button key={id} onClick={() => setStep(id)} style={{
+            display: 'flex', alignItems: 'center', gap: 14, padding: '15px 16px',
+            borderRadius: 16, border: '1px solid rgba(255,255,255,0.09)',
+            background: 'rgba(255,255,255,0.04)', cursor: 'pointer', width: '100%', textAlign: 'left',
+            transition: 'border-color 0.15s, background 0.15s',
+          }}
+            onMouseEnter={e => { const b = e.currentTarget; b.style.borderColor = 'var(--accent)'; b.style.background = 'rgba(var(--accent-rgb),0.07)'; }}
+            onMouseLeave={e => { const b = e.currentTarget; b.style.borderColor = 'rgba(255,255,255,0.09)'; b.style.background = 'rgba(255,255,255,0.04)'; }}
+          >
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Icon size={20} style={{ color: iconColor }} />
             </div>
-
-            {/* Details */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20, fontSize: 13 }}>
-              {([
-                ['Order type', ordType === 'MARKET' ? 'Market Order' : 'Limit Order'],
-                ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
-                [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
-                ['Subtotal', `${currency} ${fmtNum(subtotal)}`],
-                ['Fee (0.1%)', `${currency} ${fmtNum(fee)}`],
-              ] as [string, string][]).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(235,235,245,0.45)' }}>{k}</span>
-                  <span style={{ color: '#fff' }}>{v}</span>
-                </div>
-              ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <span style={{ color: '#fff' }}>Est. Total Cost</span>
-                <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
-              </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
+              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.38)', margin: '3px 0 0' }}>{sub}</p>
             </div>
-
-            {ordType === 'MARKET' && (
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', borderRadius: 12, background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)', fontSize: 12, color: '#facc15', marginBottom: 18 }}>
-                <Info size={13} style={{ marginTop: 1, flexShrink: 0 }} />
-                Market orders fill at live price and may differ slightly from the estimate.
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={onClose} disabled={placing}
-                style={{ flex: 1, padding: '13px', borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.7)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
-                Cancel
-              </button>
-              <button onClick={placeOrder} disabled={placing}
-                style={{ flex: 1, padding: '13px', borderRadius: 12, border: 'none', backgroundColor: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 700, cursor: placing ? 'not-allowed' : 'pointer', opacity: placing ? 0.65 : 1, fontFamily: 'inherit' }}>
-                {placing ? 'Placing…' : 'Confirm BUY'}
-              </button>
-            </div>
-          </>
-        )}
+            <ChevronRight size={16} style={{ color: 'rgba(235,235,245,0.28)', flexShrink: 0 }} />
+          </button>
+        ))}
       </div>
-    </div>
+    </div></div>
+  );
+
+  /* ── STEP: M-Pesa form ── */
+  if (step === 'mpesa') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Pay with M-Pesa" sub="You'll get a prompt on your phone" back={() => setStep('pay')} />
+      <OrderSummaryRows />
+      <form onSubmit={submitMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80' }}>
+          An STK push will be sent to your phone. Enter your M-Pesa PIN to authorise payment.
+        </div>
+        <div>
+          <label className="label">M-Pesa Phone Number</label>
+          <input className="input text-sm" placeholder="+254700000000 or 0700000000" value={mpesaPhone} onChange={e => setPhone(e.target.value)} required />
+        </div>
+        <div>
+          <label className="label">Amount (KES)</label>
+          <input className="input text-sm" type="number" min="10" value={mpesaAmount} onChange={e => setMpesaAmt(e.target.value)} required />
+          <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.35)', marginTop: 4 }}>Approximate KES equivalent of {currency} {fmtNum(total)}</p>
+        </div>
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          {loading ? 'Sending prompt…' : 'Send M-Pesa Prompt'}
+        </button>
+      </form>
+    </div></div>
+  );
+
+  /* ── STEP: M-Pesa sent — waiting for PIN ── */
+  if (step === 'mpesa-sent') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Check Your Phone" />
+      <div style={{ textAlign: 'center', margin: '8px 0 24px' }}>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <Smartphone size={28} style={{ color: '#4ade80' }} />
+        </div>
+        <p style={{ color: '#fff', fontWeight: 600, fontSize: 15, margin: '0 0 8px' }}>M-Pesa prompt sent!</p>
+        <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13, lineHeight: 1.55 }}>
+          Enter your <strong style={{ color: '#fff' }}>M-Pesa PIN</strong> on your phone to authorise the payment. Once confirmed, tap the button below to complete your purchase.
+        </p>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <button onClick={() => setStep('review')} style={btnGreen}>I've entered my PIN — Place Order</button>
+        <button onClick={onClose} style={btnGhost}>Do this later</button>
+      </div>
+    </div></div>
+  );
+
+  /* ── STEP: Bank Transfer ── */
+  if (step === 'bank') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Bank Transfer" sub="Funds arrive in 1–3 business days" back={() => setStep('pay')} />
+      <OrderSummaryRows />
+      {!bankDetails ? (
+        <form onSubmit={submitBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)' }}>
+            Transfer to CAPA's account. Your order will be placed once funds are confirmed.
+          </div>
+          <div>
+            <label className="label">Currency</label>
+            <select className="input text-sm" value={bankCur} onChange={e => setBankCur(e.target.value)}>
+              <option value="USD">USD — US Dollar</option>
+              <option value="GBP">GBP — British Pound</option>
+              <option value="KES">KES — Kenyan Shilling</option>
+            </select>
+          </div>
+          <div>
+            <label className="label">Amount</label>
+            <input className="input text-sm" type="number" min="1" value={bankAmount} onChange={e => setBankAmt(e.target.value)} required />
+          </div>
+          <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+            {loading ? 'Getting details…' : 'Get Bank Details'}
+          </button>
+        </form>
+      ) : (
+        <div>
+          <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)', marginBottom: 16 }}>
+            Use the reference below when making the transfer so we can match your payment.
+          </div>
+          {([
+            ['Bank', bankDetails.bankName], ['Account Name', bankDetails.accountName],
+            ['Account No.', bankDetails.accountNumber], ['Reference', bankDetails.reference],
+            ['Amount', `${bankDetails.currency} ${Number(bankDetails.amount).toFixed(2)}`],
+          ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <span style={{ fontSize: 13, color: 'rgba(235,235,245,0.45)' }}>{k}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
+            </div>
+          ))}
+          <button onClick={onClose} style={{ ...btnGhost, marginTop: 18 }}>Done — I'll complete the transfer</button>
+        </div>
+      )}
+    </div></div>
+  );
+
+  /* ── STEP: Order Review (after M-Pesa PIN) ── */
+  if (step === 'review') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Confirm Your Order" back={() => setStep('mpesa-sent')} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <StockLogo symbol={asset.symbol} size="md" />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontWeight: 700, color: '#fff', margin: 0 }}>{asset.symbol}</p>
+          <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.4)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
+        </div>
+        <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
+      </div>
+      <OrderSummaryRows />
+      {ordType === 'MARKET' && (
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', borderRadius: 12, background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)', fontSize: 12, color: '#facc15', marginBottom: 16 }}>
+          <Info size={13} style={{ marginTop: 1, flexShrink: 0 }} /> Market orders fill at live price and may differ slightly.
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button onClick={() => setStep('mpesa-sent')} disabled={placing} style={{ ...btnGhost, flex: 1 }}>Back</button>
+        <button onClick={placeOrder} disabled={placing} style={{ ...btnGreen, flex: 1, opacity: placing ? 0.65 : 1, cursor: placing ? 'not-allowed' : 'pointer' }}>
+          {placing ? 'Placing…' : 'Confirm BUY'}
+        </button>
+      </div>
+    </div></div>
+  );
+
+  /* ── STEP: done ── */
+  return (
+    <div style={overlay}><div style={card}>
+      <div style={{ textAlign: 'center', padding: '16px 0' }}>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+          <CheckCircle size={32} style={{ color: '#4ade80' }} />
+        </div>
+        <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 20, margin: '0 0 8px' }}>Order Placed!</h3>
+        <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13, lineHeight: 1.5 }}>
+          Your BUY order for {qty % 1 === 0 ? qty : qty.toFixed(4)} {asset.symbol} has been submitted and will fill shortly.
+        </p>
+        <button onClick={onClose} style={{ ...btnGreen, marginTop: 26 }}>Done</button>
+      </div>
+    </div></div>
   );
 }
 
@@ -420,9 +577,10 @@ export default function AssetDetailPage() {
   const subtotal  = sharesQty * effPrice;
   const fee       = subtotal * 0.001;
   const total     = side === 'BUY' ? subtotal + fee : subtotal - fee;
+  const canBuy    = sharesQty > 0 && (ordType === 'MARKET' || Number(limitPrice) > 0);
   const canOrder  = sharesQty > 0
     && (ordType === 'MARKET' || Number(limitPrice) > 0)
-    && (side === 'BUY' ? total <= avail + 0.001 : sharesQty <= ownedQty + 0.000001);
+    && sharesQty <= ownedQty + 0.000001;
 
   const chartData = (histData?.history ?? []).map((h: any) => ({ time: h.openTime, value: Number(h.close) }));
   const vals      = chartData.map((d: any) => d.value);
@@ -801,12 +959,6 @@ export default function AssetDetailPage() {
                   <AlertCircle size={12} /> Max {asset.isFractional ? ownedQty.toFixed(4) : Math.floor(ownedQty)} shares available
                 </div>
               )}
-              {side === 'BUY' && sharesQty > 0 && total > avail + 0.001 && (
-                <div className="flex items-center gap-2 text-xs text-orange-400 mb-3 p-2.5 rounded-xl" style={{ background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.2)' }}>
-                  <AlertCircle size={12} /> You need {currency} {fmtNum(total - avail)} more — deposit via the Deposit page
-                </div>
-              )}
-
               {/* Available / owned */}
               <div className="flex justify-between text-xs mb-4" style={{ color: 'rgba(235,235,245,0.4)' }}>
                 <span>{side === 'BUY' ? `${currency} available` : 'Shares owned'}</span>
@@ -820,16 +972,16 @@ export default function AssetDetailPage() {
               {/* CTA */}
               {side === 'BUY' ? (
                 <button
-                  disabled={!canOrder}
-                  onClick={() => canOrder && setBuyFlow(true)}
+                  disabled={!canBuy}
+                  onClick={() => canBuy && setBuyFlow(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    backgroundColor: canOrder ? '#22c55e' : 'rgba(255,255,255,0.06)',
-                    color: canOrder ? '#fff' : 'rgba(235,235,245,0.28)',
-                    cursor: canOrder ? 'pointer' : 'not-allowed',
+                    backgroundColor: canBuy ? '#22c55e' : 'rgba(255,255,255,0.06)',
+                    color: canBuy ? '#fff' : 'rgba(235,235,245,0.28)',
+                    cursor: canBuy ? 'pointer' : 'not-allowed',
                   }}
                 >
-                  {!amount ? 'Enter amount to buy' : !canOrder ? 'Insufficient funds' : 'Buy →'}
+                  {!amount ? 'Enter amount to buy' : 'Buy →'}
                 </button>
               ) : (
                 <button
