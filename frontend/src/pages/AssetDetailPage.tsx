@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle, Bell, BellRing, X,
+  Smartphone, Building2,
 } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
@@ -178,6 +179,179 @@ function PreviewModal({
   );
 }
 
+// ── Fund Account Modal ────────────────────────────────────────
+type FundMethod = 'mpesa' | 'bank';
+
+function FundAccountModal({
+  neededAmount, currency, onClose,
+}: { neededAmount: number; currency: string; onClose: () => void }) {
+  const [method, setMethod] = useState<FundMethod>('mpesa');
+  const [mpesaPhone, setMpesaPhone] = useState('');
+  const [mpesaAmount, setMpesaAmount] = useState('');
+  const [bankAmount, setBankAmount] = useState('');
+  const [bankCurrency, setBankCurrency] = useState('USD');
+  const [loading, setLoading] = useState(false);
+  const [mpesaSent, setMpesaSent] = useState(false);
+  const [bankDetails, setBankDetails] = useState<any>(null);
+
+  const submitMpesa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await api.post('/api/deposits/mpesa', { phone: mpesaPhone, amount: Number(mpesaAmount), currency: 'KES' });
+      setMpesaSent(true);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'M-Pesa request failed');
+    } finally { setLoading(false); }
+  };
+
+  const submitBank = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/deposits/bank', { amount: Number(bankAmount), currency: bankCurrency });
+      setBankDetails(data.bankDetails);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Bank deposit failed');
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 1000,
+      backgroundColor: 'rgba(0,0,0,0.80)', backdropFilter: 'blur(6px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+    }}>
+      <div style={{
+        background: 'var(--card-bg)', border: '1px solid var(--card-border)',
+        borderRadius: 22, padding: 28, maxWidth: 400, width: '100%',
+        backdropFilter: 'blur(24px)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+        maxHeight: '90vh', overflowY: 'auto',
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
+          <div>
+            <h3 style={{ fontWeight: 700, color: '#fff', fontSize: 18, margin: 0 }}>Add Funds</h3>
+            <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.45)', marginTop: 3 }}>
+              You need {currency} {fmtNum(neededAmount)} more to complete this trade
+            </p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.4)', cursor: 'pointer', fontSize: 18, padding: 2, lineHeight: 1 }}>✕</button>
+        </div>
+
+        {/* Method picker */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 22 }}>
+          {([
+            { id: 'mpesa' as FundMethod, label: 'M-Pesa', sub: 'Instant · KES', Icon: Smartphone },
+            { id: 'bank'  as FundMethod, label: 'Bank Transfer', sub: '1–3 days', Icon: Building2 },
+          ]).map(({ id, label, sub, Icon }) => (
+            <button key={id} onClick={() => { setMethod(id); setMpesaSent(false); setBankDetails(null); }}
+              style={{
+                padding: '13px 14px', borderRadius: 14, textAlign: 'left', cursor: 'pointer',
+                border: `2px solid ${method === id ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
+                background: method === id ? 'rgba(var(--accent-rgb),0.10)' : 'rgba(255,255,255,0.03)',
+                transition: 'all 0.15s',
+              }}>
+              <Icon size={18} style={{ color: method === id ? 'var(--accent)' : 'rgba(235,235,245,0.4)' }} />
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '7px 0 2px' }}>{label}</p>
+              <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: 0 }}>{sub}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* ── M-Pesa ── */}
+        {method === 'mpesa' && !mpesaSent && (
+          <form onSubmit={submitMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80' }}>
+              You'll receive an STK push on your phone. Enter your M-Pesa PIN to confirm.
+            </div>
+            <div>
+              <label className="label">M-Pesa Phone Number</label>
+              <input className="input text-sm" placeholder="+254700000000 or 0700000000"
+                value={mpesaPhone} onChange={e => setMpesaPhone(e.target.value)} required />
+            </div>
+            <div>
+              <label className="label">Amount (KES)</label>
+              <input className="input text-sm" type="number" min="10" placeholder="e.g. 5000"
+                value={mpesaAmount} onChange={e => setMpesaAmount(e.target.value)} required />
+            </div>
+            <button type="submit" disabled={loading}
+              style={{ backgroundColor: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1, fontFamily: 'inherit' }}>
+              {loading ? 'Sending prompt…' : 'Send M-Pesa Prompt'}
+            </button>
+          </form>
+        )}
+
+        {method === 'mpesa' && mpesaSent && (
+          <div style={{ textAlign: 'center', padding: '12px 0' }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+              <CheckCircle size={28} style={{ color: '#4ade80' }} />
+            </div>
+            <h4 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: '0 0 6px' }}>Prompt Sent!</h4>
+            <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13, marginBottom: 20 }}>
+              Check your phone and enter your M-Pesa PIN. Your balance updates once confirmed.
+            </p>
+            <button onClick={onClose}
+              style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.7)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+              Close
+            </button>
+          </div>
+        )}
+
+        {/* ── Bank Transfer ── */}
+        {method === 'bank' && !bankDetails && (
+          <form onSubmit={submitBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)' }}>
+              Funds arrive in 1–3 business days after your transfer is received.
+            </div>
+            <div>
+              <label className="label">Currency</label>
+              <select className="input text-sm" value={bankCurrency} onChange={e => setBankCurrency(e.target.value)}>
+                <option value="USD">USD — US Dollar</option>
+                <option value="GBP">GBP — British Pound</option>
+                <option value="KES">KES — Kenyan Shilling</option>
+              </select>
+            </div>
+            <div>
+              <label className="label">Amount</label>
+              <input className="input text-sm" type="number" min="1" placeholder="e.g. 1000"
+                value={bankAmount} onChange={e => setBankAmount(e.target.value)} required />
+            </div>
+            <button type="submit" disabled={loading}
+              style={{ backgroundColor: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1, fontFamily: 'inherit' }}>
+              {loading ? 'Getting details…' : 'Get Bank Details'}
+            </button>
+          </form>
+        )}
+
+        {method === 'bank' && bankDetails && (
+          <div>
+            <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)', marginBottom: 16 }}>
+              Transfer the exact amount using the reference number below.
+            </div>
+            {([
+              ['Bank', bankDetails.bankName],
+              ['Account Name', bankDetails.accountName],
+              ['Account No.', bankDetails.accountNumber],
+              ['Reference', bankDetails.reference],
+              ['Amount', `${bankDetails.currency} ${Number(bankDetails.amount).toFixed(2)}`],
+            ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <span style={{ fontSize: 13, color: 'rgba(235,235,245,0.45)' }}>{k}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#fff', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
+              </div>
+            ))}
+            <button onClick={onClose}
+              style={{ width: '100%', padding: '12px', borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.7)', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 16, fontFamily: 'inherit' }}>
+              Done
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Page ─────────────────────────────────────────────────────
 export default function AssetDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -195,6 +369,7 @@ export default function AssetDetailPage() {
   const [success, setSuccess]     = useState(false);
   const [flashKey, setFlash]      = useState(0);
   const [showAlert, setShowAlert] = useState(false);
+  const [showFundModal, setFundModal] = useState(false);
   const [alertCond, setAlertCond] = useState<'above' | 'below'>('above');
   const [alertPrice, setAlertPriceVal] = useState('');
   const [savingAlert, setSavingAlert] = useState(false);
@@ -451,6 +626,14 @@ export default function AssetDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showFundModal && (
+        <FundAccountModal
+          neededAmount={Math.max(0, total - avail)}
+          currency={currency}
+          onClose={() => setFundModal(false)}
+        />
       )}
 
       {showPreview && (
@@ -731,22 +914,32 @@ export default function AssetDetailPage() {
               </div>
 
               {/* CTA */}
-              <button
-                disabled={!canOrder}
-                onClick={() => canOrder && setPreview(true)}
-                className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
-                style={{
-                  backgroundColor: canOrder ? (side === 'BUY' ? '#22c55e' : '#ef4444') : 'rgba(255,255,255,0.06)',
-                  color: canOrder ? '#fff' : 'rgba(235,235,245,0.28)',
-                  cursor: canOrder ? 'pointer' : 'not-allowed',
-                }}
-              >
-                {!amount
-                  ? `Enter amount to ${side.toLowerCase()}`
-                  : !canOrder
-                  ? side === 'BUY' ? 'Insufficient funds' : 'Insufficient shares'
-                  : `Review ${side} Order →`}
-              </button>
+              {side === 'BUY' && sharesQty > 0 && total > avail + 0.001 ? (
+                <button
+                  onClick={() => setFundModal(true)}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
+                  style={{ backgroundColor: 'var(--accent)', color: '#fff', cursor: 'pointer' }}
+                >
+                  Add Funds to Buy →
+                </button>
+              ) : (
+                <button
+                  disabled={!canOrder}
+                  onClick={() => canOrder && setPreview(true)}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
+                  style={{
+                    backgroundColor: canOrder ? (side === 'BUY' ? '#22c55e' : '#ef4444') : 'rgba(255,255,255,0.06)',
+                    color: canOrder ? '#fff' : 'rgba(235,235,245,0.28)',
+                    cursor: canOrder ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  {!amount
+                    ? `Enter amount to ${side.toLowerCase()}`
+                    : !canOrder
+                    ? 'Insufficient shares'
+                    : `Review ${side} Order →`}
+                </button>
+              )}
 
               <p className="text-center text-xs mt-2" style={{ color: 'rgba(235,235,245,0.22)' }}>
                 0.1% trading fee · No monthly charges
