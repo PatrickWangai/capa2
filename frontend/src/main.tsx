@@ -6,9 +6,11 @@ import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
 import AlertPopup from './components/ui/AlertPopup';
 import { initSentry } from './utils/sentry';
+import { startAnimatedFavicon } from './utils/animatedFavicon';
 import './styles/globals.css';
 
 initSentry();
+startAnimatedFavicon();
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
