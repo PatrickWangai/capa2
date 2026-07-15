@@ -14,13 +14,6 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
 });
 
-function dismissSplash() {
-  const el = document.getElementById('capa-splash');
-  if (!el) return;
-  el.classList.add('fade');
-  setTimeout(() => el.remove(), 400);
-}
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -38,5 +31,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ThemeProvider>
   </React.StrictMode>
 );
-
-dismissSplash();
