@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 export const registerSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().min(8).max(128).required(),
   firstName: Joi.string().min(1).max(100).required(),
   lastName: Joi.string().min(1).max(100).required(),
@@ -10,9 +10,9 @@ export const registerSchema = Joi.object({
 });
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().required(),
-  mfaCode: Joi.string().length(6).allow('', null),
+  mfaCode: Joi.string().length(6).optional().allow('', null),
 });
 
 export const refreshSchema = Joi.object({

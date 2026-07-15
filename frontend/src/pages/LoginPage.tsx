@@ -29,7 +29,9 @@ export default function LoginPage() {
       showAlert({ variant: 'success', title: `Welcome back, ${data.user.firstName}!`, message: 'You are now signed in.' });
       navigate('/dashboard');
     } catch (err: any) {
-      showAlert({ variant: 'error', title: 'Sign in failed', message: err.response?.data?.error || 'Please check your credentials and try again.' });
+      const data = err.response?.data;
+      const msg = data?.details?.[0]?.message || data?.error || 'Please check your credentials and try again.';
+      showAlert({ variant: 'error', title: 'Sign in failed', message: msg });
     } finally { setLoading(false); }
   };
 
