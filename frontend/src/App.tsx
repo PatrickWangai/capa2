@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import CookieBanner from './components/ui/CookieBanner';
+import CapaLogo from './components/ui/CapaLogo';
 
 // Eagerly loaded (critical path)
 import LandingPage from './pages/LandingPage';
@@ -54,67 +55,59 @@ function LoadingSpinner() {
   return (
     <>
       <style>{`
-        @keyframes capa-pulse {
-          0%, 100% { opacity: 0.85; transform: scale(1); }
-          50%       { opacity: 1;    transform: scale(1.04); }
+        @keyframes _splash-logo {
+          0%   { opacity: 0; transform: scale(0.88); }
+          100% { opacity: 1; transform: scale(1); }
         }
-        @keyframes capa-fade-up {
-          from { opacity: 0; transform: translateY(14px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes _splash-dot {
+          0%, 60%, 100% { transform: scale(0.4); opacity: 0.25; }
+          30%            { transform: scale(1);   opacity: 1; }
         }
-        @keyframes capa-bar {
-          0%   { width: 0%; }
-          60%  { width: 70%; }
-          100% { width: 91%; }
-        }
-        @keyframes capa-shimmer {
-          0%   { transform: translateX(-100%) skewX(-20deg); }
-          100% { transform: translateX(400%)  skewX(-20deg); }
+        @keyframes _splash-ring {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
 
       <div style={{
-        minHeight: '100vh',
-        background: 'var(--bg-gradient)',
+        position: 'fixed', inset: 0,
+        background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
+        zIndex: 9999,
       }}>
-        {/* Fist icon — pulse */}
-        <div style={{ animation: 'capa-pulse 2.4s ease-in-out infinite', marginBottom: 20 }}>
-          <img
-            src="/capa-icon.png" alt="CAPA"
-            width={110} height={110}
-            draggable={false}
-            style={{ display: 'block', userSelect: 'none' }}
-          />
+
+        {/* Logo */}
+        <div style={{ animation: '_splash-logo 0.55s cubic-bezier(0.22,1,0.36,1) both', marginBottom: 52 }}>
+          <CapaLogo size={160} />
         </div>
 
-        {/* Tagline */}
-        <p style={{
-          fontFamily: "'Orbitron', sans-serif",
-          fontSize: 13, fontWeight: 700, letterSpacing: '0.18em', color: 'var(--accent)',
-          textTransform: 'uppercase', margin: '0 0 28px',
-          animation: 'capa-fade-up 0.7s ease 0.2s both',
-        }}>Unstoppable Minds</p>
+        {/* Spinner ring */}
+        <div style={{ position: 'relative', width: 36, height: 36, marginBottom: 20 }}>
+          {/* Track */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            border: '2.5px solid rgba(255,255,255,0.10)',
+          }} />
+          {/* Arc */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            border: '2.5px solid transparent',
+            borderTopColor: 'var(--accent)',
+            borderRightColor: 'var(--accent)',
+            animation: '_splash-ring 0.9s linear infinite',
+          }} />
+        </div>
 
-        {/* Progress bar */}
-        <div style={{
-          width: 160, height: 2, borderRadius: 2,
-          backgroundColor: 'rgba(255,255,255,0.15)', overflow: 'hidden',
-          animation: 'capa-fade-up 0.7s ease 0.4s both',
-          position: 'relative',
-        }}>
-          <div style={{
-            height: '100%', borderRadius: 2,
-            backgroundColor: 'var(--accent)',
-            animation: 'capa-bar 2.8s cubic-bezier(0.4,0,0.2,1) forwards',
-          }} />
-          {/* Shimmer sweep */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, width: '30%', height: '100%',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
-            animation: 'capa-shimmer 1.6s ease-in-out 0.8s infinite',
-          }} />
+        {/* Three dots */}
+        <div style={{ display: 'flex', gap: 7 }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{
+              width: 6, height: 6, borderRadius: '50%',
+              backgroundColor: 'var(--accent)',
+              animation: `_splash-dot 1.2s ease-in-out ${i * 0.18}s infinite`,
+            }} />
+          ))}
         </div>
       </div>
     </>
