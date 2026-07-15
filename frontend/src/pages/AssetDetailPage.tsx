@@ -5,7 +5,7 @@ import { api } from '../services/api';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle, Bell, BellRing, X,
-  Smartphone, Building2, ChevronRight,
+  Smartphone, Building2, ChevronRight, Plus, Trash2, WalletCards,
 } from 'lucide-react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
@@ -183,7 +183,9 @@ function PreviewModal({
 // Step 1: choose payment source (M-Pesa or Bank)
 // Step 2a (M-Pesa): enter phone → STK push → enter PIN → confirm order
 // Step 2b (Bank): see bank details (order placed when funds arrive)
-type BuyStep = 'pay' | 'mpesa' | 'mpesa-sent' | 'bank' | 'review' | 'done';
+type BuyStep = 'connect' | 'add-mpesa' | 'add-bank' | 'mpesa' | 'mpesa-sent' | 'bank' | 'review' | 'done';
+
+interface SavedMethod { id: string; type: string; label: string; phone?: string; bankName?: string; bankAccount?: string; isDefault: boolean; }
 
 function BuyFlowModal({
   asset, qty, ordType, limitPriceStr, currentPrice, fee, total, currency,
@@ -193,14 +195,31 @@ function BuyFlowModal({
   currentPrice: number; fee: number; total: number; currency: string;
   onClose: () => void; onOrderSuccess: () => void;
 }) {
-  const [step, setStep]           = useState<BuyStep>('pay');
+  const [step, setStep]             = useState<BuyStep>('connect');
+  const [savedMethods, setSaved]    = useState<SavedMethod[]>([]);
+  const [methodsLoading, setMLoad]  = useState(true);
+  const [selected, setSelected]     = useState<SavedMethod | null>(null);
+
+  // add-mpesa form
+  const [newPhone, setNewPhone]     = useState('');
+  // add-bank form
+  const [newBankName, setNewBankName]    = useState('');
+  const [newBankAccount, setNewBankAcct] = useState('');
+
   const [mpesaPhone, setPhone]    = useState('');
-  const [mpesaAmount, setMpesaAmt]= useState(String(Math.ceil(total * 130))); // rough KES estimate
+  const [mpesaAmount, setMpesaAmt]= useState(String(Math.ceil(total * 130)));
   const [bankAmount, setBankAmt]  = useState(String(Math.ceil(total)));
   const [bankCur, setBankCur]     = useState(currency === 'KES' ? 'KES' : 'USD');
   const [bankDetails, setBankDetails] = useState<any>(null);
   const [loading, setLoading]     = useState(false);
   const [placing, setPlacing]     = useState(false);
+
+  useEffect(() => {
+    api.get('/api/payment-methods')
+      .then(r => { setSaved(r.data.methods); })
+      .catch(() => {})
+      .finally(() => setMLoad(false));
+  }, []);
 
   const effPrice = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
   const subtotal = qty * effPrice;
@@ -282,43 +301,157 @@ function BuyFlowModal({
     } finally { setPlacing(false); }
   };
 
-  /* ── STEP: choose payment ── */
-  if (step === 'pay') return (
-    <div style={overlay}><div style={card}>
-      <Header title="How would you like to pay?" sub={`Buying ${qty % 1 === 0 ? qty : qty.toFixed(4)} ${asset.symbol} · ${currency} ${fmtNum(total)}`} />
+  const addMpesa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/payment-methods', { type: 'MPESA', phone: newPhone });
+      setSaved(prev => [...prev, data.method]);
+      setNewPhone('');
+      setStep('connect');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to save M-Pesa number');
+    } finally { setLoading(false); }
+  };
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {[
-          { id: 'mpesa' as BuyStep, Icon: Smartphone, label: 'M-Pesa', sub: 'Instant · enter phone number', iconBg: 'rgba(34,197,94,0.15)', iconColor: '#4ade80' },
-          { id: 'bank'  as BuyStep, Icon: Building2,  label: 'Bank Transfer', sub: 'USD · GBP · KES · 1–3 days', iconBg: 'rgba(99,102,241,0.15)', iconColor: 'rgba(165,180,252,1)' },
-        ].map(({ id, Icon, label, sub, iconBg, iconColor }) => (
-          <button key={id} onClick={() => setStep(id)} style={{
-            display: 'flex', alignItems: 'center', gap: 14, padding: '15px 16px',
-            borderRadius: 16, border: '1px solid rgba(255,255,255,0.09)',
-            background: 'rgba(255,255,255,0.04)', cursor: 'pointer', width: '100%', textAlign: 'left',
-            transition: 'border-color 0.15s, background 0.15s',
-          }}
-            onMouseEnter={e => { const b = e.currentTarget; b.style.borderColor = 'var(--accent)'; b.style.background = 'rgba(var(--accent-rgb),0.07)'; }}
-            onMouseLeave={e => { const b = e.currentTarget; b.style.borderColor = 'rgba(255,255,255,0.09)'; b.style.background = 'rgba(255,255,255,0.04)'; }}
-          >
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Icon size={20} style={{ color: iconColor }} />
+  const addBank = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/payment-methods', { type: 'BANK_TRANSFER', bankName: newBankName, bankAccount: newBankAccount });
+      setSaved(prev => [...prev, data.method]);
+      setNewBankName(''); setNewBankAcct('');
+      setStep('connect');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to save bank account');
+    } finally { setLoading(false); }
+  };
+
+  const removeMethod = async (id: string) => {
+    try {
+      await api.delete(`/api/payment-methods/${id}`);
+      setSaved(prev => prev.filter(m => m.id !== id));
+    } catch { toast.error('Could not remove method'); }
+  };
+
+  const selectMethod = (m: SavedMethod) => {
+    setSelected(m);
+    if (m.type === 'MPESA') { setPhone(m.phone || ''); setStep('mpesa'); }
+    else { setStep('bank'); }
+  };
+
+  /* ── STEP: connect (mandatory first step) ── */
+  if (step === 'connect') return (
+    <div style={overlay}><div style={card}>
+      <Header
+        title="Connect a payment method"
+        sub={`Buying ${qty % 1 === 0 ? qty : qty.toFixed(4)} ${asset.symbol} · ${currency} ${fmtNum(total)}`}
+      />
+
+      {methodsLoading ? (
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(235,235,245,0.4)', fontSize: 13 }}>Loading…</div>
+      ) : (
+        <>
+          {savedMethods.length > 0 ? (
+            <>
+              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.4)', marginBottom: 10 }}>Your connected methods — choose one to pay with:</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                {savedMethods.map(m => (
+                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', background: 'rgba(255,255,255,0.04)' }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 10, background: m.type === 'MPESA' ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {m.type === 'MPESA' ? <Smartphone size={18} style={{ color: '#4ade80' }} /> : <Building2 size={18} style={{ color: 'rgba(165,180,252,1)' }} />}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{m.type === 'MPESA' ? 'M-Pesa' : 'Bank Transfer'}</p>
+                      <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</p>
+                    </div>
+                    <button onClick={() => selectMethod(m)} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', backgroundColor: 'var(--accent)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>Pay</button>
+                    <button onClick={() => removeMethod(m.id)} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.3)', cursor: 'pointer', padding: 4, flexShrink: 0 }} title="Remove">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.38)', marginBottom: 8, textAlign: 'center' }}>or add a new method</p>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '24px 0 20px' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                <WalletCards size={26} style={{ color: 'rgba(235,235,245,0.5)' }} />
+              </div>
+              <p style={{ color: '#fff', fontWeight: 600, fontSize: 14, margin: '0 0 6px' }}>No payment method connected</p>
+              <p style={{ color: 'rgba(235,235,245,0.4)', fontSize: 12, margin: '0 0 20px', lineHeight: 1.5 }}>Connect M-Pesa or a bank account to start buying.</p>
             </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
-              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.38)', margin: '3px 0 0' }}>{sub}</p>
-            </div>
-            <ChevronRight size={16} style={{ color: 'rgba(235,235,245,0.28)', flexShrink: 0 }} />
-          </button>
-        ))}
-      </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              { step: 'add-mpesa' as BuyStep, Icon: Smartphone, label: 'Connect M-Pesa', sub: 'Instant STK push', iconBg: 'rgba(34,197,94,0.15)', iconColor: '#4ade80' },
+              { step: 'add-bank'  as BuyStep, Icon: Building2,  label: 'Connect Bank Account', sub: 'USD · GBP · KES', iconBg: 'rgba(99,102,241,0.15)', iconColor: 'rgba(165,180,252,1)' },
+            ].map(({ step: s, Icon, label, sub, iconBg, iconColor }) => (
+              <button key={s} onClick={() => setStep(s)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 14, border: '1px dashed rgba(255,255,255,0.14)', background: 'transparent', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={18} style={{ color: iconColor }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
+                  <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0' }}>{sub}</p>
+                </div>
+                <Plus size={15} style={{ color: 'rgba(235,235,245,0.3)', flexShrink: 0 }} />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div></div>
+  );
+
+  /* ── STEP: add M-Pesa ── */
+  if (step === 'add-mpesa') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Connect M-Pesa" sub="We'll send an STK push to this number" back={() => setStep('connect')} />
+      <form onSubmit={addMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80', lineHeight: 1.5 }}>
+          Your phone number is saved to your account so you only need to enter it once.
+        </div>
+        <div>
+          <label className="label">M-Pesa Phone Number</label>
+          <input className="input text-sm" placeholder="+254700000000 or 0700000000" value={newPhone} onChange={e => setNewPhone(e.target.value)} required />
+        </div>
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          {loading ? 'Saving…' : 'Connect M-Pesa'}
+        </button>
+      </form>
+    </div></div>
+  );
+
+  /* ── STEP: add Bank ── */
+  if (step === 'add-bank') return (
+    <div style={overlay}><div style={card}>
+      <Header title="Connect Bank Account" sub="Your details are saved for future transfers" back={() => setStep('connect')} />
+      <form onSubmit={addBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)', lineHeight: 1.5 }}>
+          Add your bank details once. Your order will be placed when funds arrive (1–3 business days).
+        </div>
+        <div>
+          <label className="label">Bank Name</label>
+          <input className="input text-sm" placeholder="e.g. KCB, Equity, Barclays" value={newBankName} onChange={e => setNewBankName(e.target.value)} required />
+        </div>
+        <div>
+          <label className="label">Account Number</label>
+          <input className="input text-sm" placeholder="Your bank account number" value={newBankAccount} onChange={e => setNewBankAcct(e.target.value)} required />
+        </div>
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          {loading ? 'Saving…' : 'Connect Bank Account'}
+        </button>
+      </form>
     </div></div>
   );
 
   /* ── STEP: M-Pesa form ── */
   if (step === 'mpesa') return (
     <div style={overlay}><div style={card}>
-      <Header title="Pay with M-Pesa" sub="You'll get a prompt on your phone" back={() => setStep('pay')} />
+      <Header title="Pay with M-Pesa" sub="You'll get a prompt on your phone" back={() => setStep('connect')} />
       <OrderSummaryRows />
       <form onSubmit={submitMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80' }}>
@@ -363,7 +496,7 @@ function BuyFlowModal({
   /* ── STEP: Bank Transfer ── */
   if (step === 'bank') return (
     <div style={overlay}><div style={card}>
-      <Header title="Bank Transfer" sub="Funds arrive in 1–3 business days" back={() => setStep('pay')} />
+      <Header title="Bank Transfer" sub="Funds arrive in 1–3 business days" back={() => setStep('connect')} />
       <OrderSummaryRows />
       {!bankDetails ? (
         <form onSubmit={submitBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

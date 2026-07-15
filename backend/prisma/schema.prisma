@@ -157,7 +157,25 @@ model User {
   auditLogs           AuditLog[]          @relation("UserAudit")
   adminAuditLogs      AuditLog[]          @relation("AdminAudit")
   adminRole           UserRole?           @relation(name: "AdminRole")
+  savedPaymentMethods SavedPaymentMethod[]
   @@map("users")
+}
+
+model SavedPaymentMethod {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  type        PaymentMethod @map("type")
+  label       String?
+  phone       String?
+  bankName    String?       @map("bank_name")
+  bankAccount String?       @map("bank_account")
+  isDefault   Boolean       @default(false) @map("is_default")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  user        User          @relation(fields: [userId], references: [id])
+
+  @@map("saved_payment_methods")
 }
 
 model UserRole {
