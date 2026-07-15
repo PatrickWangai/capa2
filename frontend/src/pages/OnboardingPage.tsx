@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, BarChart2, Clock, Target } from 'lucide-react';
-import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
@@ -57,11 +56,6 @@ export default function OnboardingPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', maxWidth: 480 }}>
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <CapaLogo size={110} />
-        </div>
-
         <StepIndicator current={step} total={3} />
 
         {/* Step 0: Risk tolerance */}
