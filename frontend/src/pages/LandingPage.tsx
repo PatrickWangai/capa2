@@ -250,7 +250,7 @@ export default function LandingPage() {
         <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 4 }}>
             <CapaLogo size={260} />
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', margin: '2px 0 0', textAlign: 'center' }}>Unstoppable Minds</p>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', margin: '-44px 0 0', textAlign: 'center' }}>Unstoppable Minds</p>
           </div>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
