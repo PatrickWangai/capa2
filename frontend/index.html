@@ -109,7 +109,7 @@
           0%, 60%, 100% { transform: scale(0.35); opacity: 0.2; }
           30%            { transform: scale(1);    opacity: 1; }
         }
-        #capa-splash img { display: block; width: min(260px, 72vw); height: auto; margin-bottom: 48px; }
+        #capa-splash .c-icon { display: block; margin-bottom: 48px; }
         #capa-splash .ring {
           width: 36px; height: 36px; border-radius: 50%; margin-bottom: 18px;
           border: 2.5px solid rgba(255,255,255,0.10);
@@ -126,7 +126,13 @@
         #capa-splash .dot:nth-child(2) { animation: _s-dot 1.2s ease-in-out 0.18s infinite; }
         #capa-splash .dot:nth-child(3) { animation: _s-dot 1.2s ease-in-out 0.36s infinite; }
       </style>
-      <img src="/capa-logo.png" alt="CAPA" draggable="false" />
+      <svg class="c-icon" width="96" height="96" viewBox="0 0 100 100" aria-label="CAPA">
+        <path d="M 78,28 A 34,34 0 1,0 78,72"
+          fill="none"
+          stroke="var(--accent, #10b981)"
+          stroke-width="11"
+          stroke-linecap="round"/>
+      </svg>
       <div class="ring"></div>
       <div class="dots">
         <div class="dot"></div>
