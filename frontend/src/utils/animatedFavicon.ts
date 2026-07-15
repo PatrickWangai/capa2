@@ -11,7 +11,7 @@ export function startAnimatedFavicon() {
   if (!ctx) return;
 
   const img = new Image();
-  img.src = '/ghost-black-512.png';
+  img.src = '/capa-c-icon-512.png';
 
   img.onload = () => {
     // Find or create the favicon link element
@@ -35,8 +35,8 @@ export function startAnimatedFavicon() {
 
       ctx.clearRect(0, 0, SIZE, SIZE);
 
-      // White rounded background
-      ctx.fillStyle = '#ffffff';
+      // Black background to match the C icon
+      ctx.fillStyle = '#000000';
       ctx.beginPath();
       ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
       ctx.fill();
