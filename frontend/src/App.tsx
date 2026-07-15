@@ -18,7 +18,6 @@ import DashboardPage     from './pages/DashboardPage';
 import MarketsPage       from './pages/MarketsPage';
 import AssetDetailPage   from './pages/AssetDetailPage';
 import PortfolioPage     from './pages/PortfolioPage';
-import DepositPage       from './pages/DepositPage';
 import OrdersPage        from './pages/OrdersPage';
 import KycPage           from './pages/KycPage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -157,7 +156,6 @@ export default function App() {
               <Route path="markets"      element={<><PageTitle title="Markets" /><ErrorBoundary><MarketsPage /></ErrorBoundary></>} />
               <Route path="markets/:id"  element={<><PageTitle title="Asset" /><ErrorBoundary><AssetDetailPage /></ErrorBoundary></>} />
               <Route path="portfolio"    element={<><PageTitle title="Portfolio" /><ErrorBoundary><PortfolioPage /></ErrorBoundary></>} />
-              <Route path="deposit"      element={<><PageTitle title="Deposit" /><ErrorBoundary><DepositPage /></ErrorBoundary></>} />
               <Route path="orders"       element={<><PageTitle title="Orders" /><ErrorBoundary><OrdersPage /></ErrorBoundary></>} />
               <Route path="kyc"          element={<><PageTitle title="Verify Identity" /><ErrorBoundary><KycPage /></ErrorBoundary></>} />
               <Route path="notifications" element={<><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></>} />

@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp, TrendingDown, DollarSign, Briefcase, ShieldCheck,
-  ArrowRight, CreditCard, BarChart2, RefreshCw, Star, Clock,
+  ArrowRight, BarChart2, Star, Clock,
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
@@ -113,10 +113,8 @@ export default function DashboardPage() {
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: CreditCard, label: 'Deposit',   sub: 'Add funds',     to: '/deposit',   color: '#30d158' },
           { icon: TrendingUp, label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--accent)' },
           { icon: BarChart2,  label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: '#bf5af2' },
-          { icon: RefreshCw,  label: 'Withdraw',  sub: 'Cash out',      to: '/deposit',   color: '#ff9f0a' },
         ].map(({ icon: Icon, label, sub, to, color }) => (
           <Link key={label} to={to} style={{ textDecoration: 'none' }}>
             <div className="card hover:border-gray-700 transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
