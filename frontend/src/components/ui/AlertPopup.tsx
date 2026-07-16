@@ -43,20 +43,6 @@ const VARIANT_CONFIG: Record<AlertVariant, {
   },
 };
 
-const STAR_POSITIONS = [
-  { top: 14, left: 14, size: 16, opacity: 0.18 },
-  { top: 18, right: 18, size: 10, opacity: 0.14 },
-  { bottom: 16, left: 18, size: 8,  opacity: 0.12 },
-  { bottom: 12, right: 14, size: 14, opacity: 0.16 },
-];
-
-function Star({ style }: { style: React.CSSProperties }) {
-  return (
-    <svg viewBox="0 0 20 20" style={{ position: 'absolute', pointerEvents: 'none', ...style }}>
-      <path d="M10 0 L12 8 L20 10 L12 12 L10 20 L8 12 L0 10 L8 8 Z" fill="#000" />
-    </svg>
-  );
-}
 
 export default function AlertPopup() {
   const { alert, hide } = useAlertStore();
@@ -111,37 +97,32 @@ export default function AlertPopup() {
         aria-label={alert.title}
         style={{
           position: 'fixed',
-          top: 24,
+          top: 16,
           left: '50%',
           zIndex: 9999,
-          width: 'min(360px, calc(100vw - 48px))',
+          width: 'min(300px, calc(100vw - 32px))',
           backgroundColor: cfg.bg,
-          border: `3px solid ${cfg.border}`,
-          borderRadius: 18,
-          boxShadow: '7px 7px 0 #000',
+          border: `2px solid ${cfg.border}`,
+          borderRadius: 12,
+          boxShadow: '4px 4px 0 #000',
           animation: 'nb-pop-in 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards',
           overflow: 'hidden',
           fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif',
         }}
       >
-        {/* Decorative stars */}
-        {STAR_POSITIONS.map((pos, i) => (
-          <Star key={i} style={{ width: pos.size, height: pos.size, opacity: pos.opacity, top: pos.top, left: (pos as any).left, right: (pos as any).right, bottom: (pos as any).bottom }} />
-        ))}
-
         {/* Top label bar */}
         <div style={{
           backgroundColor: cfg.iconBg,
-          borderBottom: '3px solid #000',
-          padding: '6px 16px',
+          borderBottom: '2px solid #000',
+          padding: '4px 12px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
           <span style={{
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: 900,
-            letterSpacing: '0.18em',
+            letterSpacing: '0.16em',
             color: '#fff',
             textTransform: 'uppercase',
           }}>{cfg.label}</span>
@@ -150,16 +131,16 @@ export default function AlertPopup() {
             aria-label="Close"
             style={{
               background: 'rgba(255,255,255,0.25)',
-              border: '2px solid rgba(255,255,255,0.5)',
-              borderRadius: 6,
-              width: 22,
-              height: 22,
+              border: '1.5px solid rgba(255,255,255,0.5)',
+              borderRadius: 5,
+              width: 18,
+              height: 18,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               color: '#fff',
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: 900,
               lineHeight: 1,
               padding: 0,
@@ -171,24 +152,24 @@ export default function AlertPopup() {
 
         {/* Body */}
         <div style={{
-          padding: '24px 24px 20px',
+          padding: '12px 14px 10px',
           display: 'flex',
           alignItems: 'flex-start',
-          gap: 18,
+          gap: 10,
         }}>
           {/* Icon circle */}
           <div style={{
             flexShrink: 0,
-            width: 56,
-            height: 56,
+            width: 36,
+            height: 36,
             borderRadius: '50%',
             backgroundColor: cfg.iconBg,
-            border: '3px solid #000',
-            boxShadow: '3px 3px 0 #000',
+            border: '2px solid #000',
+            boxShadow: '2px 2px 0 #000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 26,
+            fontSize: 16,
             fontWeight: 900,
             color: '#fff',
             fontStyle: cfg.icon === 'i' ? 'italic' : 'normal',
@@ -197,24 +178,24 @@ export default function AlertPopup() {
           </div>
 
           {/* Text */}
-          <div style={{ flex: 1, minWidth: 0, paddingTop: 4 }}>
+          <div style={{ flex: 1, minWidth: 0, paddingTop: 2 }}>
             <p style={{
               margin: 0,
-              fontSize: 19,
+              fontSize: 14,
               fontWeight: 900,
               color: '#000',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.01em',
               lineHeight: 1.25,
             }}>
               {alert.title}
             </p>
             {alert.message && (
               <p style={{
-                margin: '6px 0 0',
-                fontSize: 14,
+                margin: '4px 0 0',
+                fontSize: 12,
                 fontWeight: 500,
                 color: '#333',
-                lineHeight: 1.5,
+                lineHeight: 1.45,
               }}>
                 {alert.message}
               </p>
@@ -224,9 +205,9 @@ export default function AlertPopup() {
 
         {/* Progress bar */}
         <div style={{
-          borderTop: '2px solid #000',
+          borderTop: '1.5px solid #000',
           backgroundColor: 'rgba(0,0,0,0.08)',
-          height: 6,
+          height: 4,
           position: 'relative',
           overflow: 'hidden',
         }}>
