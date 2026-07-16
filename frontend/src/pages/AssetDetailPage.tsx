@@ -225,28 +225,28 @@ function BuyFlowModal({
   const effPrice = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
   const subtotal = qty * effPrice;
 
-  // shared styles
-  const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 };
-  const card: React.CSSProperties   = { background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 22, padding: 26, maxWidth: 400, width: '100%', backdropFilter: 'blur(24px)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)', maxHeight: '92vh', overflowY: 'auto' };
-  const btnGreen: React.CSSProperties  = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', backgroundColor: '#22c55e', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
-  const btnAccent: React.CSSProperties = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', backgroundColor: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
-  const btnGhost: React.CSSProperties  = { width: '100%', padding: '13px', borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.65)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
+  // shared styles — compact, fully themed
+  const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 };
+  const card: React.CSSProperties   = { background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '18px 18px 16px', maxWidth: 340, width: '100%', boxShadow: '0 16px 60px rgba(0,0,0,0.55)', maxHeight: '90vh', overflowY: 'auto' };
+  const btnAccent: React.CSSProperties = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', backgroundColor: 'var(--accent)', color: 'var(--accent-text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
+  const btnGhost: React.CSSProperties  = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'rgba(255,255,255,0.06)', color: 'rgba(235,235,245,0.6)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
+  const infoBanner: React.CSSProperties = { background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)', borderRadius: 10, padding: '8px 12px', fontSize: 11, color: 'var(--accent)', lineHeight: 1.5 };
 
   const Header = ({ title, sub, back }: { title: string; sub?: string; back?: () => void }) => (
-    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 22 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {back && <button onClick={back} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1, marginTop: -1 }}>‹</button>}
+    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {back && <button onClick={back} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.45)', cursor: 'pointer', fontSize: 18, padding: 0, lineHeight: 1 }}>‹</button>}
         <div>
-          <p style={{ fontWeight: 700, color: '#fff', fontSize: 17, margin: 0 }}>{title}</p>
-          {sub && <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.42)', margin: '3px 0 0' }}>{sub}</p>}
+          <p style={{ fontWeight: 700, color: '#fff', fontSize: 14, margin: 0 }}>{title}</p>
+          {sub && <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0' }}>{sub}</p>}
         </div>
       </div>
-      <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.38)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>✕</button>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.35)', cursor: 'pointer', fontSize: 18, padding: 0, lineHeight: 1 }}>✕</button>
     </div>
   );
 
   const OrderSummaryRows = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 9, fontSize: 13, marginBottom: 18 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12, marginBottom: 14, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
       {([
         ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
         [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
@@ -254,11 +254,11 @@ function BuyFlowModal({
         ['Fee (0.1%)', `${currency} ${fmtNum(fee)}`],
       ] as [string, string][]).map(([k, v]) => (
         <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: 'rgba(235,235,245,0.45)' }}>{k}</span>
-          <span style={{ color: '#fff' }}>{v}</span>
+          <span style={{ color: 'rgba(235,235,245,0.42)' }}>{k}</span>
+          <span style={{ color: 'rgba(235,235,245,0.85)' }}>{v}</span>
         </div>
       ))}
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 9, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.07)', marginTop: 2 }}>
         <span style={{ color: '#fff' }}>Total</span>
         <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
       </div>
@@ -345,60 +345,51 @@ function BuyFlowModal({
   if (step === 'connect') return (
     <div style={overlay}><div style={card}>
       <Header
-        title="Connect a payment method"
-        sub={`Buying ${qty % 1 === 0 ? qty : qty.toFixed(4)} ${asset.symbol} · ${currency} ${fmtNum(total)}`}
+        title="Payment method"
+        sub={`${qty % 1 === 0 ? qty : qty.toFixed(4)} ${asset.symbol} · ${currency} ${fmtNum(total)}`}
       />
-
       {methodsLoading ? (
-        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(235,235,245,0.4)', fontSize: 13 }}>Loading…</div>
+        <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(235,235,245,0.38)', fontSize: 12 }}>Loading…</div>
       ) : (
         <>
-          {savedMethods.length > 0 ? (
-            <>
-              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.4)', marginBottom: 10 }}>Your connected methods — choose one to pay with:</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-                {savedMethods.map(m => (
-                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', background: 'rgba(255,255,255,0.04)' }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 10, background: m.type === 'MPESA' ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {m.type === 'MPESA' ? <Smartphone size={18} style={{ color: '#4ade80' }} /> : <Building2 size={18} style={{ color: 'rgba(165,180,252,1)' }} />}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{m.type === 'MPESA' ? 'M-Pesa' : 'Bank Transfer'}</p>
-                      <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</p>
-                    </div>
-                    <button onClick={() => selectMethod(m)} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', backgroundColor: 'var(--accent)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>Pay</button>
-                    <button onClick={() => removeMethod(m.id)} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.3)', cursor: 'pointer', padding: 4, flexShrink: 0 }} title="Remove">
-                      <Trash2 size={14} />
-                    </button>
+          {savedMethods.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
+              {savedMethods.map(m => (
+                <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, border: '1px solid rgba(var(--accent-rgb),0.25)', background: 'rgba(var(--accent-rgb),0.06)' }}>
+                  <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(var(--accent-rgb),0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {m.type === 'MPESA' ? <Smartphone size={14} style={{ color: 'var(--accent)' }} /> : <Building2 size={14} style={{ color: 'var(--accent)' }} />}
                   </div>
-                ))}
-              </div>
-              <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.38)', marginBottom: 8, textAlign: 'center' }}>or add a new method</p>
-            </>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '24px 0 20px' }}>
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
-                <WalletCards size={26} style={{ color: 'rgba(235,235,245,0.5)' }} />
-              </div>
-              <p style={{ color: '#fff', fontWeight: 600, fontSize: 14, margin: '0 0 6px' }}>No payment method connected</p>
-              <p style={{ color: 'rgba(235,235,245,0.4)', fontSize: 12, margin: '0 0 20px', lineHeight: 1.5 }}>Connect M-Pesa or a bank account to start buying.</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{m.type === 'MPESA' ? 'M-Pesa' : 'Bank'}</p>
+                    <p style={{ fontSize: 10, color: 'rgba(235,235,245,0.38)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</p>
+                  </div>
+                  <button onClick={() => selectMethod(m)} style={{ padding: '5px 12px', borderRadius: 8, border: 'none', backgroundColor: 'var(--accent)', color: 'var(--accent-text)', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>Pay</button>
+                  <button onClick={() => removeMethod(m.id)} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.25)', cursor: 'pointer', padding: 3, flexShrink: 0 }}>
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[
-              { step: 'add-mpesa' as BuyStep, Icon: Smartphone, label: 'Connect M-Pesa', sub: 'Instant STK push', iconBg: 'rgba(34,197,94,0.15)', iconColor: '#4ade80' },
-              { step: 'add-bank'  as BuyStep, Icon: Building2,  label: 'Connect Bank Account', sub: 'USD · GBP · KES', iconBg: 'rgba(99,102,241,0.15)', iconColor: 'rgba(165,180,252,1)' },
-            ].map(({ step: s, Icon, label, sub, iconBg, iconColor }) => (
-              <button key={s} onClick={() => setStep(s)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 14, border: '1px dashed rgba(255,255,255,0.14)', background: 'transparent', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
-                <div style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={18} style={{ color: iconColor }} />
+          {savedMethods.length === 0 && (
+            <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', marginBottom: 10, textAlign: 'center' }}>Connect a payment method to start buying</p>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+            {([
+              { s: 'add-mpesa' as BuyStep, Icon: Smartphone, label: 'Connect M-Pesa', sub: 'Instant STK push' },
+              { s: 'add-bank'  as BuyStep, Icon: Building2,  label: 'Connect Bank',    sub: 'USD · GBP · KES · 1–3 days' },
+            ]).map(({ s, Icon, label, sub }) => (
+              <button key={s} onClick={() => setStep(s)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, border: '1px dashed rgba(var(--accent-rgb),0.3)', background: 'transparent', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={14} style={{ color: 'var(--accent)' }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
-                  <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0' }}>{sub}</p>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
+                  <p style={{ fontSize: 10, color: 'rgba(235,235,245,0.35)', margin: 0 }}>{sub}</p>
                 </div>
-                <Plus size={15} style={{ color: 'rgba(235,235,245,0.3)', flexShrink: 0 }} />
+                <Plus size={13} style={{ color: 'var(--accent)', flexShrink: 0 }} />
               </button>
             ))}
           </div>
@@ -410,16 +401,14 @@ function BuyFlowModal({
   /* ── STEP: add M-Pesa ── */
   if (step === 'add-mpesa') return (
     <div style={overlay}><div style={card}>
-      <Header title="Connect M-Pesa" sub="We'll send an STK push to this number" back={() => setStep('connect')} />
-      <form onSubmit={addMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80', lineHeight: 1.5 }}>
-          Your phone number is saved to your account so you only need to enter it once.
-        </div>
+      <Header title="Connect M-Pesa" back={() => setStep('connect')} />
+      <form onSubmit={addMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={infoBanner}>Saved to your account — enter it once, pay every time.</div>
         <div>
-          <label className="label">M-Pesa Phone Number</label>
+          <label className="label">Phone number</label>
           <input className="input text-sm" placeholder="+254700000000 or 0700000000" value={newPhone} onChange={e => setNewPhone(e.target.value)} required />
         </div>
-        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 2 }}>
           {loading ? 'Saving…' : 'Connect M-Pesa'}
         </button>
       </form>
@@ -429,66 +418,62 @@ function BuyFlowModal({
   /* ── STEP: add Bank ── */
   if (step === 'add-bank') return (
     <div style={overlay}><div style={card}>
-      <Header title="Connect Bank Account" sub="Your details are saved for future transfers" back={() => setStep('connect')} />
-      <form onSubmit={addBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)', lineHeight: 1.5 }}>
-          Add your bank details once. Your order will be placed when funds arrive (1–3 business days).
-        </div>
+      <Header title="Connect Bank Account" back={() => setStep('connect')} />
+      <form onSubmit={addBank} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={infoBanner}>Enter once. Your order is placed when funds arrive (1–3 days).</div>
         <div>
-          <label className="label">Bank Name</label>
+          <label className="label">Bank name</label>
           <input className="input text-sm" placeholder="e.g. KCB, Equity, Barclays" value={newBankName} onChange={e => setNewBankName(e.target.value)} required />
         </div>
         <div>
-          <label className="label">Account Number</label>
+          <label className="label">Account number</label>
           <input className="input text-sm" placeholder="Your bank account number" value={newBankAccount} onChange={e => setNewBankAcct(e.target.value)} required />
         </div>
-        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 2 }}>
           {loading ? 'Saving…' : 'Connect Bank Account'}
         </button>
       </form>
     </div></div>
   );
 
-  /* ── STEP: M-Pesa form ── */
+  /* ── STEP: M-Pesa payment ── */
   if (step === 'mpesa') return (
     <div style={overlay}><div style={card}>
-      <Header title="Pay with M-Pesa" sub="You'll get a prompt on your phone" back={() => setStep('connect')} />
+      <Header title="Pay with M-Pesa" back={() => setStep('connect')} />
       <OrderSummaryRows />
-      <form onSubmit={submitMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: '#4ade80' }}>
-          An STK push will be sent to your phone. Enter your M-Pesa PIN to authorise payment.
-        </div>
+      <form onSubmit={submitMpesa} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={infoBanner}>An STK push goes to your phone. Enter your PIN to authorise.</div>
         <div>
-          <label className="label">M-Pesa Phone Number</label>
-          <input className="input text-sm" placeholder="+254700000000 or 0700000000" value={mpesaPhone} onChange={e => setPhone(e.target.value)} required />
+          <label className="label">M-Pesa number</label>
+          <input className="input text-sm" placeholder="+254700000000" value={mpesaPhone} onChange={e => setPhone(e.target.value)} required />
         </div>
         <div>
           <label className="label">Amount (KES)</label>
           <input className="input text-sm" type="number" min="10" value={mpesaAmount} onChange={e => setMpesaAmt(e.target.value)} required />
-          <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.35)', marginTop: 4 }}>Approximate KES equivalent of {currency} {fmtNum(total)}</p>
+          <p style={{ fontSize: 10, color: 'rgba(235,235,245,0.32)', marginTop: 3 }}>≈ KES equivalent of {currency} {fmtNum(total)}</p>
         </div>
-        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
-          {loading ? 'Sending prompt…' : 'Send M-Pesa Prompt'}
+        <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 2 }}>
+          {loading ? 'Sending…' : 'Send M-Pesa Prompt'}
         </button>
       </form>
     </div></div>
   );
 
-  /* ── STEP: M-Pesa sent — waiting for PIN ── */
+  /* ── STEP: M-Pesa PIN wait ── */
   if (step === 'mpesa-sent') return (
     <div style={overlay}><div style={card}>
-      <Header title="Check Your Phone" />
-      <div style={{ textAlign: 'center', margin: '8px 0 24px' }}>
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-          <Smartphone size={28} style={{ color: '#4ade80' }} />
+      <Header title="Check your phone" />
+      <div style={{ textAlign: 'center', padding: '8px 0 16px' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(var(--accent-rgb),0.15)', border: '1px solid rgba(var(--accent-rgb),0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+          <Smartphone size={22} style={{ color: 'var(--accent)' }} />
         </div>
-        <p style={{ color: '#fff', fontWeight: 600, fontSize: 15, margin: '0 0 8px' }}>M-Pesa prompt sent!</p>
-        <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13, lineHeight: 1.55 }}>
-          Enter your <strong style={{ color: '#fff' }}>M-Pesa PIN</strong> on your phone to authorise the payment. Once confirmed, tap the button below to complete your purchase.
+        <p style={{ color: '#fff', fontWeight: 600, fontSize: 13, margin: '0 0 6px' }}>M-Pesa prompt sent!</p>
+        <p style={{ color: 'rgba(235,235,245,0.42)', fontSize: 11, lineHeight: 1.55 }}>
+          Enter your <strong style={{ color: '#fff' }}>M-Pesa PIN</strong> on your phone, then tap below.
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <button onClick={() => setStep('review')} style={btnGreen}>I've entered my PIN — Place Order</button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        <button onClick={() => setStep('review')} style={btnAccent}>I've entered my PIN — Continue</button>
         <button onClick={onClose} style={btnGhost}>Do this later</button>
       </div>
     </div></div>
@@ -497,13 +482,11 @@ function BuyFlowModal({
   /* ── STEP: Bank Transfer ── */
   if (step === 'bank') return (
     <div style={overlay}><div style={card}>
-      <Header title="Bank Transfer" sub="Funds arrive in 1–3 business days" back={() => setStep('connect')} />
+      <Header title="Bank Transfer" sub="1–3 business days" back={() => setStep('connect')} />
       <OrderSummaryRows />
       {!bankDetails ? (
-        <form onSubmit={submitBank} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)' }}>
-            Transfer to CAPA's account. Your order will be placed once funds are confirmed.
-          </div>
+        <form onSubmit={submitBank} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={infoBanner}>Your order is placed once funds are confirmed.</div>
           <div>
             <label className="label">Currency</label>
             <select className="input text-sm" value={bankCur} onChange={e => setBankCur(e.target.value)}>
@@ -516,52 +499,50 @@ function BuyFlowModal({
             <label className="label">Amount</label>
             <input className="input text-sm" type="number" min="1" value={bankAmount} onChange={e => setBankAmt(e.target.value)} required />
           </div>
-          <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          <button type="submit" disabled={loading} style={{ ...btnAccent, opacity: loading ? 0.65 : 1, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 2 }}>
             {loading ? 'Getting details…' : 'Get Bank Details'}
           </button>
         </form>
       ) : (
         <div>
-          <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 12, padding: '10px 14px', fontSize: 12, color: 'rgba(165,180,252,1)', marginBottom: 16 }}>
-            Use the reference below when making the transfer so we can match your payment.
-          </div>
+          <div style={{ ...infoBanner, marginBottom: 12 }}>Use this reference so we can match your transfer.</div>
           {([
-            ['Bank', bankDetails.bankName], ['Account Name', bankDetails.accountName],
-            ['Account No.', bankDetails.accountNumber], ['Reference', bankDetails.reference],
+            ['Bank', bankDetails.bankName], ['Account name', bankDetails.accountName],
+            ['Account no.', bankDetails.accountNumber], ['Reference', bankDetails.reference],
             ['Amount', `${bankDetails.currency} ${Number(bankDetails.amount).toFixed(2)}`],
           ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
-            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <span style={{ fontSize: 13, color: 'rgba(235,235,245,0.45)' }}>{k}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: 11, color: 'rgba(235,235,245,0.42)' }}>{k}</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#fff', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
             </div>
           ))}
-          <button onClick={onClose} style={{ ...btnGhost, marginTop: 18 }}>Done — I'll complete the transfer</button>
+          <button onClick={onClose} style={{ ...btnGhost, marginTop: 14 }}>Done — I'll transfer now</button>
         </div>
       )}
     </div></div>
   );
 
-  /* ── STEP: Order Review (after M-Pesa PIN) ── */
+  /* ── STEP: Confirm order ── */
   if (step === 'review') return (
     <div style={overlay}><div style={card}>
-      <Header title="Confirm Your Order" back={() => setStep('mpesa-sent')} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <StockLogo symbol={asset.symbol} size="md" />
+      <Header title="Confirm order" back={() => setStep('mpesa-sent')} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <StockLogo symbol={asset.symbol} size="sm" />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontWeight: 700, color: '#fff', margin: 0 }}>{asset.symbol}</p>
-          <p style={{ fontSize: 12, color: 'rgba(235,235,245,0.4)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
+          <p style={{ fontWeight: 700, color: '#fff', fontSize: 13, margin: 0 }}>{asset.symbol}</p>
+          <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
         </div>
-        <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
+        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
       </div>
       <OrderSummaryRows />
       {ordType === 'MARKET' && (
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', borderRadius: 12, background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)', fontSize: 12, color: '#facc15', marginBottom: 16 }}>
-          <Info size={13} style={{ marginTop: 1, flexShrink: 0 }} /> Market orders fill at live price and may differ slightly.
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, ...infoBanner, marginBottom: 12, color: 'rgba(235,235,245,0.55)' }}>
+          <Info size={11} style={{ flexShrink: 0 }} /> Price may differ slightly at fill time.
         </div>
       )}
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', gap: 8 }}>
         <button onClick={() => setStep('mpesa-sent')} disabled={placing} style={{ ...btnGhost, flex: 1 }}>Back</button>
-        <button onClick={placeOrder} disabled={placing} style={{ ...btnGreen, flex: 1, opacity: placing ? 0.65 : 1, cursor: placing ? 'not-allowed' : 'pointer' }}>
+        <button onClick={placeOrder} disabled={placing} style={{ ...btnAccent, flex: 1, opacity: placing ? 0.65 : 1, cursor: placing ? 'not-allowed' : 'pointer' }}>
           {placing ? 'Placing…' : 'Confirm BUY'}
         </button>
       </div>
@@ -571,15 +552,15 @@ function BuyFlowModal({
   /* ── STEP: done ── */
   return (
     <div style={overlay}><div style={card}>
-      <div style={{ textAlign: 'center', padding: '16px 0' }}>
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
-          <CheckCircle size={32} style={{ color: '#4ade80' }} />
+      <div style={{ textAlign: 'center', padding: '10px 0 4px' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(var(--accent-rgb),0.15)', border: '1px solid rgba(var(--accent-rgb),0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+          <CheckCircle size={24} style={{ color: 'var(--accent)' }} />
         </div>
-        <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 20, margin: '0 0 8px' }}>Order Placed!</h3>
-        <p style={{ color: 'rgba(235,235,245,0.45)', fontSize: 13, lineHeight: 1.5 }}>
-          Your BUY order for {qty % 1 === 0 ? qty : qty.toFixed(4)} {asset.symbol} has been submitted and will fill shortly.
+        <p style={{ color: '#fff', fontWeight: 700, fontSize: 15, margin: '0 0 6px' }}>Order placed!</p>
+        <p style={{ color: 'rgba(235,235,245,0.42)', fontSize: 11, lineHeight: 1.5 }}>
+          BUY order for {qty % 1 === 0 ? qty : qty.toFixed(4)} {asset.symbol} submitted.
         </p>
-        <button onClick={onClose} style={{ ...btnGreen, marginTop: 26 }}>Done</button>
+        <button onClick={onClose} style={{ ...btnAccent, marginTop: 18 }}>Done</button>
       </div>
     </div></div>
   );
