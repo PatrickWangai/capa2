@@ -79,18 +79,24 @@ export default function AboutPage() {
             },
             {
               step: '02',
+              title: 'KRA PIN — What It Is & Why We Need It',
+              sub: null,
+              body: 'A KRA PIN (Kenya Revenue Authority Personal Identification Number) is a unique identifier issued by the Kenya Revenue Authority. It is required by Kenyan law for any financial or investment activity, including opening a brokerage account. CAPA uses your KRA PIN to comply with tax regulations and to report any capital gains or dividends you earn to the KRA. If you do not have a KRA PIN, you can register for one for free at iTax (itax.kra.go.ke) using your National ID. The process takes only a few minutes.',
+            },
+            {
+              step: '03',
               title: 'Deposit Money',
               sub: null,
               body: 'Deposit money using your preferred mobile banking app, then refresh this page and the balance should be updated in the app. If you encounter any errors, kindly contact our support team. After that, you will need to convert currencies based on the country in which each stock is listed.',
             },
             {
-              step: '03',
+              step: '04',
               title: 'Changing Currencies',
               sub: null,
               body: 'Select the preferred country and your mobile wallet money will be updated automatically based on the country\'s conversion rate.',
             },
             {
-              step: '04',
+              step: '05',
               title: 'Buying Stocks',
               sub: null,
               body: 'Please select a country to view its stock exchanges and market listings, including publicly traded companies and their current prices. You can choose to invest in individual stocks or in our index fund.',
