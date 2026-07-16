@@ -1,6 +1,6 @@
 import { prisma } from '../utils/db.js';
 import Decimal from 'decimal.js';
-import { convert, getSupportedPairs, ExchangeRateService } from '../services/fxService.js';
+import { convertAsync, getSupportedPairs, ExchangeRateService } from '../services/fxService.js';
 
 // ── helpers ───────────────────────────────────────────────────
 async function getPrimaryAccount(userId) {
@@ -62,7 +62,7 @@ export async function convertCurrency(req, res) {
     return res.status(400).json({ error: 'Cannot convert a currency to itself.' });
   }
 
-  const { rate, fee, net } = convert(Number(amount), fromCurrency, toCurrency);
+  const { rate, fee, net } = await convertAsync(Number(amount), fromCurrency, toCurrency);
   const fromAmount = new Decimal(amount);
   const toAmount   = new Decimal(net);
   const feeAmount  = new Decimal(fee);

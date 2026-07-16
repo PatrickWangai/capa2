@@ -30,14 +30,14 @@ export default function CurrencyConverterPage() {
     refetchInterval: 15_000,
   });
 
-  const rate = rateData?.rates?.[`${from}_${to}`] || (from === 'KES' ? 1 / 130 : 130);
+  const rate = rateData?.rates?.[`${from}_${to}`] ?? (from === 'KES' ? rateData?.rates?.KES_USD : rateData?.rates?.USD_KES) ?? null;
   const balances: any[] = walletData?.balances ?? [];
   const fromBal = balances.find(b => b.currency === from);
 
   // Live preview (no DB write)
   useEffect(() => {
     const n = parseFloat(amount);
-    if (!n || n <= 0) { setPreview(null); return; }
+    if (!n || n <= 0 || !rate) { setPreview(null); return; }
     const gross = n * rate;
     const fee   = gross * 0.01;
     const net   = gross - fee;
@@ -81,7 +81,7 @@ export default function CurrencyConverterPage() {
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
         style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--accent)' }}>
         <Info size={14} />
-        <span>1 USD = {(rateData?.rates?.USD_KES || 130).toFixed(2)} KES &nbsp;·&nbsp; 1% conversion fee</span>
+        <span>1 USD = {rateData?.rates?.USD_KES ? Number(rateData.rates.USD_KES).toFixed(4) : '…'} KES &nbsp;·&nbsp; 1% conversion fee</span>
       </div>
 
       {/* Converter card */}
@@ -169,7 +169,7 @@ export default function CurrencyConverterPage() {
       </div>
 
       <p className="text-xs text-gray-600 text-center">
-        Rates are mocked for development. Production: configure FX_RATE_USD_KES env var or connect a live FX provider.
+        Rates sourced from open.er-api.com · updated hourly · {rateData?.rates?.updatedAt ? new Date(rateData.rates.updatedAt).toLocaleString() : ''}
       </p>
     </div>
   );

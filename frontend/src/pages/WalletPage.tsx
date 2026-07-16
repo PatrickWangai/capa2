@@ -59,8 +59,8 @@ export default function WalletPage() {
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
         style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--accent)' }}>
         <ArrowRightLeft size={14} />
-        <span>Current rate: 1 USD = {Number(rate).toFixed(2)} KES</span>
-        <span className="ml-auto text-xs opacity-60">(mock rate — configurable via FX_RATE_USD_KES)</span>
+        <span>Live rate: 1 USD = {Number(rate).toFixed(4)} KES</span>
+        <span className="ml-auto text-xs opacity-60">Updated hourly · {data?.rates?.source === 'live' ? 'live' : 'fallback'}</span>
       </div>
 
       {/* Balance cards */}
