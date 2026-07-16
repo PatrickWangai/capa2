@@ -125,6 +125,25 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Founder */}
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 24px' }}>Meet the Founder</h2>
+          <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' as const }}>
+            <img
+              src="/patrick-wangai.png"
+              alt="Patrick Wangai — Founder of CAPA"
+              style={{ width: 160, height: 200, objectFit: 'cover', objectPosition: 'center top', borderRadius: 16, flexShrink: 0, boxShadow: '0 4px 24px rgba(0,0,0,0.4)' }}
+            />
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <p style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 4px' }}>Patrick Wangai</p>
+              <p style={{ fontSize: 14, color: ACCENT, fontWeight: 600, margin: '0 0 16px', letterSpacing: '0.02em' }}>Founder & CEO</p>
+              <p style={{ fontSize: 15, color: SEC, lineHeight: 1.75, margin: 0 }}>
+                Patrick is the visionary behind CAPA, driven by a passion for making global investment opportunities accessible to every African investor. With a deep understanding of both technology and financial markets, he built CAPA to bridge the gap between African capital and global stock exchanges.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Contact */}
         <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 8px' }}>Contact Us</h2>
