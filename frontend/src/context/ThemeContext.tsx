@@ -20,9 +20,9 @@ type ThemeVars = {
   navText?: string;
 };
 
-export const COLOUR_THEMES: Exclude<ThemeName, 'black'>[] = [
+export const COLOUR_THEMES: ThemeName[] = [
   'teal','blue','sky','cyan','emerald','lime',
-  'amber','orange','rose','pink','violet','purple','indigo',
+  'amber','orange','rose','pink','violet','purple','indigo','black',
 ];
 
 export const THEMES: Record<ThemeName, ThemeVars> = {
