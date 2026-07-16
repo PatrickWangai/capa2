@@ -267,15 +267,17 @@ async function backfillHistory() {
   logger.info(`Backfill: checking history for ${assets.length} assets…`);
 
   const cutoff2y = new Date(Date.now() - 2 * 365 * 86_400_000);
-  const cutoff30d = new Date(Date.now() - 30 * 86_400_000);
 
   for (const asset of assets) {
     try {
-      // Skip if we already have at least 30 daily candles in the last 30 days
-      const recent = await prisma.priceHistory.count({
-        where: { assetId: asset.id, interval: '1d', openTime: { gte: cutoff30d } },
+      // Skip only if we already have data going back at least 6 months
+      const oldest = await prisma.priceHistory.findFirst({
+        where: { assetId: asset.id, interval: '1d' },
+        orderBy: { openTime: 'asc' },
+        select: { openTime: true },
       });
-      if (recent >= 30) continue;
+      const sixMonthsAgo = new Date(Date.now() - 180 * 86_400_000);
+      if (oldest && oldest.openTime < sixMonthsAgo) continue;
 
       const suffix = YAHOO_SUFFIX[asset.exchange];
       if (suffix === undefined) continue;
