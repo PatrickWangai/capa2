@@ -679,8 +679,6 @@ export default function AssetDetailPage() {
   const isUp         = change >= 0;
   const currency     = asset.currency;
 
-  const cashBal  = portfolioData?.cashBalances?.find((b: any) => b.currency === currency);
-  const avail    = cashBal ? Number(cashBal.available) : 0;
   const pos      = portfolioData?.positions?.find((p: any) => p.assetId === id);
   const ownedQty = pos ? Number(pos.quantity) : 0;
 
@@ -1075,15 +1073,15 @@ export default function AssetDetailPage() {
                   <AlertCircle size={12} /> Max {asset.isFractional ? ownedQty.toFixed(4) : Math.floor(ownedQty)} shares available
                 </div>
               )}
-              {/* Available / owned */}
-              <div className="flex justify-between text-xs mb-4" style={{ color: 'rgba(235,235,245,0.4)' }}>
-                <span>{side === 'BUY' ? `${currency} available` : 'Shares owned'}</span>
-                <span className="text-white font-medium">
-                  {side === 'BUY'
-                    ? `${currency} ${fmtNum(avail)}`
-                    : `${asset.isFractional ? ownedQty.toFixed(4) : Math.floor(ownedQty)} ${asset.symbol}`}
-                </span>
-              </div>
+              {/* Shares owned (SELL side only) */}
+              {side === 'SELL' && (
+                <div className="flex justify-between text-xs mb-4" style={{ color: 'rgba(235,235,245,0.4)' }}>
+                  <span>Shares owned</span>
+                  <span className="text-white font-medium">
+                    {asset.isFractional ? ownedQty.toFixed(4) : Math.floor(ownedQty)} {asset.symbol}
+                  </span>
+                </div>
+              )}
 
               {/* CTA */}
               {side === 'BUY' ? (

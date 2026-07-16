@@ -102,26 +102,6 @@ export default function PortfolioPage() {
         />
       </div>
 
-      {/* Cash balances */}
-      {balances.length > 0 && (
-        <div className="card">
-          <h2 className="font-semibold text-white mb-3">Cash Balances</h2>
-          <div className="flex flex-wrap gap-4">
-            {balances.map((b: any) => (
-              <div key={b.currency} className="rounded-lg px-4 py-3 min-w-[140px]"
-                style={{ background: 'rgba(255,255,255,0.06)' }}>
-                <p className="text-xs text-gray-400">{b.currency} Available</p>
-                <p className="text-lg font-bold text-white mt-0.5">
-                  {Number(b.available).toLocaleString('en', { minimumFractionDigits: 2 })}
-                </p>
-                {Number(b.reserved) > 0 && (
-                  <p className="text-xs text-gray-500 mt-0.5">Reserved: {Number(b.reserved).toFixed(2)}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-800">
