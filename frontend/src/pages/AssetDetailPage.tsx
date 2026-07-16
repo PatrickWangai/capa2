@@ -594,15 +594,13 @@ export default function AssetDetailPage() {
   });
 
   const { data: histData } = useQuery({
-    queryKey: ['price-history', id, period.label],
+    // key by interval only — backend returns all candles, we filter client-side by days
+    queryKey: ['price-history', id, period.interval],
     queryFn: () =>
       api.get(`/api/assets/${id}/history`, {
-        params: {
-          interval: period.interval,
-          from: new Date(Date.now() - period.days * 86_400_000).toISOString(),
-        },
+        params: { interval: period.interval },
       }).then(r => r.data),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const { data: portfolioData } = useQuery({
@@ -697,7 +695,10 @@ export default function AssetDetailPage() {
     && (ordType === 'MARKET' || Number(limitPrice) > 0)
     && sharesQty <= ownedQty + 0.000001;
 
-  const chartData = (histData?.history ?? []).map((h: any) => ({ time: h.openTime, value: Number(h.close) }));
+  const cutoffMs  = Date.now() - period.days * 86_400_000;
+  const chartData = (histData?.history ?? [])
+    .filter((h: any) => new Date(h.openTime).getTime() >= cutoffMs)
+    .map((h: any) => ({ time: h.openTime, value: Number(h.close) }));
   const vals      = chartData.map((d: any) => d.value);
   const chartMin  = vals.length ? Math.min(...vals) * 0.997 : undefined;
   const chartMax  = vals.length ? Math.max(...vals) * 1.003 : undefined;

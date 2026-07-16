@@ -73,7 +73,10 @@ export async function getAsset(req, res) {
 
 // GET /api/assets/:id/history
 export async function getPriceHistory(req, res) {
-  const { interval = '1d', from, to } = req.query;
+  const { interval = '1d' } = req.query;
+  // from/to are ignored — we return all available candles and let the client filter.
+  // This ensures the cache key is stable across period changes (1W vs 1M vs 1Y all
+  // use interval=1d, and a shared full-history response is cheaper than per-range caches).
   const cacheKey = `price_history:${req.params.id}:${interval}`;
   try {
     const cached = await redis.get(cacheKey);
@@ -83,19 +86,13 @@ export async function getPriceHistory(req, res) {
   }
 
   const history = await prisma.priceHistory.findMany({
-    where: {
-      assetId: req.params.id,
-      interval,
-      ...(from && { openTime: { gte: new Date(from) } }),
-      ...(to && { openTime: { lte: new Date(to) } }),
-    },
+    where: { assetId: req.params.id, interval },
     orderBy: { openTime: 'asc' },
-    take: 500,
+    take: interval === '1d' ? 800 : 1440, // up to ~2.2y daily or 24h of 1m candles
   });
 
   const response = { history };
   try {
-    // Cache daily candles for 5 min; 1m candles for 30s
     const ttl = interval === '1d' ? 300 : 30;
     await redis.setex(cacheKey, ttl, JSON.stringify(response));
   } catch (e) {
