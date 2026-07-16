@@ -9,6 +9,11 @@ import { clampLimit, clampOffset } from '../utils/pagination.js';
 export async function placeOrder(req, res) {
   const { assetId, side, orderType = 'MARKET', quantity, limitPrice, stopPrice } = req.body;
 
+  const trader = await prisma.user.findUnique({ where: { id: req.user.id }, select: { taxId: true } });
+  if (!trader?.taxId) {
+    return res.status(403).json({ error: 'KRA PIN required to trade. Please add your KRA PIN in Profile settings.' });
+  }
+
   const account = await prisma.investmentAccount.findFirst({
     where: { userId: req.user.id, isPrimary: true, isActive: true },
     include: { balances: true },

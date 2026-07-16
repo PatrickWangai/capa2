@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
-import { User, Lock, Shield, Mail, Phone, MapPin, Calendar, CheckCircle2 } from 'lucide-react';
+import { User, Lock, Shield, Mail, Phone, MapPin, Calendar, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Badge } from '../components/ui';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -31,7 +31,9 @@ export default function ProfilePage() {
     addressLine1: '',
     city:       '',
     postalCode: '',
+    taxId:      '',
   });
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const [passwords, setPasswords] = useState({
     currentPassword: '',
@@ -41,6 +43,26 @@ export default function ProfilePage() {
 
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPass,    setSavingPass]    = useState(false);
+
+  useQuery({
+    queryKey: ['profile-full'],
+    queryFn: () => api.get('/api/users/me').then(r => r.data),
+    retry: false,
+    onSuccess: (data: any) => {
+      if (!profileLoaded && data.user) {
+        setProfile(p => ({
+          ...p,
+          phone:       data.user.phone        || '',
+          dateOfBirth: data.user.dateOfBirth  ? data.user.dateOfBirth.slice(0, 10) : '',
+          addressLine1:data.user.addressLine1 || '',
+          city:        data.user.city         || '',
+          postalCode:  data.user.postalCode   || '',
+          taxId:       data.user.taxId        || '',
+        }));
+        setProfileLoaded(true);
+      }
+    },
+  });
 
   const { data: portfolioData } = useQuery({
     queryKey: ['portfolio'],
@@ -145,6 +167,17 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {/* KRA PIN banner */}
+      {!profile.taxId && profileLoaded && (
+        <div className="flex items-start gap-3 p-4 rounded-xl border border-orange-700/40 bg-orange-900/20">
+          <AlertTriangle size={18} className="text-orange-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-orange-300">KRA PIN required to trade</p>
+            <p className="text-xs text-orange-400/80 mt-0.5">Add your Kenya Revenue Authority PIN below to unlock buying and selling.</p>
+          </div>
+        </div>
+      )}
+
       {/* Personal info */}
       <SectionCard title="Personal Information" icon={User}>
         <form onSubmit={saveProfile} className="space-y-4">
@@ -182,6 +215,21 @@ export default function ProfilePage() {
               <label className="label">Postal Code</label>
               <input className="input" value={profile.postalCode} onChange={e => setProfile(p => ({ ...p, postalCode: e.target.value }))} />
             </div>
+          </div>
+          <div>
+            <label className="label flex items-center gap-1.5">
+              <Shield size={12} />
+              KRA PIN
+              <span className="text-orange-400 text-xs font-semibold ml-1">Required to trade</span>
+            </label>
+            <input
+              className="input"
+              placeholder="e.g. A012345678Z"
+              value={profile.taxId}
+              onChange={e => setProfile(p => ({ ...p, taxId: e.target.value.toUpperCase() }))}
+              style={!profile.taxId ? { borderColor: 'rgba(249,115,22,0.5)' } : {}}
+            />
+            <p className="text-xs text-gray-500 mt-1">Your Kenya Revenue Authority Personal Identification Number.</p>
           </div>
           <button type="submit" disabled={savingProfile} className="btn-primary" style={{ fontSize: 14, padding: '10px 24px' }}>
             {savingProfile ? 'Saving…' : 'Save Changes'}
