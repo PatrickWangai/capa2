@@ -259,12 +259,85 @@ function startOfDay(date) {
   return d;
 }
 
+// ── Historical backfill ───────────────────────────────────────────
+// Fetches up to 2 years of real daily candles from Yahoo Finance for
+// each active asset if the DB has fewer than 30 days of history.
+async function backfillHistory() {
+  const assets = await prisma.asset.findMany({ where: { isActive: true } });
+  logger.info(`Backfill: checking history for ${assets.length} assets…`);
+
+  const cutoff2y = new Date(Date.now() - 2 * 365 * 86_400_000);
+  const cutoff30d = new Date(Date.now() - 30 * 86_400_000);
+
+  for (const asset of assets) {
+    try {
+      // Skip if we already have at least 30 daily candles in the last 30 days
+      const recent = await prisma.priceHistory.count({
+        where: { assetId: asset.id, interval: '1d', openTime: { gte: cutoff30d } },
+      });
+      if (recent >= 30) continue;
+
+      const suffix = YAHOO_SUFFIX[asset.exchange];
+      if (suffix === undefined) continue;
+      const yahooSym = asset.exchange === 'NSE'
+        ? (NSE_YAHOO_MAP[asset.symbol] ?? asset.symbol) + suffix
+        : asset.symbol + suffix;
+
+      logger.info(`Backfill: fetching 2y daily history for ${yahooSym}`);
+      const rows = await yf.historical(yahooSym, {
+        period1: cutoff2y.toISOString().slice(0, 10),
+        period2: new Date().toISOString().slice(0, 10),
+        interval: '1d',
+      }).catch(() => null);
+
+      if (!rows || rows.length === 0) {
+        logger.warn(`Backfill: no data returned for ${yahooSym}`);
+        continue;
+      }
+
+      // Bulk-upsert — use raw SQL for efficiency
+      let inserted = 0;
+      for (const row of rows) {
+        if (!row.close || !row.date) continue;
+        const openTime = new Date(row.date);
+        openTime.setUTCHours(0, 0, 0, 0);
+        await prisma.$executeRaw`
+          INSERT INTO price_history (id, asset_id, interval, open_time, open, high, low, close, volume)
+          VALUES (
+            gen_random_uuid(), ${asset.id}::uuid, '1d', ${openTime},
+            ${row.open ?? row.close}, ${row.high ?? row.close},
+            ${row.low  ?? row.close}, ${row.close},
+            ${BigInt(Math.round(row.volume ?? 0))}
+          )
+          ON CONFLICT (asset_id, interval, open_time) DO UPDATE SET
+            open   = EXCLUDED.open,
+            high   = GREATEST(price_history.high, EXCLUDED.high),
+            low    = LEAST   (price_history.low,  EXCLUDED.low),
+            close  = EXCLUDED.close,
+            volume = EXCLUDED.volume
+        `.catch(() => {});
+        inserted++;
+      }
+      logger.info(`Backfill: upserted ${inserted} daily candles for ${asset.symbol}`);
+
+      // Small delay between assets to avoid hammering Yahoo
+      await new Promise(r => setTimeout(r, 300));
+    } catch (err) {
+      logger.warn(`Backfill: error for ${asset.symbol} — ${err.message}`);
+    }
+  }
+  logger.info('Backfill complete.');
+}
+
 export async function startPriceFeed(io) {
   logger.info('Price feed starting — 1s broadcast | 15s DB write | 15s Yahoo | 15m NSE Yahoo(.NR)');
   await seedLiveCache();
 
   // Fetch real prices immediately on startup
   await fetchRealPrices();
+
+  // Backfill historical daily candles (runs once in background, non-blocking)
+  backfillHistory().catch(err => logger.warn('Backfill failed', { err: err.message }));
 
   // 1-second tick: apply micro-drift and broadcast
   setInterval(tick, TICK_MS);

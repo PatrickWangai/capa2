@@ -17,6 +17,7 @@ type OrdType = 'MARKET' | 'LIMIT';
 type InMode  = 'SHARES' | 'DOLLARS';
 
 const PERIODS = [
+  { label: '1D', interval: '1m', days: 1   },
   { label: '1W', interval: '1d', days: 7   },
   { label: '1M', interval: '1d', days: 30  },
   { label: '3M', interval: '1d', days: 90  },
@@ -589,7 +590,7 @@ export default function AssetDetailPage() {
   const { id } = useParams<{ id: string }>();
   const qc     = useQueryClient();
 
-  const [period, setPeriod]     = useState(PERIODS[1]);
+  const [period, setPeriod]     = useState(PERIODS[0]);
   const [side, setSide]         = useState<Side>('BUY');
   const [ordType, setOrdType]   = useState<OrdType>('MARKET');
   const [inMode, setInMode]     = useState<InMode>('SHARES');

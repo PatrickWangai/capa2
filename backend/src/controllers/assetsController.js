@@ -93,9 +93,11 @@ export async function getPriceHistory(req, res) {
     take: 500,
   });
 
-  const response = { history }
+  const response = { history };
   try {
-    await redis.setex(cacheKey, 60, JSON.stringify(response));
+    // Cache daily candles for 5 min; 1m candles for 30s
+    const ttl = interval === '1d' ? 300 : 30;
+    await redis.setex(cacheKey, ttl, JSON.stringify(response));
   } catch (e) {
     logger.warn('Price history cache write failed', { error: e.message });
   }
