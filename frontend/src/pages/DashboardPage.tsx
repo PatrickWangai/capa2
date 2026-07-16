@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
 import {
-  DollarSign, Briefcase, ShieldCheck,
+  TrendingUp, DollarSign, Briefcase, ShieldCheck,
   ArrowRight, BarChart2, Star, Clock,
 } from 'lucide-react';
 import clsx from 'clsx';
