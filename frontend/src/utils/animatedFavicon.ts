@@ -42,7 +42,7 @@ export function startAnimatedFavicon() {
       ctx.fill();
 
       // Ghost — centred with bob
-      const gs = Math.round(SIZE * 0.72 * scale);
+      const gs = Math.round(SIZE * 0.88 * scale);
       const gx = (SIZE - gs) / 2;
       const gy = (SIZE - gs) / 2 + bobY;
       ctx.drawImage(img, gx, gy, gs, gs);
