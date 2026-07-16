@@ -111,74 +111,158 @@ export default function OrdersPage() {
       </div>
 
       {isLoading ? <PageLoader /> : (
-        <div className="card overflow-x-auto p-0">
-          <table className="w-full">
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Asset', 'Side', 'Type', 'Qty', 'Price', 'Total', 'Fee', 'Status', 'Date', ''].map(h => (
-                  <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {orders.length === 0 ? (
-                <tr><td colSpan={10}>
-                  <EmptyState icon={ArrowDownUp} title="No orders found" description="Place your first order from the Markets page." />
-                </td></tr>
-              ) : orders.map((o: any, idx: number) => (
-                <tr key={o.id}
-                  className="hover:bg-white/[0.025] transition-colors"
-                  style={{ borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <StockLogo symbol={o.asset?.symbol ?? '?'} size="sm" />
-                      <div>
-                        <p className="font-semibold text-white text-sm">{o.asset?.symbol}</p>
-                        <p className="text-xs text-gray-500">{o.asset?.exchange}</p>
+        <>
+          {/* Desktop table — hidden on mobile */}
+          <div className="card overflow-x-auto p-0 hidden sm:block">
+            <table className="w-full">
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {['Asset', 'Side', 'Type', 'Qty', 'Price', 'Total', 'Fee', 'Status', 'Date', ''].map(h => (
+                    <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {orders.length === 0 ? (
+                  <tr><td colSpan={10}>
+                    <EmptyState icon={ArrowDownUp} title="No orders found" description="Place your first order from the Markets page." />
+                  </td></tr>
+                ) : orders.map((o: any, idx: number) => (
+                  <tr key={o.id}
+                    className="hover:bg-white/[0.025] transition-colors"
+                    style={{ borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <StockLogo symbol={o.asset?.symbol ?? '?'} size="sm" />
+                        <div>
+                          <p className="font-semibold text-white text-sm">{o.asset?.symbol}</p>
+                          <p className="text-xs text-gray-500">{o.asset?.exchange}</p>
+                        </div>
                       </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={clsx('text-sm font-bold', o.side === 'BUY' ? 'text-green-400' : 'text-red-400')}>{o.side}</span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-400 text-xs uppercase">{o.orderType}</td>
+                    <td className="px-4 py-3 text-gray-300 text-sm">
+                      {Number(o.filledQuantity) > 0
+                        ? <>{Number(o.filledQuantity).toFixed(4)}<span className="text-gray-600">/{Number(o.quantity).toFixed(4)}</span></>
+                        : Number(o.quantity).toFixed(4)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-300 text-sm">
+                      {o.avgFillPrice
+                        ? `${o.currency} ${Number(o.avgFillPrice).toFixed(2)}`
+                        : o.limitPrice
+                          ? `${o.currency} ${Number(o.limitPrice).toFixed(2)}`
+                          : <span className="text-gray-500">Market</span>}
+                    </td>
+                    <td className="px-4 py-3 text-white text-sm font-semibold">
+                      {o.filledTotal
+                        ? `${o.currency} ${Number(o.filledTotal).toFixed(2)}`
+                        : o.estimatedTotal
+                          ? <span className="text-gray-400">~{o.currency} {Number(o.estimatedTotal).toFixed(2)}</span>
+                          : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-gray-400 text-sm">{Number(o.fee).toFixed(2)}</td>
+                    <td className="px-4 py-3"><Badge variant={STATUS_VARIANT[o.status] || 'gray'}>{o.status}</Badge></td>
+                    <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
+                      {new Date(o.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </td>
+                    <td className="px-4 py-3">
+                      {['PENDING', 'OPEN'].includes(o.status) && (
+                        <button onClick={() => cancel(o.id)}
+                          className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-900/20 transition-colors">
+                          <X size={14} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards — shown only on small screens */}
+          <div className="block sm:hidden space-y-2">
+            {orders.length === 0 ? (
+              <div className="card">
+                <EmptyState icon={ArrowDownUp} title="No orders found" description="Place your first order from the Markets page." />
+              </div>
+            ) : orders.map((o: any) => (
+              <div key={o.id} className="card p-3">
+                {/* Header: asset + status + cancel */}
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <StockLogo symbol={o.asset?.symbol ?? '?'} size="sm" />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-white text-sm leading-tight">{o.asset?.symbol}</p>
+                      <p className="text-xs text-gray-500 leading-tight">{o.asset?.exchange}</p>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={clsx('text-sm font-bold', o.side === 'BUY' ? 'text-green-400' : 'text-red-400')}>{o.side}</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs uppercase">{o.orderType}</td>
-                  <td className="px-4 py-3 text-gray-300 text-sm">
-                    {Number(o.filledQuantity) > 0
-                      ? <>{Number(o.filledQuantity).toFixed(4)}<span className="text-gray-600">/{Number(o.quantity).toFixed(4)}</span></>
-                      : Number(o.quantity).toFixed(4)}
-                  </td>
-                  <td className="px-4 py-3 text-gray-300 text-sm">
-                    {o.avgFillPrice
-                      ? `${o.currency} ${Number(o.avgFillPrice).toFixed(2)}`
-                      : o.limitPrice
-                        ? `${o.currency} ${Number(o.limitPrice).toFixed(2)}`
-                        : <span className="text-gray-500">Market</span>}
-                  </td>
-                  <td className="px-4 py-3 text-white text-sm font-semibold">
-                    {o.filledTotal
-                      ? `${o.currency} ${Number(o.filledTotal).toFixed(2)}`
-                      : o.estimatedTotal
-                        ? <span className="text-gray-400">~{o.currency} {Number(o.estimatedTotal).toFixed(2)}</span>
-                        : '—'}
-                  </td>
-                  <td className="px-4 py-3 text-gray-400 text-sm">{Number(o.fee).toFixed(2)}</td>
-                  <td className="px-4 py-3"><Badge variant={STATUS_VARIANT[o.status] || 'gray'}>{o.status}</Badge></td>
-                  <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
-                    {new Date(o.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </td>
-                  <td className="px-4 py-3">
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Badge variant={STATUS_VARIANT[o.status] || 'gray'}>{o.status}</Badge>
                     {['PENDING', 'OPEN'].includes(o.status) && (
                       <button onClick={() => cancel(o.id)}
                         className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-900/20 transition-colors">
                         <X size={14} />
                       </button>
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </div>
+
+                {/* Details grid */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5"
+                  style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 }}>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Side</span>
+                    <span className={clsx('text-xs font-bold', o.side === 'BUY' ? 'text-green-400' : 'text-red-400')}>{o.side}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Type</span>
+                    <span className="text-xs text-gray-400 uppercase">{o.orderType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Qty</span>
+                    <span className="text-xs text-gray-300">
+                      {Number(o.filledQuantity) > 0
+                        ? <>{Number(o.filledQuantity).toFixed(4)}<span className="text-gray-600">/{Number(o.quantity).toFixed(4)}</span></>
+                        : Number(o.quantity).toFixed(4)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Price</span>
+                    <span className="text-xs text-gray-300">
+                      {o.avgFillPrice
+                        ? `${o.currency} ${Number(o.avgFillPrice).toFixed(2)}`
+                        : o.limitPrice
+                          ? `${o.currency} ${Number(o.limitPrice).toFixed(2)}`
+                          : 'Market'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Total</span>
+                    <span className="text-xs font-semibold text-white">
+                      {o.filledTotal
+                        ? `${o.currency} ${Number(o.filledTotal).toFixed(2)}`
+                        : o.estimatedTotal
+                          ? `~${o.currency} ${Number(o.estimatedTotal).toFixed(2)}`
+                          : '—'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">Fee</span>
+                    <span className="text-xs text-gray-400">{Number(o.fee).toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Date */}
+                <p className="text-xs text-gray-600 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 6 }}>
+                  {new Date(o.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {!isLoading && orders.length > 0 && (
