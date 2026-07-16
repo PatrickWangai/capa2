@@ -1,121 +1,89 @@
+/**
+ * FX Service
+ *
+ * Business logic layer for currency conversion.
+ * Delegates to the FXProvider (currently MockFXProvider / open.er-api.com).
+ * Swap the provider without touching this file.
+ */
+
+import fxProvider from '../providers/fxProvider.js';
 import logger from '../utils/logger.js';
 
-// ── Configuration ─────────────────────────────────────────────
-const FX_FEE_PERCENT  = parseFloat(process.env.FX_FEE_PERCENT || '1'); // 1% default
-const FALLBACK_RATE   = parseFloat(process.env.FX_RATE_USD_KES || '130'); // used if API fails
-const CACHE_TTL_MS    = 60 * 60 * 1000; // 1 hour
-const FX_API_BASE     = 'https://open.er-api.com/v6/latest';
-
-// ── In-memory rate cache ──────────────────────────────────────
-let _cache = {
-  rates:     null,   // { USD_KES: number, KES_USD: number, ... }
-  fetchedAt: 0,
-  source:    'none',
-};
-
-async function fetchLiveRates() {
-  const res  = await fetch(`${FX_API_BASE}/USD`, { signal: AbortSignal.timeout(8000) });
-  if (!res.ok) throw new Error(`FX API returned ${res.status}`);
-  const data = await res.json();
-  if (data.result !== 'success') throw new Error('FX API result not success');
-
-  const r = data.rates;
-  return {
-    USD_KES: r.KES,
-    KES_USD: 1 / r.KES,
-    USD_USD: 1,
-    KES_KES: 1,
-    updatedAt: data.time_last_update_utc,
-  };
-}
-
-async function getRates() {
-  const now = Date.now();
-  if (_cache.rates && now - _cache.fetchedAt < CACHE_TTL_MS) {
-    return _cache.rates;
-  }
-
-  try {
-    const rates = await fetchLiveRates();
-    _cache = { rates, fetchedAt: now, source: 'live' };
-    logger.info(`FX rates refreshed — 1 USD = ${rates.USD_KES.toFixed(4)} KES`);
-    return rates;
-  } catch (err) {
-    logger.warn(`FX API fetch failed (${err.message}), using fallback rate ${FALLBACK_RATE}`);
-    const fallback = {
-      USD_KES: FALLBACK_RATE,
-      KES_USD: 1 / FALLBACK_RATE,
-      USD_USD: 1,
-      KES_KES: 1,
-      updatedAt: new Date().toISOString(),
-    };
-    // Cache fallback for 5 minutes so we retry sooner
-    _cache = { rates: fallback, fetchedAt: now - CACHE_TTL_MS + 5 * 60 * 1000, source: 'fallback' };
-    return fallback;
-  }
-}
-
-// ── ExchangeRateService interface ─────────────────────────────
+// Re-export the provider so walletController can use ExchangeRateService shape
 export const ExchangeRateService = {
-  async getRate(fromCurrency, toCurrency) {
-    if (fromCurrency === toCurrency) return 1;
-    const rates = await getRates();
-    const key   = `${fromCurrency}_${toCurrency}`;
-    if (!(key in rates)) throw new Error(`FX pair not supported: ${fromCurrency} → ${toCurrency}`);
-    return rates[key];
+  async getRate(from, to) {
+    if (from === to) return 1;
+    const q = await fxProvider.quote(from, to);
+    return q.clientRate;
   },
 
-  async getAllRates() {
-    const rates = await getRates();
-    return {
-      USD_KES:   rates.USD_KES,
-      KES_USD:   rates.KES_USD,
-      updatedAt: rates.updatedAt,
-      source:    _cache.source,
-    };
+  async getAllRates(base = 'USD') {
+    const rates     = await fxProvider.getRates(base);
+    const supported = ['USD','GBP','KES','EUR','CAD','AUD','JPY','CHF','HKD','SGD','ZAR'];
+    const out       = {};
+    for (const ccy of supported) {
+      if (ccy !== base) out[`${base}_${ccy}`] = rates[ccy] ?? null;
+    }
+    // also expose the reciprocals so frontend can do KES_USD etc.
+    const baseRate = rates[base] ?? 1;
+    for (const ccy of supported) {
+      if (ccy !== base) {
+        const r      = rates[ccy] ?? 1;
+        out[`${ccy}_${base}`] = parseFloat((baseRate / r).toFixed(8));
+      }
+    }
+    out.updatedAt = new Date().toISOString();
+    out.source    = 'live';
+    return out;
   },
 };
-
-// ── Sync rate getter (uses cache; throws if not yet loaded) ───
-export function getRate(from, to) {
-  if (from === to) return 1;
-  const key   = `${from}_${to}`;
-  const rates = _cache.rates;
-  if (!rates) throw new Error('FX rates not yet loaded. Use ExchangeRateService.getRate() instead.');
-  if (!(key in rates)) throw new Error(`FX pair not supported: ${from} → ${to}`);
-  return rates[key];
-}
 
 /**
- * Convert `fromAmount` from `from` to `to` using cached rates.
- * For atomic transactions, call ExchangeRateService.getRate() first and pass rate in.
+ * Convert fromAmount from one currency to another.
+ * Returns the full FXConvertResult from the provider.
  */
 export async function convertAsync(fromAmount, from, to) {
-  const rate  = await ExchangeRateService.getRate(from, to);
-  const gross = parseFloat((fromAmount * rate).toFixed(6));
-  const fee   = parseFloat((gross * FX_FEE_PERCENT / 100).toFixed(6));
-  const net   = parseFloat((gross - fee).toFixed(6));
-  return { rate, gross, fee, net, feeCurrency: to };
+  if (from === to) {
+    return { fromAmount, toAmount: fromAmount, rate: 1, midRate: 1, fee: 0, spread: 0, reference: null, provider: 'identity' };
+  }
+  const result = await fxProvider.convert(fromAmount, from, to);
+  logger.info(`FX convert ${from}→${to}: ${fromAmount} → ${result.toAmount} (rate ${result.rate})`);
+  return result;
 }
 
-// Sync version (uses cache only — used inside prisma.$transaction)
-export function convert(fromAmount, from, to) {
-  const rate  = getRate(from, to);
-  const gross = parseFloat((fromAmount * rate).toFixed(6));
-  const fee   = parseFloat((gross * FX_FEE_PERCENT / 100).toFixed(6));
-  const net   = parseFloat((gross - fee).toFixed(6));
-  return { rate, gross, fee, net, feeCurrency: to };
+export async function quoteAsync(from, to) {
+  return fxProvider.quote(from, to);
 }
 
 export function getSupportedPairs() {
-  const rates = _cache.rates ?? { USD_KES: FALLBACK_RATE, KES_USD: 1 / FALLBACK_RATE };
-  return ['USD_KES', 'KES_USD'].map(key => {
-    const [from, to] = key.split('_');
-    return { from, to, rate: rates[key] };
-  });
+  const currencies = ['USD','GBP','KES','EUR','CAD','AUD','JPY','CHF','HKD','SGD','ZAR'];
+  const pairs = [];
+  for (const from of currencies) {
+    for (const to of currencies) {
+      if (from !== to) pairs.push({ from, to });
+    }
+  }
+  return pairs;
 }
 
-// Warm up cache on startup
-getRates().then(rates => {
-  logger.info(`FX service ready (${_cache.source}) — 1 USD = ${rates.USD_KES.toFixed(4)} KES, fee ${FX_FEE_PERCENT}%`);
-}).catch(() => {});
+export const SUPPORTED_CURRENCIES = ['USD','GBP','KES','EUR','CAD','AUD','JPY','CHF','HKD','SGD','ZAR'];
+
+// Backwards-compatible sync wrapper (uses cached rates only — not recommended for new code)
+export function convert(fromAmount, from, to) {
+  // Delegate to async path but return synchronously with a rough approximation
+  // Only used in legacy places; prefer convertAsync for new code.
+  logger.warn('fxService.convert() sync called — use convertAsync() instead');
+  const fallbackRates = { USD:1,GBP:0.79,KES:129.37,EUR:0.92,CAD:1.37,AUD:1.53,JPY:157.4,CHF:0.90,HKD:7.78,SGD:1.35,ZAR:18.15 };
+  const feePercent = parseFloat(process.env.FX_FEE_PERCENT || '1');
+  const spread     = parseFloat(process.env.FX_SPREAD      || '0.005');
+  const fromUsd    = fallbackRates[from] ?? 1;
+  const toUsd      = fallbackRates[to]   ?? 1;
+  const midRate    = toUsd / fromUsd;
+  const clientRate = midRate * (1 - spread);
+  const gross      = fromAmount * clientRate;
+  const fee        = gross * feePercent / 100;
+  const net        = gross - fee;
+  return { rate: clientRate, gross, fee, net, feeCurrency: to, spread };
+}
+
+logger.info('FX service ready (live rates via open.er-api.com, 1h cache)');

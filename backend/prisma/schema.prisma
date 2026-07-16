@@ -34,17 +34,32 @@ enum KycDocumentType {
 }
 
 enum Currency {
-  USD
-  GBP
-  KES
-  EUR
+  USD   // US Dollar
+  GBP   // British Pound
+  KES   // Kenyan Shilling
+  EUR   // Euro
+  CAD   // Canadian Dollar
+  AUD   // Australian Dollar
+  JPY   // Japanese Yen
+  CHF   // Swiss Franc
+  HKD   // Hong Kong Dollar
+  SGD   // Singapore Dollar
+  ZAR   // South African Rand
 }
 
 enum Exchange {
-  NYSE
-  NASDAQ
-  LSE
-  NSE
+  NYSE    // New York Stock Exchange
+  NASDAQ  // Nasdaq
+  LSE     // London Stock Exchange
+  NSE     // Nairobi Securities Exchange
+  TSE     // Tokyo Stock Exchange
+  TSX     // Toronto Stock Exchange
+  ASX     // Australian Securities Exchange
+  FSE     // Frankfurt Stock Exchange
+  SIX     // SIX Swiss Exchange
+  HKEX    // Hong Kong Stock Exchange
+  SGX     // Singapore Exchange
+  JSE     // Johannesburg Stock Exchange
 }
 
 enum AssetClass {
@@ -227,8 +242,9 @@ model InvestmentAccount {
   orders        Order[]
   positions     Position[]
   transactions    Transaction[]
-  dividendPays    DividendPayment[]
-  conversions     CurrencyConversion[]
+  dividendPays        DividendPayment[]
+  conversions         CurrencyConversion[]
+  portfolioSnapshots  PortfolioSnapshot[]
 
   @@map("investment_accounts")
 }
@@ -535,7 +551,7 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-// Tracks every KES↔USD conversion event for regulatory & user history.
+// Tracks every multi-currency conversion for regulatory & user history.
 model CurrencyConversion {
   id            String    @id @default(uuid())
   accountId     String    @map("account_id")
@@ -544,14 +560,35 @@ model CurrencyConversion {
   fromAmount    Decimal   @map("from_amount")   @db.Decimal(20, 6)
   toAmount      Decimal   @map("to_amount")     @db.Decimal(20, 6)
   rate          Decimal   @db.Decimal(16, 8)
+  midRate       Decimal?  @map("mid_rate")      @db.Decimal(16, 8)  // interbank mid rate
+  spread        Decimal   @default(0)           @db.Decimal(8, 6)   // spread as decimal fraction
   fee           Decimal   @default(0)           @db.Decimal(20, 6)
   feeCurrency   Currency  @map("fee_currency")
+  reference     String?   @unique               // human-readable ref e.g. FX-20260717-XXXXX
+  provider      String    @default("mock")      // fx provider name
   createdAt     DateTime  @default(now())       @map("created_at")
 
   account       InvestmentAccount @relation(fields: [accountId], references: [id])
 
   @@index([accountId, createdAt(sort: Desc)])
   @@map("currency_conversions")
+}
+
+// Snapshots portfolio total value daily for charting / performance history.
+model PortfolioSnapshot {
+  id          String    @id @default(uuid())
+  accountId   String    @map("account_id")
+  totalValue  Decimal   @map("total_value")  @db.Decimal(20, 6)
+  cashValue   Decimal   @map("cash_value")   @db.Decimal(20, 6)
+  equityValue Decimal   @map("equity_value") @db.Decimal(20, 6)
+  currency    Currency  @default(USD)
+  snapshotAt  DateTime  @map("snapshot_at")
+
+  account     InvestmentAccount @relation(fields: [accountId], references: [id])
+
+  @@unique([accountId, snapshotAt])
+  @@index([accountId, snapshotAt(sort: Desc)])
+  @@map("portfolio_snapshots")
 }
 
 model AuditLog {

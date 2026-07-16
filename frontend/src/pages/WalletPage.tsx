@@ -2,22 +2,21 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { ArrowRightLeft, TrendingUp, Plus, History, ArrowUpRight, Receipt } from 'lucide-react';
+import { ArrowRightLeft, TrendingUp, History, Receipt, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { PageLoader } from '../components/ui';
-import toast from 'react-hot-toast';
 
-const FLAG:  Record<string, string> = { KES: '🇰🇪', USD: '🇺🇸', GBP: '🇬🇧', EUR: '🇪🇺' };
-const LABEL: Record<string, string> = { KES: 'Kenyan Shilling', USD: 'US Dollar', GBP: 'British Pound', EUR: 'Euro' };
-
-type Tab = 'deposit' | 'withdraw';
+const FLAG:  Record<string, string> = {
+  KES:'🇰🇪',USD:'🇺🇸',GBP:'🇬🇧',EUR:'🇪🇺',
+  CAD:'🇨🇦',AUD:'🇦🇺',JPY:'🇯🇵',CHF:'🇨🇭',HKD:'🇭🇰',SGD:'🇸🇬',ZAR:'🇿🇦',
+};
+const LABEL: Record<string, string> = {
+  KES:'Kenyan Shilling',USD:'US Dollar',GBP:'British Pound',EUR:'Euro',
+  CAD:'Canadian Dollar',AUD:'Australian Dollar',JPY:'Japanese Yen',
+  CHF:'Swiss Franc',HKD:'Hong Kong Dollar',SGD:'Singapore Dollar',ZAR:'South African Rand',
+};
 
 export default function WalletPage() {
   const qc = useQueryClient();
-  const [tab,          setTab]         = useState<Tab>('deposit');
-  const [depositAmt,   setDepositAmt]  = useState('');
-  const [withdrawAmt,  setWithdrawAmt] = useState('');
-  const [withdrawPhone,setPhone]       = useState('');
-  const [busy,         setBusy]        = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['wallets'],
@@ -31,9 +30,8 @@ export default function WalletPage() {
   });
 
   const balances: any[] = data?.balances ?? [];
-  const kesBal = balances.find(b => b.currency === 'KES');
-  const usdBal = balances.find(b => b.currency === 'USD');
-  const rate   = data?.rates?.USD_KES ?? 130;
+  const kesBal  = balances.find(b => b.currency === 'KES');
+  const rate    = data?.rates?.USD_KES ?? 130;
 
   const handleDeposit = async () => {
     const amt = parseFloat(depositAmt);
@@ -85,129 +83,46 @@ export default function WalletPage() {
         </span>
       </div>
 
-      {/* Balance cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {[
-          { currency: 'KES', bal: kesBal },
-          { currency: 'USD', bal: usdBal },
-        ].map(({ currency, bal }) => (
-          <div key={currency} className="card">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">{FLAG[currency]}</span>
+      {/* Balance cards — all 11 currencies */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {balances.map(({ currency: ccy, available, reserved }: any) => (
+          <div key={ccy} className="card" style={{ padding: '14px 16px' }}>
+            <div className="flex items-center gap-1.5 mb-2">
+              <span className="text-xl">{FLAG[ccy] ?? '💱'}</span>
               <div>
-                <p className="text-xs text-gray-500">{LABEL[currency]}</p>
-                <p className="text-sm font-semibold text-white">{currency}</p>
+                <p className="text-xs text-gray-500 leading-tight" style={{ fontSize: 10 }}>{LABEL[ccy] ?? ccy}</p>
+                <p className="text-xs font-semibold text-white">{ccy}</p>
               </div>
             </div>
-            <p className="text-3xl font-bold text-white">
-              {Number(bal?.available ?? 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <p className="text-lg font-bold text-white">
+              {Number(available).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            {Number(bal?.reserved ?? 0) > 0 && (
-              <p className="text-xs text-gray-500 mt-1">{Number(bal.reserved).toFixed(2)} reserved</p>
+            {Number(reserved) > 0 && (
+              <p className="text-xs text-gray-600 mt-0.5">{Number(reserved).toFixed(2)} reserved</p>
             )}
           </div>
         ))}
       </div>
 
-      {/* Deposit / Withdraw card */}
-      <div className="card space-y-4">
-        {/* Tab toggle */}
-        <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)' }}>
-          {(['deposit', 'withdraw'] as Tab[]).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className="flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
-              style={{
-                background: tab === t ? 'var(--accent)' : 'transparent',
-                color:      tab === t ? 'var(--accent-text)' : 'rgba(255,255,255,0.55)',
-              }}>
-              {t === 'deposit' ? '+ Deposit KES' : '↑ Withdraw KES'}
-            </button>
-          ))}
-        </div>
-
-        {tab === 'deposit' ? (
-          <>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">KES</span>
-                <input className="input pl-12" type="number" placeholder="0.00"
-                  value={depositAmt} onChange={e => setDepositAmt(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleDeposit()} />
-              </div>
-              <button className="btn-primary" disabled={busy} onClick={handleDeposit}
-                style={{ padding: '0 20px', fontSize: 14 }}>
-                {busy ? 'Processing…' : 'Deposit'}
-              </button>
-            </div>
-            {/* Quick amounts */}
-            <div className="flex flex-wrap gap-2">
-              {[500, 1000, 5000, 10000, 50000].map(n => (
-                <button key={n} onClick={() => setDepositAmt(String(n))}
-                  className="px-3 py-1 rounded-lg text-xs font-semibold transition-all"
-                  style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  KES {n.toLocaleString()}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-600">
-              Mock deposit — credited instantly. TODO: wire to M-Pesa STK push.
-            </p>
-          </>
-        ) : (
-          <>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">KES</span>
-                <input className="input pl-12" type="number" placeholder="0.00"
-                  value={withdrawAmt} onChange={e => setWithdrawAmt(e.target.value)} />
-              </div>
-              <button className="btn-primary" disabled={busy} onClick={handleWithdraw}
-                style={{ padding: '0 20px', fontSize: 14 }}>
-                {busy ? 'Processing…' : 'Withdraw'}
-              </button>
-            </div>
-            <input className="input" type="tel" placeholder="M-Pesa phone (optional, e.g. 0712345678)"
-              value={withdrawPhone} onChange={e => setPhone(e.target.value)} />
-            <p className="text-xs text-gray-400">
-              Available: KES {Number(kesBal?.available ?? 0).toLocaleString('en', { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-xs text-gray-600">
-              Mock withdrawal — funds marked pending. TODO: wire to M-Pesa B2C disbursement.
-            </p>
-          </>
-        )}
-      </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Link to="/wallet/convert" style={{ textDecoration: 'none' }}>
-          <div className="card hover:border-gray-600 transition-all cursor-pointer" style={{ padding: '14px 16px' }}>
-            <ArrowRightLeft size={17} style={{ color: 'var(--accent)' }} className="mb-2" />
-            <p className="font-semibold text-white text-sm">Convert</p>
-            <p className="text-xs text-gray-500 mt-0.5">KES ↔ USD</p>
-          </div>
-        </Link>
-        <Link to="/wallet/history" style={{ textDecoration: 'none' }}>
-          <div className="card hover:border-gray-600 transition-all cursor-pointer" style={{ padding: '14px 16px' }}>
-            <History size={17} style={{ color: 'var(--accent)' }} className="mb-2" />
-            <p className="font-semibold text-white text-sm">FX History</p>
-            <p className="text-xs text-gray-500 mt-0.5">Conversions</p>
-          </div>
-        </Link>
-        <Link to="/wallet/transactions" style={{ textDecoration: 'none' }}>
-          <div className="card hover:border-gray-600 transition-all cursor-pointer" style={{ padding: '14px 16px' }}>
-            <Receipt size={17} style={{ color: 'var(--accent)' }} className="mb-2" />
-            <p className="font-semibold text-white text-sm">Transactions</p>
-            <p className="text-xs text-gray-500 mt-0.5">All activity</p>
-          </div>
-        </Link>
-        <Link to="/markets" style={{ textDecoration: 'none' }}>
-          <div className="card hover:border-gray-600 transition-all cursor-pointer" style={{ padding: '14px 16px' }}>
-            <TrendingUp size={17} style={{ color: 'var(--accent)' }} className="mb-2" />
-            <p className="font-semibold text-white text-sm">Invest</p>
-            <p className="text-xs text-gray-500 mt-0.5">Browse markets</p>
-          </div>
-        </Link>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {[
+          { to: '/deposit',           icon: ArrowDownLeft,  label: 'Deposit',      sub: 'Add funds'     },
+          { to: '/withdraw',          icon: ArrowUpRight,   label: 'Withdraw',     sub: 'Cash out'      },
+          { to: '/wallet/convert',    icon: ArrowRightLeft, label: 'Convert',      sub: 'KES ↔ USD'    },
+          { to: '/wallet/history',    icon: History,        label: 'FX History',   sub: 'Conversions'   },
+          { to: '/wallet/transactions',icon:Receipt,        label: 'Transactions', sub: 'All activity'  },
+          { to: '/markets',           icon: TrendingUp,     label: 'Invest',       sub: 'Markets'       },
+        ].map(({ to, icon: Icon, label, sub }) => (
+          <Link key={to} to={to} style={{ textDecoration: 'none' }}>
+            <div className="card hover:border-gray-600 transition-all cursor-pointer text-center" style={{ padding: '12px 8px' }}>
+              <Icon size={16} style={{ color: 'var(--accent)', margin: '0 auto 6px' }} />
+              <p className="font-semibold text-white" style={{ fontSize: 11 }}>{label}</p>
+              <p className="text-gray-500" style={{ fontSize: 10 }}>{sub}</p>
+            </div>
+          </Link>
+        ))}
       </div>
 
       {/* Recent conversions */}

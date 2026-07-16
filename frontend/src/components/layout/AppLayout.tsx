@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
   ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu, Wallet,
+  Star, Settings,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAlertStore } from '../../store/alertStore';
@@ -17,9 +18,11 @@ const nav = [
   { to: '/portfolio',     label: 'Portfolio',    icon: Briefcase },
   { to: '/orders',        label: 'Orders',       icon: ArrowDownUp },
   { to: '/wallet',        label: 'Wallet',       icon: Wallet },
+  { to: '/watchlist',     label: 'Watchlist',    icon: Star },
   { to: '/notifications', label: 'Alerts',       icon: Bell },
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
   { to: '/profile',       label: 'Profile',      icon: User },
+  { to: '/settings',      label: 'Settings',     icon: Settings },
 ];
 
 export default function AppLayout() {

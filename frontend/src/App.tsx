@@ -27,6 +27,10 @@ import WalletPage                from './pages/WalletPage';
 import CurrencyConverterPage    from './pages/CurrencyConverterPage';
 import FxHistoryPage            from './pages/FxHistoryPage';
 import WalletTransactionsPage   from './pages/WalletTransactionsPage';
+import WatchlistPage            from './pages/WatchlistPage';
+import DepositPage              from './pages/DepositPage';
+import WithdrawPage             from './pages/WithdrawPage';
+import SettingsPage             from './pages/SettingsPage';
 
 // Admin
 const AdminDashboardPage    = lazy(() => import('./pages/admin/AdminDashboardPage'));
@@ -166,6 +170,10 @@ export default function App() {
               <Route path="wallet/convert"       element={<><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></>} />
               <Route path="wallet/history"       element={<><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></>} />
               <Route path="wallet/transactions"  element={<><PageTitle title="Wallet Transactions" /><ErrorBoundary><WalletTransactionsPage /></ErrorBoundary></>} />
+              <Route path="watchlist"            element={<><PageTitle title="Watchlist" /><ErrorBoundary><WatchlistPage /></ErrorBoundary></>} />
+              <Route path="deposit"              element={<><PageTitle title="Deposit" /><ErrorBoundary><DepositPage /></ErrorBoundary></>} />
+              <Route path="withdraw"             element={<><PageTitle title="Withdraw" /><ErrorBoundary><WithdrawPage /></ErrorBoundary></>} />
+              <Route path="settings"             element={<><PageTitle title="Settings" /><ErrorBoundary><SettingsPage /></ErrorBoundary></>} />
             </Route>
 
             {/* Admin */}
