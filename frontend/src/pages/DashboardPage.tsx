@@ -7,7 +7,6 @@ import {
   TrendingUp, TrendingDown, DollarSign, Briefcase, ShieldCheck,
   ArrowRight, BarChart2, Star, Clock,
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
 import { Badge } from '../components/ui';
@@ -41,13 +40,7 @@ export default function DashboardPage() {
     retry: false,
   });
 
-  const { data: history } = useQuery({
-    queryKey: ['portfolio-history'],
-    queryFn: () => api.get('/api/portfolio/history?period=1M').then(r => r.data),
-    retry: false,
-  });
-
-  const { data: wlData } = useQuery({
+const { data: wlData } = useQuery({
     queryKey: ['watchlist'],
     queryFn: () => api.get('/api/assets/watchlist').then(r => r.data),
     refetchInterval: 30_000,
@@ -153,49 +146,9 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Performance chart + Watchlist */}
+      {/* Watchlist */}
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="card lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white">Portfolio Performance</h2>
-            <Link to="/portfolio" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
-              Details <ArrowRight size={14} />
-            </Link>
-          </div>
-          {history?.history?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={history.history}>
-                <defs>
-                  <linearGradient id="dash-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }}
-                  tickFormatter={d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })} />
-                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} tickFormatter={v => `$${Number(v).toFixed(0)}`} />
-                <Tooltip
-                  contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
-                  formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Value']}
-                />
-                <Area type="monotone" dataKey="value" stroke="var(--accent)" strokeWidth={2} fill="url(#dash-grad)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-[220px] flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <Briefcase size={36} className="mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No history yet. Make your first trade!</p>
-                <Link to="/markets" className="text-sm mt-2 inline-block" style={{ color: 'var(--accent)' }}>
-                  Browse Markets →
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Watchlist */}
-        <div className="card">
+        <div className="card lg:col-span-3">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-white flex items-center gap-2">
               <Star size={14} className="text-yellow-400" fill="currentColor" />

@@ -2,22 +2,19 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, AreaChart, Area, XAxis, YAxis } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, Briefcase, DollarSign, ArrowUpDown } from 'lucide-react';
 import { StatCard, EmptyState, Badge, PageLoader } from '../components/ui';
 import { StockLogo } from '../components/ui/StockLogo';
 import clsx from 'clsx';
 
-const TABS = ['Holdings', 'Performance', 'Transactions', 'Dividends'];
-const PERIODS = ['1W', '1M', '3M', '6M', '1Y', 'ALL'] as const;
-type Period = typeof PERIODS[number];
+const TABS = ['Holdings', 'Transactions', 'Dividends'];
 type SortKey = 'value' | 'pnl' | 'name';
 
 const COLORS = ['#2563EB', '#14B8A6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#F97316', '#06B6D4'];
 
 export default function PortfolioPage() {
   const [tab, setTab] = useState('Holdings');
-  const [period, setPeriod] = useState<Period>('1M');
   const [sort, setSort] = useState<SortKey>('value');
 
   const { data: portfolio, isLoading } = useQuery({
@@ -26,13 +23,7 @@ export default function PortfolioPage() {
     refetchInterval: 30_000,
   });
 
-  const { data: histData, isLoading: histLoading } = useQuery({
-    queryKey: ['portfolio-history', period],
-    queryFn: () => api.get(`/api/portfolio/history?period=${period}`).then(r => r.data),
-    enabled: tab === 'Performance',
-  });
-
-  const { data: divData } = useQuery({
+const { data: divData } = useQuery({
     queryKey: ['dividends'],
     queryFn: () => api.get('/api/portfolio/dividends').then(r => r.data),
     enabled: tab === 'Dividends',
@@ -61,12 +52,6 @@ export default function PortfolioPage() {
   const pieData = positions.map((p, i) => ({
     name: p.symbol, value: Number(p.marketValue), fill: COLORS[i % COLORS.length],
   }));
-
-  const histPoints: any[] = histData?.history ?? [];
-  const firstVal = histPoints[0]?.value;
-  const lastVal = histPoints[histPoints.length - 1]?.value;
-  const periodChange = firstVal != null && lastVal != null ? Number(lastVal) - Number(firstVal) : null;
-  const periodColor = periodChange === null || periodChange >= 0 ? '#10b981' : '#ef4444';
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -235,59 +220,6 @@ export default function PortfolioPage() {
         </div>
       )}
 
-      {/* ── Performance tab ── */}
-      {tab === 'Performance' && (
-        <div className="card p-0 overflow-hidden">
-          <div className="flex items-center gap-3 p-5 border-b border-gray-800/60">
-            <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
-              {PERIODS.map(p => (
-                <button key={p} onClick={() => setPeriod(p)}
-                  className={clsx('px-3 py-1.5 text-xs font-semibold rounded-lg transition-all',
-                    period === p ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
-                  style={period === p ? { backgroundColor: 'rgba(255,255,255,0.10)' } : {}}>
-                  {p}
-                </button>
-              ))}
-            </div>
-            {periodChange !== null && (
-              <div className="ml-auto text-right">
-                <p className={clsx('text-sm font-semibold', periodChange >= 0 ? 'text-green-400' : 'text-red-400')}>
-                  {periodChange >= 0 ? '+' : ''}${Math.abs(periodChange).toFixed(2)}
-                </p>
-                <p className="text-xs text-gray-500">{period} change</p>
-              </div>
-            )}
-          </div>
-          <div className="p-6">
-            {histLoading ? (
-              <div className="h-[300px] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: 'var(--accent)' }} />
-              </div>
-            ) : histPoints.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={histPoints}>
-                  <defs>
-                    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={periodColor} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={periodColor} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }}
-                    tickFormatter={d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })} />
-                  <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} tickFormatter={v => `$${Number(v).toFixed(0)}`} />
-                  <Tooltip
-                    contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
-                    formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Portfolio Value']}
-                  />
-                  <Area type="monotone" dataKey="value" stroke={periodColor} strokeWidth={2} fill="url(#pg)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <EmptyState icon={TrendingUp} title="No performance data yet" description="Trade to start building history." />
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ── Transactions tab ── */}
       {tab === 'Transactions' && (
