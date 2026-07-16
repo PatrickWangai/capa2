@@ -227,7 +227,7 @@ export default function LandingPage() {
           <CapaLogo size={44} />
         </div>
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
-          {[['About', '/about'], ['Pricing', '/pricing'], ['FAQ', '/faq'], ['Security', '/security']].map(([l, h]) => (
+          {[['About', '/about'], ['Contact', '/contact']].map(([l, h]) => (
             <Link key={l} to={h} style={{ fontSize: 13, color: SEC, textDecoration: 'none' }}>{l}</Link>
           ))}
         </div>
@@ -366,8 +366,8 @@ export default function LandingPage() {
               <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
             </div>
             {[
-              { heading: 'Company', links: [['About', '/about'], ['Pricing', '/pricing'], ['Security', '/security'], ['Contact', '/contact']] },
-              { heading: 'Legal',   links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['FAQ', '/faq']] },
+              { heading: 'Company', links: [['About', '/about'], ['Contact', '/contact']] },
+              { heading: 'Legal',   links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy']] },
               { heading: 'Account', links: [['Sign In', '/login'], ['Register', '/register']] },
             ].map(({ heading, links }) => (
               <div key={heading}>

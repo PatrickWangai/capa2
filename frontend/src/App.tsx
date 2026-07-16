@@ -38,9 +38,6 @@ const VerifyEmailPage       = lazy(() => import('./pages/VerifyEmailPage'));
 // Info pages
 const AboutPage             = lazy(() => import('./pages/AboutPage'));
 const ContactPage           = lazy(() => import('./pages/ContactPage'));
-const FaqPage               = lazy(() => import('./pages/FaqPage'));
-const PricingPage           = lazy(() => import('./pages/PricingPage'));
-const SecurityPage          = lazy(() => import('./pages/SecurityPage'));
 const TermsPage             = lazy(() => import('./pages/TermsPage'));
 const PrivacyPage           = lazy(() => import('./pages/PrivacyPage'));
 const NotFoundPage          = lazy(() => import('./pages/NotFoundPage'));
@@ -174,9 +171,6 @@ export default function App() {
             {/* Info / marketing */}
             <Route path="/about"    element={<><PageTitle title="About" /><AboutPage /></>} />
             <Route path="/contact"  element={<><PageTitle title="Contact" /><ContactPage /></>} />
-            <Route path="/faq"      element={<><PageTitle title="FAQ" /><FaqPage /></>} />
-            <Route path="/pricing"  element={<><PageTitle title="Pricing" /><PricingPage /></>} />
-            <Route path="/security" element={<><PageTitle title="Security" /><SecurityPage /></>} />
             <Route path="/terms"    element={<><PageTitle title="Terms of Service" /><TermsPage /></>} />
             <Route path="/privacy"  element={<><PageTitle title="Privacy Policy" /><PrivacyPage /></>} />
 
