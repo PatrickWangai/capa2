@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const TEXT = 'var(--text)';
-const SEC = 'var(--text-secondary)';
+const SEC    = 'var(--text-secondary)';
 const ACCENT = 'var(--accent)';
-const CARD = '#1c1c1e';
+const CARD   = '#1c1c1e';
+const DIVIDER = '1px solid rgba(255,255,255,0.08)';
 
 function Nav() {
   return (
@@ -13,121 +13,185 @@ function Nav() {
         <CapaLogo size={44} />
       </Link>
       <div style={{ display: 'flex', gap: 20 }}>
-        <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
+        <Link to="/login"    style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
         <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
       </div>
     </nav>
   );
 }
 
+const steps = [
+  {
+    n: '01',
+    title: 'Create Your Account',
+    body: (
+      <>
+        <p style={{ margin: '0 0 10px' }}>Sign up in just a few minutes.</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>You'll need:</p>
+        <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+          {['Email address', 'Phone number', 'Government-issued ID or Passport', 'KRA PIN (for Kenyan residents)', 'A secure password'].map(i => <li key={i}>{i}</li>)}
+        </ul>
+        <p style={{ margin: '12px 0 0' }}>Complete identity verification (KYC) to unlock all platform features.</p>
+      </>
+    ),
+  },
+  {
+    n: '02',
+    title: 'Fund Your Account',
+    body: (
+      <>
+        <p style={{ margin: '0 0 10px' }}>Deposit funds securely using your preferred payment method.</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>Supported methods (coming soon):</p>
+        <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+          {['M-Pesa', 'Bank Transfer', 'Debit/Credit Card'].map(i => <li key={i}>{i}</li>)}
+        </ul>
+        <p style={{ margin: '12px 0 0' }}>Once your deposit is confirmed, your balance will appear in your CAPA wallet.</p>
+      </>
+    ),
+  },
+  {
+    n: '03',
+    title: 'Convert Your Currency',
+    body: (
+      <>
+        <p style={{ margin: '0 0 10px' }}>CAPA supports multi-currency investing. Convert your local currency into the currency required for your chosen market using competitive exchange rates.</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>For example:</p>
+        <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+          {['KES → USD (United States)', 'KES → GBP (United Kingdom)', 'KES → EUR (Europe)'].map(i => <li key={i}>{i}</li>)}
+        </ul>
+        <p style={{ margin: '12px 0 0' }}>Your converted funds are stored securely in your investment wallet, ready for trading.</p>
+      </>
+    ),
+  },
+  {
+    n: '04',
+    title: 'Start Investing',
+    body: (
+      <>
+        <p style={{ margin: '0 0 10px' }}>Explore stock markets from around the world and invest in companies you believe in.</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>With CAPA you can:</p>
+        <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
+          {['Invest in individual stocks', 'Buy fractional shares', 'Invest in Exchange-Traded Funds (ETFs)', 'Build and manage a diversified portfolio', 'Track your investments in real time', 'Monitor market performance with live pricing and charts'].map(i => <li key={i}>{i}</li>)}
+        </ul>
+      </>
+    ),
+  },
+];
+
+const whyPoints = [
+  'Access multiple global stock exchanges from one platform',
+  'Invest using your local currency',
+  'Secure multi-currency wallets',
+  'Transparent pricing with no hidden fees',
+  'Simple, modern, and intuitive experience',
+  'Built for African investors with global ambitions',
+];
+
 export default function AboutPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: '#f5f5f7', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       {/* Hero */}
-      <section style={{ textAlign: 'center', padding: '80px 24px 60px' }}>
-        <div className="orange-float" style={{ display: 'inline-block', marginBottom: 24 }}>
-          <CapaLogo size={120} />
+      <section style={{ textAlign: 'center', padding: '80px 24px 56px' }}>
+        <div style={{ display: 'inline-block', marginBottom: 24 }}>
+          <CapaLogo size={100} />
         </div>
-        <h1 style={{ fontSize: 'clamp(36px,6vw,64px)', fontWeight: 700, letterSpacing: '-0.04em', margin: '0 0 16px', lineHeight: 1.05 }}>
-          Investing for Everyone,<br />Everywhere
+        <h1 style={{ fontSize: 'clamp(36px,6vw,64px)', fontWeight: 700, letterSpacing: '-0.04em', margin: '0 0 12px', lineHeight: 1.05 }}>
+          Investing Without Borders
         </h1>
-        <p style={{ fontSize: 19, color: SEC, maxWidth: 540, margin: '0 auto', lineHeight: 1.6 }}>
-          Capa is your trusted trading platform connecting African investors to global markets — simply, securely, and affordably.
+        <p style={{ fontSize: 22, fontWeight: 600, color: ACCENT, margin: '0 0 16px' }}>
+          Invest in Global Markets from Africa
+        </p>
+        <p style={{ fontSize: 17, color: SEC, maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+          CAPA makes it simple, secure, and affordable for African investors to access leading stock exchanges around the world. Build your wealth by investing in global companies — all from one platform.
         </p>
       </section>
 
-      {/* About CAPA */}
-      <section style={{ maxWidth: 760, margin: '0 auto', padding: '0 24px 64px' }}>
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '40px 36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
-          <h2 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 16 }}>About CAPA</h2>
-          <p style={{ fontSize: 17, color: SEC, lineHeight: 1.7, margin: 0 }}>
-            CAPA is a company dedicated to listing all stock exchange platforms in one place. Our goal is to make it easier for investors to quickly identify and evaluate investment opportunities.
-          </p>
-          <p style={{ fontSize: 17, color: SEC, lineHeight: 1.7, margin: '16px 0 0' }}>
-            We are situated at <strong style={{ color: TEXT }}>Zetech University</strong> in Nairobi, Kenya.
-          </p>
-          <div style={{ marginTop: 24, padding: '20px 24px', borderRadius: 14, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: SEC, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 12px' }}>Contact Us</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <a href="tel:+254799277412" style={{ color: ACCENT, textDecoration: 'none', fontSize: 16, fontWeight: 500 }}>
-                📞 +254 799 277 412
-              </a>
-              <a href="mailto:capa@gmail.com" style={{ color: ACCENT, textDecoration: 'none', fontSize: 16, fontWeight: 500 }}>
-                ✉️ capa@gmail.com
-              </a>
-            </div>
-          </div>
-          <p style={{ fontSize: 16, color: SEC, lineHeight: 1.7, margin: '24px 0 0', fontStyle: 'italic' }}>
-            We thank you for choosing us as your trusted trading platform.
-          </p>
-        </div>
-      </section>
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px 80px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-      {/* Guidelines */}
-      <section style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 64px' }}>
-        <h2 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 8, textAlign: 'center' }}>How to Get Started</h2>
-        <p style={{ fontSize: 15, color: SEC, textAlign: 'center', marginBottom: 32 }}>Everything you need to know to begin investing with CAPA.</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {[
-            {
-              step: '01',
-              title: 'How to Open an Account',
-              sub: 'If you are new!',
-              body: 'Requirements: Email address, phone number, KRA PIN, and preferred mode of payment and deposit.',
-            },
-            {
-              step: '02',
-              title: 'KRA PIN — What It Is & Why We Need It',
-              sub: null,
-              body: 'A KRA PIN (Kenya Revenue Authority Personal Identification Number) is a unique identifier issued by the Kenya Revenue Authority. It is required by Kenyan law for any financial or investment activity, including opening a brokerage account. CAPA uses your KRA PIN to comply with tax regulations and to report any capital gains or dividends you earn to the KRA. If you do not have a KRA PIN, you can register for one for free at iTax (itax.kra.go.ke) using your National ID. The process takes only a few minutes.',
-            },
-            {
-              step: '03',
-              title: 'Deposit Money',
-              sub: null,
-              body: 'Deposit money using your preferred mobile banking app, then refresh this page and the balance should be updated in the app. If you encounter any errors, kindly contact our support team. After that, you will need to convert currencies based on the country in which each stock is listed.',
-            },
-            {
-              step: '04',
-              title: 'Changing Currencies',
-              sub: null,
-              body: 'Select the preferred country and your mobile wallet money will be updated automatically based on the country\'s conversion rate.',
-            },
-            {
-              step: '05',
-              title: 'Buying Stocks',
-              sub: null,
-              body: 'Please select a country to view its stock exchanges and market listings, including publicly traded companies and their current prices. You can choose to invest in individual stocks or in our index fund.',
-            },
-          ].map(({ step, title, sub, body }) => (
-            <div key={step} style={{ backgroundColor: CARD, borderRadius: 18, padding: '28px 32px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: ACCENT, opacity: 0.7, minWidth: 40, lineHeight: 1 }}>{step}</div>
-              <div>
-                <h3 style={{ fontSize: 17, fontWeight: 600, margin: '0 0 2px', letterSpacing: '-0.02em' }}>
-                  {title}{sub && <span style={{ fontSize: 13, fontWeight: 400, color: SEC, marginLeft: 8 }}>— {sub}</span>}
-                </h3>
-                <p style={{ fontSize: 14, color: SEC, margin: '8px 0 0', lineHeight: 1.7 }}>{body}</p>
-              </div>
-            </div>
-          ))}
+        {/* About */}
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 16px' }}>About CAPA</h2>
+          <p style={{ fontSize: 16, color: SEC, lineHeight: 1.75, margin: '0 0 14px' }}>
+            CAPA is a global stock investing platform built to give investors seamless access to multiple international stock exchanges through a single account. Our mission is to remove barriers to global investing by providing a secure, transparent, and user-friendly experience.
+          </p>
+          <p style={{ fontSize: 16, color: SEC, lineHeight: 1.75, margin: 0 }}>
+            Whether you're investing in companies listed in the United States, Europe, Asia, or Africa, CAPA helps you discover opportunities, manage your portfolio, and grow your wealth with confidence.
+          </p>
+          <div style={{ marginTop: 20, paddingTop: 20, borderTop: DIVIDER, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 20 }}>🏢</span>
+            <span style={{ fontSize: 15, color: SEC }}><strong style={{ color: '#fff' }}>Head Office</strong> — Nairobi, Kenya</span>
+          </div>
         </div>
-      </section>
+
+        {/* Contact */}
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 8px' }}>Contact Us</h2>
+          <p style={{ fontSize: 15, color: SEC, margin: '0 0 20px' }}>Our support team is always ready to help you with your investing journey.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <a href="tel:+254799277412" style={{ display: 'flex', alignItems: 'center', gap: 10, color: ACCENT, textDecoration: 'none', fontSize: 16, fontWeight: 500 }}>
+              <span style={{ fontSize: 20 }}>📞</span> +254 799 277 412
+            </a>
+            <a href="mailto:support@capa.co.ke" style={{ display: 'flex', alignItems: 'center', gap: 10, color: ACCENT, textDecoration: 'none', fontSize: 16, fontWeight: 500 }}>
+              <span style={{ fontSize: 20 }}>✉️</span> support@capa.co.ke
+            </a>
+          </div>
+        </div>
+
+        {/* Getting Started */}
+        <div>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 6px' }}>Getting Started</h2>
+          <p style={{ fontSize: 15, color: SEC, margin: '0 0 24px' }}>Everything you need to begin investing with CAPA.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {steps.map(({ n, title, body }) => (
+              <div key={n} style={{ backgroundColor: CARD, borderRadius: 18, padding: '28px 32px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: ACCENT, opacity: 0.7, minWidth: 36, lineHeight: 1, flexShrink: 0 }}>{n}</div>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.02em' }}>{title}</h3>
+                  <div style={{ fontSize: 14, color: SEC, lineHeight: 1.75 }}>{body}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Why CAPA */}
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 20px' }}>Why Choose CAPA?</h2>
+          <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {whyPoints.map(p => (
+              <li key={p} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 15, color: SEC, lineHeight: 1.5 }}>
+                <span style={{ color: ACCENT, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Mission */}
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 14px' }}>Our Mission</h2>
+          <p style={{ fontSize: 16, color: SEC, lineHeight: 1.75, margin: 0 }}>
+            To empower every African investor with seamless access to global financial markets through innovative technology, transparency, and world-class investment tools.
+          </p>
+        </div>
+
+      </div>
 
       {/* CTA */}
-      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', marginTop: 24 }}>
-        <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>Ready to start investing?</h2>
-        <p style={{ fontSize: 17, color: SEC, marginBottom: 28 }}>Open your account in minutes. No minimum deposit.</p>
-        <Link to="/register" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '14px 36px', borderRadius: 980, fontSize: 18, fontWeight: 500 }}>
+      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
+        <h2 style={{ fontSize: 30, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>Ready to start investing?</h2>
+        <p style={{ fontSize: 17, color: SEC, marginBottom: 28 }}>Open your account in minutes.</p>
+        <Link to="/register" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '14px 36px', borderRadius: 980, fontSize: 17, fontWeight: 600 }}>
           Get Started
         </Link>
       </section>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: DIVIDER }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
-          © {new Date().getFullYear()} Capa Investments Ltd. Regulated investment platform. Capital at risk.{' '}
-          <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>
+          © {new Date().getFullYear()} CAPA. All rights reserved.{' '}
+          <Link to="/terms"   style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>
         </p>
       </footer>
     </div>
