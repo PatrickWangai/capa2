@@ -103,22 +103,31 @@ export default function AppLayout() {
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Appearance</p>
-              <div style={{ marginBottom: 24 }}>
-                <button
-                  onClick={() => setTheme('black')}
-                  style={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                    padding: '14px 10px', borderRadius: 16, cursor: 'pointer', width: '48%',
-                    backgroundColor: theme === 'black' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
-                    border: theme === 'black' ? '2px solid #f5f5f7' : '1.5px solid rgba(255,255,255,0.08)',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <div style={{ width: 60, height: 36, borderRadius: 10, background: '#181818', border: '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: 28, height: 14, borderRadius: 4, background: '#f5f5f7', opacity: 0.25 }} />
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: theme === 'black' ? 600 : 500, color: theme === 'black' ? '#f5f5f7' : drawerLabelClr }}>Black</span>
-                </button>
+              <div style={{ display: 'flex', gap: 10, marginBottom: 24 }}>
+                {(['black', 'white'] as const).map(name => {
+                  const active = theme === name;
+                  const isWhite = name === 'white';
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => setTheme(name)}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                        padding: '14px 10px', borderRadius: 16, cursor: 'pointer', flex: 1,
+                        backgroundColor: active ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
+                        border: active ? '2px solid #f5f5f7' : '1.5px solid rgba(255,255,255,0.08)',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      <div style={{ width: 60, height: 36, borderRadius: 10, background: isWhite ? '#f5f5f7' : '#181818', border: '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 28, height: 14, borderRadius: 4, background: isWhite ? '#181818' : '#f5f5f7', opacity: 0.3 }} />
+                      </div>
+                      <span style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? '#f5f5f7' : drawerLabelClr }}>
+                        {isWhite ? 'White' : 'Black'}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Colour Theme</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>

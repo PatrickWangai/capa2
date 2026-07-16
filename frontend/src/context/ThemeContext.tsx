@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type ThemeName =
   | 'blue' | 'teal' | 'purple' | 'rose' | 'amber'
   | 'indigo' | 'cyan' | 'emerald' | 'orange' | 'pink'
-  | 'violet' | 'sky' | 'lime' | 'black';
+  | 'violet' | 'sky' | 'lime' | 'black' | 'white';
 
 type ThemeVars = {
   label: string;
@@ -153,6 +153,17 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
     sidebarBg: 'rgba(15,15,15,0.97)',
     inputBg:   'rgba(40,40,40,0.95)',
     navText:   'rgba(235,235,245,0.80)',
+  },
+  white: {
+    label: 'White', swatch: '#ffffff',
+    accent: '#ffffff', accentDark: '#d4d4d4', accentRgb: '255,255,255',
+    bg: ['#0a0a0a','#111111','#161616','#1c1c1c','#222222','#0a0a0a'],
+    accentText: '#000000',
+    cardBg:    'rgba(28,28,28,0.96)',
+    cardBorder:'rgba(255,255,255,0.12)',
+    sidebarBg: 'rgba(10,10,10,0.98)',
+    inputBg:   'rgba(38,38,38,0.96)',
+    navText:   'rgba(255,255,255,0.85)',
   },
 };
 
