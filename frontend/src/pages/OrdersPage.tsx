@@ -113,7 +113,7 @@ export default function OrdersPage() {
       {isLoading ? <PageLoader /> : (
         <>
           {/* Desktop table — hidden on mobile */}
-          <div className="card overflow-x-auto p-0 hidden sm:block">
+          <div className="card overflow-x-auto p-0 hidden lg:block">
             <table className="w-full">
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -183,7 +183,7 @@ export default function OrdersPage() {
           </div>
 
           {/* Mobile cards — shown only on small screens */}
-          <div className="block sm:hidden space-y-2">
+          <div className="block lg:hidden space-y-2">
             {orders.length === 0 ? (
               <div className="card">
                 <EmptyState icon={ArrowDownUp} title="No orders found" description="Place your first order from the Markets page." />
