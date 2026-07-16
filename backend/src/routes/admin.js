@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import * as c from '../controllers/adminController.js';
+
 import * as kycC from '../controllers/kycController.js';
 import auth from '../middleware/authenticate.js';
 import requireAdmin from '../middleware/requireAdmin.js';
@@ -12,5 +13,7 @@ router.get('/transactions', ...guard, c.listTransactions);
 router.patch('/transactions/:id/confirm', ...guard, c.confirmTransaction);
 router.get('/kyc/pending', ...guard, kycC.listPending);
 router.patch('/kyc/:docId/review', ...guard, kycC.reviewDocument);
-router.get('/audit', ...guard, c.getAuditLogs);
+router.get('/audit',               ...guard, c.getAuditLogs);
+router.get('/wallet-conversions',  ...guard, c.listWalletConversions);
+router.get('/wallet-stats',        ...guard, c.getWalletStats);
 export default router;

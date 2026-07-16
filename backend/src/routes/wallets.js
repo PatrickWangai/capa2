@@ -1,51 +1,45 @@
 import { Router } from 'express';
 import auth from '../middleware/authenticate.js';
-import { prisma } from '../utils/db.js';
 import validate from '../middleware/validate.js';
-import { walletConvertSchema } from '../validation/schemas.js';
+import Joi from 'joi';
+import {
+  getWallets,
+  convertCurrency,
+  getConversions,
+  getWalletTransactions,
+  getFxRates,
+  depositKes,
+  withdrawKes,
+} from '../controllers/walletController.js';
+
 const router = Router();
 
-// GET /api/wallets — return all balances for the primary account
-router.get('/', auth, async (req, res) => {
-  const account = await prisma.investmentAccount.findFirst({
-    where: { userId: req.user.id, isPrimary: true },
-    include: {
-      balances: true,
-      _count: { select: { positions: true, orders: true } },
-    },
-  });
-  if (!account) return res.status(404).json({ error: 'Account not found.' });
-
-  const balances = account.balances.map(b => ({
-    currency: b.currency,
-    available: Number(b.available).toFixed(6),
-    reserved: Number(b.reserved).toFixed(6),
-    total: (Number(b.available) + Number(b.reserved)).toFixed(6),
-  }));
-
-  res.json({
-    account: {
-      id: account.id,
-      accountNumber: account.accountNumber,
-      baseCurrency: account.baseCurrency,
-      positionCount: account._count.positions,
-      orderCount: account._count.orders,
-    },
-    balances,
-  });
+const convertSchema = Joi.object({
+  fromCurrency: Joi.string().valid('KES', 'USD').uppercase().required(),
+  toCurrency:   Joi.string().valid('KES', 'USD').uppercase().required(),
+  amount:       Joi.number().positive().max(10_000_000).required(),
 });
 
-// POST /api/wallets/convert — FX conversion between currencies (stub)
-router.post('/convert', auth, validate(walletConvertSchema), async (req, res) => {
-  const { fromCurrency, toCurrency, amount } = req.body;
-  // Placeholder FX rates (production: use live FX API)
-  const rates = { USD_KES: 129.5, KES_USD: 1 / 129.5, USD_GBP: 0.79, GBP_USD: 1 / 0.79, KES_GBP: 0.0061, GBP_KES: 163 }
-  const key = `${fromCurrency}_${toCurrency}`;
-  const rate = rates[key];
-  if (!rate) return res.status(400).json({ error: `Conversion ${key} not supported.` });
-
-  const converted = (Number(amount) * rate).toFixed(2);
-  res.json({ from: { currency: fromCurrency, amount }, to: { currency: toCurrency, amount: converted }, rate, fee: (Number(amount) * 0.005).toFixed(4) });
+const depositSchema = Joi.object({
+  amount:      Joi.number().positive().max(10_000_000).required(),
+  description: Joi.string().max(200).optional(),
 });
+
+const withdrawSchema = Joi.object({
+  amount:      Joi.number().positive().max(10_000_000).required(),
+  phone:       Joi.string().optional(),
+  description: Joi.string().max(200).optional(),
+});
+
+// Balances & rates
+router.get('/',             auth, getWallets);
+router.get('/fx-rates',     auth, getFxRates);
+router.get('/conversions',  auth, getConversions);
+router.get('/transactions', auth, getWalletTransactions);
+
+// Actions
+router.post('/convert',      auth, validate(convertSchema),  convertCurrency);
+router.post('/deposit-kes',  auth, validate(depositSchema),  depositKes);
+router.post('/withdraw-kes', auth, validate(withdrawSchema), withdrawKes);
 
 export default router;

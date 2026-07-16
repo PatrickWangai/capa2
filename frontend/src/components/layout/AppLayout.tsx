@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
-  ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu,
+  ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu, Wallet,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAlertStore } from '../../store/alertStore';
@@ -16,6 +16,7 @@ const nav = [
   { to: '/markets',       label: 'Markets',      icon: TrendingUp },
   { to: '/portfolio',     label: 'Portfolio',    icon: Briefcase },
   { to: '/orders',        label: 'Orders',       icon: ArrowDownUp },
+  { to: '/wallet',        label: 'Wallet',       icon: Wallet },
   { to: '/notifications', label: 'Alerts',       icon: Bell },
   { to: '/kyc',           label: 'Verification', icon: ShieldCheck },
   { to: '/profile',       label: 'Profile',      icon: User },

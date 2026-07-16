@@ -226,8 +226,9 @@ model InvestmentAccount {
   balances      AccountBalance[]
   orders        Order[]
   positions     Position[]
-  transactions  Transaction[]
-  dividendPays  DividendPayment[]
+  transactions    Transaction[]
+  dividendPays    DividendPayment[]
+  conversions     CurrencyConversion[]
 
   @@map("investment_accounts")
 }
@@ -532,6 +533,25 @@ model RefreshToken {
 
   @@index([userId])
   @@map("refresh_tokens")
+}
+
+// Tracks every KES↔USD conversion event for regulatory & user history.
+model CurrencyConversion {
+  id            String    @id @default(uuid())
+  accountId     String    @map("account_id")
+  fromCurrency  Currency  @map("from_currency")
+  toCurrency    Currency  @map("to_currency")
+  fromAmount    Decimal   @map("from_amount")   @db.Decimal(20, 6)
+  toAmount      Decimal   @map("to_amount")     @db.Decimal(20, 6)
+  rate          Decimal   @db.Decimal(16, 8)
+  fee           Decimal   @default(0)           @db.Decimal(20, 6)
+  feeCurrency   Currency  @map("fee_currency")
+  createdAt     DateTime  @default(now())       @map("created_at")
+
+  account       InvestmentAccount @relation(fields: [accountId], references: [id])
+
+  @@index([accountId, createdAt(sort: Desc)])
+  @@map("currency_conversions")
 }
 
 model AuditLog {

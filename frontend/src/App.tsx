@@ -23,12 +23,16 @@ import KycPage           from './pages/KycPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage       from './pages/ProfilePage';
 import OnboardingPage    from './pages/OnboardingPage';
+import WalletPage            from './pages/WalletPage';
+import CurrencyConverterPage from './pages/CurrencyConverterPage';
+import FxHistoryPage         from './pages/FxHistoryPage';
 
 // Admin
 const AdminDashboardPage    = lazy(() => import('./pages/admin/AdminDashboardPage'));
 const AdminUsersPage        = lazy(() => import('./pages/admin/AdminUsersPage'));
 const AdminKycPage          = lazy(() => import('./pages/admin/AdminKycPage'));
 const AdminTransactionsPage = lazy(() => import('./pages/admin/AdminTransactionsPage'));
+const AdminWalletsPage      = lazy(() => import('./pages/admin/AdminWalletsPage'));
 
 // Auth recovery
 const ForgotPasswordPage    = lazy(() => import('./pages/ForgotPasswordPage'));
@@ -157,6 +161,9 @@ export default function App() {
               <Route path="kyc"          element={<><PageTitle title="Verify Identity" /><ErrorBoundary><KycPage /></ErrorBoundary></>} />
               <Route path="notifications" element={<><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></>} />
               <Route path="profile"      element={<><PageTitle title="Profile" /><ErrorBoundary><ProfilePage /></ErrorBoundary></>} />
+              <Route path="wallet"         element={<><PageTitle title="Wallet" /><ErrorBoundary><WalletPage /></ErrorBoundary></>} />
+              <Route path="wallet/convert" element={<><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></>} />
+              <Route path="wallet/history" element={<><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></>} />
             </Route>
 
             {/* Admin */}
@@ -166,6 +173,7 @@ export default function App() {
               <Route path="users"        element={<><PageTitle title="Admin — Users" /><AdminUsersPage /></>} />
               <Route path="kyc"          element={<><PageTitle title="Admin — KYC" /><AdminKycPage /></>} />
               <Route path="transactions" element={<><PageTitle title="Admin — Transactions" /><AdminTransactionsPage /></>} />
+              <Route path="wallets"      element={<><PageTitle title="Admin — Wallets" /><AdminWalletsPage /></>} />
             </Route>
 
             {/* Info / marketing */}

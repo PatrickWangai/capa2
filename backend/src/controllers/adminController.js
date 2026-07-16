@@ -71,3 +71,45 @@ export async function getAuditLogs(req, res) {
   const logs = await prisma.auditLog.findMany({ orderBy: { createdAt: 'desc' }, take: 100 });
   res.json({ logs });
 }
+
+// GET /api/admin/wallet-conversions
+export async function listWalletConversions(req, res) {
+  const limit  = Math.min(Number(req.query.limit  ?? 50), 200);
+  const offset = Number(req.query.offset ?? 0);
+
+  const [conversions, total] = await Promise.all([
+    prisma.currencyConversion.findMany({
+      orderBy: { createdAt: 'desc' },
+      take:    limit,
+      skip:    offset,
+      include: { account: { include: { user: { select: { firstName: true, lastName: true, email: true } } } } },
+    }),
+    prisma.currencyConversion.count(),
+  ]);
+
+  res.json({ conversions, total, limit, offset });
+}
+
+// GET /api/admin/wallet-stats
+export async function getWalletStats(req, res) {
+  const [totalConversions, fxVolume, balanceSummary] = await Promise.all([
+    prisma.currencyConversion.count(),
+    prisma.currencyConversion.groupBy({
+      by:     ['fromCurrency', 'toCurrency'],
+      _sum:   { fromAmount: true, fee: true },
+      _count: { id: true },
+    }),
+    prisma.accountBalance.groupBy({
+      by:    ['currency'],
+      _sum:  { available: true, reserved: true },
+    }),
+  ]);
+
+  res.json({
+    stats: {
+      totalConversions,
+      fxVolume,
+      balanceSummary,
+    },
+  });
+}
