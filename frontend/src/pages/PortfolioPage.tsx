@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, Briefcase, DollarSign, ArrowUpDown } from 'lucide-react';
+import { Briefcase, DollarSign, ArrowUpDown } from 'lucide-react';
 import { StatCard, EmptyState, Badge, PageLoader } from '../components/ui';
 import { StockLogo } from '../components/ui/StockLogo';
 import clsx from 'clsx';
 
 const TABS = ['Holdings', 'Transactions', 'Dividends'];
-type SortKey = 'value' | 'pnl' | 'name';
+type SortKey = 'value' | 'name';
 
 const COLORS = ['#2563EB', '#14B8A6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#F97316', '#06B6D4'];
 
@@ -23,7 +23,7 @@ export default function PortfolioPage() {
     refetchInterval: 30_000,
   });
 
-const { data: divData } = useQuery({
+  const { data: divData } = useQuery({
     queryKey: ['dividends'],
     queryFn: () => api.get('/api/portfolio/dividends').then(r => r.data),
     enabled: tab === 'Dividends',
@@ -39,13 +39,9 @@ const { data: divData } = useQuery({
 
   const summary = portfolio?.summary || {};
   const positions: any[] = portfolio?.positions || [];
-  const balances: any[] = portfolio?.cashBalances || [];
-  const gainLoss = Number(summary.totalGainLoss || 0);
-  const isUp = gainLoss >= 0;
 
   const sortedPositions = [...positions].sort((a, b) => {
     if (sort === 'value') return Number(b.marketValue) - Number(a.marketValue);
-    if (sort === 'pnl') return Number(b.gainLossPct) - Number(a.gainLossPct);
     return a.symbol.localeCompare(b.symbol);
   });
 
@@ -57,11 +53,11 @@ const { data: divData } = useQuery({
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-white">Portfolio</h1>
-        <p className="text-gray-400 mt-1">Your holdings and performance</p>
+        <p className="text-gray-400 mt-1">Your holdings</p>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           label="Total Value"
           value={`$${Number(summary.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
@@ -72,21 +68,7 @@ const { data: divData } = useQuery({
           value={`$${Number(summary.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
           icon={DollarSign}
         />
-        <StatCard
-          label="Total P&L"
-          value={`${isUp ? '+' : ''}$${Math.abs(gainLoss).toFixed(2)}`}
-          sub={`${summary.totalGainLossPct}%`}
-          positive={isUp}
-          icon={isUp ? TrendingUp : TrendingDown}
-        />
-        <StatCard
-          label="Day Change"
-          value={`${Number(summary.dailyChange || 0) >= 0 ? '+' : ''}$${Number(summary.dailyChange || 0).toFixed(2)}`}
-          sub={`${summary.dailyChangePct}%`}
-          positive={Number(summary.dailyChange || 0) >= 0}
-        />
       </div>
-
 
       {/* Tabs */}
       <div className="border-b border-gray-800">
@@ -115,12 +97,12 @@ const { data: divData } = useQuery({
                 <div className="flex items-center gap-2">
                   <ArrowUpDown size={12} className="text-gray-500" />
                   <span className="text-xs text-gray-500">Sort by</span>
-                  {(['value', 'pnl', 'name'] as SortKey[]).map(s => (
+                  {(['value', 'name'] as SortKey[]).map(s => (
                     <button key={s} onClick={() => setSort(s)}
                       className={clsx('text-xs px-2.5 py-1 rounded-lg font-medium transition-colors',
                         sort === s ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
                       style={sort === s ? { backgroundColor: 'var(--accent)', opacity: 0.9 } : {}}>
-                      {s === 'pnl' ? 'P&L' : s.charAt(0).toUpperCase() + s.slice(1)}
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -157,20 +139,7 @@ const { data: divData } = useQuery({
                   <p className="font-semibold text-white">
                     {pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}
                   </p>
-                  <div className="flex items-center gap-3 justify-end mt-0.5">
-                    <span className="text-xs text-gray-500">{pos.allocation}%</span>
-                    <p className={clsx('text-sm', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
-                      {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
-                      <span className="text-xs ml-1 opacity-70">
-                        ({Number(pos.gainLoss) >= 0 ? '+' : ''}{Number(pos.gainLoss).toFixed(2)})
-                      </span>
-                    </p>
-                  </div>
-                  {Number(pos.dayGainLoss) !== 0 && (
-                    <p className={clsx('text-xs mt-0.5', Number(pos.dayGainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
-                      Day: {Number(pos.dayGainLoss) >= 0 ? '+' : ''}{Number(pos.dayGainLoss).toFixed(2)}
-                    </p>
-                  )}
+                  <span className="text-xs text-gray-500">{pos.allocation}%</span>
                 </div>
               </Link>
             ))}
@@ -219,7 +188,6 @@ const { data: divData } = useQuery({
           )}
         </div>
       )}
-
 
       {/* ── Transactions tab ── */}
       {tab === 'Transactions' && (

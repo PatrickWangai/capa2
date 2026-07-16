@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
 import {
-  TrendingUp, TrendingDown, DollarSign, Briefcase, ShieldCheck,
+  DollarSign, Briefcase, ShieldCheck,
   ArrowRight, BarChart2, Star, Clock,
 } from 'lucide-react';
 import clsx from 'clsx';
@@ -13,19 +13,12 @@ import { Badge } from '../components/ui';
 
 type MoverTab = 'gainers' | 'losers' | 'active';
 
-function StatCard({ label, value, sub, positive }: { label: string; value: string; sub?: string; positive?: boolean }) {
+function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="card">
       <p className="text-sm text-gray-400">{label}</p>
       <p className="text-2xl font-bold text-white mt-1">{value}</p>
-      {sub && (
-        <p className={clsx('text-sm mt-1 flex items-center gap-1',
-          positive === true ? 'text-green-400' : positive === false ? 'text-red-400' : 'text-gray-400')}>
-          {positive === true && <TrendingUp size={14} />}
-          {positive === false && <TrendingDown size={14} />}
-          {sub}
-        </p>
-      )}
+      {sub && <p className="text-sm mt-1 text-gray-400">{sub}</p>}
     </div>
   );
 }
@@ -62,7 +55,6 @@ const { data: wlData } = useQuery({
   });
 
   const summary = portfolio?.summary;
-  const isUp = summary ? Number(summary.dailyChange) >= 0 : true;
   const watchlistItems: any[] = wlData?.watchlist?.items ?? [];
   const movers: any[] = moversData?.assets ?? [];
   const recentOrders: any[] = ordersData?.orders ?? [];
@@ -122,22 +114,14 @@ const { data: wlData } = useQuery({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           label="Total Value"
           value={`$${Number(summary?.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          sub={summary ? `${isUp ? '+' : ''}$${Number(summary.dailyChange).toFixed(2)} today` : undefined}
-          positive={isUp}
         />
         <StatCard
           label="Total Invested"
           value={`$${Number(summary?.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-        />
-        <StatCard
-          label="Total P&L"
-          value={`${Number(summary?.totalGainLoss || 0) >= 0 ? '+' : ''}$${Number(summary?.totalGainLoss || 0).toFixed(2)}`}
-          sub={summary ? `${summary.totalGainLossPct}%` : undefined}
-          positive={Number(summary?.totalGainLoss || 0) >= 0}
         />
         <StatCard
           label="Positions"
@@ -279,9 +263,7 @@ const { data: wlData } = useQuery({
                       <p className="text-sm font-semibold text-white">
                         {pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}
                       </p>
-                      <p className={clsx('text-xs', Number(pos.gainLoss) >= 0 ? 'text-green-400' : 'text-red-400')}>
-                        {Number(pos.gainLoss) >= 0 ? '+' : ''}{pos.gainLossPct}%
-                      </p>
+                      <p className="text-xs text-gray-500">{pos.allocation}%</p>
                     </div>
                   </div>
                 </Link>
