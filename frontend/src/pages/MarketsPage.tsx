@@ -31,10 +31,18 @@ function isNSEOpen(): boolean {
 
 // ── Config ────────────────────────────────────────────────────
 const EXCHANGES = [
-  { id: 'NSE',    label: 'Nairobi',   flag: '🇰🇪', currency: 'KES', comingSoon: false },
-  { id: 'NYSE',   label: 'New York',  flag: '🇺🇸', currency: 'USD', comingSoon: true  },
-  { id: 'NASDAQ', label: 'NASDAQ',    flag: '🇺🇸', currency: 'USD', comingSoon: true  },
-  { id: 'LSE',    label: 'London',    flag: '🇬🇧', currency: 'GBP', comingSoon: true  },
+  { id: 'NSE',    label: 'Nairobi',     flag: '🇰🇪', currency: 'KES', comingSoon: false },
+  { id: 'NYSE',   label: 'New York',    flag: '🇺🇸', currency: 'USD', comingSoon: true  },
+  { id: 'NASDAQ', label: 'NASDAQ',      flag: '🇺🇸', currency: 'USD', comingSoon: true  },
+  { id: 'LSE',    label: 'London',      flag: '🇬🇧', currency: 'GBP', comingSoon: true  },
+  { id: 'TSE',    label: 'Tokyo',       flag: '🇯🇵', currency: 'JPY', comingSoon: true  },
+  { id: 'TSX',    label: 'Toronto',     flag: '🇨🇦', currency: 'CAD', comingSoon: true  },
+  { id: 'ASX',    label: 'Sydney',      flag: '🇦🇺', currency: 'AUD', comingSoon: true  },
+  { id: 'FSE',    label: 'Frankfurt',   flag: '🇩🇪', currency: 'EUR', comingSoon: true  },
+  { id: 'SIX',    label: 'Zurich',      flag: '🇨🇭', currency: 'CHF', comingSoon: true  },
+  { id: 'HKEX',   label: 'Hong Kong',   flag: '🇭🇰', currency: 'HKD', comingSoon: true  },
+  { id: 'SGX',    label: 'Singapore',   flag: '🇸🇬', currency: 'SGD', comingSoon: true  },
+  { id: 'JSE',    label: 'Johannesburg',flag: '🇿🇦', currency: 'ZAR', comingSoon: true  },
 ];
 
 type View = 'all' | 'gainers' | 'losers' | 'active';

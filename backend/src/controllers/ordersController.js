@@ -31,10 +31,23 @@ export async function placeOrder(req, res) {
   const fee = estimatedTotal.mul(0.001);
 
   if (side === 'BUY') {
-    const balance = account.balances.find(b => b.currency === asset.currency);
+    const balance   = account.balances.find(b => b.currency === asset.currency);
     const available = balance ? new Decimal(balance.available.toString()) : new Decimal(0);
     if (available.lt(estimatedTotal.plus(fee))) {
-      return res.status(400).json({ error: 'Insufficient funds.', required: estimatedTotal.plus(fee).toFixed(2), available: available.toFixed(2), currency: asset.currency });
+      // Check if user has KES that could be converted
+      const kesBalance = account.balances.find(b => b.currency === 'KES');
+      const kesAvail   = kesBalance ? new Decimal(kesBalance.available.toString()) : new Decimal(0);
+      const hint       = asset.currency === 'USD' && kesAvail.gt(0)
+        ? ' You have KES available — convert KES to USD in your Wallet before placing this order.'
+        : '';
+      return res.status(400).json({
+        error:     `Insufficient ${asset.currency} funds.${hint}`,
+        required:  estimatedTotal.plus(fee).toFixed(2),
+        available: available.toFixed(2),
+        currency:  asset.currency,
+        kesAvailable: kesAvail.toFixed(2),
+        hint:      hint.trim() || null,
+      });
     }
   } else {
     const position = await prisma.position.findUnique({ where: { accountId_assetId: { accountId: account.id, assetId } } });

@@ -31,6 +31,7 @@ import WatchlistPage            from './pages/WatchlistPage';
 import DepositPage              from './pages/DepositPage';
 import WithdrawPage             from './pages/WithdrawPage';
 import SettingsPage             from './pages/SettingsPage';
+import TradeConfirmPage         from './pages/TradeConfirmPage';
 
 // Admin
 const AdminDashboardPage    = lazy(() => import('./pages/admin/AdminDashboardPage'));
@@ -174,6 +175,7 @@ export default function App() {
               <Route path="deposit"              element={<><PageTitle title="Deposit" /><ErrorBoundary><DepositPage /></ErrorBoundary></>} />
               <Route path="withdraw"             element={<><PageTitle title="Withdraw" /><ErrorBoundary><WithdrawPage /></ErrorBoundary></>} />
               <Route path="settings"             element={<><PageTitle title="Settings" /><ErrorBoundary><SettingsPage /></ErrorBoundary></>} />
+              <Route path="trade/confirm"        element={<><PageTitle title="Confirm Trade" /><ErrorBoundary><TradeConfirmPage /></ErrorBoundary></>} />
             </Route>
 
             {/* Admin */}

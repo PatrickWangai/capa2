@@ -9,6 +9,7 @@ interface User {
   kycStatus: string;
   status: string;
   adminRole: string | null;
+  mfaEnabled?: boolean;
 }
 
 interface AuthState {

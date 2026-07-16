@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { ArrowRightLeft, TrendingUp, History, Receipt, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
@@ -16,9 +15,7 @@ const LABEL: Record<string, string> = {
 };
 
 export default function WalletPage() {
-  const qc = useQueryClient();
-
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['wallets'],
     queryFn:  () => api.get('/api/wallets').then(r => r.data),
     refetchInterval: 30_000,
@@ -30,39 +27,7 @@ export default function WalletPage() {
   });
 
   const balances: any[] = data?.balances ?? [];
-  const kesBal  = balances.find(b => b.currency === 'KES');
   const rate    = data?.rates?.USD_KES ?? 130;
-
-  const handleDeposit = async () => {
-    const amt = parseFloat(depositAmt);
-    if (!amt || amt <= 0) return toast.error('Enter a valid amount');
-    setBusy(true);
-    try {
-      await api.post('/api/wallets/deposit-kes', { amount: amt });
-      toast.success(`KES ${amt.toLocaleString()} deposited!`);
-      setDepositAmt('');
-      refetch();
-      qc.invalidateQueries({ queryKey: ['wallet-transactions'] });
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Deposit failed');
-    } finally { setBusy(false); }
-  };
-
-  const handleWithdraw = async () => {
-    const amt = parseFloat(withdrawAmt);
-    if (!amt || amt <= 0) return toast.error('Enter a valid amount');
-    setBusy(true);
-    try {
-      await api.post('/api/wallets/withdraw-kes', { amount: amt, phone: withdrawPhone || undefined });
-      toast.success('Withdrawal request submitted. Funds arrive in 1–2 business days.');
-      setWithdrawAmt('');
-      setPhone('');
-      refetch();
-      qc.invalidateQueries({ queryKey: ['wallet-transactions'] });
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Withdrawal failed');
-    } finally { setBusy(false); }
-  };
 
   if (isLoading) return <PageLoader />;
 

@@ -5,11 +5,17 @@ import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp, DollarSign, Briefcase, ShieldCheck,
-  ArrowRight, BarChart2, Star, Clock,
+  ArrowRight, BarChart2, Star, Clock, Wallet, ArrowUpRight, ArrowDownLeft,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
 import { Badge } from '../components/ui';
+
+const FLAG: Record<string, string> = {
+  KES: '🇰🇪', USD: '🇺🇸', GBP: '🇬🇧', EUR: '🇪🇺',
+  CAD: '🇨🇦', AUD: '🇦🇺', JPY: '🇯🇵', CHF: '🇨🇭',
+  HKD: '🇭🇰', SGD: '🇸🇬', ZAR: '🇿🇦',
+};
 
 type MoverTab = 'gainers' | 'losers' | 'active';
 
@@ -54,10 +60,18 @@ const { data: wlData } = useQuery({
     retry: false,
   });
 
+  const { data: walletData } = useQuery({
+    queryKey: ['wallets'],
+    queryFn: () => api.get('/api/wallets').then(r => r.data),
+    retry: false,
+    staleTime: 60_000,
+  });
+
   const summary = portfolio?.summary;
   const watchlistItems: any[] = wlData?.watchlist?.items ?? [];
   const movers: any[] = moversData?.assets ?? [];
   const recentOrders: any[] = ordersData?.orders ?? [];
+  const walletBalances: any[] = (walletData?.balances ?? []).filter((b: any) => Number(b.available) > 0 || b.currency === 'KES' || b.currency === 'USD');
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -98,8 +112,10 @@ const { data: wlData } = useQuery({
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: TrendingUp, label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--accent)' },
-          { icon: BarChart2,  label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: '#bf5af2' },
+          { icon: TrendingUp,    label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--accent)' },
+          { icon: BarChart2,     label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: '#bf5af2' },
+          { icon: ArrowDownLeft, label: 'Deposit',   sub: 'Add funds',     to: '/deposit',   color: '#34d399' },
+          { icon: ArrowUpRight,  label: 'Withdraw',  sub: 'Cash out',      to: '/withdraw',  color: '#fb923c' },
         ].map(({ icon: Icon, label, sub, to, color }) => (
           <Link key={label} to={to} style={{ textDecoration: 'none' }}>
             <div className="card hover:border-gray-700 transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
@@ -112,6 +128,31 @@ const { data: wlData } = useQuery({
           </Link>
         ))}
       </div>
+
+      {/* Wallet balances strip */}
+      {walletBalances.length > 0 && (
+        <div className="card" style={{ padding: '16px 20px' }}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-white flex items-center gap-2">
+              <Wallet size={14} style={{ color: 'var(--accent)' }} />
+              Wallet
+            </h2>
+            <Link to="/wallet" className="text-sm flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+              View all <ArrowRight size={13} />
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {walletBalances.slice(0, 6).map((b: any) => (
+              <div key={b.currency} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <span>{FLAG[b.currency] ?? '💱'}</span>
+                <span className="text-xs font-semibold text-white">{b.currency}</span>
+                <span className="text-xs text-gray-400">{Number(b.available).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
