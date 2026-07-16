@@ -23,9 +23,10 @@ import KycPage           from './pages/KycPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage       from './pages/ProfilePage';
 import OnboardingPage    from './pages/OnboardingPage';
-import WalletPage            from './pages/WalletPage';
-import CurrencyConverterPage from './pages/CurrencyConverterPage';
-import FxHistoryPage         from './pages/FxHistoryPage';
+import WalletPage                from './pages/WalletPage';
+import CurrencyConverterPage    from './pages/CurrencyConverterPage';
+import FxHistoryPage            from './pages/FxHistoryPage';
+import WalletTransactionsPage   from './pages/WalletTransactionsPage';
 
 // Admin
 const AdminDashboardPage    = lazy(() => import('./pages/admin/AdminDashboardPage'));
@@ -162,8 +163,9 @@ export default function App() {
               <Route path="notifications" element={<><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></>} />
               <Route path="profile"      element={<><PageTitle title="Profile" /><ErrorBoundary><ProfilePage /></ErrorBoundary></>} />
               <Route path="wallet"         element={<><PageTitle title="Wallet" /><ErrorBoundary><WalletPage /></ErrorBoundary></>} />
-              <Route path="wallet/convert" element={<><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></>} />
-              <Route path="wallet/history" element={<><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></>} />
+              <Route path="wallet/convert"       element={<><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></>} />
+              <Route path="wallet/history"       element={<><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></>} />
+              <Route path="wallet/transactions"  element={<><PageTitle title="Wallet Transactions" /><ErrorBoundary><WalletTransactionsPage /></ErrorBoundary></>} />
             </Route>
 
             {/* Admin */}

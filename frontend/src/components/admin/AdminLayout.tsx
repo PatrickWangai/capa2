@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
-import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft, Wallet } from 'lucide-react';
 import clsx from 'clsx';
 import { useAlertStore } from '../../store/alertStore';
 import CapaLogo from '../ui/CapaLogo';
@@ -11,6 +11,7 @@ const nav = [
   { to: '/admin/users',        label: 'Users',        icon: Users },
   { to: '/admin/kyc',          label: 'KYC Review',   icon: ShieldCheck },
   { to: '/admin/transactions', label: 'Transactions', icon: ArrowDownUp },
+  { to: '/admin/wallets',      label: 'Wallets',      icon: Wallet },
 ];
 
 export default function AdminLayout() {
