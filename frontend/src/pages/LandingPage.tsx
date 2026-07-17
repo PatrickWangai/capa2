@@ -44,46 +44,62 @@ function HeroCanvas({ theme }: { theme: string }) {
     function draw() {
       t++;
       ctx.clearRect(0, 0, W, H);
+      const hy = H * 0.70;
 
-      // Single smooth gradient — no visible horizon band
-      const bg = ctx.createLinearGradient(0, 0, 0, H);
-      bg.addColorStop(0,    skyC[0]);
-      bg.addColorStop(0.20, skyC[1]);
-      bg.addColorStop(0.45, skyC[2]);
-      bg.addColorStop(0.70, skyC[3]);
-      bg.addColorStop(0.88, skyC[4]);
-      bg.addColorStop(1,    waterC[2]);
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      // Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, hy);
+      sky.addColorStop(0,    skyC[0]);
+      sky.addColorStop(0.22, skyC[1]);
+      sky.addColorStop(0.52, skyC[2]);
+      sky.addColorStop(0.80, skyC[3]);
+      sky.addColorStop(1,    skyC[4]);
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
 
-      // Slowly pulsing warm glow — breathes every ~6 s
-      const pulse = Math.sin(t * 0.018) * 0.5 + 0.5;
-      const sg = ctx.createRadialGradient(W*0.28, H*0.52, 0, W*0.28, H*0.52, W*0.42);
-      sg.addColorStop(0,   `rgba(255,218,110,${0.10 + pulse * 0.10})`);
-      sg.addColorStop(0.5, `rgba(255,175,55,${0.02 + pulse * 0.03})`);
-      sg.addColorStop(1,   'transparent');
+      // Sun glow
+      const sg = ctx.createRadialGradient(W*0.28, hy*0.78, 0, W*0.28, hy*0.78, W*0.38);
+      sg.addColorStop(0,    'rgba(255,218,110,0.28)');
+      sg.addColorStop(0.45, 'rgba(255,175,55,0.07)');
+      sg.addColorStop(1,    'transparent');
       ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
 
-      // Floating light blobs — rounded squares, not 1px-height ellipses,
-      // so Safari anti-aliasing renders them as soft glows not sharp lines
-      const waterTop = H * 0.60;
+      // Water
+      const wg = ctx.createLinearGradient(0, hy, 0, H);
+      wg.addColorStop(0,   waterC[0]);
+      wg.addColorStop(0.5, waterC[1]);
+      wg.addColorStop(1,   waterC[2]);
+      ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H - hy);
+
+      // Water shimmer — horizontal gradient-filled rects instead of thin
+      // ellipses; fillRect is rendered identically on all browsers including
+      // Safari (no sub-pixel ellipse anti-aliasing issue)
       ctx.save();
-      for (let i = 0; i < 28; i++) {
-        const bx  = ((i * 137.5 + t * 0.28) % W);
-        const by  = waterTop + ((i * 83.7) % (H - waterTop) * 0.70);
-        const ba  = (Math.sin(t * 0.05 + i * 1.7) * 0.5 + 0.5) * 0.13;
-        const br  = 4 + (i % 5) * 2.5;          // radius 4–14 px — never < 4
-        ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,230,${ba})`;
-        ctx.fill();
+      for (let i = 0; i < 38; i++) {
+        const sx  = ((i * 137.5 + t * 0.35) % W);
+        const sy  = hy + ((i * 79.3) % ((H - hy) * 0.65));
+        const sa  = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.28;
+        const hw  = 10 + (i % 5) * 4; // half-width 10–26 px
+        const gr  = ctx.createLinearGradient(sx - hw, 0, sx + hw, 0);
+        gr.addColorStop(0,   'rgba(255,255,230,0)');
+        gr.addColorStop(0.5, `rgba(255,255,230,${sa})`);
+        gr.addColorStop(1,   'rgba(255,255,230,0)');
+        ctx.fillStyle = gr;
+        ctx.fillRect(sx - hw, sy - 2, hw * 2, 4);
       }
       ctx.restore();
 
+      // Horizon glow
+      const hg = ctx.createLinearGradient(0, hy - 18, 0, hy + 24);
+      hg.addColorStop(0,   'rgba(255,255,255,0.00)');
+      hg.addColorStop(0.5, 'rgba(255,255,255,0.07)');
+      hg.addColorStop(1,   'rgba(255,255,255,0.00)');
+      ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
+
       // Text-legibility overlay
       const ov = ctx.createLinearGradient(0, 0, 0, H);
-      ov.addColorStop(0,    'rgba(0,0,0,0.52)');
-      ov.addColorStop(0.45, 'rgba(0,0,0,0.14)');
-      ov.addColorStop(1,    'rgba(0,0,0,0.38)');
+      ov.addColorStop(0,    'rgba(0,0,0,0.54)');
+      ov.addColorStop(0.40, 'rgba(0,0,0,0.18)');
+      ov.addColorStop(0.65, 'rgba(0,0,0,0.06)');
+      ov.addColorStop(1,    'rgba(0,0,0,0.42)');
       ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
 
       animId = requestAnimationFrame(draw);
