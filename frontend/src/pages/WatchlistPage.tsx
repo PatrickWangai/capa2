@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { Star, Trash2, TrendingUp, TrendingDown, Search, Plus } from 'lucide-react';
+import { Star, Trash2, TrendingUp, TrendingDown, Search } from 'lucide-react';
 import { PageLoader, EmptyState } from '../components/ui';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
@@ -70,10 +70,6 @@ export default function WatchlistPage() {
 
       {/* Search to add */}
       <div className="card space-y-3">
-        <label className="text-sm font-semibold text-white flex items-center gap-2">
-          <Plus size={14} style={{ color: 'var(--accent)' }} />
-          Add Stock
-        </label>
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input

@@ -146,12 +146,9 @@ export default function DepositPage() {
         {/* Amount */}
         <div>
           <label className="label">Amount</label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">{currency}</span>
-            <input className="input pl-14" type="number" placeholder="0.00"
-              value={amount} onChange={e => setAmount(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleDeposit()} />
-          </div>
+          <input className="input" type="number" placeholder="0.00"
+            value={amount} onChange={e => setAmount(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleDeposit()} />
           <div className="flex flex-wrap gap-2 mt-2">
             {quickAmts.map(n => (
               <button key={n} onClick={() => setAmount(String(n))}

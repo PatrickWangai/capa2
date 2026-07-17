@@ -145,12 +145,9 @@ export default function WithdrawPage() {
         {/* Amount */}
         <div>
           <label className="label">Amount</label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">{currency}</span>
-            <input className="input pl-14" type="number" placeholder="0.00"
-              max={avail} value={amount} onChange={e => setAmount(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleWithdraw()} />
-          </div>
+          <input className="input" type="number" placeholder="0.00"
+            max={avail} value={amount} onChange={e => setAmount(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleWithdraw()} />
         </div>
 
         {/* Method fields */}
