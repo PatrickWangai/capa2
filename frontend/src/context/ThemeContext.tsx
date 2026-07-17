@@ -156,87 +156,58 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
   },
 };
 
-function applyTheme(name: ThemeName, mode: 'dark' | 'light' = 'dark') {
+function applyTheme(name: ThemeName) {
   const t = THEMES[name];
   const r = document.documentElement;
 
-  // Accent vars — same for both modes
   r.style.setProperty('--accent',             t.accent);
   r.style.setProperty('--accent-dark',        t.accentDark);
   r.style.setProperty('--accent-rgb',         t.accentRgb);
-  r.style.setProperty('--accent-dim',         `rgba(${t.accentRgb},${mode === 'light' ? '0.12' : '0.18'})`);
+  r.style.setProperty('--accent-dim',         `rgba(${t.accentRgb},0.18)`);
   r.style.setProperty('--accent-glow',        `rgba(${t.accentRgb},0.22)`);
   r.style.setProperty('--accent-text',        t.accentText ?? '#ffffff');
   r.style.setProperty('--color-primary-from', t.accent);
   r.style.setProperty('--color-primary-to',   t.accentDark);
-
-  if (mode === 'light') {
-    r.style.setProperty('--bg-1', '#ffffff');
-    r.style.setProperty('--bg-2', '#f8fafb');
-    r.style.setProperty('--bg-3', '#f0f4f8');
-    r.style.setProperty('--bg-4', '#e8edf3');
-    r.style.setProperty('--bg-5', '#f4f7fa');
-    r.style.setProperty('--bg-6', '#ffffff');
-    r.style.setProperty('--card-bg',    'rgba(255,255,255,0.92)');
-    r.style.setProperty('--card-border','rgba(0,0,0,0.07)');
-    r.style.setProperty('--sidebar-bg', 'rgba(255,255,255,0.94)');
-    r.style.setProperty('--input-bg',   'rgba(242,242,247,0.95)');
-    r.style.setProperty('--nav-text',   'rgba(28,28,30,0.68)');
-    r.setAttribute('data-theme', 'light');
-  } else {
-    r.style.setProperty('--bg-1', t.bg[0]);
-    r.style.setProperty('--bg-2', t.bg[1]);
-    r.style.setProperty('--bg-3', t.bg[2]);
-    r.style.setProperty('--bg-4', t.bg[3]);
-    r.style.setProperty('--bg-5', t.bg[4]);
-    r.style.setProperty('--bg-6', t.bg[5]);
-    r.style.setProperty('--card-bg',    t.cardBg    ?? 'rgba(28,28,30,0.72)');
-    r.style.setProperty('--card-border',t.cardBorder ?? 'rgba(255,255,255,0.08)');
-    r.style.setProperty('--sidebar-bg', t.sidebarBg ?? 'rgba(6,38,52,0.62)');
-    r.style.setProperty('--input-bg',   t.inputBg   ?? 'rgba(44,44,46,0.85)');
-    r.style.setProperty('--nav-text',   t.navText   ?? 'rgba(235,235,245,0.85)');
-    r.setAttribute('data-theme', 'dark');
-  }
+  r.style.setProperty('--bg-1', t.bg[0]);
+  r.style.setProperty('--bg-2', t.bg[1]);
+  r.style.setProperty('--bg-3', t.bg[2]);
+  r.style.setProperty('--bg-4', t.bg[3]);
+  r.style.setProperty('--bg-5', t.bg[4]);
+  r.style.setProperty('--bg-6', t.bg[5]);
+  r.style.setProperty('--card-bg',    t.cardBg    ?? 'rgba(28,28,30,0.72)');
+  r.style.setProperty('--card-border',t.cardBorder ?? 'rgba(255,255,255,0.08)');
+  r.style.setProperty('--sidebar-bg', t.sidebarBg ?? 'rgba(6,38,52,0.62)');
+  r.style.setProperty('--input-bg',   t.inputBg   ?? 'rgba(44,44,46,0.85)');
+  r.style.setProperty('--nav-text',   t.navText   ?? 'rgba(235,235,245,0.85)');
+  r.removeAttribute('data-theme');
 }
 
 type ThemeCtx = {
   theme: ThemeName;
   setTheme: (t: ThemeName) => void;
-  mode: 'dark' | 'light';
-  setMode: (m: 'dark' | 'light') => void;
 };
 const ThemeContext = createContext<ThemeCtx>({
   theme: 'emerald', setTheme: () => {},
-  mode: 'dark',     setMode: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
+    localStorage.removeItem('capa-mode');
     const savedTheme = localStorage.getItem('capa-theme') as ThemeName | null;
-    const savedMode  = (localStorage.getItem('capa-mode') as 'dark' | 'light') || 'dark';
     const t = (savedTheme && savedTheme in THEMES ? savedTheme : 'emerald') as ThemeName;
-    applyTheme(t, savedMode); // apply before first render so loading screen inherits theme
+    applyTheme(t);
     return t;
   });
 
-  const [mode, setModeState] = useState<'dark' | 'light'>(() =>
-    (localStorage.getItem('capa-mode') as 'dark' | 'light') || 'dark'
-  );
-
-  useEffect(() => { applyTheme(theme, mode); }, [theme, mode]);
+  useEffect(() => { applyTheme(theme); }, [theme]);
 
   function setTheme(t: ThemeName) {
     setThemeState(t);
     localStorage.setItem('capa-theme', t);
   }
 
-  function setMode(m: 'dark' | 'light') {
-    setModeState(m);
-    localStorage.setItem('capa-mode', m);
-  }
-
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, mode, setMode }}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

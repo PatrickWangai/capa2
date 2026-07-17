@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
   ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu, Wallet,
-  Star, Settings, Sun, Moon,
+  Star, Settings,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAlertStore } from '../../store/alertStore';
@@ -33,7 +33,7 @@ export default function AppLayout() {
   const [searchOpen, setSearch] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
-  const { theme, setTheme, mode, setMode } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     api.get('/api/auth/me').then(r => {
@@ -70,14 +70,13 @@ export default function AppLayout() {
 
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
-  const isLight        = mode === 'light';
-  const sidebarBorder  = isLight ? 'rgba(0,0,0,0.08)'          : 'rgba(255,255,255,0.10)';
+  const sidebarBorder  = 'rgba(255,255,255,0.10)';
   const navInactive    = 'var(--nav-text)';
-  const drawerBg       = isLight ? 'rgba(255,255,255,0.98)'     : 'rgba(8,16,40,0.97)';
-  const drawerBorder   = isLight ? 'rgba(0,0,0,0.08)'          : 'rgba(255,255,255,0.10)';
-  const drawerHeadText = isLight ? '#1c1c1e'                    : '#ffffff';
-  const drawerLabelClr = isLight ? 'rgba(28,28,30,0.42)'       : 'rgba(235,235,245,0.38)';
-  const drawerCloseClr = isLight ? 'rgba(28,28,30,0.45)'       : 'rgba(235,235,245,0.5)';
+  const drawerBg       = 'rgba(8,16,40,0.97)';
+  const drawerBorder   = 'rgba(255,255,255,0.10)';
+  const drawerHeadText = '#ffffff';
+  const drawerLabelClr = 'rgba(235,235,245,0.38)';
+  const drawerCloseClr = 'rgba(235,235,245,0.5)';
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
@@ -107,30 +106,6 @@ export default function AppLayout() {
               </button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-              {/* Dark / Light toggle */}
-              <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 10px' }}>Appearance</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 22 }}>
-                {(['dark', 'light'] as const).map(m => {
-                  const active = mode === m;
-                  const Icon   = m === 'dark' ? Moon : Sun;
-                  return (
-                    <button key={m} onClick={() => setMode(m)}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                        padding: '10px 0', borderRadius: 12, cursor: 'pointer',
-                        fontFamily: 'inherit', fontSize: 13, fontWeight: active ? 600 : 400,
-                        background: active ? 'var(--accent-dim)' : 'transparent',
-                        border: `1.5px solid ${active ? 'var(--accent)' : drawerBorder}`,
-                        color: active ? 'var(--accent)' : drawerLabelClr,
-                        transition: 'all 0.15s',
-                      }}>
-                      <Icon size={14} />
-                      {m === 'dark' ? 'Dark' : 'Light'}
-                    </button>
-                  );
-                })}
-              </div>
-
               <p style={{ fontSize: 11, fontWeight: 600, color: drawerLabelClr, letterSpacing: '0.10em', textTransform: 'uppercase', margin: '0 0 12px' }}>Colour Theme</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {COLOUR_THEMES.map(name => {
