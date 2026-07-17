@@ -50,6 +50,9 @@ const AboutPage             = lazy(() => import('./pages/AboutPage'));
 const ContactPage           = lazy(() => import('./pages/ContactPage'));
 const TermsPage             = lazy(() => import('./pages/TermsPage'));
 const PrivacyPage           = lazy(() => import('./pages/PrivacyPage'));
+const FaqPage               = lazy(() => import('./pages/FaqPage'));
+const PricingPage           = lazy(() => import('./pages/PricingPage'));
+const SecurityPage          = lazy(() => import('./pages/SecurityPage'));
 const NotFoundPage          = lazy(() => import('./pages/NotFoundPage'));
 
 function PageTitle({ title }: { title: string }) {
@@ -193,6 +196,9 @@ export default function App() {
             <Route path="/contact"  element={<><PageTitle title="Contact" /><ContactPage /></>} />
             <Route path="/terms"    element={<><PageTitle title="Terms of Service" /><TermsPage /></>} />
             <Route path="/privacy"  element={<><PageTitle title="Privacy Policy" /><PrivacyPage /></>} />
+            <Route path="/faq"      element={<><PageTitle title="FAQ" /><FaqPage /></>} />
+            <Route path="/pricing"  element={<><PageTitle title="Pricing" /><PricingPage /></>} />
+            <Route path="/security" element={<><PageTitle title="Security" /><SecurityPage /></>} />
 
             {/* 404 */}
             <Route path="*" element={<><PageTitle title="Page Not Found" /><NotFoundPage /></>} />

@@ -7,8 +7,9 @@ export function startAnimatedFavicon() {
   const canvas = document.createElement('canvas');
   canvas.width = SIZE;
   canvas.height = SIZE;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  const ctxRaw = canvas.getContext('2d');
+  if (!ctxRaw) return;
+  const ctx: CanvasRenderingContext2D = ctxRaw;
 
   const img = new Image();
   img.src = '/capa-c-icon-512.png';

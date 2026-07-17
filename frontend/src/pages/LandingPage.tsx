@@ -366,9 +366,9 @@ export default function LandingPage() {
               <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
             </div>
             {[
-              { heading: 'Company', links: [['About', '/about'], ['Contact', '/contact']] },
-              { heading: 'Legal',   links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy']] },
-              { heading: 'Account', links: [['Sign In', '/login'], ['Register', '/register']] },
+              { heading: 'Company',  links: [['About', '/about'], ['Contact', '/contact'], ['Pricing', '/pricing'], ['FAQ', '/faq']] },
+              { heading: 'Legal',    links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Security', '/security']] },
+              { heading: 'Account',  links: [['Sign In', '/login'], ['Register', '/register']] },
             ].map(({ heading, links }) => (
               <div key={heading}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(235,235,245,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
@@ -44,25 +44,27 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPass,    setSavingPass]    = useState(false);
 
-  useQuery({
+  const { data: profileData } = useQuery({
     queryKey: ['profile-full'],
     queryFn: () => api.get('/api/users/me').then(r => r.data),
     retry: false,
-    onSuccess: (data: any) => {
-      if (!profileLoaded && data.user) {
-        setProfile(p => ({
-          ...p,
-          phone:       data.user.phone        || '',
-          dateOfBirth: data.user.dateOfBirth  ? data.user.dateOfBirth.slice(0, 10) : '',
-          addressLine1:data.user.addressLine1 || '',
-          city:        data.user.city         || '',
-          postalCode:  data.user.postalCode   || '',
-          taxId:       data.user.taxId        || '',
-        }));
-        setProfileLoaded(true);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (!profileLoaded && profileData?.user) {
+      const u = profileData.user;
+      setProfile(p => ({
+        ...p,
+        phone:        u.phone        || '',
+        dateOfBirth:  u.dateOfBirth  ? u.dateOfBirth.slice(0, 10) : '',
+        addressLine1: u.addressLine1 || '',
+        city:         u.city         || '',
+        postalCode:   u.postalCode   || '',
+        taxId:        u.taxId        || '',
+      }));
+      setProfileLoaded(true);
+    }
+  }, [profileData, profileLoaded]);
 
   const { data: portfolioData } = useQuery({
     queryKey: ['portfolio'],
