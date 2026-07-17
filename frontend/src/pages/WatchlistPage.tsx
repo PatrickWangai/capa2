@@ -54,7 +54,7 @@ export default function WatchlistPage() {
     },
   });
 
-  const items: any[] = wlData?.items ?? wlData?.watchlist ?? [];
+  const items: any[] = wlData?.watchlist?.items ?? wlData?.items ?? [];
   const searchResults: any[] = searchData?.assets ?? [];
   const watchedIds = new Set(items.map((i: any) => i.assetId ?? i.asset?.id ?? i.id));
 
