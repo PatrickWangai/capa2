@@ -113,33 +113,26 @@ export default function CurrencyConverterPage() {
 
         {/* Amount input */}
         <div>
-          <label className="label">Amount to convert ({from})</label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">{from}</span>
-            <input
-              className="input pl-14"
-              type="number"
-              placeholder="0.00"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-            />
-          </div>
+          <label className="label">Amount to convert</label>
+          <input
+            className="input"
+            type="number"
+            placeholder="0.00"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+          />
         </div>
 
         {/* Preview */}
         {preview && (
           <div className="rounded-xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Gross ({to})</span>
-              <span className="text-white">{preview.gross.toFixed(4)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
               <span className="text-gray-400">Fee (1%)</span>
-              <span className="text-red-400">− {preview.fee.toFixed(4)}</span>
+              <span className="text-red-400">− {preview.fee.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm font-semibold" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 8 }}>
               <span className="text-gray-300">You receive ({to})</span>
-              <span className="text-white">{preview.net.toFixed(4)}</span>
+              <span className="text-white">{preview.net.toFixed(2)}</span>
             </div>
           </div>
         )}
@@ -168,9 +161,6 @@ export default function CurrencyConverterPage() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-600 text-center">
-        Rates sourced from open.er-api.com · updated hourly · {rateData?.rates?.updatedAt ? new Date(rateData.rates.updatedAt).toLocaleString() : ''}
-      </p>
     </div>
   );
 }
