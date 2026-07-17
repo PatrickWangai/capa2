@@ -20,7 +20,7 @@ function HeroCanvas({ theme }: { theme: string }) {
     if (!ctxRaw) return;
     const el  = elRaw  as HTMLCanvasElement;
     const ctx = ctxRaw as CanvasRenderingContext2D;
-    let W = 0, H = 0;
+    let animId: number, t = 0, W = 0, H = 0;
 
     let skyC: string[], waterC: string[];
     if (theme === 'black') {
@@ -42,9 +42,10 @@ function HeroCanvas({ theme }: { theme: string }) {
     }
 
     function draw() {
+      t++;
       ctx.clearRect(0, 0, W, H);
 
-      // Single smooth gradient — no horizon split, no visible band
+      // Single smooth gradient — no visible horizon band
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0,    skyC[0]);
       bg.addColorStop(0.20, skyC[1]);
@@ -54,12 +55,29 @@ function HeroCanvas({ theme }: { theme: string }) {
       bg.addColorStop(1,    waterC[2]);
       ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
-      // Subtle warm glow
+      // Slowly pulsing warm glow — breathes every ~6 s
+      const pulse = Math.sin(t * 0.018) * 0.5 + 0.5;
       const sg = ctx.createRadialGradient(W*0.28, H*0.52, 0, W*0.28, H*0.52, W*0.42);
-      sg.addColorStop(0,   'rgba(255,218,110,0.16)');
-      sg.addColorStop(0.5, 'rgba(255,175,55,0.04)');
+      sg.addColorStop(0,   `rgba(255,218,110,${0.10 + pulse * 0.10})`);
+      sg.addColorStop(0.5, `rgba(255,175,55,${0.02 + pulse * 0.03})`);
       sg.addColorStop(1,   'transparent');
       ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+
+      // Floating light blobs — rounded squares, not 1px-height ellipses,
+      // so Safari anti-aliasing renders them as soft glows not sharp lines
+      const waterTop = H * 0.60;
+      ctx.save();
+      for (let i = 0; i < 28; i++) {
+        const bx  = ((i * 137.5 + t * 0.28) % W);
+        const by  = waterTop + ((i * 83.7) % (H - waterTop) * 0.70);
+        const ba  = (Math.sin(t * 0.05 + i * 1.7) * 0.5 + 0.5) * 0.13;
+        const br  = 4 + (i % 5) * 2.5;          // radius 4–14 px — never < 4
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,230,${ba})`;
+        ctx.fill();
+      }
+      ctx.restore();
 
       // Text-legibility overlay
       const ov = ctx.createLinearGradient(0, 0, 0, H);
@@ -67,12 +85,14 @@ function HeroCanvas({ theme }: { theme: string }) {
       ov.addColorStop(0.45, 'rgba(0,0,0,0.14)');
       ov.addColorStop(1,    'rgba(0,0,0,0.38)');
       ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
+
+      animId = requestAnimationFrame(draw);
     }
 
-    init(); draw();
-    const ro = new ResizeObserver(() => { init(); draw(); });
+    init(); animId = requestAnimationFrame(draw);
+    const ro = new ResizeObserver(() => { init(); });
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
   }, [theme]); // restart whenever theme changes
 
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />;
