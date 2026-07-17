@@ -12,6 +12,15 @@ import './styles/globals.css';
 initSentry();
 startAnimatedFavicon();
 
+// When a lazy chunk fails to load (stale deployment — chunk hashes changed),
+// reload once so the user gets the latest bundle instead of an error screen.
+window.addEventListener('vite:preloadError', () => {
+  if (!sessionStorage.getItem('chunk-reload')) {
+    sessionStorage.setItem('chunk-reload', '1');
+    window.location.reload();
+  }
+});
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
 });

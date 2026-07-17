@@ -127,6 +127,9 @@ if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
   app.use(express.static(frontendDist));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
+    // Static assets that don't exist should 404, not return index.html —
+    // returning HTML for a missing JS chunk causes the MIME-type error.
+    if (req.path.startsWith('/assets/')) return res.status(404).end();
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 }
