@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, MessageSquare, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import toast from 'react-hot-toast';
@@ -10,12 +10,12 @@ const ACCENT = 'var(--accent)';
 const CARD = '#1c1c1e';
 
 function Nav() {
+  const navigate = useNavigate();
   return (
     <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+      <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
         <CapaLogo size={44} />
-        <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
-      </Link>
+      </button>
       <div style={{ display: 'flex', gap: 20 }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
         <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
