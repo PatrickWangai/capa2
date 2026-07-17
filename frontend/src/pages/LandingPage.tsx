@@ -69,13 +69,13 @@ function HeroCanvas({ theme }: { theme: string }) {
       wg.addColorStop(1,   waterC[2]);
       ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H-hy);
 
-      // Water shimmer
+      // Water shimmer — subtle specular highlights
       ctx.save();
-      for (let i = 0; i < 42; i++) {
+      for (let i = 0; i < 32; i++) {
         const sx = ((i * 137.5 + t * 0.35) % W);
         const sy = hy + ((i * 79.3) % ((H - hy) * 0.65));
-        const sa = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.44;
-        ctx.beginPath(); ctx.ellipse(sx, sy, 10 + (i % 5) * 3, 1.4, 0, 0, Math.PI * 2);
+        const sa = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.18;
+        ctx.beginPath(); ctx.ellipse(sx, sy, 6 + (i % 4) * 2, 1.0, 0, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,255,230,${sa})`; ctx.fill();
       }
       ctx.restore();
