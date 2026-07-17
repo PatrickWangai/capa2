@@ -26,7 +26,6 @@ export default function LoginPage() {
       const { data } = await api.post('/api/auth/login', form);
       if (data.requiresMfa) { setNeedsMfa(true); setLoading(false); return; }
       setAuth(data.user, data.accessToken, data.refreshToken);
-      showAlert({ variant: 'success', title: `Welcome back, ${data.user.firstName}!`, message: 'You are now signed in.' });
       navigate('/dashboard');
     } catch (err: any) {
       const data = err.response?.data;
