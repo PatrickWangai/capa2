@@ -38,7 +38,7 @@ export default function TermsPage() {
       <Nav />
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px' }}>
         <h1 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.04em', marginBottom: 8 }}>Terms of Service</h1>
-        <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: January 2024</p>
+        <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: January 2026</p>
 
         <div style={{ backgroundColor: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 36 }}>
           <p style={{ margin: 0, fontSize: 14, color: 'rgba(var(--accent-rgb),0.9)', lineHeight: 1.6 }}>
@@ -58,7 +58,7 @@ export default function TermsPage() {
 
       <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
-          © 2024 Capa Investments Ltd.{' '}
+          © 2026 Capa Investments Ltd.{' '}
           <Link to="/privacy" style={{ color: SEC }}>Privacy Policy</Link> · <Link to="/contact" style={{ color: SEC }}>Contact</Link>
         </p>
       </footer>
