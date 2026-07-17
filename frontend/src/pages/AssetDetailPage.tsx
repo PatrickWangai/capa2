@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   TrendingUp, TrendingDown, Star, ArrowLeft, Info, AlertCircle, CheckCircle, Bell, BellRing, X,
   Smartphone, Building2, ChevronRight, Plus, Trash2, WalletCards,
@@ -15,14 +14,6 @@ import { StockLogo } from '../components/ui/StockLogo';
 type Side    = 'BUY' | 'SELL';
 type OrdType = 'MARKET' | 'LIMIT';
 type InMode  = 'SHARES' | 'DOLLARS';
-
-const PERIODS = [
-  { label: '1D', interval: '1m', days: 1   },
-  { label: '1W', interval: '1d', days: 7   },
-  { label: '1M', interval: '1d', days: 30  },
-  { label: '3M', interval: '1d', days: 90  },
-  { label: '1Y', interval: '1d', days: 365 },
-];
 
 // ── Helpers ───────────────────────────────────────────────────
 function fmtNum(v: number | string | undefined, dp = 2) {
@@ -38,24 +29,6 @@ function fmtVol(v: number | string | undefined) {
   return n.toLocaleString();
 }
 
-// ── Chart tooltip ─────────────────────────────────────────────
-function ChartTip({ active, payload, currency }: any) {
-  if (!active || !payload?.length) return null;
-  const pt = payload[0];
-  return (
-    <div style={{
-      background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-      borderRadius: 10, padding: '8px 12px', backdropFilter: 'blur(12px)',
-    }}>
-      <p className="text-xs text-gray-400">
-        {new Date(pt.payload.time).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
-      </p>
-      <p className="font-semibold text-white text-sm mt-0.5">
-        {currency} {Number(pt.value).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-      </p>
-    </div>
-  );
-}
 
 // ── Stat row inside preview modal ─────────────────────────────
 function Row({ label, value }: { label: string; value: string }) {
@@ -571,7 +544,6 @@ export default function AssetDetailPage() {
   const { id } = useParams<{ id: string }>();
   const qc     = useQueryClient();
 
-  const [period, setPeriod]     = useState(PERIODS[0]);
   const [side, setSide]         = useState<Side>('BUY');
   const [ordType, setOrdType]   = useState<OrdType>('MARKET');
   const [inMode, setInMode]     = useState<InMode>('SHARES');
@@ -591,16 +563,6 @@ export default function AssetDetailPage() {
     queryKey: ['asset', id],
     queryFn: () => api.get(`/api/assets/${id}`).then(r => r.data),
     refetchInterval: 15_000,
-  });
-
-  const { data: histData } = useQuery({
-    // key by interval only — backend returns all candles, we filter client-side by days
-    queryKey: ['price-history', id, period.interval],
-    queryFn: () =>
-      api.get(`/api/assets/${id}/history`, {
-        params: { interval: period.interval },
-      }).then(r => r.data),
-    staleTime: 60_000,
   });
 
   const { data: portfolioData } = useQuery({
@@ -692,14 +654,6 @@ export default function AssetDetailPage() {
   const canOrder  = sharesQty > 0
     && (ordType === 'MARKET' || Number(limitPrice) > 0)
     && sharesQty <= ownedQty + 0.000001;
-
-  const cutoffMs  = Date.now() - period.days * 86_400_000;
-  const chartData = (histData?.history ?? [])
-    .filter((h: any) => new Date(h.openTime).getTime() >= cutoffMs)
-    .map((h: any) => ({ time: h.openTime, value: Number(h.close) }));
-  const vals      = chartData.map((d: any) => d.value);
-  const chartMin  = vals.length ? Math.min(...vals) * 0.997 : undefined;
-  const chartMax  = vals.length ? Math.max(...vals) * 1.003 : undefined;
 
   const keyStats = [
     { label: 'Open',        value: price?.open          ? `${currency} ${fmtNum(price.open)}`         : '—' },
@@ -883,50 +837,6 @@ export default function AssetDetailPage() {
 
           {/* LEFT: chart + stats */}
           <div className="lg:col-span-2 space-y-5">
-
-            {/* Chart */}
-            <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-white text-sm">Price History</h2>
-                <div className="flex gap-0.5 p-0.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                  {PERIODS.map(p => (
-                    <button
-                      key={p.label}
-                      onClick={() => setPeriod(p)}
-                      className={clsx('px-3 py-1 rounded-md text-xs font-semibold transition-all', period.label === p.label ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
-                      style={period.label === p.label ? { backgroundColor: 'rgba(255,255,255,0.12)' } : {}}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={210}>
-                  <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                    <defs>
-                      <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor={isUp ? '#22c55e' : '#ef4444'} stopOpacity={0.22} />
-                        <stop offset="95%" stopColor={isUp ? '#22c55e' : '#ef4444'} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="time" hide />
-                    <YAxis domain={[chartMin ?? 'auto', chartMax ?? 'auto']} hide />
-                    <Tooltip content={<ChartTip currency={currency} />} />
-                    <Area
-                      type="monotone" dataKey="value"
-                      stroke={isUp ? '#22c55e' : '#ef4444'} strokeWidth={2}
-                      fill="url(#cg)" dot={false} activeDot={{ r: 4, strokeWidth: 0 }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[210px] flex items-center justify-center text-sm" style={{ color: 'rgba(235,235,245,0.3)' }}>
-                  No chart data for this period
-                </div>
-              )}
-            </div>
 
             {/* Key statistics */}
             <div className="card">
