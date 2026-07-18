@@ -5,6 +5,24 @@ import { alpaca, submitOrder as submitAlpacaOrder, getOrder as getAlpacaOrder, c
 import logger from '../utils/logger.js';
 import { clampLimit, clampOffset } from '../utils/pagination.js';
 
+// ── Trading charges ───────────────────────────────────────────
+// Broker commission: 1%
+// VAT (on commission): 16%
+// NSE transaction levy: 0.12%
+// CMA regulatory levy:  0.06%
+// CDSC settlement levy: 0.05%
+// Stamp duty (buys):    0.1%
+function calcTotalFee(subtotal, side) {
+  const D = (v) => new Decimal(v);
+  const broker    = subtotal.mul(0.01);
+  const vat       = broker.mul(0.16);
+  const nseLеvy   = subtotal.mul(0.0012);
+  const cmaLevy   = subtotal.mul(0.0006);
+  const cdscLevy  = subtotal.mul(0.0005);
+  const stampDuty = side === 'BUY' ? subtotal.mul(0.001) : D(0);
+  return broker.plus(vat).plus(nseLеvy).plus(cmaLevy).plus(cdscLevy).plus(stampDuty);
+}
+
 // POST /api/orders
 export async function placeOrder(req, res) {
   const { assetId, side, orderType = 'MARKET', quantity, limitPrice, stopPrice } = req.body;
@@ -28,7 +46,7 @@ export async function placeOrder(req, res) {
 
   const qty = new Decimal(quantity);
   const estimatedTotal = price.mul(qty);
-  const fee = estimatedTotal.mul(0.01);
+  const fee = calcTotalFee(estimatedTotal, side);
 
   if (side === 'BUY') {
     const balance   = account.balances.find(b => b.currency === asset.currency);
@@ -111,7 +129,7 @@ export async function fillOrder(orderId, estimatedPrice) {
     const qty = new Decimal(order.quantity.toString());
     const price = new Decimal(fillPrice);
     const total = qty.mul(price);
-    const fee = total.mul(0.01);
+    const fee = calcTotalFee(total, order.side);
 
     await prisma.$transaction(async (tx) => {
       await tx.order.update({ where: { id: orderId }, data: { status: 'FILLED', filledQuantity: qty.toFixed(6), avgFillPrice: price.toFixed(6), filledTotal: total.toFixed(6), filledAt: new Date() } });

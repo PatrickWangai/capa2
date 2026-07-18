@@ -52,6 +52,12 @@ function PreviewModal({
   const displayPrice = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
   const subtotal     = qty * displayPrice;
   const isBuy        = side === 'BUY';
+  const brokerFee    = subtotal * 0.01;
+  const vat          = brokerFee * 0.16;
+  const nseLеvy      = subtotal * 0.0012;
+  const cmaLevy      = subtotal * 0.0006;
+  const cdscLevy     = subtotal * 0.0005;
+  const stampDuty    = isBuy ? subtotal * 0.001 : 0;
 
   return (
     <div style={{
@@ -110,8 +116,13 @@ function PreviewModal({
               <Row label="Order type" value={ordType === 'MARKET' ? 'Market Order' : 'Limit Order'} />
               <Row label="Shares"     value={qty % 1 === 0 ? String(qty) : qty.toFixed(6)} />
               <Row label={ordType === 'LIMIT' ? 'Limit price' : 'Est. price'} value={`${currency} ${fmtNum(displayPrice)}`} />
-              <Row label="Subtotal"   value={`${currency} ${fmtNum(subtotal)}`} />
-              <Row label="Fee (1%)" value={`${currency} ${fmtNum(fee)}`} />
+              <Row label="Subtotal"          value={`${currency} ${fmtNum(subtotal)}`} />
+              <Row label="Broker fee (1%)"   value={`${currency} ${fmtNum(brokerFee)}`} />
+              <Row label="VAT (16% on fee)"  value={`${currency} ${fmtNum(vat)}`} />
+              <Row label="NSE levy (0.12%)"  value={`${currency} ${fmtNum(nseLеvy)}`} />
+              <Row label="CMA levy (0.06%)"  value={`${currency} ${fmtNum(cmaLevy)}`} />
+              <Row label="CDSC levy (0.05%)" value={`${currency} ${fmtNum(cdscLevy)}`} />
+              {isBuy && <Row label="Stamp duty (0.1%)" value={`${currency} ${fmtNum(stampDuty)}`} />}
               <div className="flex justify-between pt-3 font-bold" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
                 <span className="text-white">Est. {isBuy ? 'Total Cost' : 'Proceeds'}</span>
                 <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
@@ -195,8 +206,14 @@ function BuyFlowModal({
       .finally(() => setMLoad(false));
   }, []);
 
-  const effPrice = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
-  const subtotal = qty * effPrice;
+  const effPrice  = ordType === 'LIMIT' ? (Number(limitPriceStr) || currentPrice) : currentPrice;
+  const subtotal  = qty * effPrice;
+  const brokerFee = subtotal * 0.01;
+  const vat       = brokerFee * 0.16;
+  const nseLеvy   = subtotal * 0.0012;
+  const cmaLevy   = subtotal * 0.0006;
+  const cdscLevy  = subtotal * 0.0005;
+  const stampDuty = subtotal * 0.001; // BUY only
 
   // shared styles — compact, fully themed
   const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 };
@@ -224,7 +241,12 @@ function BuyFlowModal({
         ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
         [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
         ['Subtotal', `${currency} ${fmtNum(subtotal)}`],
-        ['Fee (1%)', `${currency} ${fmtNum(fee)}`],
+        ['Broker fee (1%)', `${currency} ${fmtNum(brokerFee)}`],
+        ['VAT (16% on fee)', `${currency} ${fmtNum(vat)}`],
+        ['NSE levy (0.12%)', `${currency} ${fmtNum(nseLеvy)}`],
+        ['CMA levy (0.06%)', `${currency} ${fmtNum(cmaLevy)}`],
+        ['CDSC levy (0.05%)', `${currency} ${fmtNum(cdscLevy)}`],
+        ['Stamp duty (0.1%)', `${currency} ${fmtNum(stampDuty)}`],
       ] as [string, string][]).map(([k, v]) => (
         <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'rgba(235,235,245,0.42)' }}>{k}</span>
@@ -648,8 +670,17 @@ export default function AssetDetailPage() {
   const sharesQty = inMode === 'SHARES' ? rawAmt : (currentPrice > 0 ? rawAmt / currentPrice : 0);
   const effPrice  = ordType === 'LIMIT' ? (Number(limitPrice) || currentPrice) : currentPrice;
   const subtotal  = sharesQty * effPrice;
-  const fee       = subtotal * 0.01;
-  const total     = side === 'BUY' ? subtotal + fee : subtotal - fee;
+
+  // Charges breakdown
+  const brokerFee  = subtotal * 0.01;
+  const vat        = brokerFee * 0.16;
+  const nseLеvy    = subtotal * 0.0012;
+  const cmaLevy    = subtotal * 0.0006;
+  const cdscLevy   = subtotal * 0.0005;
+  const stampDuty  = side === 'BUY' ? subtotal * 0.001 : 0;
+  const tax        = vat + nseLеvy + cmaLevy + cdscLevy + stampDuty;
+  const fee        = brokerFee + tax;
+  const total      = side === 'BUY' ? subtotal + fee : subtotal - fee;
   const canBuy    = sharesQty > 0 && (ordType === 'MARKET' || Number(limitPrice) > 0);
   const canOrder  = sharesQty > 0
     && (ordType === 'MARKET' || Number(limitPrice) > 0)
@@ -962,7 +993,33 @@ export default function AssetDetailPage() {
                     <span className="text-white">{currency} {fmtNum(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>Fee (1%)</span>
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>Broker fee (1%)</span>
+                    <span className="text-white">{currency} {fmtNum(brokerFee)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>VAT on fee (16%)</span>
+                    <span className="text-white">{currency} {fmtNum(vat)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>NSE levy (0.12%)</span>
+                    <span className="text-white">{currency} {fmtNum(nseLеvy)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>CMA levy (0.06%)</span>
+                    <span className="text-white">{currency} {fmtNum(cmaLevy)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>CDSC levy (0.05%)</span>
+                    <span className="text-white">{currency} {fmtNum(cdscLevy)}</span>
+                  </div>
+                  {side === 'BUY' && (
+                    <div className="flex justify-between">
+                      <span style={{ color: 'rgba(235,235,245,0.45)' }}>Stamp duty (0.1%)</span>
+                      <span className="text-white">{currency} {fmtNum(stampDuty)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between pt-1" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>Total charges</span>
                     <span className="text-white">{currency} {fmtNum(fee)}</span>
                   </div>
                   <div className="flex justify-between font-bold pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>

@@ -3,15 +3,30 @@ import { clampLimit, clampOffset } from '../utils/pagination.js';
 
 // GET /api/admin/dashboard
 export async function getDashboard(req, res) {
-  const [users, kyc, orders, deposits] = await Promise.all([
+  const [users, kyc, orders, deposits, tradeFees] = await Promise.all([
     prisma.user.count(),
     prisma.user.groupBy({ by: ['kycStatus'], _count: true }),
     prisma.order.count({ where: { createdAt: { gte: new Date(Date.now() - 86400000) } } }),
     prisma.transaction.aggregate({ where: { type: 'DEPOSIT', status: 'COMPLETED' }, _sum: { amount: true } }),
+    prisma.transaction.aggregate({ where: { type: { in: ['BUY', 'SELL'] }, status: 'COMPLETED' }, _sum: { fee: true }, _count: true }),
   ]);
   const pendingKyc = await prisma.kycDocument.count({ where: { status: 'PENDING' } });
   const newUsers7d = await prisma.user.count({ where: { createdAt: { gte: new Date(Date.now() - 7 * 86400000) } } });
-  res.json({ totalUsers: users, kycBreakdown: kyc, ordersToday: orders, totalDeposited: deposits._sum.amount || 0, pendingKycDocs: pendingKyc, newUsers7d });
+
+  // Derive tax breakdown from total fees collected
+  // Total fee = broker(1%) + VAT(0.16% of trade) + NSE(0.12%) + CMA(0.06%) + CDSC(0.05%) + stamp(~0.075% avg)
+  // Approx ratios derived from buy-side: broker=1%, tax≈0.49% → tax share ≈ 32.9% of total fee
+  const totalFees  = Number(tradeFees._sum.fee || 0);
+  const brokerRevenue = totalFees * (1 / 1.49);       // broker portion
+  const taxCollected  = totalFees * (0.49 / 1.49);    // tax portion
+
+  res.json({
+    totalUsers: users, kycBreakdown: kyc, ordersToday: orders,
+    totalDeposited: deposits._sum.amount || 0,
+    pendingKycDocs: pendingKyc, newUsers7d,
+    totalFees, brokerRevenue, taxCollected,
+    totalTradeCount: tradeFees._count,
+  });
 }
 
 // GET /api/admin/users
