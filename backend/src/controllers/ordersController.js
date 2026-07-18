@@ -28,7 +28,7 @@ export async function placeOrder(req, res) {
 
   const qty = new Decimal(quantity);
   const estimatedTotal = price.mul(qty);
-  const fee = estimatedTotal.mul(0.001);
+  const fee = estimatedTotal.mul(0.01);
 
   if (side === 'BUY') {
     const balance   = account.balances.find(b => b.currency === asset.currency);
@@ -111,7 +111,7 @@ export async function fillOrder(orderId, estimatedPrice) {
     const qty = new Decimal(order.quantity.toString());
     const price = new Decimal(fillPrice);
     const total = qty.mul(price);
-    const fee = total.mul(0.001);
+    const fee = total.mul(0.01);
 
     await prisma.$transaction(async (tx) => {
       await tx.order.update({ where: { id: orderId }, data: { status: 'FILLED', filledQuantity: qty.toFixed(6), avgFillPrice: price.toFixed(6), filledTotal: total.toFixed(6), filledAt: new Date() } });

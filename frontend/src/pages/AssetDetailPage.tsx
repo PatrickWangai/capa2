@@ -111,7 +111,7 @@ function PreviewModal({
               <Row label="Shares"     value={qty % 1 === 0 ? String(qty) : qty.toFixed(6)} />
               <Row label={ordType === 'LIMIT' ? 'Limit price' : 'Est. price'} value={`${currency} ${fmtNum(displayPrice)}`} />
               <Row label="Subtotal"   value={`${currency} ${fmtNum(subtotal)}`} />
-              <Row label="Fee (0.1%)" value={`${currency} ${fmtNum(fee)}`} />
+              <Row label="Fee (1%)" value={`${currency} ${fmtNum(fee)}`} />
               <div className="flex justify-between pt-3 font-bold" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
                 <span className="text-white">Est. {isBuy ? 'Total Cost' : 'Proceeds'}</span>
                 <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
@@ -224,7 +224,7 @@ function BuyFlowModal({
         ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
         [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
         ['Subtotal', `${currency} ${fmtNum(subtotal)}`],
-        ['Fee (0.1%)', `${currency} ${fmtNum(fee)}`],
+        ['Fee (1%)', `${currency} ${fmtNum(fee)}`],
       ] as [string, string][]).map(([k, v]) => (
         <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'rgba(235,235,245,0.42)' }}>{k}</span>
@@ -648,7 +648,7 @@ export default function AssetDetailPage() {
   const sharesQty = inMode === 'SHARES' ? rawAmt : (currentPrice > 0 ? rawAmt / currentPrice : 0);
   const effPrice  = ordType === 'LIMIT' ? (Number(limitPrice) || currentPrice) : currentPrice;
   const subtotal  = sharesQty * effPrice;
-  const fee       = subtotal * 0.001;
+  const fee       = subtotal * 0.01;
   const total     = side === 'BUY' ? subtotal + fee : subtotal - fee;
   const canBuy    = sharesQty > 0 && (ordType === 'MARKET' || Number(limitPrice) > 0);
   const canOrder  = sharesQty > 0
@@ -962,7 +962,7 @@ export default function AssetDetailPage() {
                     <span className="text-white">{currency} {fmtNum(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>Fee (0.1%)</span>
+                    <span style={{ color: 'rgba(235,235,245,0.45)' }}>Fee (1%)</span>
                     <span className="text-white">{currency} {fmtNum(fee)}</span>
                   </div>
                   <div className="flex justify-between font-bold pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
@@ -1023,7 +1023,7 @@ export default function AssetDetailPage() {
               )}
 
               <p className="text-center text-xs mt-2" style={{ color: 'rgba(235,235,245,0.22)' }}>
-                0.1% trading fee · No monthly charges
+                1% trading fee · No monthly charges
               </p>
             </div>
 

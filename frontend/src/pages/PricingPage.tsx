@@ -9,10 +9,10 @@ const CARD = '#1c1c1e';
 
 const fees = [
   { category: 'Trading', items: [
-    { label: 'US Stocks & ETFs', value: '0.5% per trade', note: 'Min $1' },
-    { label: 'UK Stocks', value: '0.5% per trade', note: 'Min £1' },
-    { label: 'Kenyan Stocks (NSE)', value: '0.3% per trade', note: 'Min KES 50' },
-    { label: 'Fractional Shares', value: '0.5% per trade', note: 'From $1' },
+    { label: 'US Stocks & ETFs', value: '1% per trade', note: 'Min $1' },
+    { label: 'UK Stocks', value: '1% per trade', note: 'Min £1' },
+    { label: 'Kenyan Stocks (NSE)', value: '1% per trade', note: 'Min KES 50' },
+    { label: 'Fractional Shares', value: '1% per trade', note: 'From $1' },
   ]},
   { category: 'Deposits', items: [
     { label: 'M-Pesa', value: 'Free', note: '' },
