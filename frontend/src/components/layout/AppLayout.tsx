@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import {
   LayoutDashboard, TrendingUp, Briefcase, ArrowDownUp, Bell,
   ShieldCheck, LogOut, User, ShieldAlert, X, Palette, Search, Menu, Wallet,
-  Star, Settings,
+  Star, Settings, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import CapaLogo from '../ui/CapaLogo';
@@ -31,6 +31,13 @@ export default function AppLayout() {
   const [searchOpen, setSearch] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
+
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem('sidebar-collapsed', String(next));
+  };
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -135,54 +142,111 @@ export default function AppLayout() {
 
       {/* ── Desktop sidebar (hidden on mobile) ── */}
       {!isMobile && (
-        <aside style={{ width: 256, flexShrink: 0, display: 'flex', flexDirection: 'column', height: '100vh', overflowY: 'auto', overflowX: 'hidden', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(160%) blur(28px)', WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderRight: `1px solid ${sidebarBorder}`, boxShadow: '1px 0 0 rgba(0,0,0,0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: `1px solid ${sidebarBorder}` }}>
-            <CapaLogo size={44} />
-          </div>
-          <div style={{ padding: '10px 12px 4px' }}>
-            <button onClick={() => setSearch(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, textAlign: 'left', transition: 'all 0.15s' }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(235,235,245,0.8)'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}>
-              <Search size={15} /><span style={{ flex: 1 }}>Search stocks…</span>
-              <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(235,235,245,0.4)' }}>⌘K</kbd>
+        <aside style={{
+          width: collapsed ? 64 : 256, flexShrink: 0, display: 'flex', flexDirection: 'column',
+          height: '100vh', overflowY: 'auto', overflowX: 'hidden',
+          backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(160%) blur(28px)',
+          WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderRight: `1px solid ${sidebarBorder}`,
+          boxShadow: '1px 0 0 rgba(0,0,0,0.08)',
+          transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)',
+        }}>
+
+          {/* Logo row + collapse toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between', padding: collapsed ? '16px 0' : '16px 12px 16px 20px', borderBottom: `1px solid ${sidebarBorder}`, flexShrink: 0 }}>
+            {!collapsed && <CapaLogo size={44} />}
+            <button
+              onClick={toggleCollapsed}
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              style={{ color: 'rgba(235,235,245,0.45)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 8, display: 'flex', flexShrink: 0, transition: 'color 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(235,235,245,0.9)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(235,235,245,0.45)')}>
+              {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
             </button>
           </div>
-          <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
+
+          {/* Search — hidden when collapsed */}
+          {!collapsed && (
+            <div style={{ padding: '10px 12px 4px' }}>
+              <button onClick={() => setSearch(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, textAlign: 'left', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(235,235,245,0.8)'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}>
+                <Search size={15} /><span style={{ flex: 1 }}>Search stocks…</span>
+                <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(235,235,245,0.4)' }}>⌘K</kbd>
+              </button>
+            </div>
+          )}
+
+          {/* Search icon only when collapsed */}
+          {collapsed && (
+            <div style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'center' }}>
+              <button onClick={() => setSearch(true)} title="Search stocks"
+                style={{ color: 'rgba(235,235,245,0.5)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, cursor: 'pointer', padding: 8, display: 'flex', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(235,235,245,0.9)'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}>
+                <Search size={16} />
+              </button>
+            </div>
+          )}
+
+          <nav style={{ flex: 1, padding: collapsed ? '8px 0' : '8px 12px', overflowY: 'auto' }}>
             {user?.adminRole && (
               <NavLink to="/admin/dashboard"
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive })}>
-                {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
+                title={collapsed ? 'Admin' : undefined}
+                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', gap: 10, padding: collapsed ? '10px 0' : '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive })}>
+                {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />{!collapsed && 'Admin'}</>}
               </NavLink>
             )}
             {nav.map(({ to, label, icon: Icon }) => (
               <NavLink key={to} to={to}
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive })}>
-                {({ isActive }) => (<><Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />{label}{label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}</>)}
+                title={collapsed ? label : undefined}
+                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', gap: 10, padding: collapsed ? '10px 0' : '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive })}>
+                {({ isActive }) => (<>
+                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                  {!collapsed && label}
+                  {!collapsed && label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}
+                  {collapsed && label === 'Verification' && kycBadge && <span style={{ position: 'absolute', top: 6, right: 10, width: 7, height: 7, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}
+                </>)}
               </NavLink>
             ))}
             <button onClick={() => setPalette(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', borderRadius: 10, marginTop: 2, fontSize: 15, fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', color: navInactive, transition: 'background 0.15s', textAlign: 'left' }}
+              title={collapsed ? 'Customizations' : undefined}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', gap: 10, width: '100%', padding: collapsed ? '10px 0' : '9px 12px', borderRadius: 10, marginTop: 2, fontSize: 15, fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', color: navInactive, transition: 'background 0.15s', textAlign: 'left' }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
-              <Palette size={18} strokeWidth={1.8} />Customizations
+              <Palette size={18} strokeWidth={1.8} />{!collapsed && 'Customizations'}
             </button>
           </nav>
-          <div style={{ padding: 12, borderTop: `1px solid ${sidebarBorder}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
-                {user?.firstName?.[0]}{user?.lastName?.[0]}
+
+          {/* User footer */}
+          <div style={{ padding: collapsed ? '12px 0' : 12, borderTop: `1px solid ${sidebarBorder}`, flexShrink: 0 }}>
+            {collapsed ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <div title={`${user?.firstName} ${user?.lastName}`} style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600 }}>
+                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                </div>
+                <button onClick={handleLogout} title="Sign out" style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                  <LogOut size={15} />
+                </button>
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-                <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
+                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+                </div>
+                <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                  <LogOut size={15} />
+                </button>
               </div>
-              <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
-                <LogOut size={15} />
-              </button>
-            </div>
+            )}
           </div>
         </aside>
       )}
