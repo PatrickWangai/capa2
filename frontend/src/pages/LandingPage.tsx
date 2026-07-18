@@ -36,8 +36,8 @@ function HeroCanvas({ theme }: { theme: string }) {
       const dpr = window.devicePixelRatio || 1;
       W = el.offsetWidth;
       H = el.offsetHeight;
-      el.width  = Math.round(W * dpr);
-      el.height = Math.round(H * dpr);
+      el.width  = Math.ceil(W * dpr);
+      el.height = Math.ceil(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
