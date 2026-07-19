@@ -135,12 +135,25 @@ if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
   app.get('/favicon.ico', (_req, res) => res.status(404).end());
   app.get('/apple-touch-icon.png', (_req, res) => res.status(404).end());
   app.get('/apple-touch-icon-precomposed.png', (_req, res) => res.status(404).end());
-  app.use(express.static(frontendDist));
+  // JS/CSS chunks have content hashes in their filenames — cache them aggressively.
+  // index.html must never be cached so phones always get the latest app shell.
+  app.use(express.static(frontendDist, {
+    setHeaders(res, filePath) {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    },
+  }));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
     // Static assets that don't exist should 404, not return index.html —
     // returning HTML for a missing JS chunk causes the MIME-type error.
     if (req.path.startsWith('/assets/')) return res.status(404).end();
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 }
