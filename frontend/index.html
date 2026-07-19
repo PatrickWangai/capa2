@@ -2,15 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      (function(){
-        var l=document.createElement('link');
-        l.rel='icon';l.type='image/png';l.sizes='192x192';
-        l.href='/app-icon.png?v='+Math.floor(Date.now()/86400000);
-        document.querySelectorAll("link[rel*='icon']").forEach(function(e){e.remove();});
-        document.head.appendChild(l);
-      })();
-    </script>
+    <!-- SVG data URI: no URL for Safari to cache, vector-crisp at any resolution -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMDgyZTNjIi8+PHBhdGggZD0iTSA3OCwyOCBBIDM0LDM0IDAgMSwwIDc4LDcyIiBmaWxsPSJub25lIiBzdHJva2U9IiMyMGQ0YjgiIHN0cm9rZS13aWR0aD0iMTEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxlbGxpcHNlIGN4PSIzNCIgY3k9IjI3IiByeD0iNSIgcnk9IjMuMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii41NSIgdHJhbnNmb3JtPSJyb3RhdGUoLTQyIDM0IDI3KSIvPjwvc3ZnPg==" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
