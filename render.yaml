@@ -55,7 +55,7 @@ services:
       - key: POLYGON_API_KEY
         sync: false
       - key: FRONTEND_URL
-        value: https://capa-q1nh.onrender.com
+        value: https://capa-q1nh-fx87.onrender.com
       - key: BANK_NAME
         sync: false
       - key: BANK_ACCOUNT_NAME
