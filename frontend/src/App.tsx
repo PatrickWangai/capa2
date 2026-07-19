@@ -63,80 +63,17 @@ function PageTitle({ title }: { title: string }) {
 
 function LoadingSpinner() {
   return (
-    <>
-      <style>{`
-        @keyframes _sp-bg   { from { opacity:0 } to { opacity:1 } }
-        @keyframes _sp-icon {
-          0%   { opacity:0; transform:scale(0.4); }
-          60%  { transform:scale(1.1); }
-          100% { opacity:1; transform:scale(1); }
-        }
-        @keyframes _sp-pulse {
-          0%,100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb),0.0); }
-          50%     { box-shadow: 0 0 0 10px rgba(var(--accent-rgb),0.15); }
-        }
-        @keyframes _sp-up {
-          from { opacity:0; transform:translateY(8px); }
-          to   { opacity:1; transform:translateY(0); }
-        }
-        @keyframes _sp-dots {
-          0%,80%,100% { opacity:0.2; transform:scale(0.8); }
-          40%         { opacity:1;   transform:scale(1); }
-        }
-      `}</style>
-
-      <div style={{
-        position: 'fixed', inset: 0,
-        background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
-        zIndex: 9999,
-        animation: '_sp-bg 0.2s ease both',
-      }}>
-
-        {/* C icon — spring bounce in, then pulses gently */}
-        <div style={{
-          animation: '_sp-icon 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.05s both, _sp-pulse 2.4s ease-in-out 0.7s infinite',
-          background: 'rgba(var(--accent-rgb),0.10)',
-          borderRadius: 18,
-          lineHeight: 0,
-          padding: 4,
-        }}>
-          <CapaCIcon size={56} animate bg="none" />
-        </div>
-
-        {/* Wordmark */}
-        <p style={{
-          margin: '14px 0 4px', padding: 0,
-          fontSize: 16, fontWeight: 700, letterSpacing: '0.20em',
-          color: 'var(--text)',
-          animation: '_sp-up 0.4s ease 0.28s both',
-        }}>CAPA</p>
-
-        {/* Tagline */}
-        <p style={{
-          margin: 0, padding: 0,
-          fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.03em',
-          animation: '_sp-up 0.4s ease 0.42s both',
-        }}>Invest Globally</p>
-
-        {/* Loading dots */}
-        <div style={{
-          display: 'flex', gap: 5, marginTop: 22,
-          animation: '_sp-up 0.4s ease 0.55s both',
-        }}>
-          {[0,1,2].map(i => (
-            <span key={i} style={{
-              width: 5, height: 5, borderRadius: '50%',
-              background: 'var(--accent)',
-              display: 'block',
-              animation: `_sp-dots 1.2s ease-in-out ${i * 0.18}s infinite`,
-            }} />
-          ))}
-        </div>
-
-      </div>
-    </>
+    <div style={{
+      position: 'fixed', inset: 0,
+      background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
+      zIndex: 9999,
+    }}>
+      <img src="/capa-c-icon-512.png" style={{ width: 80, height: 80, objectFit: 'contain' }} alt="CAPA" />
+      <p style={{ margin: '14px 0 4px', padding: 0, fontSize: 16, fontWeight: 700, letterSpacing: '0.20em', color: 'var(--text)' }}>CAPA</p>
+      <p style={{ margin: 0, padding: 0, fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.03em' }}>Invest Globally</p>
+    </div>
   );
 }
 
