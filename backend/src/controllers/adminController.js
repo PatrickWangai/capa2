@@ -70,6 +70,7 @@ export async function listTransactions(req, res) {
 export async function confirmTransaction(req, res) {
   const tx = await prisma.transaction.findUnique({ where: { id: req.params.id } });
   if (!tx) return res.status(404).json({ error: 'Not found.' });
+  if (tx.status === 'COMPLETED') return res.status(400).json({ error: 'Transaction already confirmed.' });
   await prisma.transaction.update({ where: { id: tx.id }, data: { status: 'COMPLETED' } });
   if (tx.type === 'DEPOSIT') {
     await prisma.accountBalance.upsert({

@@ -53,7 +53,7 @@ const httpServer = http.createServer(app);
 // ── Socket.IO ────────────────────────────────────────────────
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173'],
+    origin: process.env.CORS_ORIGINS === '*' ? true : (process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173']),
     credentials: true,
   },
   transports: ['websocket', 'polling'],
@@ -76,7 +76,7 @@ app.use(helmet({
 }));
 app.use(compression());
 app.use(cors({
-  origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173'],
+  origin: process.env.CORS_ORIGINS === '*' ? true : (process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173']),
   credentials: true,
 }));
 app.use('/api/webhooks', express.raw({ type: 'application/json' }));

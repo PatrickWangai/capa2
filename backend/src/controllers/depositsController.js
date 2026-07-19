@@ -6,6 +6,7 @@ import Decimal from 'decimal.js';
 export async function mpesaDeposit(req, res) {
   const { amount, phone, currency = 'KES' } = req.body;
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.status(404).json({ error: 'No active account found.' });
 
   const tx = await prisma.transaction.create({
     data: { accountId: account.id, type: 'DEPOSIT', status: 'PENDING', amount, currency, description: 'M-Pesa deposit' },
@@ -24,6 +25,7 @@ export async function mpesaDeposit(req, res) {
 export async function bankDeposit(req, res) {
   const { amount, currency = 'USD', bankName, bankAccount } = req.body;
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.status(404).json({ error: 'No active account found.' });
 
   const tx = await prisma.transaction.create({
     data: { accountId: account.id, type: 'DEPOSIT', status: 'PENDING', amount, currency, description: 'Bank transfer deposit' },
@@ -53,6 +55,7 @@ export async function bankDeposit(req, res) {
 export async function withdraw(req, res) {
   const { amount, currency, method, phone, bankAccount, bankName } = req.body;
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true }, include: { balances: true } });
+  if (!account) return res.status(404).json({ error: 'No active account found.' });
   const balance = account.balances.find(b => b.currency === currency);
   if (!balance || new Decimal(balance.available.toString()).lt(amount)) {
     return res.status(400).json({ error: 'Insufficient balance.' });
@@ -71,6 +74,7 @@ export async function withdraw(req, res) {
 // GET /api/deposits/history
 export async function getHistory(req, res) {
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.json({ transactions: [] });
   const transactions = await prisma.transaction.findMany({
     where: { accountId: account.id, type: { in: ['DEPOSIT', 'WITHDRAWAL'] } },
     include: { paymentInstruction: true },

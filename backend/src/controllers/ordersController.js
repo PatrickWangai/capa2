@@ -98,7 +98,7 @@ export async function placeOrder(req, res) {
         currency: asset.currency, status: 'PENDING', brokerOrderId },
       include: { asset: { select: { symbol: true, name: true } } },
     });
-    if (side === 'BUY' && orderType === 'MARKET') {
+    if (side === 'BUY') {
       await tx.accountBalance.updateMany({
         where: { accountId: account.id, currency: asset.currency },
         data: { available: { decrement: estimatedTotal.plus(fee).toNumber() }, reserved: { increment: estimatedTotal.plus(fee).toNumber() } },
@@ -172,6 +172,7 @@ export async function getOrders(req, res) {
 
 export async function cancelOrder(req, res) {
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.status(404).json({ error: 'No active account found.' });
   const order = await prisma.order.findFirst({ where: { id: req.params.id, accountId: account.id } });
   if (!order) return res.status(404).json({ error: 'Order not found.' });
   if (!['PENDING', 'OPEN'].includes(order.status)) return res.status(400).json({ error: `Cannot cancel order with status ${order.status}.` });

@@ -122,6 +122,7 @@ export async function getPortfolioHistory(req, res) {
 // GET /api/portfolio/dividends
 export async function getDividends(req, res) {
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+  if (!account) return res.json({ payments: [], totalDividends: '0.00' });
 
   const payments = await prisma.dividendPayment.findMany({
     where: { accountId: account.id },

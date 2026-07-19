@@ -272,11 +272,11 @@ export async function resendVerification(req, res) {
 
 // PUT /api/auth/profile
 export async function updateProfile(req, res) {
-  const { firstName, lastName, phone, dateOfBirth, addressLine1, addressLine2, city, postalCode } = req.body;
+  const { firstName, lastName, phone, dateOfBirth, addressLine1, addressLine2, city, postalCode, taxId } = req.body;
   const updated = await prisma.user.update({
     where: { id: req.user.id },
-    data: { firstName, lastName, phone: phone || null, dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined, addressLine1, addressLine2, city, postalCode },
-    select: { id: true, email: true, firstName: true, lastName: true, phone: true, dateOfBirth: true, addressLine1: true, addressLine2: true, city: true, postalCode: true, kycStatus: true, status: true, createdAt: true },
+    data: { firstName, lastName, phone: phone || null, dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined, addressLine1, addressLine2, city, postalCode, ...(taxId !== undefined && { taxId }) },
+    select: { id: true, email: true, firstName: true, lastName: true, phone: true, dateOfBirth: true, addressLine1: true, addressLine2: true, city: true, postalCode: true, taxId: true, kycStatus: true, status: true, createdAt: true },
   });
   res.json(updated);
 }
