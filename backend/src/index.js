@@ -124,8 +124,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendDist = path.resolve(__dirname, '../../frontend/dist');
 if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
-  // Safari auto-fetches /favicon.ico from the root even without a <link> tag.
-  // Returning 404 forces it to fall back to the data: URI in the HTML <link>.
+  // /app-icon.png — served with no-store so Safari cannot cache a stale version.
+  // /favicon.ico, apple-touch-icon → 404 so Safari cannot fall back to old cached files.
+  app.get('/app-icon.png', (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.sendFile(path.join(frontendDist, 'app-icon.png'));
+  });
   app.get('/favicon.ico', (_req, res) => res.status(404).end());
   app.get('/apple-touch-icon.png', (_req, res) => res.status(404).end());
   app.get('/apple-touch-icon-precomposed.png', (_req, res) => res.status(404).end());
