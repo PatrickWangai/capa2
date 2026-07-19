@@ -5,6 +5,7 @@ import { useAuthStore } from './store/authStore';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import CookieBanner from './components/ui/CookieBanner';
 import CapaLogo from './components/ui/CapaLogo';
+import CapaCIcon from './components/ui/CapaCIcon';
 
 // Eagerly loaded (critical path)
 import LandingPage from './pages/LandingPage';
@@ -64,60 +65,52 @@ function LoadingSpinner() {
   return (
     <>
       <style>{`
-        @keyframes _splash-logo {
-          0%   { opacity: 0; transform: scale(0.88); }
-          100% { opacity: 1; transform: scale(1); }
+        @keyframes _sp-bg   { from { opacity:0 } to { opacity:1 } }
+        @keyframes _sp-icon {
+          0%   { opacity:0; transform:scale(0.5); }
+          65%  { transform:scale(1.08); }
+          100% { opacity:1; transform:scale(1); }
         }
-        @keyframes _splash-dot {
-          0%, 60%, 100% { transform: scale(0.4); opacity: 0.25; }
-          30%            { transform: scale(1);   opacity: 1; }
-        }
-        @keyframes _splash-ring {
-          0%   { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        @keyframes _sp-up {
+          from { opacity:0; transform:translateY(10px); }
+          to   { opacity:1; transform:translateY(0); }
         }
       `}</style>
 
       <div style={{
         position: 'fixed', inset: 0,
-        background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%)',
+        background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
         zIndex: 9999,
+        animation: '_sp-bg 0.2s ease both',
       }}>
 
-        {/* Logo */}
-        <div style={{ animation: '_splash-logo 0.55s cubic-bezier(0.22,1,0.36,1) both', marginBottom: 52 }}>
-          <CapaLogo size={160} />
+        {/* C icon — spring bounce in, then draws itself */}
+        <div style={{
+          animation: '_sp-icon 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.05s both',
+          background: 'rgba(var(--accent-rgb),0.12)',
+          borderRadius: 24,
+          lineHeight: 0,
+        }}>
+          <CapaCIcon size={80} animate bg="none" />
         </div>
 
-        {/* Spinner ring */}
-        <div style={{ position: 'relative', width: 36, height: 36, marginBottom: 20 }}>
-          {/* Track */}
-          <div style={{
-            position: 'absolute', inset: 0, borderRadius: '50%',
-            border: '2.5px solid rgba(255,255,255,0.10)',
-          }} />
-          {/* Arc */}
-          <div style={{
-            position: 'absolute', inset: 0, borderRadius: '50%',
-            border: '2.5px solid transparent',
-            borderTopColor: 'var(--accent)',
-            borderRightColor: 'var(--accent)',
-            animation: '_splash-ring 0.9s linear infinite',
-          }} />
-        </div>
+        {/* Wordmark */}
+        <p style={{
+          margin: '18px 0 5px', padding: 0,
+          fontSize: 20, fontWeight: 700, letterSpacing: '0.18em',
+          color: 'var(--text)',
+          animation: '_sp-up 0.45s ease 0.3s both',
+        }}>CAPA</p>
 
-        {/* Three dots */}
-        <div style={{ display: 'flex', gap: 7 }}>
-          {[0, 1, 2].map(i => (
-            <div key={i} style={{
-              width: 6, height: 6, borderRadius: '50%',
-              backgroundColor: 'var(--accent)',
-              animation: `_splash-dot 1.2s ease-in-out ${i * 0.18}s infinite`,
-            }} />
-          ))}
-        </div>
+        {/* Tagline */}
+        <p style={{
+          margin: 0, padding: 0,
+          fontSize: 12, color: 'var(--text-secondary)', letterSpacing: '0.02em',
+          animation: '_sp-up 0.45s ease 0.45s both',
+        }}>Invest Globally from Africa</p>
+
       </div>
     </>
   );
