@@ -2,7 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/app-icon.png" />
+    <script>
+      (function(){
+        var l=document.createElement('link');
+        l.rel='icon';l.type='image/png';l.sizes='192x192';
+        l.href='/app-icon.png?v='+Math.floor(Date.now()/86400000);
+        document.querySelectorAll("link[rel*='icon']").forEach(function(e){e.remove();});
+        document.head.appendChild(l);
+      })();
+    </script>
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -54,8 +62,8 @@
           black:  {a:'#a0a0a0',d:'#707070',r:'160,160,160',  bg:['#0f0f0f','#111111','#181818','#1f1f1f','#282828','#0f0f0f'],   sb:'rgba(15,15,15,0.97)',  cb:'rgba(31,31,31,0.95)', cbr:'rgba(255,255,255,0.07)', ib:'rgba(40,40,40,0.95)', at:'#000000'},
         };
         var key=localStorage.getItem('capa-theme');
-        if(!key||key==='indigo'||key==='blue'||key==='emerald'||key==='white'){key='black';localStorage.setItem('capa-theme','black');}
-        var t=T[key]||T.emerald;
+        if(!key||key==='indigo'||key==='blue'||key==='emerald'||key==='white'||key==='black'){key='teal';localStorage.setItem('capa-theme','teal');}
+        var t=T[key]||T.teal;
         var s=document.documentElement.style;
         s.setProperty('--accent',t.a);
         s.setProperty('--accent-dark',t.d);

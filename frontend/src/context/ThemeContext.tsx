@@ -187,14 +187,14 @@ type ThemeCtx = {
   setTheme: (t: ThemeName) => void;
 };
 const ThemeContext = createContext<ThemeCtx>({
-  theme: 'emerald', setTheme: () => {},
+  theme: 'teal', setTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
     localStorage.removeItem('capa-mode');
     const savedTheme = localStorage.getItem('capa-theme') as ThemeName | null;
-    const t = (savedTheme && savedTheme in THEMES ? savedTheme : 'emerald') as ThemeName;
+    const t = (savedTheme && savedTheme in THEMES ? savedTheme : 'teal') as ThemeName;
     applyTheme(t);
     return t;
   });
