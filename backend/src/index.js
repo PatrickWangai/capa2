@@ -132,9 +132,15 @@ if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
     res.setHeader('Expires', '0');
     res.sendFile(path.join(frontendDist, 'app-icon.png'));
   });
-  app.get('/favicon.ico', (_req, res) => res.status(404).end());
-  app.get('/apple-touch-icon.png', (_req, res) => res.status(404).end());
-  app.get('/apple-touch-icon-precomposed.png', (_req, res) => res.status(404).end());
+  // Favicon routes — served with no-store so Safari never caches a stale icon
+  for (const name of ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'favicon-48x48.png', 'apple-touch-icon.png', 'apple-touch-icon-precomposed.png']) {
+    app.get(`/${name}`, (_req, res) => {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.sendFile(path.join(frontendDist, name));
+    });
+  }
   // JS/CSS chunks have content hashes in their filenames — cache them aggressively.
   // index.html must never be cached so phones always get the latest app shell.
   app.use(express.static(frontendDist, {
