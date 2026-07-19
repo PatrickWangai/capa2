@@ -260,7 +260,7 @@ export default function LandingPage() {
           <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: 4 }}>
             <CapaLogo size={260} />
           </div>
-          <p className="hero-text hero-text-3" style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(235,235,245,0.45)', margin: '-8px 0 18px' }}>
+          <p className="hero-text hero-text-3" style={{ fontSize: 'clamp(28px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--accent)', margin: '0 0 20px', lineHeight: 1.1 }}>
             Unstoppable Minds
           </p>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
