@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { Shield, Bell, Lock, Smartphone, CheckCircle, Copy, Eye, EyeOff } from 'lucide-react';
+import { Shield, Bell, Lock, Smartphone, CheckCircle, Copy, Eye, EyeOff, Gift } from 'lucide-react';
 import { PageLoader } from '../components/ui';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
@@ -13,6 +13,61 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div className="card space-y-4">
       <h2 className="text-base font-semibold text-white">{title}</h2>
       {children}
+    </div>
+  );
+}
+
+// ── MFA Disable Section ───────────────────────────────────────────────────────
+function MfaDisableSection({ onDisabled }: { onDisabled: () => void }) {
+  const [confirming, setConfirming] = useState(false);
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const handleDisable = async () => {
+    if (!code || code.length !== 6) return toast.error('Enter the 6-digit code from your authenticator app');
+    setBusy(true);
+    try {
+      await api.post('/api/auth/mfa/disable', { code });
+      toast.success('Two-factor authentication disabled');
+      onDisabled();
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Invalid code — try again');
+    } finally { setBusy(false); }
+  };
+
+  if (confirming) {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-yellow-400">Enter the 6-digit code from your authenticator app to confirm.</p>
+        <input className="input text-center tracking-widest text-xl" maxLength={6}
+          placeholder="000000" value={code}
+          onChange={e => setCode(e.target.value.replace(/\D/g, ''))} />
+        <div className="flex gap-3">
+          <button className="flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-colors"
+            style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+            onClick={handleDisable} disabled={busy}>
+            {busy ? 'Disabling…' : 'Confirm Disable'}
+          </button>
+          <button className="btn-secondary" onClick={() => { setConfirming(false); setCode(''); }}>Cancel</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <CheckCircle size={18} style={{ color: '#34d399' }} />
+        <div>
+          <p className="text-sm font-semibold text-white">2FA is enabled</p>
+          <p className="text-xs text-gray-500">Your account is protected with an authenticator app.</p>
+        </div>
+      </div>
+      <button className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
+        style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)', whiteSpace: 'nowrap' }}
+        onClick={() => setConfirming(true)}>
+        Disable 2FA
+      </button>
     </div>
   );
 }
@@ -85,15 +140,7 @@ function SecurityTab() {
       {/* 2FA */}
       <Section title="Two-Factor Authentication">
         {mfaEnabled || mfaStep === 'done' ? (
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle size={18} style={{ color: '#34d399' }} />
-              <div>
-                <p className="text-sm font-semibold text-white">2FA is enabled</p>
-                <p className="text-xs text-gray-500">Your account is protected with an authenticator app.</p>
-              </div>
-            </div>
-          </div>
+          <MfaDisableSection onDisabled={() => { setMfaStep('idle'); qc.invalidateQueries({ queryKey: ['auth-me'] }); }} />
         ) : mfaStep === 'idle' ? (
           <div className="space-y-3">
             <p className="text-sm text-gray-400">
@@ -255,8 +302,38 @@ function NotificationsTab() {
 
 // ── Account tab ───────────────────────────────────────────────────────────────
 function AccountTab() {
+  const { user } = useAuthStore();
+  const referralCode = (user as any)?.referralCode as string | undefined;
+
+  const copyReferral = () => {
+    if (!referralCode) return;
+    navigator.clipboard.writeText(referralCode);
+    toast.success('Referral code copied');
+  };
+
   return (
     <div className="space-y-4">
+      {/* Referral */}
+      <Section title="Refer a Friend">
+        <div className="space-y-3">
+          <p className="text-sm text-gray-400">
+            Share your unique referral code. When a friend joins and starts investing, you both benefit.
+          </p>
+          {referralCode ? (
+            <div className="flex items-center gap-3 p-3 rounded-xl"
+              style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)' }}>
+              <Gift size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+              <span className="flex-1 font-mono font-bold text-white tracking-widest text-sm">{referralCode}</span>
+              <button onClick={copyReferral} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+                <Copy size={14} className="text-gray-400" />
+              </button>
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500">No referral code generated yet — log out and back in to refresh.</p>
+          )}
+        </div>
+      </Section>
+
       <Section title="Data & Privacy">
         <p className="text-sm text-gray-400">
           You can request a copy of all your personal data or request account deletion.

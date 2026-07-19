@@ -12,7 +12,7 @@ import { StockLogo } from '../components/ui/StockLogo';
 
 // ── Types ─────────────────────────────────────────────────────
 type Side    = 'BUY' | 'SELL';
-type OrdType = 'MARKET' | 'LIMIT';
+type OrdType = 'MARKET' | 'LIMIT' | 'STOP' | 'STOP_LIMIT';
 type InMode  = 'SHARES' | 'DOLLARS';
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -173,10 +173,10 @@ type BuyStep = 'connect' | 'add-mpesa' | 'add-bank' | 'mpesa' | 'mpesa-sent' | '
 interface SavedMethod { id: string; type: string; label: string; phone?: string; bankName?: string; bankAccount?: string; isDefault: boolean; }
 
 function BuyFlowModal({
-  asset, qty, ordType, limitPriceStr, currentPrice, fee, total, currency,
+  asset, qty, ordType, limitPriceStr, stopPriceStr, currentPrice, fee, total, currency,
   onClose, onOrderSuccess,
 }: {
-  asset: any; qty: number; ordType: OrdType; limitPriceStr: string;
+  asset: any; qty: number; ordType: OrdType; limitPriceStr: string; stopPriceStr: string;
   currentPrice: number; fee: number; total: number; currency: string;
   onClose: () => void; onOrderSuccess: () => void;
 }) {
@@ -288,6 +288,8 @@ function BuyFlowModal({
       await api.post('/api/orders', {
         assetId: asset.id, side: 'BUY', orderType: ordType,
         quantity: asset.isFractional ? qty.toFixed(6) : String(Math.round(qty)),
+        ...((ordType === 'STOP' || ordType === 'STOP_LIMIT') && { stopPrice: Number(stopPriceStr).toFixed(2) }),
+        ...(ordType === 'STOP_LIMIT' && { limitPrice: Number(limitPriceStr).toFixed(2) }),
         ...(ordType === 'LIMIT' && { limitPrice: Number(limitPriceStr).toFixed(2) }),
       });
       setStep('done');
@@ -574,6 +576,10 @@ export default function AssetDetailPage() {
   const [watched, setWatched]     = useState(false);
   const [showBuyFlow, setBuyFlow] = useState(false);
   const [flashKey, setFlash]      = useState(0);
+  const [stopPrice, setStopPrice]   = useState('');
+  const [showSellPreview, setSellPreview] = useState(false);
+  const [sellLoading, setSellLoading]    = useState(false);
+  const [sellSuccess, setSellSuccess]    = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertCond, setAlertCond] = useState<'above' | 'below'>('above');
   const [alertPrice, setAlertPriceVal] = useState('');
@@ -668,7 +674,7 @@ export default function AssetDetailPage() {
 
   const rawAmt    = Number(amount) || 0;
   const sharesQty = inMode === 'SHARES' ? rawAmt : (currentPrice > 0 ? rawAmt / currentPrice : 0);
-  const effPrice  = ordType === 'LIMIT' ? (Number(limitPrice) || currentPrice) : currentPrice;
+  const effPrice  = (ordType === 'LIMIT' || ordType === 'STOP_LIMIT') ? (Number(limitPrice) || currentPrice) : currentPrice;
   const subtotal  = sharesQty * effPrice;
 
   // Charges breakdown
@@ -681,9 +687,14 @@ export default function AssetDetailPage() {
   const tax        = vat + nseLеvy + cmaLevy + cdscLevy + stampDuty;
   const fee        = brokerFee + tax;
   const total      = side === 'BUY' ? subtotal + fee : subtotal - fee;
-  const canBuy    = sharesQty > 0 && (ordType === 'MARKET' || Number(limitPrice) > 0);
+  const needsStop  = ordType === 'STOP' || ordType === 'STOP_LIMIT';
+  const needsLimit = ordType === 'LIMIT' || ordType === 'STOP_LIMIT';
+  const canBuy    = sharesQty > 0
+    && (!needsStop || Number(stopPrice) > 0)
+    && (!needsLimit || Number(limitPrice) > 0);
   const canOrder  = sharesQty > 0
-    && (ordType === 'MARKET' || Number(limitPrice) > 0)
+    && (!needsStop || Number(stopPrice) > 0)
+    && (!needsLimit || Number(limitPrice) > 0)
     && sharesQty <= ownedQty + 0.000001;
 
   const keyStats = [
@@ -800,10 +811,38 @@ export default function AssetDetailPage() {
       {showBuyFlow && (
         <BuyFlowModal
           asset={asset} qty={sharesQty} ordType={ordType}
-          limitPriceStr={limitPrice} currentPrice={currentPrice}
+          limitPriceStr={limitPrice} stopPriceStr={stopPrice} currentPrice={currentPrice}
           fee={fee} total={total} currency={currency}
           onClose={() => { setBuyFlow(false); refetchAsset(); }}
           onOrderSuccess={() => { qc.invalidateQueries({ queryKey: ['portfolio'] }); qc.invalidateQueries({ queryKey: ['orders'] }); setAmount(''); }}
+        />
+      )}
+
+      {showSellPreview && (
+        <PreviewModal
+          asset={asset} side="SELL" ordType={ordType} qty={sharesQty}
+          limitPriceStr={limitPrice} currentPrice={currentPrice}
+          fee={fee} total={total} currency={currency}
+          loading={sellLoading} success={sellSuccess}
+          onCancel={() => { setSellPreview(false); setSellSuccess(false); refetchAsset(); if (sellSuccess) { qc.invalidateQueries({ queryKey: ['portfolio'] }); qc.invalidateQueries({ queryKey: ['orders'] }); setAmount(''); } }}
+          onConfirm={async () => {
+            setSellLoading(true);
+            try {
+              await api.post('/api/orders', {
+                assetId: asset.id, side: 'SELL', orderType: ordType,
+                quantity: asset.isFractional ? sharesQty.toFixed(6) : String(Math.round(sharesQty)),
+                ...((ordType === 'STOP' || ordType === 'STOP_LIMIT') && { stopPrice: Number(stopPrice).toFixed(2) }),
+                ...(ordType === 'STOP_LIMIT' && { limitPrice: Number(limitPrice).toFixed(2) }),
+                ...(ordType === 'LIMIT' && { limitPrice: Number(limitPrice).toFixed(2) }),
+              });
+              setSellSuccess(true);
+              qc.invalidateQueries({ queryKey: ['portfolio'] });
+              qc.invalidateQueries({ queryKey: ['orders'] });
+              setAmount('');
+            } catch (err: any) {
+              toast.error(err.response?.data?.error || 'Order failed — try again.');
+            } finally { setSellLoading(false); }
+          }}
         />
       )}
 
@@ -922,14 +961,14 @@ export default function AssetDetailPage() {
               <div className="mb-4">
                 <p className="label">Order Type</p>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {(['MARKET', 'LIMIT'] as OrdType[]).map(t => (
+                  {(['MARKET', 'LIMIT', 'STOP', 'STOP_LIMIT'] as OrdType[]).map(t => (
                     <button
                       key={t}
-                      onClick={() => { setOrdType(t); setInMode('SHARES'); }}
+                      onClick={() => { setOrdType(t); setInMode('SHARES'); setStopPrice(''); }}
                       className={clsx('py-2 rounded-lg text-xs font-semibold transition-all', ordType === t ? 'text-white' : 'text-gray-500 hover:text-white')}
                       style={ordType === t ? { backgroundColor: 'var(--accent)' } : { background: 'rgba(255,255,255,0.06)' }}
                     >
-                      {t}
+                      {t.replace('_', ' ')}
                     </button>
                   ))}
                 </div>
@@ -954,8 +993,17 @@ export default function AssetDetailPage() {
                 </div>
               )}
 
+              {/* Stop price */}
+              {(ordType === 'STOP' || ordType === 'STOP_LIMIT') && (
+                <div className="mb-3">
+                  <label className="label">Stop Price ({currency})</label>
+                  <input type="number" className="input text-sm" placeholder="0.00" value={stopPrice} onChange={e => setStopPrice(e.target.value)} min="0" step="0.01" />
+                  <p className="text-xs mt-1" style={{ color: 'rgba(235,235,245,0.35)' }}>Order triggers when price hits this level.</p>
+                </div>
+              )}
+
               {/* Limit price */}
-              {ordType === 'LIMIT' && (
+              {(ordType === 'LIMIT' || ordType === 'STOP_LIMIT') && (
                 <div className="mb-3">
                   <label className="label">Limit Price ({currency})</label>
                   <input type="number" className="input text-sm" placeholder="0.00" value={limitPrice} onChange={e => setLimitP(e.target.value)} min="0" step="0.01" />
@@ -1067,7 +1115,7 @@ export default function AssetDetailPage() {
               ) : (
                 <button
                   disabled={!canOrder}
-                  onClick={() => canOrder && setBuyFlow(true)}
+                  onClick={() => canOrder && setSellPreview(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
                     backgroundColor: canOrder ? '#ef4444' : 'rgba(255,255,255,0.06)',

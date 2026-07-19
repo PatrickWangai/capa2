@@ -220,6 +220,18 @@ export async function mfaVerify(req, res) {
   res.json({ message: 'MFA enabled successfully.' });
 }
 
+// POST /api/auth/mfa/disable
+export async function mfaDisable(req, res) {
+  const { code } = req.body;
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!user.mfaEnabled) return res.status(400).json({ error: 'MFA is not enabled.' });
+  if (!code) return res.status(400).json({ error: 'Verification code required to disable MFA.' });
+  const valid = speakeasy.totp.verify({ secret: user.mfaSecret, encoding: 'base32', token: code, window: 1 });
+  if (!valid) return res.status(401).json({ error: 'Invalid code.' });
+  await prisma.user.update({ where: { id: req.user.id }, data: { mfaEnabled: false, mfaSecret: null } });
+  res.json({ message: 'MFA disabled.' });
+}
+
 // POST /api/auth/forgot-password
 export async function forgotPassword(req, res) {
   const { email } = req.body;

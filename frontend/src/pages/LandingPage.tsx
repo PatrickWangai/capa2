@@ -337,6 +337,52 @@ export default function LandingPage() {
         </section>
       </FadeSection>
 
+      {/* SOCIAL PROOF */}
+      <FadeSection>
+        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
+          <h2 style={{ fontSize: 'clamp(28px,5vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
+            Built on trust. Backed by data.
+          </h2>
+          {/* Trust pillars */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
+            {[
+              { emoji: '🏛️', label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
+              { emoji: '🔒', label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
+              { emoji: '⚡', label: 'Real-Time Execution', desc: 'Orders placed in milliseconds on NYSE, NASDAQ, LSE & NSE.' },
+              { emoji: '💸', label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
+            ].map(({ emoji, label, desc }) => (
+              <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>{emoji}</div>
+                <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{label}</p>
+                <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+          {/* Testimonials */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+            {[
+              { name: 'Amara N.', role: 'Software Engineer, Nairobi', quote: 'I finally found a platform that lets me invest in Apple and Safaricom from the same account. Setup took 8 minutes.' },
+              { name: 'Brian K.', role: 'Entrepreneur, Mombasa', quote: 'The limit order feature is a game changer. I set my price, go about my day, and get notified when it fills.' },
+              { name: 'Wanjiru M.', role: 'Finance Analyst, Kampala', quote: 'Portfolio performance charts and real-time data — everything I expected from a global-grade investing app.' },
+            ].map(({ name, role, quote }) => (
+              <div key={name} style={{ padding: '28px 24px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
+                <p style={{ fontSize: 14, color: SEC, lineHeight: 1.7, marginBottom: 20, fontStyle: 'italic' }}>"{quote}"</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+                    {name[0]}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: TEXT, margin: 0 }}>{name}</p>
+                    <p style={{ fontSize: 11, color: SEC, margin: 0 }}>{role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </FadeSection>
+
       {/* CTA */}
       <FadeSection>
         <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid var(--card-border)', position: 'relative', overflow: 'hidden' }}>

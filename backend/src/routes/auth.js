@@ -25,6 +25,7 @@ router.post('/resend-verification', auth, c.resendVerification);
 // MFA
 router.post('/mfa/setup', auth, c.mfaSetup);
 router.post('/mfa/verify', auth, c.mfaVerify);
+router.post('/mfa/disable', auth, c.mfaDisable);
 
 // Profile management (authenticated)
 router.put('/profile', auth, c.updateProfile);

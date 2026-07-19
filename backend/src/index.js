@@ -42,6 +42,8 @@ import alertsRoutes from './routes/alerts.js';
 import { setupSocketHandlers } from './services/socketService.js';
 import { startPriceFeed } from './services/priceFeedService.js';
 import { startLimitOrderJob } from './jobs/limitOrderJob.js';
+import { checkPriceAlerts } from './jobs/priceAlertJob.js';
+import { startPortfolioSnapshotJob } from './jobs/portfolioSnapshotJob.js';
 
 // Prisma can return BigInt values; JSON.stringify doesn't handle them natively
 BigInt.prototype.toJSON = function () { return this.toString(); };
@@ -183,6 +185,8 @@ const PORT = process.env.PORT || 4000;
   setupSocketHandlers(io);
   await startPriceFeed(io);
   startLimitOrderJob();
+  setInterval(checkPriceAlerts, 60_000);
+  startPortfolioSnapshotJob();
   httpServer.listen(PORT, () => logger.info(`API listening on :${PORT}`));
 })();
 

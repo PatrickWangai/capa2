@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { Briefcase, DollarSign, ArrowUpDown } from 'lucide-react';
+import { Briefcase, DollarSign, ArrowUpDown, Download } from 'lucide-react';
 import { StatCard, EmptyState, Badge, PageLoader } from '../components/ui';
 import { StockLogo } from '../components/ui/StockLogo';
 import clsx from 'clsx';
@@ -49,11 +49,39 @@ export default function PortfolioPage() {
     name: p.symbol, value: Number(p.marketValue), fill: COLORS[i % COLORS.length],
   }));
 
+  const downloadCSV = () => {
+    const rows = [
+      ['Symbol', 'Name', 'Exchange', 'Shares', 'Avg Cost', 'Current Price', 'Market Value', 'Gain/Loss', 'Gain/Loss %', 'Currency'],
+      ...sortedPositions.map(p => [
+        p.symbol, p.name, p.exchange,
+        p.quantity, p.avgCostPrice, p.currentPrice,
+        p.marketValue, p.gainLoss, p.gainLossPct + '%', p.currency,
+      ]),
+    ];
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `capa-portfolio-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Portfolio</h1>
-        <p className="text-gray-400 mt-1">Your holdings</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Portfolio</h1>
+          <p className="text-gray-400 mt-1">Your holdings</p>
+        </div>
+        {sortedPositions.length > 0 && (
+          <button onClick={downloadCSV}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+            style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,235,245,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <Download size={14} /> Export CSV
+          </button>
+        )}
       </div>
 
       {/* Summary cards */}
