@@ -291,7 +291,7 @@ export default function ProfilePage() {
 
       {/* Risk disclaimer */}
       <div className="text-xs text-gray-500 leading-relaxed px-1 pb-4">
-        <strong className="text-gray-400">Risk Warning:</strong> Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results. Capital at risk.
+        <strong className="text-gray-400">Risk Warning:</strong> Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
       </div>
     </div>
   );

@@ -271,7 +271,7 @@ export default function LandingPage() {
               Sign In
             </Link>
           </div>
-          <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit · Capital at risk</p>
+          <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit</p>
         </div>
       </section>
 
@@ -389,7 +389,7 @@ export default function LandingPage() {
           </div>
           <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: 24 }}>
             <p style={{ margin: 0, fontSize: 12, color: 'rgba(235,235,245,0.3)', lineHeight: 1.7 }}>
-              © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results. Capital at risk.
+              © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
             </p>
           </div>
         </div>

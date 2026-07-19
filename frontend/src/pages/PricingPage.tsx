@@ -99,14 +99,14 @@ export default function PricingPage() {
 
         <div style={{ marginTop: 40, padding: 20, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 12 }}>
           <p style={{ margin: 0, fontSize: 12, color: SEC, lineHeight: 1.6 }}>
-            <strong style={{ color: 'rgba(235,235,245,0.8)' }}>Disclaimer:</strong> Fees are subject to change. FX conversion rates apply when investing in currencies other than your account base currency. All prices shown exclude applicable taxes. Capa Investments Ltd is a regulated entity. Capital at risk.
+            <strong style={{ color: 'rgba(235,235,245,0.8)' }}>Disclaimer:</strong> Fees are subject to change. FX conversion rates apply when investing in currencies other than your account base currency. All prices shown exclude applicable taxes. Capa Investments Ltd is a regulated entity.
           </p>
         </div>
       </div>
 
       <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
-          © 2026 Capa Investments Ltd. Capital at risk.{' '}
+          © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>
         </p>
       </footer>
