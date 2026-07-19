@@ -27,7 +27,7 @@ const fees = [
   ]},
   { category: 'Account', items: [
     { label: 'Account Opening', value: 'Free', note: '' },
-    { label: 'Monthly Fee', value: 'Free', note: 'No subscription' },
+    { label: 'Monthly Fee', value: 'Free', note: '' },
     { label: 'Inactivity Fee', value: 'Free', note: '' },
     { label: 'Data & Statements', value: 'Free', note: '' },
   ]},
@@ -59,13 +59,6 @@ export default function PricingPage() {
           <p style={{ fontSize: 17, color: SEC, margin: 0 }}>No hidden fees. No surprises. Ever.</p>
         </div>
 
-        {/* No monthly fee highlight */}
-        <div style={{ backgroundColor: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.25)', borderRadius: 18, padding: '28px 32px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div>
-            <h3 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 700, color: TEXT }}>No monthly subscription</h3>
-            <p style={{ margin: 0, fontSize: 15, color: SEC }}>You only pay when you trade. Open an account for free and keep it open at no cost — forever.</p>
-          </div>
-        </div>
 
         {fees.map(({ category, items }) => (
           <div key={category} style={{ marginBottom: 24 }}>

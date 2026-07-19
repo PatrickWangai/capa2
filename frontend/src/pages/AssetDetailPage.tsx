@@ -1080,7 +1080,7 @@ export default function AssetDetailPage() {
               )}
 
               <p className="text-center text-xs mt-2" style={{ color: 'rgba(235,235,245,0.22)' }}>
-                1% trading fee · No monthly charges
+                1% trading fee
               </p>
             </div>
 

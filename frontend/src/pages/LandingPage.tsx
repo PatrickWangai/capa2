@@ -261,7 +261,7 @@ export default function LandingPage() {
             <CapaLogo size={260} />
           </div>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
-            Invest in global markets. Real-time data, instant execution, no monthly fees.
+            Invest in global markets. Real-time data, instant execution.
           </p>
           <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
@@ -349,7 +349,7 @@ export default function LandingPage() {
               Open your free account in under 10 minutes. No minimum deposit.
             </p>
             <div className="cta-features" style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-              {['No monthly fee', 'Regulated platform', 'Instant M-Pesa deposits'].map(f => (
+              {['Regulated platform', 'Instant M-Pesa deposits'].map(f => (
                 <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: SEC }}>
                   <Check size={13} color={ACCENT} />{f}
                 </span>
