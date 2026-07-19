@@ -261,7 +261,7 @@ export default function LandingPage() {
             <CapaLogo size={260} />
           </div>
           <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
-            Trade global markets from Africa. Real-time data, instant execution, and no monthly fees — ever.
+            Invest in global markets. Real-time data, instant execution, no monthly fees.
           </p>
           <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
