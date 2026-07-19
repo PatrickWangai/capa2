@@ -3,7 +3,7 @@ import { prisma } from '../utils/db.js';
 import { broadcastPrice } from './socketService.js';
 import logger from '../utils/logger.js';
 
-const yf = new YahooFinance({ suppressNotices: ['yahooSurvey', 'yahooVersion'] });
+const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
 const TICK_MS          = 1_000;        // broadcast every 1 second
 const DB_WRITE_MS      = 15_000;       // persist to DB every 15 seconds
@@ -63,7 +63,7 @@ async function fetchYahooPrice(symbol, exchange) {
     ? (NSE_YAHOO_MAP[symbol] ?? symbol) + suffix
     : symbol + suffix;
   try {
-    const q = await yf.quote(yahooSym, {}, { validateResult: false });
+    const q = await yf.quote(yahooSym);
     if (!q?.regularMarketPrice) return null;
     return {
       price:         q.regularMarketPrice,
@@ -290,7 +290,7 @@ async function backfillHistory() {
         period1: cutoff2y.toISOString().slice(0, 10),
         period2: new Date().toISOString().slice(0, 10),
         interval: '1d',
-      }, { validateResult: false }).catch(() => null);
+      }).catch(() => null);
 
       if (!rows || rows.length === 0) {
         logger.warn(`Backfill: no data returned for ${yahooSym}`);
