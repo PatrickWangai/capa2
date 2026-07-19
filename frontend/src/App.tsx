@@ -109,7 +109,7 @@ function LoadingSpinner() {
           margin: 0, padding: 0,
           fontSize: 12, color: 'var(--text-secondary)', letterSpacing: '0.02em',
           animation: '_sp-up 0.45s ease 0.45s both',
-        }}>Invest Globally from Africa</p>
+        }}>Invest Globally</p>
 
       </div>
     </>
