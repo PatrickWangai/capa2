@@ -182,6 +182,8 @@ const PORT = process.env.PORT || 4000;
 (async () => {
   await prisma.$connect();
   logger.info('PostgreSQL connected via Prisma');
+  if (!process.env.ADMIN_PASSWORD)  logger.warn('ADMIN_PASSWORD env var is not set — admin account will use the insecure default password');
+  if (!process.env.ADMIN2_PASSWORD) logger.warn('ADMIN2_PASSWORD env var is not set — second admin account will use the insecure default password');
   setupSocketHandlers(io);
   await startPriceFeed(io);
   startLimitOrderJob();

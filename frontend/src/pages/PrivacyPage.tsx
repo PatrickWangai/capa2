@@ -36,7 +36,7 @@ export default function PrivacyPage() {
       <Nav />
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px' }}>
         <h1 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.04em', marginBottom: 8 }}>Privacy Policy</h1>
-        <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: January 2026</p>
+        <p style={{ fontSize: 14, color: SEC, marginBottom: 40 }}>Last updated: July 2026</p>
 
         <p style={{ fontSize: 16, color: SEC, lineHeight: 1.7, marginBottom: 40 }}>
           At Capa, protecting your personal data is a core responsibility, not an afterthought. This policy explains what data we collect, how we use it, and your rights.

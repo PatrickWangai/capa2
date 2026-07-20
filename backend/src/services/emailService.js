@@ -17,8 +17,10 @@ function wrap(title, body) {
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 16px;">
 <table width="100%" style="max-width:520px;background:#1c1c1e;border-radius:18px;padding:40px;border:1px solid rgba(255,255,255,0.08);" cellpadding="0" cellspacing="0">
 <tr><td style="text-align:center;padding-bottom:32px;">
-  <span style="font-size:32px;">🍊</span>
-  <h1 style="margin:8px 0 0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:-0.02em;">Capa</h1>
+  <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:#10b981;">
+    <span style="color:#ffffff;font-size:26px;font-weight:800;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;line-height:1;">C</span>
+  </div>
+  <h1 style="margin:10px 0 0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:-0.02em;">Capa</h1>
 </td></tr>
 <tr><td>${body}</td></tr>
 <tr><td style="padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);margin-top:32px;text-align:center;">
@@ -46,7 +48,7 @@ export async function sendPasswordResetEmail(to, token) {
       <h2 style="margin:0 0 8px;color:#ffffff;font-size:20px;font-weight:700;">Reset your password</h2>
       <p style="margin:0 0 24px;color:rgba(235,235,245,0.6);font-size:15px;line-height:1.6;">We received a request to reset the password for your Capa account. Click the button below — this link expires in 1 hour.</p>
       <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:24px;">
-        <a href="${url}" style="display:inline-block;background:#f5821f;color:#ffffff;text-decoration:none;padding:13px 32px;border-radius:980px;font-size:17px;font-weight:500;">Reset Password</a>
+        <a href="${url}" style="display:inline-block;background:#10b981;color:#ffffff;text-decoration:none;padding:13px 32px;border-radius:980px;font-size:17px;font-weight:500;">Reset Password</a>
       </td></tr></table>
       <p style="margin:0;font-size:13px;color:rgba(235,235,245,0.4);word-break:break-all;">Or copy this link: ${url}</p>
     `),
@@ -62,7 +64,7 @@ export async function sendVerifyEmail(to, token, firstName) {
       <h2 style="margin:0 0 8px;color:#ffffff;font-size:20px;font-weight:700;">Welcome to Capa, ${firstName}!</h2>
       <p style="margin:0 0 24px;color:rgba(235,235,245,0.6);font-size:15px;line-height:1.6;">Please verify your email address to activate your account and start investing.</p>
       <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:24px;">
-        <a href="${url}" style="display:inline-block;background:#f5821f;color:#ffffff;text-decoration:none;padding:13px 32px;border-radius:980px;font-size:17px;font-weight:500;">Verify Email</a>
+        <a href="${url}" style="display:inline-block;background:#10b981;color:#ffffff;text-decoration:none;padding:13px 32px;border-radius:980px;font-size:17px;font-weight:500;">Verify Email</a>
       </td></tr></table>
       <p style="margin:0;font-size:13px;color:rgba(235,235,245,0.4);word-break:break-all;">Or copy this link: ${url}</p>
     `),
@@ -82,7 +84,7 @@ export async function sendDepositReceiptEmail(to, firstName, amount, currency, r
         <tr><td style="color:rgba(235,235,245,0.6);font-size:14px;padding:6px 0;">Status</td><td style="color:#30d158;font-size:14px;font-weight:600;text-align:right;">Confirmed</td></tr>
       </table>
       <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-        <a href="${BASE}/dashboard" style="display:inline-block;background:#f5821f;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:980px;font-size:16px;">View Dashboard</a>
+        <a href="${BASE}/dashboard" style="display:inline-block;background:#10b981;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:980px;font-size:16px;">View Dashboard</a>
       </td></tr></table>
     `),
     text: `Deposit confirmed: ${currency} ${amount} (ref: ${reference})`,
