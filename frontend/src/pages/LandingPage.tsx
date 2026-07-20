@@ -269,13 +269,12 @@ export default function LandingPage() {
           {/* Trust pillars */}
           <div className="hero-text hero-text-3 hero-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, maxWidth: 720, width: '100%', margin: '0 auto 32px' }}>
             {[
-              { e: '🏛️', t: 'CMA Regulated',      d: 'Licensed by the CMA Kenya' },
-              { e: '🔒', t: 'Bank-Grade Security', d: 'AES-256 & MFA protected' },
-              { e: '⚡', t: 'Real-Time Execution', d: 'NYSE · NASDAQ · LSE · NSE' },
-              { e: '💸', t: 'No Hidden Fees',      d: '0.5% trade fee, nothing else' },
-            ].map(({ e, t, d }) => (
+              { t: 'CMA Regulated',      d: 'Licensed by the CMA Kenya' },
+              { t: 'Bank-Grade Security', d: 'AES-256 & MFA protected' },
+              { t: 'Real-Time Execution', d: 'NYSE · NASDAQ · LSE · NSE' },
+              { t: 'No Hidden Fees',      d: '0.5% trade fee, nothing else' },
+            ].map(({ t, d }) => (
               <div key={t} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
-                <div style={{ fontSize: 20, marginBottom: 4 }}>{e}</div>
                 <p style={{ fontSize: 11, fontWeight: 700, color: TEXT, margin: '0 0 2px', lineHeight: 1.3 }}>{t}</p>
                 <p style={{ fontSize: 10, color: SEC, margin: 0, lineHeight: 1.4 }}>{d}</p>
               </div>
@@ -365,13 +364,12 @@ export default function LandingPage() {
           {/* Trust pillars */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
             {[
-              { emoji: '🏛️', label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
-              { emoji: '🔒', label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
-              { emoji: '⚡', label: 'Real-Time Execution', desc: 'Orders placed in milliseconds on NYSE, NASDAQ, LSE & NSE.' },
-              { emoji: '💸', label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
-            ].map(({ emoji, label, desc }) => (
+              { label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
+              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
+              { label: 'Real-Time Execution', desc: 'Orders placed in milliseconds on NYSE, NASDAQ, LSE & NSE.' },
+              { label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
+            ].map(({ label, desc }) => (
               <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{emoji}</div>
                 <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{label}</p>
                 <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
               </div>
