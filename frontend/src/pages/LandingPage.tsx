@@ -116,43 +116,16 @@ function HeroCanvas({ theme }: { theme: string }) {
 
 
 
-// ── Typewriter hook ───────────────────────────────────────────
-const TYPED_PHRASES = [
-  'Invest in global markets.',
-  'Real-time data, instant execution.',
-  'No minimum deposit.',
-];
+// ── Typewriter (one-shot) ─────────────────────────────────────
+const HERO_TEXT = 'Invest in global markets. Real-time data, instant execution.';
 
-function useTypewriter(phrases: string[], typingSpeed = 48, deletingSpeed = 24, pauseMs = 1800) {
+function useTypeOnce(text: string, speed = 38) {
   const [displayed, setDisplayed] = useState('');
-  const [phraseIdx, setPhraseIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-
   useEffect(() => {
-    const phrase = phrases[phraseIdx];
-    if (!deleting && charIdx < phrase.length) {
-      const t = setTimeout(() => setCharIdx(i => i + 1), typingSpeed);
-      return () => clearTimeout(t);
-    }
-    if (!deleting && charIdx === phrase.length) {
-      const t = setTimeout(() => setDeleting(true), pauseMs);
-      return () => clearTimeout(t);
-    }
-    if (deleting && charIdx > 0) {
-      const t = setTimeout(() => setCharIdx(i => i - 1), deletingSpeed);
-      return () => clearTimeout(t);
-    }
-    if (deleting && charIdx === 0) {
-      setDeleting(false);
-      setPhraseIdx(i => (i + 1) % phrases.length);
-    }
-  }, [charIdx, deleting, phraseIdx, phrases, typingSpeed, deletingSpeed, pauseMs]);
-
-  useEffect(() => {
-    setDisplayed(phrases[phraseIdx].slice(0, charIdx));
-  }, [charIdx, phraseIdx, phrases]);
-
+    if (displayed.length >= text.length) return;
+    const t = setTimeout(() => setDisplayed(text.slice(0, displayed.length + 1)), speed);
+    return () => clearTimeout(t);
+  }, [displayed, text, speed]);
   return displayed;
 }
 
@@ -203,7 +176,7 @@ const steps = [
 // ── Page ─────────────────────────────────────────────────────
 export default function LandingPage() {
   const { theme } = useTheme();
-  const typedText = useTypewriter(TYPED_PHRASES);
+  const typedText = useTypeOnce(HERO_TEXT);
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
@@ -307,24 +280,9 @@ export default function LandingPage() {
             <CapaLogo size={260} />
           </div>
 
-          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 24, maxWidth: 520, margin: '0 auto 24px', minHeight: '1.5em' }}>
-            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: SEC, marginLeft: 2, verticalAlign: 'middle', animation: 'cursor-blink 0.9s step-end infinite' }} />
+          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px', minHeight: '1.5em' }}>
+            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
           </p>
-
-          {/* Trust pillars */}
-          <div className="hero-text hero-text-3 hero-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, maxWidth: 720, width: '100%', margin: '0 auto 32px' }}>
-            {[
-              { t: 'CMA Regulated',      d: 'Licensed by the CMA Kenya' },
-              { t: 'Bank-Grade Security', d: 'AES-256 & MFA protected' },
-              { t: 'Real-Time Execution', d: 'NYSE · NASDAQ · LSE · NSE' },
-              { t: 'No Hidden Fees',      d: '0.5% trade fee, nothing else' },
-            ].map(({ t, d }) => (
-              <div key={t} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: TEXT, margin: '0 0 2px', lineHeight: 1.3 }}>{t}</p>
-                <p style={{ fontSize: 10, color: SEC, margin: 0, lineHeight: 1.4 }}>{d}</p>
-              </div>
-            ))}
-          </div>
 
           <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
