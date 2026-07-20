@@ -117,7 +117,7 @@ function HeroCanvas({ theme }: { theme: string }) {
 
 
 // ── Typewriter (one-shot) ─────────────────────────────────────
-const HERO_TEXT = 'Invest in global markets. Real-time data, instant execution.';
+const HERO_TEXT = 'Invest in global markets with real-time data and instant execution.';
 
 function useTypeOnce(text: string, speed = 38) {
   const [displayed, setDisplayed] = useState('');
