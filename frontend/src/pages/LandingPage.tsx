@@ -185,6 +185,7 @@ export default function LandingPage() {
 
           /* Push hero content below fixed nav */
           .hero-content { padding-top: 52px !important; }
+          .hero-trust-grid { grid-template-columns: repeat(2,1fr) !important; max-width: 340px !important; }
 
           /* Hero */
           .hero-logo-wrap { margin-bottom: 0px !important; }
@@ -261,9 +262,26 @@ export default function LandingPage() {
             <CapaLogo size={260} />
           </div>
 
-          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
+          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 24, maxWidth: 520, margin: '0 auto 24px' }}>
             Invest in global markets. Real-time data, instant execution.
           </p>
+
+          {/* Trust pillars */}
+          <div className="hero-text hero-text-3 hero-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, maxWidth: 720, width: '100%', margin: '0 auto 32px' }}>
+            {[
+              { e: '🏛️', t: 'CMA Regulated',      d: 'Licensed by the CMA Kenya' },
+              { e: '🔒', t: 'Bank-Grade Security', d: 'AES-256 & MFA protected' },
+              { e: '⚡', t: 'Real-Time Execution', d: 'NYSE · NASDAQ · LSE · NSE' },
+              { e: '💸', t: 'No Hidden Fees',      d: '0.5% trade fee, nothing else' },
+            ].map(({ e, t, d }) => (
+              <div key={t} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
+                <div style={{ fontSize: 20, marginBottom: 4 }}>{e}</div>
+                <p style={{ fontSize: 11, fontWeight: 700, color: TEXT, margin: '0 0 2px', lineHeight: 1.3 }}>{t}</p>
+                <p style={{ fontSize: 10, color: SEC, margin: 0, lineHeight: 1.4 }}>{d}</p>
+              </div>
+            ))}
+          </div>
+
           <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
               Start Investing Free <ChevronRight size={16} />
