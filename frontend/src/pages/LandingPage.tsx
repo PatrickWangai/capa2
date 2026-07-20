@@ -116,6 +116,48 @@ function HeroCanvas({ theme }: { theme: string }) {
 
 
 
+// ── Typewriter hook ───────────────────────────────────────────
+const TYPED_PHRASES = [
+  'Invest in global markets.',
+  'Real-time data, instant execution.',
+  'NYSE, NASDAQ, LSE & NSE.',
+  'Build wealth across borders.',
+  'No minimum deposit.',
+];
+
+function useTypewriter(phrases: string[], typingSpeed = 48, deletingSpeed = 24, pauseMs = 1800) {
+  const [displayed, setDisplayed] = useState('');
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const phrase = phrases[phraseIdx];
+    if (!deleting && charIdx < phrase.length) {
+      const t = setTimeout(() => setCharIdx(i => i + 1), typingSpeed);
+      return () => clearTimeout(t);
+    }
+    if (!deleting && charIdx === phrase.length) {
+      const t = setTimeout(() => setDeleting(true), pauseMs);
+      return () => clearTimeout(t);
+    }
+    if (deleting && charIdx > 0) {
+      const t = setTimeout(() => setCharIdx(i => i - 1), deletingSpeed);
+      return () => clearTimeout(t);
+    }
+    if (deleting && charIdx === 0) {
+      setDeleting(false);
+      setPhraseIdx(i => (i + 1) % phrases.length);
+    }
+  }, [charIdx, deleting, phraseIdx, phrases, typingSpeed, deletingSpeed, pauseMs]);
+
+  useEffect(() => {
+    setDisplayed(phrases[phraseIdx].slice(0, charIdx));
+  }, [charIdx, phraseIdx, phrases]);
+
+  return displayed;
+}
+
 // ── Section fade-in hook ─────────────────────────────────────
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
@@ -163,6 +205,7 @@ const steps = [
 // ── Page ─────────────────────────────────────────────────────
 export default function LandingPage() {
   const { theme } = useTheme();
+  const typedText = useTypewriter(TYPED_PHRASES);
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
@@ -171,6 +214,10 @@ export default function LandingPage() {
         @keyframes hero-text-in {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
         }
         .hero-text { animation: hero-text-in 1s ease both; }
         .hero-text-1 { animation-delay: 0.1s; }
@@ -262,8 +309,8 @@ export default function LandingPage() {
             <CapaLogo size={260} />
           </div>
 
-          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 24, maxWidth: 520, margin: '0 auto 24px' }}>
-            Invest in global markets. Real-time data, instant execution.
+          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 24, maxWidth: 520, margin: '0 auto 24px', minHeight: '1.5em' }}>
+            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: SEC, marginLeft: 2, verticalAlign: 'middle', animation: 'cursor-blink 0.9s step-end infinite' }} />
           </p>
 
           {/* Trust pillars */}
