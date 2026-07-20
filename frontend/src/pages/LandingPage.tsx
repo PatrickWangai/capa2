@@ -120,8 +120,6 @@ function HeroCanvas({ theme }: { theme: string }) {
 const TYPED_PHRASES = [
   'Invest in global markets.',
   'Real-time data, instant execution.',
-  'NYSE, NASDAQ, LSE & NSE.',
-  'Build wealth across borders.',
   'No minimum deposit.',
 ];
 
