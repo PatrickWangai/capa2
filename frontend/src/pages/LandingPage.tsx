@@ -249,8 +249,8 @@ export default function LandingPage() {
 
       {/* NAV */}
       <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <CapaLogo size={44} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <CapaCIcon size={34} animate={false} borderRadius={10} bg="rgba(var(--accent-rgb),0.15)" />
         </div>
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
           {[['About', '/about'], ['Contact', '/contact']].map(([l, h]) => (
