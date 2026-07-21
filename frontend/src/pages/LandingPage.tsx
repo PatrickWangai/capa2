@@ -3,6 +3,7 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCIcon from '../components/ui/CapaCIcon';
+import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme, THEMES } from '../context/ThemeContext';
 
 const ACCENT = 'var(--accent)';
@@ -250,7 +251,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <CapaCIcon size={34} animate={false} borderRadius={10} bg="rgba(var(--accent-rgb),0.15)" />
+          <CapaCCircle size={34} />
         </div>
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
           {[['About', '/about'], ['Contact', '/contact']].map(([l, h]) => (
