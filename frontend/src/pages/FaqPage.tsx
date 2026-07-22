@@ -56,7 +56,7 @@ function Nav() {
         <CapaLogo size={44} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
       </Link>
-      <div style={{ display: 'flex', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
         <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
       </div>
