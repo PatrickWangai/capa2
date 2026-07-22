@@ -379,26 +379,6 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          {/* Testimonials */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
-            {[
-              { name: 'Brian K.', role: 'Entrepreneur, Mombasa', quote: 'The limit order feature is a game changer. I set my price, go about my day, and get notified when it fills.' },
-              { name: 'Wanjiru M.', role: 'Finance Analyst, Kampala', quote: 'Portfolio performance charts and real-time data — everything I expected from a global-grade investing app.' },
-            ].map(({ name, role, quote }) => (
-              <div key={name} style={{ padding: '28px 24px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
-                <p style={{ fontSize: 14, color: SEC, lineHeight: 1.7, marginBottom: 20, fontStyle: 'italic' }}>"{quote}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-                    {name[0]}
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: TEXT, margin: 0 }}>{name}</p>
-                    <p style={{ fontSize: 11, color: SEC, margin: 0 }}>{role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
       </FadeSection>
 
