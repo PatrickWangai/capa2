@@ -382,7 +382,6 @@ export default function LandingPage() {
           {/* Testimonials */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
             {[
-              { name: 'Amara N.', role: 'Software Engineer, Nairobi', quote: 'I finally found a platform that lets me invest in Apple and Safaricom from the same account. Setup took 8 minutes.' },
               { name: 'Brian K.', role: 'Entrepreneur, Mombasa', quote: 'The limit order feature is a game changer. I set my price, go about my day, and get notified when it fills.' },
               { name: 'Wanjiru M.', role: 'Finance Analyst, Kampala', quote: 'Portfolio performance charts and real-time data — everything I expected from a global-grade investing app.' },
             ].map(({ name, role, quote }) => (
