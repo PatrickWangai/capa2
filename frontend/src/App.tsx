@@ -70,9 +70,7 @@ function LoadingSpinner() {
       fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
       zIndex: 9999,
     }}>
-      <img src="/capa-c-icon-512.png" style={{ width: 80, height: 80, objectFit: 'contain' }} alt="CAPA" />
-      <p style={{ margin: '14px 0 4px', padding: 0, fontSize: 16, fontWeight: 700, letterSpacing: '0.20em', color: 'var(--text)' }}>CAPA</p>
-      <p style={{ margin: 0, padding: 0, fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.03em' }}>Invest Globally</p>
+      <img src="/capa-logo.png" style={{ width: 200, height: 'auto', objectFit: 'contain' }} alt="CAPA" draggable={false} />
     </div>
   );
 }
