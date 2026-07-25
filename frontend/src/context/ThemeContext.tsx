@@ -177,6 +177,9 @@ function applyTheme(name: ThemeName) {
   r.style.setProperty('--bg-4', t.bg[3]);
   r.style.setProperty('--bg-5', t.bg[4]);
   r.style.setProperty('--bg-6', t.bg[5]);
+  r.style.setProperty('--bg-gradient',
+    `linear-gradient(160deg, ${t.bg[0]} 0%, ${t.bg[1]} 18%, ${t.bg[2]} 45%, ${t.bg[3]} 72%, ${t.bg[4]} 88%, ${t.bg[5]} 100%)`
+  );
   r.style.setProperty('--card-bg',    t.cardBg    ?? 'rgba(28,28,30,0.72)');
   r.style.setProperty('--card-border',t.cardBorder ?? 'rgba(255,255,255,0.08)');
   r.style.setProperty('--sidebar-bg', t.sidebarBg ?? 'rgba(6,38,52,0.62)');
@@ -208,6 +211,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { applyTheme(theme); }, [theme]);
 
   function setTheme(t: ThemeName) {
+    applyTheme(t);
     setThemeState(t);
     localStorage.setItem('capa-theme', t);
   }
