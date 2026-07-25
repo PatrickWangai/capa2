@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type ThemeName =
   | 'blue' | 'teal' | 'purple' | 'rose' | 'amber'
   | 'indigo' | 'cyan' | 'emerald' | 'orange' | 'pink'
-  | 'violet' | 'sky' | 'lime' | 'black';
+  | 'violet' | 'sky' | 'lime' | 'black' | 'white';
 
 type ThemeVars = {
   label: string;
@@ -18,10 +18,13 @@ type ThemeVars = {
   sidebarBg?: string;
   inputBg?: string;
   navText?: string;
+  text?: string;
+  textSecondary?: string;
+  textTertiary?: string;
 };
 
 export const COLOUR_THEMES: ThemeName[] = [
-  'teal','blue','sky','cyan','emerald','lime',
+  'white','teal','blue','sky','cyan','emerald','lime',
   'amber','orange','rose','pink','violet','purple','indigo','black',
 ];
 
@@ -154,6 +157,20 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
     inputBg:   'rgba(40,40,40,0.95)',
     navText:   'rgba(235,235,245,0.80)',
   },
+  white: {
+    label: 'White', swatch: '#00C805',
+    accent: '#00C805', accentDark: '#00A304', accentRgb: '0,200,5',
+    bg: ['#ffffff','#ffffff','#f7f7f7','#f0f0f0','#ffffff','#f5f5f5'],
+    accentText: '#ffffff',
+    cardBg:     'rgba(255,255,255,1)',
+    cardBorder: 'rgba(0,0,0,0.09)',
+    sidebarBg:  'rgba(255,255,255,0.94)',
+    inputBg:    'rgba(242,242,242,1)',
+    navText:    'rgba(0,0,0,0.85)',
+    text:         '#000000',
+    textSecondary:'rgba(0,0,0,0.50)',
+    textTertiary: 'rgba(0,0,0,0.28)',
+  },
 };
 
 function applyTheme(name: ThemeName) {
@@ -179,6 +196,9 @@ function applyTheme(name: ThemeName) {
   r.style.setProperty('--sidebar-bg', t.sidebarBg ?? 'rgba(6,38,52,0.62)');
   r.style.setProperty('--input-bg',   t.inputBg   ?? 'rgba(44,44,46,0.85)');
   r.style.setProperty('--nav-text',   t.navText   ?? 'rgba(235,235,245,0.85)');
+  r.style.setProperty('--text',           t.text          ?? '#ffffff');
+  r.style.setProperty('--text-secondary', t.textSecondary ?? 'rgba(235,235,245,0.60)');
+  r.style.setProperty('--text-tertiary',  t.textTertiary  ?? 'rgba(235,235,245,0.30)');
   r.removeAttribute('data-theme');
 }
 
