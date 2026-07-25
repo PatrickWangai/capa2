@@ -162,12 +162,6 @@ const features = [
   { icon: Zap,        title: 'Instant Execution', desc: 'Orders filled in milliseconds. Your timing, your price, zero slippage.' },
   { icon: Globe,      title: 'Global Access',     desc: 'Invest in US, UK, and Kenyan markets — from anywhere in Africa.' },
 ];
-const stats = [
-  { value: '50+', label: 'Global Markets' },
-  { value: '0.5%', label: 'Trade Fee' },
-  { value: '24/7', label: 'Support' },
-  { value: '<10m', label: 'To Open Account' },
-];
 const steps = [
   { icon: UserCheck,  num: '01', title: 'Create your account',  desc: 'Register with your email. Takes under 2 minutes.' },
   { icon: Shield,     num: '02', title: 'Verify your identity', desc: 'Upload your ID and a selfie. KYC typically approved same day.' },
@@ -296,20 +290,6 @@ export default function LandingPage() {
           <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit</p>
         </div>
       </section>
-
-      {/* STATS */}
-      <FadeSection>
-        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '56px 24px', borderTop: '1px solid var(--card-border)' }}>
-          <div className="stats-grid" style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
-            {stats.map((s, i) => (
-              <div key={s.label} style={{ textAlign: 'center', padding: '0 24px', borderRight: i < 3 ? '1px solid var(--card-border)' : 'none' }}>
-                <div style={{ fontSize: 'clamp(32px,5vw,52px)', fontWeight: 700, color: TEXT, letterSpacing: '-0.03em', lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </FadeSection>
 
       {/* FEATURES */}
       <FadeSection>
