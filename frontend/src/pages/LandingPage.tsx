@@ -1,123 +1,14 @@
 import { Link } from 'react-router-dom';
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
-import CapaLogo from '../components/ui/CapaLogo';
-import CapaCIcon from '../components/ui/CapaCIcon';
+import { useRef, useState, useEffect } from 'react';
+import { TrendingUp, Shield, Zap, Globe, ChevronRight, BarChart2, Bell, Check, UserCheck, DollarSign } from 'lucide-react';
 import CapaCCircle from '../components/ui/CapaCCircle';
-import { useTheme, THEMES } from '../context/ThemeContext';
 
-const ACCENT = 'var(--accent)';
-const TEXT = 'var(--text)';
-const SEC = 'var(--text-secondary)';
+const BLUE   = '#2563eb';
+const TEXT   = '#1d1d1f';
+const MUTED  = 'rgba(29,29,31,0.52)';
+const SURF   = '#f5f5f7';
+const BORDER = 'rgba(0,0,0,0.08)';
 
-// ── Sky + water canvas ───────────────────────────────────────
-function HeroCanvas({ theme }: { theme: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const elRaw = canvasRef.current;
-    if (!elRaw) return;
-    const ctxRaw = elRaw.getContext('2d');
-    if (!ctxRaw) return;
-    const el  = elRaw  as HTMLCanvasElement;
-    const ctx = ctxRaw as CanvasRenderingContext2D;
-    let animId: number, t = 0, W = 0, H = 0;
-
-    let skyC: string[], waterC: string[];
-    if (theme === 'black') {
-      skyC   = ['#0a1628','#0f2d5c','#1a4aad','#2563eb','#3b82f6'];
-      waterC = ['#2563eb','#1a4aad','#0f2d5c'];
-    } else {
-      const bg = (THEMES[theme as keyof typeof THEMES] ?? THEMES.blue).bg;
-      skyC   = [bg[0], bg[1], bg[2], bg[3], bg[4]];
-      waterC = [bg[4], bg[2], bg[0]];
-    }
-
-    function init() {
-      const dpr = window.devicePixelRatio || 1;
-      W = el.offsetWidth;
-      H = el.offsetHeight;
-      el.width  = Math.ceil(W * dpr);
-      el.height = Math.ceil(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    function draw() {
-      t++;
-      ctx.clearRect(0, 0, W, H);
-      const hy = H * 0.70;
-
-      // Sky
-      const sky = ctx.createLinearGradient(0, 0, 0, hy);
-      sky.addColorStop(0,    skyC[0]);
-      sky.addColorStop(0.22, skyC[1]);
-      sky.addColorStop(0.52, skyC[2]);
-      sky.addColorStop(0.80, skyC[3]);
-      sky.addColorStop(1,    skyC[4]);
-      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
-
-      // Sun glow
-      const sg = ctx.createRadialGradient(W*0.28, hy*0.78, 0, W*0.28, hy*0.78, W*0.38);
-      sg.addColorStop(0,    'rgba(255,218,110,0.28)');
-      sg.addColorStop(0.45, 'rgba(255,175,55,0.07)');
-      sg.addColorStop(1,    'transparent');
-      ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
-
-      // Water
-      const wg = ctx.createLinearGradient(0, hy, 0, H);
-      wg.addColorStop(0,   waterC[0]);
-      wg.addColorStop(0.5, waterC[1]);
-      wg.addColorStop(1,   waterC[2]);
-      ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H - hy);
-
-      // Water shimmer — horizontal gradient-filled rects instead of thin
-      // ellipses; fillRect is rendered identically on all browsers including
-      // Safari (no sub-pixel ellipse anti-aliasing issue)
-      ctx.save();
-      for (let i = 0; i < 38; i++) {
-        const sx  = ((i * 137.5 + t * 0.35) % W);
-        const sy  = hy + ((i * 79.3) % ((H - hy) * 0.65));
-        const sa  = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.28;
-        const hw  = 10 + (i % 5) * 4; // half-width 10–26 px
-        const gr  = ctx.createLinearGradient(sx - hw, 0, sx + hw, 0);
-        gr.addColorStop(0,   'rgba(255,255,230,0)');
-        gr.addColorStop(0.5, `rgba(255,255,230,${sa})`);
-        gr.addColorStop(1,   'rgba(255,255,230,0)');
-        ctx.fillStyle = gr;
-        ctx.fillRect(sx - hw, sy - 2, hw * 2, 4);
-      }
-      ctx.restore();
-
-      // Horizon glow
-      const hg = ctx.createLinearGradient(0, hy - 18, 0, hy + 24);
-      hg.addColorStop(0,   'rgba(255,255,255,0.00)');
-      hg.addColorStop(0.5, 'rgba(255,255,255,0.07)');
-      hg.addColorStop(1,   'rgba(255,255,255,0.00)');
-      ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
-
-      // Text-legibility overlay
-      const ov = ctx.createLinearGradient(0, 0, 0, H);
-      ov.addColorStop(0,    'rgba(0,0,0,0.54)');
-      ov.addColorStop(0.40, 'rgba(0,0,0,0.18)');
-      ov.addColorStop(0.65, 'rgba(0,0,0,0.06)');
-      ov.addColorStop(1,    'rgba(0,0,0,0.42)');
-      ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    init(); animId = requestAnimationFrame(draw);
-    const ro = new ResizeObserver(() => { init(); });
-    ro.observe(el);
-    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
-  }, [theme]); // restart whenever theme changes
-
-  return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />;
-}
-
-
-
-// ── Typewriter (one-shot) ─────────────────────────────────────
 const HERO_TEXT = 'Invest in global markets with real-time data and instant execution.';
 
 function useTypeOnce(text: string, speed = 38) {
@@ -130,7 +21,6 @@ function useTypeOnce(text: string, speed = 38) {
   return displayed;
 }
 
-// ── Section fade-in hook ─────────────────────────────────────
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -155,291 +45,300 @@ function FadeSection({ children, style }: { children: React.ReactNode; style?: R
   );
 }
 
-// ── Data ─────────────────────────────────────────────────────
-const features = [
-  { icon: TrendingUp, title: 'Live Markets',      desc: 'Real-time prices across NYSE, NASDAQ, LSE and NSE. Never miss a move.' },
-  { icon: Shield,     title: 'Capital Protected', desc: 'Your assets are held by a regulated custodian, segregated from company funds.' },
-  { icon: Zap,        title: 'Instant Execution', desc: 'Orders filled in milliseconds. Your timing, your price, zero slippage.' },
-  { icon: Globe,      title: 'Global Access',     desc: 'Invest in US, UK, and Kenyan markets — from anywhere in Africa.' },
-];
-const stats = [
-  { value: '50+', label: 'Global Markets' },
-  { value: '0.5%', label: 'Trade Fee' },
-  { value: '24/7', label: 'Support' },
-  { value: '<10m', label: 'To Open Account' },
-];
-const steps = [
-  { icon: UserCheck,  num: '01', title: 'Create your account',  desc: 'Register with your email. Takes under 2 minutes.' },
-  { icon: Shield,     num: '02', title: 'Verify your identity', desc: 'Upload your ID and a selfie. KYC typically approved same day.' },
-  { icon: DollarSign, num: '03', title: 'Fund your account',    desc: 'Deposit via M-Pesa, bank transfer, or card. Funds appear instantly.' },
-  { icon: BarChart2,  num: '04', title: 'Start investing',      desc: 'Browse global markets and place your first trade in seconds.' },
-];
-// ── Page ─────────────────────────────────────────────────────
-export default function LandingPage() {
-  const { theme } = useTheme();
-  const typedText = useTypeOnce(HERO_TEXT);
-  return (
-    <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+type SparkPoint = [number, number];
 
-      {/* Inject keyframes + mobile overrides */}
+function Sparkline({ points, up }: { points: SparkPoint[]; up: boolean }) {
+  const w = 100, h = 44;
+  const pts = points.map(([x, y]) => `${x * w / 100},${(1 - y) * h}`).join(' ');
+  const color = up ? '#16a34a' : '#dc2626';
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const tickerItems = [
+  { sym: 'AAPL',     price: '$213.49',    change: '+1.14%', up: true },
+  { sym: 'MSFT',     price: '$421.90',    change: '+0.82%', up: true },
+  { sym: 'TSLA',     price: '$248.23',    change: '-0.40%', up: false },
+  { sym: 'GOOGL',    price: '$178.50',    change: '+1.52%', up: true },
+  { sym: 'NVDA',     price: '$137.85',    change: '+2.10%', up: true },
+  { sym: 'AMZN',     price: '$196.40',    change: '-0.22%', up: false },
+  { sym: 'META',     price: '$587.12',    change: '+0.94%', up: true },
+  { sym: 'SCOM.NBO', price: 'KES 16.30', change: '+0.62%', up: true },
+  { sym: 'EQTY.NBO', price: 'KES 52.75', change: '-0.28%', up: false },
+  { sym: 'KCB.NBO',  price: 'KES 38.00', change: '+1.07%', up: true },
+];
+
+const markets = [
+  {
+    sym: 'AAPL', name: 'Apple Inc.', exchange: 'NASDAQ',
+    price: '$213.49', pct: '+1.14%', up: true,
+    spark: [[0,0.40],[15,0.50],[28,0.35],[40,0.45],[52,0.60],[65,0.55],[78,0.75],[90,0.80],[100,0.90]] as SparkPoint[],
+  },
+  {
+    sym: 'SCOM', name: 'Safaricom PLC', exchange: 'NSE',
+    price: 'KES 16.30', pct: '+0.62%', up: true,
+    spark: [[0,0.55],[15,0.50],[28,0.62],[40,0.52],[52,0.60],[65,0.68],[78,0.62],[90,0.71],[100,0.74]] as SparkPoint[],
+  },
+  {
+    sym: 'TSLA', name: 'Tesla Inc.', exchange: 'NASDAQ',
+    price: '$248.23', pct: '-0.40%', up: false,
+    spark: [[0,0.85],[15,0.78],[28,0.82],[40,0.70],[52,0.65],[65,0.72],[78,0.55],[90,0.48],[100,0.40]] as SparkPoint[],
+  },
+];
+
+const features = [
+  { icon: TrendingUp, title: 'Live Markets',       desc: 'Real-time prices across NYSE, NASDAQ, LSE and NSE. Never miss a move.' },
+  { icon: Zap,        title: 'Instant Execution',  desc: 'Orders filled in milliseconds. Your timing, your price, zero slippage.' },
+  { icon: Shield,     title: 'Capital Protected',  desc: 'Assets held by a regulated custodian, segregated from company funds.' },
+  { icon: Globe,      title: 'Global Access',      desc: 'Invest in US, UK, and Kenyan markets from anywhere in Africa.' },
+  { icon: Bell,       title: 'Price Alerts',       desc: 'Get notified the moment your target price is hit, any market.' },
+  { icon: BarChart2,  title: 'Portfolio Analytics',desc: 'Detailed performance breakdowns with exportable reports.' },
+];
+
+const stats = [
+  { value: '50+',  label: 'Markets' },
+  { value: '2%',   label: 'Trade Fee' },
+  { value: '24/7', label: 'Support' },
+  { value: '<10m', label: 'Account Setup' },
+];
+
+const steps = [
+  { num: '1', icon: UserCheck,  title: 'Create your account',  desc: 'Register with your email and basic details. Takes under two minutes.' },
+  { num: '2', icon: Shield,     title: 'Verify your identity', desc: 'Upload your ID and a selfie. KYC is typically approved the same day.' },
+  { num: '3', icon: DollarSign, title: 'Start investing',      desc: 'Fund via M-Pesa, bank transfer, or card and place your first trade.' },
+];
+
+export default function LandingPage() {
+  const typedText = useTypeOnce(HERO_TEXT);
+
+  return (
+    <div style={{ background: '#fff', color: TEXT, minHeight: '100vh', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+
       <style>{`
-        @keyframes hero-text-in {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
         @keyframes cursor-blink {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
-        .hero-text { animation: hero-text-in 1s ease both; }
-        .hero-text-1 { animation-delay: 0.1s; }
-        .hero-text-2 { animation-delay: 0.3s; }
-        .hero-text-3 { animation-delay: 0.5s; }
-        .hero-text-4 { animation-delay: 0.7s; }
-
+        .lp-feat-card:hover { border-color: rgba(37,99,235,0.28) !important; }
+        .lp-mkt-card:hover  { box-shadow: 0 8px 32px rgba(0,0,0,0.09) !important; }
         @media (max-width: 640px) {
-          /* Nav: hide middle links, tighten padding */
-          .nav-links { display: none !important; }
           .lp-nav { padding: 0 16px !important; }
-
-          /* Push hero content below fixed nav */
-          .hero-content { padding-top: 52px !important; }
-          .hero-trust-grid { grid-template-columns: repeat(2,1fr) !important; max-width: 340px !important; }
-
-          /* Hero */
-          .hero-logo-wrap { margin-bottom: 0px !important; }
-          .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
-          .hero-tagline { margin-top: -62px !important; }
-          .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
-          .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
-          .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
-          .hero-buttons a { justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
-
-          /* Stats: 2×2 */
-          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .stats-grid > div { border-right: none !important; border-bottom: 1px solid var(--card-border) !important; padding: 28px 12px !important; }
-          .stats-grid > div:nth-child(odd)  { border-right: 1px solid var(--card-border) !important; }
-          .stats-grid > div:nth-child(3),
-          .stats-grid > div:nth-child(4)    { border-bottom: none !important; }
-
-          /* Sections: less vertical padding */
-          .lp-section-pad { padding-top: 60px !important; padding-bottom: 60px !important; }
-          .lp-section-pad-sm { padding-top: 48px !important; padding-bottom: 48px !important; }
-
-          /* Features: tighter card padding */
-          .feature-card { padding: 22px !important; }
-
-          /* How it works: single column */
-          .steps-grid { grid-template-columns: 1fr !important; gap: 36px !important; text-align: left !important; }
-          .step-icon  { margin: 0 0 12px !important; }
-
-          /* CTA */
-          .cta-features { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 0 8px !important; }
-          .cta-btn { width: 100% !important; max-width: 320px !important; justify-content: center !important; padding: 14px 24px !important; font-size: 16px !important; }
-
-          /* Footer */
-          .lp-footer { padding: 40px 20px 28px !important; }
-        }
-
-        @media (max-width: 380px) {
-          .hero-title { font-size: 22px !important; }
-          .hero-logo-wrap img { width: min(200px, 88vw) !important; height: auto !important; }
-          .hero-tagline { margin-top: -34px !important; }
+          .lp-nav-links { display: none !important; }
+          .lp-hero { padding: 116px 24px 72px !important; }
+          .lp-hero-title { font-size: 36px !important; }
+          .lp-hero-btns { flex-direction: column !important; align-items: stretch !important; }
+          .lp-stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .lp-stats-grid > div { border-right: none !important; border-bottom: 1px solid rgba(0,0,0,0.08) !important; padding: 24px 12px !important; }
+          .lp-stats-grid > div:nth-child(odd) { border-right: 1px solid rgba(0,0,0,0.08) !important; }
+          .lp-stats-grid > div:nth-child(3),
+          .lp-stats-grid > div:nth-child(4) { border-bottom: none !important; }
+          .lp-mkt-grid  { grid-template-columns: 1fr !important; }
+          .lp-feat-grid { grid-template-columns: 1fr !important; }
+          .lp-steps-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
         }
       `}</style>
 
       {/* NAV */}
-      <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <CapaCCircle size={34} />
+      <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: 'rgba(255,255,255,0.82)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: `1px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <CapaCCircle size={30} />
+          <span style={{ fontSize: 16, fontWeight: 700, color: TEXT, letterSpacing: '-0.02em' }}>Capa</span>
         </div>
-        <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
-          {[['About', '/about'], ['Contact', '/contact']].map(([l, h]) => (
-            <Link key={l} to={h} style={{ fontSize: 13, color: SEC, textDecoration: 'none' }}>{l}</Link>
+        <div className="lp-nav-links" style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+          {([['About', '/about'], ['Contact', '/contact']] as [string, string][]).map(([l, h]) => (
+            <Link key={l} to={h} style={{ fontSize: 14, color: MUTED, textDecoration: 'none' }}>{l}</Link>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link to="/login"    style={{ padding: '6px 16px', borderRadius: 980, fontSize: 13, fontWeight: 500, color: TEXT, textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.08)' }}>Log In</Link>
-          <Link to="/register" style={{ padding: '6px 16px', borderRadius: 980, fontSize: 13, fontWeight: 500, color: '#fff', textDecoration: 'none', backgroundColor: ACCENT }}>Get Started</Link>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Link to="/login"    style={{ padding: '6px 14px', borderRadius: 980, fontSize: 13, fontWeight: 500, color: TEXT, textDecoration: 'none', background: 'rgba(0,0,0,0.06)' }}>Sign In</Link>
+          <Link to="/register" style={{ padding: '6px 14px', borderRadius: 980, fontSize: 13, fontWeight: 600, color: '#fff', textDecoration: 'none', background: BLUE }}>Get Started</Link>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-
-        {/* Canvas animation layer */}
-        <HeroCanvas theme={theme} />
-
-        {/* Bottom gradient fade */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
-        {/* Top fade (for nav) */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, var(--sidebar-bg) 0%, transparent 100%)', zIndex: 2 }} />
-
-        {/* Hero content */}
-        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: -32 }}>
-            <CapaLogo size={260} />
-          </div>
-
-          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px', minHeight: '1.5em' }}>
-            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
-          </p>
-
-          <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
-              Start Investing Free <ChevronRight size={16} />
-            </Link>
-            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
-              Sign In
-            </Link>
-          </div>
-          <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit</p>
+      {/* HERO */}
+      <section className="lp-hero" style={{ paddingTop: 140, paddingBottom: 96, paddingLeft: 24, paddingRight: 24, textAlign: 'center', maxWidth: 860, margin: '0 auto' }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: BLUE, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>Global Investing for Africa</p>
+        <h1 className="lp-hero-title" style={{ fontSize: 'clamp(42px,7vw,80px)', fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1.04, color: TEXT, marginBottom: 28 }}>
+          Invest in global markets.<br />
+          <span style={{ color: BLUE }}>From anywhere.</span>
+        </h1>
+        <p style={{ fontSize: 20, color: MUTED, lineHeight: 1.6, maxWidth: 520, margin: '0 auto 36px', minHeight: '1.5em' }}>
+          {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? MUTED : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
+        </p>
+        <div className="lp-hero-btns" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+          <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, background: BLUE, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
+            Start Free <ChevronRight size={16} />
+          </Link>
+          <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', padding: '14px 28px', borderRadius: 980, background: SURF, color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500 }}>
+            Sign In
+          </Link>
         </div>
+        <p style={{ fontSize: 12, color: 'rgba(29,29,31,0.32)', margin: 0 }}>No minimum deposit · No credit card required</p>
       </section>
+
+      {/* TICKER */}
+      <div style={{ background: SURF, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}`, overflow: 'hidden', height: 42, display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', animation: 'ticker 38s linear infinite', whiteSpace: 'nowrap', willChange: 'transform' }}>
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '0 28px', fontSize: 12, fontWeight: 500 }}>
+              <span style={{ color: TEXT, letterSpacing: '0.03em', fontWeight: 600 }}>{item.sym}</span>
+              <span style={{ color: TEXT }}>{item.price}</span>
+              <span style={{ color: item.up ? '#16a34a' : '#dc2626', fontWeight: 600 }}>{item.change}</span>
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* STATS */}
       <FadeSection>
-        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '56px 24px', borderTop: '1px solid var(--card-border)' }}>
-          <div className="stats-grid" style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
+        <section style={{ background: SURF, borderBottom: `1px solid ${BORDER}`, padding: '56px 24px' }}>
+          <div className="lp-stats-grid" style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
             {stats.map((s, i) => (
-              <div key={s.label} style={{ textAlign: 'center', padding: '0 24px', borderRight: i < 3 ? '1px solid var(--card-border)' : 'none' }}>
-                <div style={{ fontSize: 'clamp(32px,5vw,52px)', fontWeight: 700, color: TEXT, letterSpacing: '-0.03em', lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>{s.label}</div>
+              <div key={s.label} style={{ textAlign: 'center', padding: '0 24px', borderRight: i < 3 ? `1px solid ${BORDER}` : 'none' }}>
+                <div style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 700, color: TEXT, letterSpacing: '-0.04em', lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontSize: 13, color: MUTED, marginTop: 6 }}>{s.label}</div>
               </div>
             ))}
+          </div>
+        </section>
+      </FadeSection>
+
+      {/* MARKETS */}
+      <FadeSection>
+        <section style={{ background: '#fff', padding: '88px 24px' }}>
+          <div style={{ maxWidth: 980, margin: '0 auto' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: BLUE, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Live Markets</p>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
+              Markets at a glance
+            </h2>
+            <div className="lp-mkt-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+              {markets.map(m => (
+                <div key={m.sym} className="lp-mkt-card" style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 20, padding: 24, transition: 'box-shadow 0.2s', cursor: 'default' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: TEXT, letterSpacing: '-0.01em' }}>{m.sym}</div>
+                      <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>{m.name}</div>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: MUTED, background: SURF, borderRadius: 6, padding: '3px 7px', letterSpacing: '0.04em' }}>{m.exchange}</span>
+                  </div>
+                  <Sparkline points={m.spark} up={m.up} />
+                  <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: 20, fontWeight: 700, color: TEXT, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{m.price}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: m.up ? '#16a34a' : '#dc2626' }}>{m.pct}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </FadeSection>
 
       {/* FEATURES */}
       <FadeSection>
-        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
-          <h2 style={{ fontSize: 'clamp(32px,5vw,54px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
-            Everything you need.<br />Nothing you don't.
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-            {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="feature-card" style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid var(--card-border)', transition: 'border-color 0.2s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.35)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--card-border)')}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-                  <Icon size={22} color={ACCENT} strokeWidth={1.8} />
+        <section style={{ background: SURF, padding: '88px 24px', borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}>
+          <div style={{ maxWidth: 980, margin: '0 auto' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: BLUE, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
+              Everything you need.
+            </h2>
+            <div className="lp-feat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+              {features.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="lp-feat-card" style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 18, padding: '28px 26px', transition: 'border-color 0.2s', cursor: 'default' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(37,99,235,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                    <Icon size={20} color={BLUE} strokeWidth={1.8} />
+                  </div>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, color: TEXT, marginBottom: 6, letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.65, margin: 0 }}>{desc}</p>
                 </div>
-                <h3 style={{ fontSize: 19, fontWeight: 600, color: TEXT, marginBottom: 8, letterSpacing: '-0.02em' }}>{title}</h3>
-                <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
       </FadeSection>
 
       {/* HOW IT WORKS */}
       <FadeSection>
-        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '80px 24px', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)' }}>
+        <section style={{ background: '#fff', padding: '88px 24px' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontSize: 'clamp(28px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.08 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: BLUE, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 60, lineHeight: 1.1 }}>
               How Capa works
             </h2>
-            <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
-              {steps.map(({ icon: Icon, num, title, desc }) => (
-                <div key={num} style={{ textAlign: 'center' }}>
-                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <Icon size={24} color={ACCENT} strokeWidth={1.8} />
+            <div className="lp-steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 40, textAlign: 'center' }}>
+              {steps.map(({ num, icon: Icon, title, desc }) => (
+                <div key={num}>
+                  <div style={{ fontSize: 80, fontWeight: 800, color: 'rgba(37,99,235,0.07)', letterSpacing: '-0.06em', lineHeight: 1, marginBottom: -12 }}>{num}</div>
+                  <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <Icon size={22} color={BLUE} strokeWidth={1.8} />
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
-                  <h3 style={{ fontSize: 17, fontWeight: 600, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
-                  <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+                  <h3 style={{ fontSize: 17, fontWeight: 600, color: TEXT, margin: '0 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 14, color: MUTED, margin: 0, lineHeight: 1.65 }}>{desc}</p>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      </FadeSection>
-
-      {/* SOCIAL PROOF */}
-      <FadeSection>
-        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
-          <h2 style={{ fontSize: 'clamp(28px,5vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
-            Built on trust. Backed by data.
-          </h2>
-          {/* Trust pillars */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
-            {[
-              { label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
-              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
-              { label: 'Real-Time Execution', desc: 'Orders placed in milliseconds on NYSE, NASDAQ, LSE & NSE.' },
-              { label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
-            ].map(({ label, desc }) => (
-              <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
-                <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{label}</p>
-                <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
-              </div>
-            ))}
           </div>
         </section>
       </FadeSection>
 
       {/* CTA */}
       <FadeSection>
-        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid var(--card-border)', position: 'relative', overflow: 'hidden' }}>
-          {/* Subtle glow behind CTA */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(var(--accent-rgb),0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'relative' }}>
-            <h2 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginBottom: 16, lineHeight: 1.06 }}>
-              Start investing today.
-            </h2>
-            <p style={{ fontSize: 17, color: SEC, marginBottom: 16, maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.55 }}>
-              Open your free account in under 10 minutes. No minimum deposit.
-            </p>
-            <div className="cta-features" style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-              {['Regulated platform', 'Instant M-Pesa deposits'].map(f => (
-                <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: SEC }}>
-                  <Check size={13} color={ACCENT} />{f}
-                </span>
-              ))}
-            </div>
-            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600 }}>
-              Create Free Account <ChevronRight size={18} />
-            </Link>
+        <section style={{ background: SURF, padding: '96px 24px', textAlign: 'center', borderTop: `1px solid ${BORDER}` }}>
+          <h2 style={{ fontSize: 'clamp(36px,5vw,60px)', fontWeight: 700, letterSpacing: '-0.04em', color: TEXT, marginBottom: 16, lineHeight: 1.07 }}>
+            Start investing today.
+          </h2>
+          <p style={{ fontSize: 18, color: MUTED, maxWidth: 400, margin: '0 auto 20px', lineHeight: 1.55 }}>
+            Open your free account in under 10 minutes. No minimum deposit.
+          </p>
+          <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
+            {['Regulated platform', 'Instant M-Pesa deposits', 'No hidden fees'].map(f => (
+              <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: MUTED }}>
+                <Check size={13} color={BLUE} />{f}
+              </span>
+            ))}
           </div>
+          <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, background: BLUE, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600 }}>
+            Create Free Account <ChevronRight size={18} />
+          </Link>
         </section>
       </FadeSection>
 
       {/* FOOTER */}
-      <footer className="lp-footer" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
+      <footer style={{ background: '#fff', borderTop: `1px solid ${BORDER}`, padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <CapaLogo size={18} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <CapaCCircle size={24} />
+                <span style={{ fontSize: 16, fontWeight: 700, color: TEXT, letterSpacing: '-0.02em' }}>Capa</span>
               </div>
-              <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
+              <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
             </div>
-            {[
-              { heading: 'Company',  links: [['About', '/about'], ['Contact', '/contact']] },
-              { heading: 'Legal',    links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Security', '/security']] },
-              { heading: 'Account',  links: [['Sign In', '/login'], ['Register', '/register']] },
-            ].map(({ heading, links }) => (
+            {([
+              { heading: 'Company', links: [['About', '/about'], ['Contact', '/contact']] as [string,string][] },
+              { heading: 'Legal',   links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Security', '/security']] as [string,string][] },
+              { heading: 'Account', links: [['Sign In', '/login'], ['Register', '/register']] as [string,string][] },
+            ]).map(({ heading, links }) => (
               <div key={heading}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(235,235,245,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(29,29,31,0.28)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {links.map(([label, href]) => (
-                    <Link key={label} to={href} style={{ fontSize: 14, color: SEC, textDecoration: 'none' }}>{label}</Link>
+                    <Link key={label} to={href} style={{ fontSize: 14, color: MUTED, textDecoration: 'none' }}>{label}</Link>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: 24 }}>
-            <p style={{ margin: 0, fontSize: 12, color: 'rgba(235,235,245,0.3)', lineHeight: 1.7 }}>
+          <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 24 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'rgba(29,29,31,0.30)', lineHeight: 1.7 }}>
               © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
             </p>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
