@@ -31,18 +31,7 @@ function isNSEOpen(): boolean {
 
 // ── Config ────────────────────────────────────────────────────
 const EXCHANGES = [
-  { id: 'NSE',    label: 'Nairobi',     flag: '🇰🇪', currency: 'KES', comingSoon: false },
-  { id: 'NYSE',   label: 'New York',    flag: '🇺🇸', currency: 'USD', comingSoon: true  },
-  { id: 'NASDAQ', label: 'NASDAQ',      flag: '🇺🇸', currency: 'USD', comingSoon: true  },
-  { id: 'LSE',    label: 'London',      flag: '🇬🇧', currency: 'GBP', comingSoon: true  },
-  { id: 'TSE',    label: 'Tokyo',       flag: '🇯🇵', currency: 'JPY', comingSoon: true  },
-  { id: 'TSX',    label: 'Toronto',     flag: '🇨🇦', currency: 'CAD', comingSoon: true  },
-  { id: 'ASX',    label: 'Sydney',      flag: '🇦🇺', currency: 'AUD', comingSoon: true  },
-  { id: 'FSE',    label: 'Frankfurt',   flag: '🇩🇪', currency: 'EUR', comingSoon: true  },
-  { id: 'SIX',    label: 'Zurich',      flag: '🇨🇭', currency: 'CHF', comingSoon: true  },
-  { id: 'HKEX',   label: 'Hong Kong',   flag: '🇭🇰', currency: 'HKD', comingSoon: true  },
-  { id: 'SGX',    label: 'Singapore',   flag: '🇸🇬', currency: 'SGD', comingSoon: true  },
-  { id: 'JSE',    label: 'Johannesburg',flag: '🇿🇦', currency: 'ZAR', comingSoon: true  },
+  { id: 'NSE', label: 'Nairobi', flag: '🇰🇪', currency: 'KES' },
 ];
 
 type View = 'all' | 'gainers' | 'losers' | 'active';
@@ -70,7 +59,7 @@ export default function MarketsPage() {
       api.get('/api/assets', { params: { exchange, limit: 300 } }).then(r => r.data),
     staleTime: 15_000,
     refetchInterval: 30_000,
-    enabled: !currEx.comingSoon,
+    enabled: true,
   });
 
   const { data: wlData } = useQuery({
@@ -167,26 +156,18 @@ export default function MarketsPage() {
               'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
               exchange === ex.id
                 ? 'text-white shadow-lg'
-                : ex.comingSoon
-                  ? 'bg-gray-800/40 text-gray-600 cursor-pointer'
-                  : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60',
+                : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60',
             )}
-            style={exchange === ex.id ? { backgroundColor: ex.comingSoon ? 'rgba(255,255,255,0.08)' : 'var(--accent)' } : {}}
+            style={exchange === ex.id ? { backgroundColor: 'var(--accent)' } : {}}
           >
             <span role="img" aria-label={ex.label}>{ex.flag}</span>
             {ex.label}
-            {ex.comingSoon && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wide"
-                style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.35)' }}>
-                SOON
-              </span>
-            )}
           </button>
         ))}
       </div>
 
-      {/* View tabs — hidden when exchange is Coming Soon */}
-      {!currEx.comingSoon && (
+      {/* View tabs */}
+      {(
         <div
           className="flex gap-0.5 p-1 rounded-xl self-start"
           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
@@ -211,20 +192,7 @@ export default function MarketsPage() {
         </div>
       )}
 
-      {/* Coming Soon placeholder */}
-      {currEx.comingSoon ? (
-        <div className="card py-24 flex flex-col items-center text-center">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
-            style={{ background: 'rgba(255,255,255,0.06)' }}>
-            <Clock size={26} className="text-gray-500" />
-          </div>
-          <p className="text-lg font-semibold text-white">{currEx.label} — Coming Soon</p>
-          <p className="text-sm text-gray-500 mt-2 max-w-xs">
-            We're working on bringing {currEx.label} ({currEx.id}) stocks to CAPA. Stay tuned for updates.
-          </p>
-        </div>
-      ) : (
-        <>
+      <>
       {/* Stock list */}
       <div className="card overflow-hidden p-0">
         {/* Table header */}
@@ -355,8 +323,7 @@ export default function MarketsPage() {
           {displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · {currEx.label}
         </p>
       )}
-        </>
-      )}
+      </>
     </div>
   );
 }
