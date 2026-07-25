@@ -1,14 +1,17 @@
 import { useState } from 'react';
 
-const SVG_LOGOS = new Set(['ABSA','BOC','EVRD','ISF','JUB']);
+const SVG_LOGOS = new Set([
+  'ABSA','BOC','EVRD','ISF','JUB',
+  'AMAC','CGEN','HAFR','HFCK','KAPC','LIMT','NBV','OCH','PORT','SBIC','SKL','UCHM','UNGA','WTK',
+]);
 
 const LOCAL_LOGOS = new Set([
-  'AAPL','ABSA','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
-  'CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','EVRD','FMLY','FTGH',
-  'GOOGL','IMH','ISF','JPM','JUB','KCB','KEGN','KNRE','KPC','KPLC','KQ',
-  'KUKZ','LBTY','LKL','LLOY','META','MSFT','NCBA','NMG','NSE','NVDA',
-  'QQQ','SASN','SCAN','SCBK','SCOM','SGL','SHEL','SLAM','SMER',
-  'SMWF','SPY','TOTL','TPSE','TSLA','UMME','VOD','VTI','VUKE','VWO','XPRS',
+  'AAPL','ABSA','AMAC','AMZN','AZN','BARC','BATK','BKG','BOC','BP','BRIT','CARB',
+  'CGEN','CIC','COOP','CRWN','CTUM','DTK','EABL','EGAD','EQTY','EVRD','FMLY','FTGH',
+  'GOOGL','HAFR','HFCK','IMH','ISF','JPM','JUB','KAPC','KCB','KEGN','KNRE','KPC','KPLC','KQ',
+  'KUKZ','LBTY','LIMT','LKL','LLOY','META','MSFT','NBV','NCBA','NMG','NSE','NVDA',
+  'OCH','PORT','QQQ','SASN','SBIC','SCAN','SCBK','SCOM','SGL','SHEL','SKL','SLAM','SMER',
+  'SMWF','SPY','TOTL','TPSE','TSLA','UCHM','UMME','UNGA','VOD','VTI','VUKE','VWO','WTK','XPRS',
 ]);
 
 const SYMBOL_COLORS = [
