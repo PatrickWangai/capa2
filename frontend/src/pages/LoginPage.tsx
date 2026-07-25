@@ -37,7 +37,7 @@ export default function LoginPage() {
   const inputStyle = (name: string) => ({
     width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17,
     border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
-    boxShadow: focused === name ? '0 0 0 3px rgba(var(--accent-rgb),0.18)' : 'none',
+    
     outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
     fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s',
     boxSizing: 'border-box' as const,

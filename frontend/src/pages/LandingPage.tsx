@@ -286,7 +286,7 @@ export default function LandingPage() {
           </p>
 
           <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 0 32px rgba(var(--accent-rgb),0.45)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
               Start Investing Free <ChevronRight size={16} />
             </Link>
             <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
@@ -401,7 +401,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600, boxShadow: '0 0 40px rgba(var(--accent-rgb),0.4)' }}>
+            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600 }}>
               Create Free Account <ChevronRight size={18} />
             </Link>
           </div>
