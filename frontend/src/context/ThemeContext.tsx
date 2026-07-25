@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type ThemeName =
   | 'blue' | 'teal' | 'purple' | 'rose' | 'amber'
   | 'indigo' | 'cyan' | 'emerald' | 'orange' | 'pink'
-  | 'violet' | 'sky' | 'lime' | 'black' | 'white';
+  | 'violet' | 'sky' | 'lime' | 'black';
 
 type ThemeVars = {
   label: string;
@@ -24,7 +24,7 @@ type ThemeVars = {
 };
 
 export const COLOUR_THEMES: ThemeName[] = [
-  'white','teal','blue','sky','cyan','emerald','lime',
+  'teal','blue','sky','cyan','emerald','lime',
   'amber','orange','rose','pink','violet','purple','indigo','black',
 ];
 
@@ -156,20 +156,6 @@ export const THEMES: Record<ThemeName, ThemeVars> = {
     sidebarBg: 'rgba(15,15,15,0.97)',
     inputBg:   'rgba(40,40,40,0.95)',
     navText:   'rgba(235,235,245,0.80)',
-  },
-  white: {
-    label: 'White', swatch: '#00C805',
-    accent: '#00C805', accentDark: '#00A304', accentRgb: '0,200,5',
-    bg: ['#ffffff','#ffffff','#f7f7f7','#f0f0f0','#ffffff','#f5f5f5'],
-    accentText: '#ffffff',
-    cardBg:     'rgba(255,255,255,1)',
-    cardBorder: 'rgba(0,0,0,0.09)',
-    sidebarBg:  'rgba(255,255,255,0.94)',
-    inputBg:    'rgba(242,242,242,1)',
-    navText:    'rgba(0,0,0,0.85)',
-    text:         '#000000',
-    textSecondary:'rgba(0,0,0,0.50)',
-    textTertiary: 'rgba(0,0,0,0.28)',
   },
 };
 
