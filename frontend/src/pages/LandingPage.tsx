@@ -350,7 +350,6 @@ export default function LandingPage() {
             {[
               { label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
               { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
-              { label: 'Real-Time Execution', desc: 'Orders placed in milliseconds on NYSE, NASDAQ, LSE & NSE.' },
               { label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
             ].map(({ label, desc }) => (
               <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
