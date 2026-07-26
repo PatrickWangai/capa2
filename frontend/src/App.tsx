@@ -1,6 +1,7 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import IntroScreen from './components/ui/IntroScreen';
 import { useAuthStore } from './store/authStore';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import CookieBanner from './components/ui/CookieBanner';
@@ -93,8 +94,18 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [introDone, setIntroDone] = useState(() =>
+    sessionStorage.getItem('capa-intro-seen') === '1'
+  );
+
+  const handleIntroDone = () => {
+    sessionStorage.setItem('capa-intro-seen', '1');
+    setIntroDone(true);
+  };
+
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      {!introDone && <IntroScreen onDone={handleIntroDone} />}
       <CookieBanner />
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
