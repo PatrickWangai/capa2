@@ -1,8 +1,9 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { api } from '../services/api';
-import { CheckCircle, AlertCircle, ChevronLeft, TrendingUp, TrendingDown } from 'lucide-react';
+import { AlertCircle, ChevronLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import { StockLogo } from '../components/ui/StockLogo';
+import { ReceiptCard } from '../components/ui/ReceiptCard';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -66,41 +67,27 @@ export default function TradeConfirmPage() {
   };
 
   if (success) {
+    const now = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const ref = orderId ? orderId.slice(0, 8).toUpperCase() : '—';
     return (
-      <div className="max-w-lg mx-auto space-y-6">
-        <div className="card text-center py-12 space-y-5">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-            style={{ background: 'rgba(52,211,153,0.12)' }}>
-            <CheckCircle size={36} style={{ color: '#34d399' }} />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-white">Order Placed!</h2>
-            <p className="text-gray-400 mt-1 text-sm">
-              Your {orderType.toLowerCase()} order to {side.toLowerCase()} {quantity} {symbol} has been submitted.
-            </p>
-          </div>
-          {orderId && (
-            <p className="text-xs text-gray-600 font-mono">Order ID: {orderId.slice(0, 16)}…</p>
-          )}
-          <div className="rounded-xl p-4 space-y-2 text-sm" style={{ background: 'rgba(52,211,153,0.05)', border: '1px solid rgba(52,211,153,0.15)' }}>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Order</span>
-              <span className="text-white font-semibold">{side} {quantity} × {symbol}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Estimated total</span>
-              <span className="text-white font-semibold">{currency} {total.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Status</span>
-              <span className="text-yellow-400 font-semibold">Pending</span>
-            </div>
-          </div>
-          <div className="flex gap-3 justify-center">
-            <Link to="/orders" className="btn-primary" style={{ fontSize: 14 }}>View Orders</Link>
-            <Link to={`/markets/${assetId}`} className="btn-secondary" style={{ fontSize: 14 }}>Back to {symbol}</Link>
-          </div>
-        </div>
+      <div className="max-w-lg mx-auto">
+        <ReceiptCard
+          title="Order placed"
+          amount={`${currency} ${total.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          note={`Your ${orderType.toLowerCase()} order has been submitted`}
+          rows={[
+            { label: 'Order reference', value: ref },
+            { label: 'Date',            value: now },
+            { label: 'Stock',           value: `${symbol} — ${name}` },
+            { label: 'Order',           value: `${side} · ${orderType} · ${quantity} share${quantity !== 1 ? 's' : ''}` },
+            { label: 'Fee',             value: `${currency} ${fee.toFixed(2)}` },
+            { label: 'Status',          value: 'Pending', accent: true },
+          ]}
+          actions={[
+            { label: 'View Orders', href: '/orders', variant: 'secondary' },
+            { label: `Back to ${symbol}`, href: `/markets/${assetId}`, variant: 'primary' },
+          ]}
+        />
       </div>
     );
   }

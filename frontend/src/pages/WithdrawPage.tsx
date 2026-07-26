@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { ChevronLeft, Smartphone, Building2, CheckCircle, Info } from 'lucide-react';
+import { ChevronLeft, Smartphone, Building2, Info } from 'lucide-react';
 import { PageLoader } from '../components/ui';
+import { ReceiptCard } from '../components/ui/ReceiptCard';
 import toast from 'react-hot-toast';
 
 const CURRENCIES = ['KES','USD','GBP','EUR','CAD','AUD','JPY','CHF','HKD','SGD','ZAR'];
@@ -55,23 +56,33 @@ export default function WithdrawPage() {
 
   if (isLoading) return <PageLoader />;
 
-  if (success) return (
-    <div className="max-w-lg mx-auto space-y-6">
-      <div className="card text-center py-10 space-y-4">
-        <CheckCircle size={48} className="mx-auto" style={{ color: '#34d399' }} />
-        <h2 className="text-xl font-bold text-white">Withdrawal Submitted</h2>
-        <p className="text-gray-400 text-sm">{success.message}</p>
-        <p className="text-3xl font-bold text-white">{currency} {parseFloat(amount).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
-        <p className="text-xs text-gray-600 max-w-xs mx-auto">
-          {method === 'MPESA' ? 'Funds will arrive on your M-Pesa within minutes once processed.' : 'Funds will arrive in your bank account within 1–2 business days.'}
-        </p>
-        <div className="flex gap-3 justify-center pt-2">
-          <button onClick={() => { setSuccess(null); setAmount(''); }} className="btn-primary">Withdraw Again</button>
-          <Link to="/wallet" className="btn-secondary">Go to Wallet</Link>
-        </div>
+  if (success) {
+    const now = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const ref = (success.transactionId ?? success.id ?? success.reference ?? '').toString().slice(0, 12).toUpperCase() || '—';
+    const methodLabel = method === 'MPESA' ? 'M-Pesa' : 'Bank Transfer';
+    const eta = method === 'MPESA' ? 'Within minutes' : '1–2 business days';
+    const flagMap: Record<string,string> = { KES:'🇰🇪',USD:'🇺🇸',GBP:'🇬🇧',EUR:'🇪🇺',CAD:'🇨🇦',AUD:'🇦🇺',JPY:'🇯🇵',CHF:'🇨🇭',HKD:'🇭🇰',SGD:'🇸🇬',ZAR:'🇿🇦' };
+    return (
+      <div className="max-w-lg mx-auto">
+        <ReceiptCard
+          title="Withdrawal submitted"
+          amount={`${flagMap[currency] ?? ''} ${currency} ${parseFloat(amount).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+          note={success.message}
+          rows={[
+            { label: 'Reference',  value: ref },
+            { label: 'Date',       value: now },
+            { label: 'Method',     value: methodLabel },
+            { label: 'Currency',   value: `${flagMap[currency] ?? ''} ${currency}` },
+            { label: 'Arrives',    value: eta },
+          ]}
+          actions={[
+            { label: 'Withdraw Again', onClick: () => { setSuccess(null); setAmount(''); }, variant: 'secondary' },
+            { label: 'Go to Wallet',   href: '/wallet', variant: 'primary' },
+          ]}
+        />
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto space-y-6">
