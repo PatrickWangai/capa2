@@ -394,7 +394,6 @@ export default function LandingPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <CapaLogo size={18} />
               </div>
-              <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>Global investing for the African generation.</p>
             </div>
             {[
               { heading: 'Company',  links: [['About', '/about'], ['Contact', '/contact']] },
