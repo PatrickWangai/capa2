@@ -132,7 +132,8 @@ export default function LandingPage() {
 
         {/* Video background */}
         <video autoPlay muted loop playsInline
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0,
+            filter: 'blur(18px)', transform: 'scale(1.08)' }}>
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
 
