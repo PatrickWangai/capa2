@@ -3,19 +3,32 @@ import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme } from '../context/ThemeContext';
 
-/* ─── Organic cellular background (lamalama-inspired) ─────────────────────────
-   Voronoi cells rendered at 200×112, scaled up by the browser (bilinear = smooth
-   organic edges). Gold sparkle particles float above on a separate canvas layer.
+/* ─── Background ──────────────────────────────────────────────────────────────
+   CUSTOM_BG = '/hero-bg.mp4'  → plays the generated video (landing page only)
+   CUSTOM_BG = ''              → falls back to real-time Voronoi canvas animation
    ─────────────────────────────────────────────────────────────────────────── */
+const CUSTOM_BG: string = '/hero-bg.mp4';
+
+const OVERLAY = (
+  <div style={{
+    position:'fixed', inset:0, zIndex:1,
+    background:'linear-gradient(to bottom,rgba(0,0,0,.52) 0%,rgba(0,0,0,.16) 48%,rgba(0,0,0,.62) 100%)',
+    pointerEvents:'none',
+  }} />
+);
+
 function BackgroundCanvas() {
   const bgRef = useRef<HTMLCanvasElement>(null);
   const fxRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Video mode — no canvas needed, video has baked-in sparkles
+    if (CUSTOM_BG) return;
+
     const bgEl = bgRef.current;
     const fxRaw = fxRef.current;
     if (!bgEl || !fxRaw) return;
-    const fe: HTMLCanvasElement = fxRaw; // non-null for closures
+    const fe: HTMLCanvasElement = fxRaw;
 
     // Low-res Voronoi canvas — browser upscales with bilinear smoothing
     const BW = 200, BH = 112;
@@ -27,13 +40,11 @@ function BackgroundCanvas() {
     window.addEventListener('resize', onResize);
     const fxCtx = fe.getContext('2d')!;
 
-    // Organic seed points that drift slowly — form the cell structure
     const seeds = Array.from({ length: 14 }, () => ({
       x: Math.random() * BW, y: Math.random() * BH,
       vx: (Math.random() - 0.5) * 0.06, vy: (Math.random() - 0.5) * 0.06,
     }));
 
-    // Gold dust particles (0–1 normalised coords)
     const particles = Array.from({ length: 80 }, () => ({
       x: Math.random(), y: Math.random(),
       vx: (Math.random() - 0.5) * 0.00012, vy: (Math.random() - 0.5) * 0.00012,
@@ -62,18 +73,15 @@ function BackgroundCanvas() {
             if (dd < d1) { d2 = d1; d1 = dd; } else if (dd < d2) { d2 = dd; }
           }
           const r1 = Math.sqrt(d1), r2 = Math.sqrt(d2);
-          // 0 = on cell boundary, →1 = cell interior
           const bv = (r2 - r1) / (r2 + r1 + 0.001);
           const i = (y * BW + x) * 4;
           if (bv < 0.14) {
-            // Cell wall — warm amber/gold glow that fades toward interior
             const glow = Math.pow(1 - bv / 0.14, 2);
             px[i]   = Math.floor(8  + 162 * glow);
             px[i+1] = Math.floor(6  + 78  * glow);
             px[i+2] = Math.floor(4  + 10  * glow);
             px[i+3] = 255;
           } else {
-            // Cell interior — near-black with subtle depth variation
             const depth = Math.min(1, (bv - 0.14) / 0.4);
             const v = Math.floor(6 + depth * 7);
             px[i] = v + 1; px[i+1] = v; px[i+2] = v; px[i+3] = 255;
@@ -108,29 +116,31 @@ function BackgroundCanvas() {
     let raf: number, frame = 0;
     const loop = () => {
       frame++;
-      if (frame % 4 === 0) drawBg(); // cells update at ~15fps
-      drawFx();                       // particles at 60fps
+      if (frame % 4 === 0) drawBg();
+      drawFx();
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
   }, []);
 
+  if (CUSTOM_BG) {
+    return (
+      <>
+        <video autoPlay loop muted playsInline src={CUSTOM_BG}
+          style={{ position:'fixed',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0 }} />
+        {OVERLAY}
+      </>
+    );
+  }
+
   return (
     <>
-      {/* Low-res Voronoi — browser bilinear-upscales to full screen (naturally smooth) */}
       <canvas ref={bgRef} style={{
         position:'fixed', inset:0, width:'100%', height:'100%',
-        objectFit:'cover', zIndex:0, imageRendering:'auto',
-        filter:'blur(3px)',
+        objectFit:'cover', zIndex:0, imageRendering:'auto', filter:'blur(3px)',
       }} />
-      {/* Dark gradient vignette */}
-      <div style={{
-        position:'fixed', inset:0, zIndex:1,
-        background:'linear-gradient(to bottom,rgba(0,0,0,.52) 0%,rgba(0,0,0,.16) 48%,rgba(0,0,0,.62) 100%)',
-        pointerEvents:'none',
-      }} />
-      {/* Gold sparkle particles */}
+      {OVERLAY}
       <canvas ref={fxRef} style={{
         position:'fixed', inset:0, width:'100%', height:'100%',
         zIndex:2, pointerEvents:'none',
