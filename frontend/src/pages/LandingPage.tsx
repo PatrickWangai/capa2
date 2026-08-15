@@ -1,193 +1,32 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme } from '../context/ThemeContext';
 
-/* ─── Watch Dogs 2-style circuit network background ─── */
+/* ─── Background scene ───────────────────────────────────────────────────────
+   To use your own image or video:
+     1. Drop the file into  frontend/public/  (e.g. hero-bg.jpg or hero-bg.mp4)
+     2. Set CUSTOM_BG below to match the filename  (e.g. '/hero-bg.jpg')
+   ─────────────────────────────────────────────────────────────────────────── */
+const CUSTOM_BG: string = ''; // ← set to '/hero-bg.jpg' or '/hero-bg.mp4'
+
 function BackgroundCanvas() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvasRaw = ref.current; if (!canvasRaw) return;
-    const ctxRaw = canvasRaw.getContext('2d'); if (!ctxRaw) return;
-    const canvas = canvasRaw as HTMLCanvasElement;
-    const ctx = ctxRaw as CanvasRenderingContext2D;
-    let W = 0, H = 0, animId: number, frame = 0;
+  // Custom image or video — GPU-composited, zero JS cost
+  if (CUSTOM_BG) {
+    const isVid = CUSTOM_BG.endsWith('.mp4') || CUSTOM_BG.endsWith('.webm');
+    return isVid
+      ? <video autoPlay loop muted playsInline src={CUSTOM_BG} style={{ position:'fixed', inset:0, width:'100%', height:'100%', objectFit:'cover', zIndex:0 }} />
+      : <div style={{ position:'fixed', inset:0, zIndex:0, backgroundImage:`url(${CUSTOM_BG})`, backgroundSize:'cover', backgroundPosition:'center' }} />;
+  }
 
-    type Kind = 'major' | 'minor' | 'small';
-    type Node = { x: number; y: number; vx: number; vy: number; kind: Kind; r: number; pulse: number; ps: number; alpha: number; };
-    type Particle = { fi: number; ti: number; t: number; spd: number; trail: { x: number; y: number }[]; };
-
-    const CD = 280; // connect distance
-    const TRAIL = 14;
-    let nodes: Node[] = [];
-    let particles: Particle[] = [];
-    let activeSet = new Set<string>();
-
-    function hex(cx: number, cy: number, sz: number) {
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = (Math.PI / 3) * i - Math.PI / 6;
-        const x = cx + sz * Math.cos(a), y = cy + sz * Math.sin(a);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-    }
-
-    function neighbor(fi: number): number {
-      const f = nodes[fi], near: number[] = [];
-      nodes.forEach((n, i) => {
-        if (i === fi) return;
-        const dx = n.x - f.x, dy = n.y - f.y;
-        if (dx*dx + dy*dy < CD*CD*1.5) near.push(i);
-      });
-      return near.length ? near[Math.floor(Math.random() * near.length)] : Math.floor(Math.random() * nodes.length);
-    }
-
-    function build() {
-      nodes = [];
-      // 5 major hex hubs — spread intentionally
-      for (let i = 0; i < 5; i++) {
-        nodes.push({ x: (0.12 + i * 0.19) * W + (Math.random()-0.5)*50, y: (0.22 + Math.random()*0.56)*H, vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.12, kind: 'major', r: 7, pulse: Math.random()*Math.PI*2, ps: 0.010+Math.random()*0.012, alpha: 1 });
-      }
-      // 14 minor nodes
-      for (let i = 0; i < 14; i++) {
-        nodes.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18, kind: 'minor', r: 3.5, pulse: Math.random()*Math.PI*2, ps: 0.014+Math.random()*0.018, alpha: 0.8+Math.random()*0.2 });
-      }
-      // 16 small nodes
-      for (let i = 0; i < 16; i++) {
-        nodes.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-0.5)*0.22, vy: (Math.random()-0.5)*0.22, kind: 'small', r: 1.3, pulse: Math.random()*Math.PI*2, ps: 0.018+Math.random()*0.024, alpha: 0.3+Math.random()*0.4 });
-      }
-
-      // Mark ~25% of edges as "active" (bright)
-      activeSet = new Set();
-      for (let i = 0; i < nodes.length; i++)
-        for (let j = i+1; j < nodes.length; j++)
-          if (Math.random() < 0.25) activeSet.add(`${i}-${j}`);
-
-      // 72 particles
-      particles = Array.from({ length: 72 }, () => {
-        const fi = Math.floor(Math.random() * nodes.length);
-        return { fi, ti: neighbor(fi), t: Math.random(), spd: 0.005 + Math.random()*0.009, trail: [] };
-      });
-    }
-
-    function resize() {
-      const dpr = devicePixelRatio || 1;
-      W = window.innerWidth; H = window.innerHeight;
-      canvas.width = Math.ceil(W*dpr); canvas.height = Math.ceil(H*dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
-    }
-
-    function draw() {
-      frame++;
-      const rgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '32,212,184';
-
-      // Background — deep navy-black
-      ctx.fillStyle = '#060a10'; ctx.fillRect(0, 0, W, H);
-
-      // Faint hexagonal grid
-      const HS = 95, HH = HS * Math.sqrt(3);
-      ctx.strokeStyle = `rgba(${rgb},0.045)`; ctx.lineWidth = 0.6;
-      for (let r = -1; r < H/HH + 2; r++)
-        for (let c = -1; c < W/(HS*1.5) + 2; c++) {
-          hex(c*HS*1.5, r*HH + (c%2===0 ? 0 : HH/2), HS); ctx.stroke();
-        }
-
-      // Move nodes
-      nodes.forEach(n => {
-        n.x += n.vx; n.y += n.vy; n.pulse += n.ps;
-        if (n.x < -90) n.x = W+90; if (n.x > W+90) n.x = -90;
-        if (n.y < -90) n.y = H+90; if (n.y > H+90) n.y = -90;
-      });
-
-      // Refresh active edges every ~4s
-      if (frame % 240 === 0) {
-        activeSet = new Set();
-        for (let i = 0; i < nodes.length; i++)
-          for (let j = i+1; j < nodes.length; j++)
-            if (Math.random() < 0.25) activeSet.add(`${i}-${j}`);
-      }
-
-      // Edges
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i+1; j < nodes.length; j++) {
-          const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          if (d < CD) {
-            const b = 1 - d/CD;
-            const isActive = activeSet.has(`${i}-${j}`);
-            ctx.strokeStyle = `rgba(${rgb},${isActive ? b*0.55 : b*0.16})`;
-            ctx.lineWidth = isActive ? 1.0 : 0.5;
-            ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
-          }
-        }
-      }
-
-      // Particles
-      particles.forEach(p => {
-        p.t += p.spd;
-        if (p.t >= 1) { p.t = 0; p.trail = []; p.fi = p.ti; p.ti = neighbor(p.fi); }
-        const f = nodes[p.fi], t = nodes[p.ti];
-        const dx = t.x - f.x, dy = t.y - f.y;
-        if (dx*dx + dy*dy > CD*CD*2.2) return;
-        const px = f.x + dx*p.t, py = f.y + dy*p.t;
-        p.trail.push({ x: px, y: py });
-        if (p.trail.length > TRAIL) p.trail.shift();
-        // Trail
-        p.trail.forEach((pt, ti) => {
-          const fr = (ti+1) / p.trail.length;
-          const tg = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, fr*3.5+5);
-          tg.addColorStop(0, `rgba(${rgb},${fr*0.75})`); tg.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = tg; ctx.beginPath(); ctx.arc(pt.x, pt.y, fr*3.5+5, 0, Math.PI*2); ctx.fill();
-          ctx.fillStyle = `rgba(255,255,255,${fr*0.9})`; ctx.beginPath(); ctx.arc(pt.x, pt.y, fr*1.8, 0, Math.PI*2); ctx.fill();
-        });
-        // Head
-        const hg = ctx.createRadialGradient(px, py, 0, px, py, 11);
-        hg.addColorStop(0, `rgba(${rgb},1)`); hg.addColorStop(0.4, `rgba(${rgb},0.45)`); hg.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(px, py, 11, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px, py, 2.2, 0, Math.PI*2); ctx.fill();
-      });
-
-      // Nodes
-      nodes.forEach(n => {
-        const p = Math.sin(n.pulse)*0.5 + 0.5;
-
-        if (n.kind === 'major') {
-          // Double hex ring
-          ctx.strokeStyle = `rgba(${rgb},${0.18+p*0.18})`; ctx.lineWidth = 1.0; hex(n.x, n.y, 19+p*7); ctx.stroke();
-          ctx.strokeStyle = `rgba(${rgb},${0.07+p*0.07})`; ctx.lineWidth = 0.6; hex(n.x, n.y, 30+p*10); ctx.stroke();
-          // Glow blob
-          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 34+p*14);
-          g.addColorStop(0, `rgba(${rgb},${0.42+p*0.28})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 34+p*14, 0, Math.PI*2); ctx.fill();
-          // Hex body
-          ctx.fillStyle = `rgba(${rgb},${0.75+p*0.25})`; hex(n.x, n.y, n.r+1); ctx.fill();
-          ctx.fillStyle = `rgba(255,255,255,${0.92+p*0.08})`; ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2); ctx.fill();
-
-        } else if (n.kind === 'minor') {
-          ctx.strokeStyle = `rgba(${rgb},${0.13+p*0.13})`; ctx.lineWidth = 0.7;
-          ctx.beginPath(); ctx.arc(n.x, n.y, 11+p*6, 0, Math.PI*2); ctx.stroke();
-          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 16+p*8);
-          g.addColorStop(0, `rgba(${rgb},${0.30+p*0.20})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 16+p*8, 0, Math.PI*2); ctx.fill();
-          ctx.fillStyle = `rgba(${rgb},${n.alpha*(0.78+p*0.22)})`; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
-          ctx.fillStyle = `rgba(255,255,255,${0.80+p*0.20})`; ctx.beginPath(); ctx.arc(n.x, n.y, 1.1, 0, Math.PI*2); ctx.fill();
-
-        } else {
-          ctx.fillStyle = `rgba(${rgb},${n.alpha*(0.45+p*0.55)})`; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
-        }
-      });
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    resize(); draw();
-    window.addEventListener('resize', resize);
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
-  }, []);
-
-  return <canvas ref={ref} style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', display: 'block', zIndex: 0 }} />;
+  // Fallback: 3 CSS-animated blobs — pure GPU, no JS draw loop
+  return (
+    <div style={{ position:'fixed', inset:0, zIndex:0, background:'#060a10', overflow:'hidden' }}>
+      <div className="wd-blob wd-blob-1" />
+      <div className="wd-blob wd-blob-2" />
+      <div className="wd-blob wd-blob-3" />
+    </div>
+  );
 }
 
 /* ─── Live Nairobi clock ─── */
@@ -296,6 +135,32 @@ export default function LandingPage() {
       </div>
 
       <style>{`
+        /* ── CSS blob background ── */
+        .wd-blob { position:absolute; border-radius:50%; }
+        .wd-blob-1 { width:1100px; height:1100px; left:42%; top:40%; transform:translate(-50%,-50%);
+          background:radial-gradient(circle, rgba(var(--accent-rgb),.22) 0%, rgba(var(--accent-rgb),.06) 42%, transparent 68%);
+          filter:blur(72px); animation:wdBlob1 22s ease-in-out infinite; }
+        .wd-blob-2 { width:780px; height:780px; left:70%; top:68%; transform:translate(-50%,-50%);
+          background:radial-gradient(circle, rgba(var(--accent-rgb),.14) 0%, transparent 65%);
+          filter:blur(60px); animation:wdBlob2 30s ease-in-out infinite; }
+        .wd-blob-3 { width:650px; height:650px; left:18%; top:58%; transform:translate(-50%,-50%);
+          background:radial-gradient(circle, rgba(var(--accent-rgb),.09) 0%, transparent 65%);
+          filter:blur(80px); animation:wdBlob3 38s ease-in-out infinite; }
+        @keyframes wdBlob1 {
+          0%,100% { transform:translate(-50%,-50%) scale(1); }
+          33%     { transform:translate(calc(-50% + 100px),calc(-50% - 80px)) scale(1.18); }
+          66%     { transform:translate(calc(-50% - 60px),calc(-50% + 55px)) scale(0.88); }
+        }
+        @keyframes wdBlob2 {
+          0%,100% { transform:translate(-50%,-50%) scale(1); }
+          40%     { transform:translate(calc(-50% - 120px),calc(-50% + 90px)) scale(1.22); }
+          72%     { transform:translate(calc(-50% + 80px),calc(-50% - 45px)) scale(0.85); }
+        }
+        @keyframes wdBlob3 {
+          0%,100% { transform:translate(-50%,-50%) scale(1); }
+          50%     { transform:translate(calc(-50% + 70px),calc(-50% + 65px)) scale(1.14); }
+        }
+        /* ── Page animations ── */
         @keyframes ll-up { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
         .ll-in { animation: ll-up 0.9s cubic-bezier(.16,1,.3,1) both; }
         .ll-in-1 { animation-delay: 0.08s; }
@@ -346,7 +211,7 @@ export default function LandingPage() {
 
               {/* Left — headline */}
               <div className="ll-in ll-in-1">
-                <h1 style={H1}>ACCESS<br />GLOBAL<br /><span style={{ color: 'var(--accent)' }}>MARKETS.</span></h1>
+                <h1 style={{ ...H1, fontSize: 'clamp(38px, 6.2vw, 92px)' }}>INVEST IN THE<br />WORLD FROM<br /><span style={{ color: 'var(--accent)' }}>ANYWHERE.</span></h1>
               </div>
 
               {/* Right — description + CTA + stats */}
