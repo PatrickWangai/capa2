@@ -8,7 +8,7 @@ import { useTheme } from '../context/ThemeContext';
      1. Drop it in  frontend/public/  (e.g. hero-bg.mp4)
      2. Set CUSTOM_BG to '/hero-bg.mp4'
    ─────────────────────────────────────────────────────────────────────────── */
-const CUSTOM_BG: string = '';
+const CUSTOM_BG: string = '/hero-bg.mp4';
 
 function BackgroundCanvas() {
   if (CUSTOM_BG) {
