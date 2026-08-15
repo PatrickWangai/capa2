@@ -187,13 +187,19 @@ function applyTheme(name: ThemeName) {
   r.style.setProperty('--bg-5', t.bg[4]);
   r.style.setProperty('--bg-6', t.bg[5]);
   if (name === 'black') {
-    r.style.setProperty('--bg-gradient', 'radial-gradient(rgba(255,255,255,0.058) 1px, #0d0d0d 0)');
+    const dotGrad = 'radial-gradient(rgba(255,255,255,0.058) 1px, #0d0d0d 0)';
+    r.style.setProperty('--bg-gradient', dotGrad);
     r.style.setProperty('--bg-size', '22px 22px');
+    document.body.style.background = dotGrad;
+    document.body.style.backgroundSize = '22px 22px';
+    document.body.style.backgroundAttachment = 'fixed';
   } else {
-    r.style.setProperty('--bg-gradient',
-      `linear-gradient(160deg, ${t.bg[0]} 0%, ${t.bg[1]} 18%, ${t.bg[2]} 45%, ${t.bg[3]} 72%, ${t.bg[4]} 88%, ${t.bg[5]} 100%)`
-    );
+    const grad = `linear-gradient(160deg, ${t.bg[0]} 0%, ${t.bg[1]} 18%, ${t.bg[2]} 45%, ${t.bg[3]} 72%, ${t.bg[4]} 88%, ${t.bg[5]} 100%)`;
+    r.style.setProperty('--bg-gradient', grad);
     r.style.setProperty('--bg-size', 'auto');
+    document.body.style.background = grad;
+    document.body.style.backgroundSize = 'auto';
+    document.body.style.backgroundAttachment = 'fixed';
   }
   r.style.setProperty('--card-bg',    t.cardBg    ?? 'rgba(28,28,30,0.72)');
   r.style.setProperty('--card-border',t.cardBorder ?? 'rgba(255,255,255,0.08)');
