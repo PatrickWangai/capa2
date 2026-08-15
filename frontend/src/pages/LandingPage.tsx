@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
+import CapaLogo from '../components/ui/CapaLogo';
 import { useTheme } from '../context/ThemeContext';
 
 /* ─── Live Nairobi clock ─── */
@@ -139,14 +140,9 @@ export default function LandingPage() {
           <div style={{ padding: `0 ${PAD}`, borderTop: BORDER }}>
             <div className="ll-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '0 64px', alignItems: 'flex-end', padding: '48px 0 44px' }}>
 
-              {/* Left — label + headline */}
-              <div>
-                <p className="ll-in ll-in-1" style={{ ...LABEL, marginBottom: 22 }}>[ CAPA INVESTMENT PLATFORM ]</p>
-                <h1 style={H1}>
-                  <span className="ll-in ll-in-2" style={{ display: 'block' }}>Your gateway</span>
-                  <span className="ll-in ll-in-3" style={{ display: 'block', color: 'var(--accent)' }}>to Kenya's</span>
-                  <span className="ll-in ll-in-4" style={{ display: 'block' }}>markets.</span>
-                </h1>
+              {/* Left — logo */}
+              <div className="ll-in ll-in-1">
+                <CapaLogo size={140} />
               </div>
 
               {/* Right — description + CTA + stats */}
