@@ -56,15 +56,28 @@ const steps = [
   { icon: BarChart2,  num: '04', title: 'Start investing',      desc: 'Browse global markets and place your first trade in seconds.' },
 ];
 
-// Lama Lama-style 10×10 pixel art icon
-function PixelIcon({ size = 12, color = 'currentColor' }: { size?: number; color?: string }) {
+const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
+
+// Animated 10×10 pixel art icon — two interleaved frames that toggle
+function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?: number; color?: string; animDelay?: number }) {
+  const d = animDelay;
   return (
-    <svg viewBox="0 0 10 10" width={size} height={size} fill={color} xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', flexShrink: 0 }}>
-      <path d="M2 0H0V2H2V0Z" /><path d="M6 0H4V2H6V0Z" /><path d="M10 0H8V2H10V0Z" />
-      <path d="M4 2H2V4H4V2Z" /><path d="M8 2H6V4H8V2Z" />
-      <path d="M2 4H0V6H2V4Z" /><path d="M6 4H4V6H6V4Z" /><path d="M10 4H8V6H10V4Z" />
-      <path d="M4 6H2V8H4V6Z" /><path d="M8 6H6V8H8V6Z" />
-      <path d="M2 8H0V10H2V8Z" /><path d="M6 8H4V10H6V8Z" /><path d="M10 8H8V10H10V8Z" />
+    <svg viewBox="0 0 10 10" width={size} height={size} fill={color} xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block', flexShrink: 0 }}>
+      {/* Frame A — base diagonal */}
+      <path d="M2 0H0V2H2V0Z"   style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M6 0H4V2H6V0Z"   style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M10 0H8V2H10V0Z" style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M4 2H2V4H4V2Z"   style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M8 2H6V4H8V2Z"   style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M2 4H0V6H2V4Z"   style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M6 4H4V6H6V4Z"   style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M10 4H8V6H10V4Z" style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M4 6H2V8H4V6Z"   style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M8 6H6V8H8V6Z"   style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M2 8H0V10H2V8Z"  style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
+      <path d="M6 8H4V10H6V8Z"  style={{ animation: `px-b 3s ${d}s ease-in-out infinite` }} />
+      <path d="M10 8H8V10H10V8Z" style={{ animation: `px-a 3s ${d}s ease-in-out infinite` }} />
     </svg>
   );
 }
@@ -83,45 +96,50 @@ function FloatingNav() {
   return (
     <div style={{
       position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)',
-      width: 'calc(100vw - 32px)', maxWidth: 438, zIndex: 200,
+      width: 'calc(100vw - 2rem)', maxWidth: '27.375rem', zIndex: 200,
+      fontFamily: MONO,
     }}>
-      {/* Glass backdrop */}
+      {/* Pill backdrop */}
       <div style={{
-        position: 'absolute', inset: 0, background: 'rgba(8,8,8,0.80)',
-        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        borderRadius: 8, border: '1px solid rgba(255,255,255,0.09)',
+        position: 'absolute', inset: 0,
+        background: 'rgba(10,10,10,0.72)',
+        backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+        borderRadius: 4, border: '1px solid rgba(255,255,255,0.08)',
         pointerEvents: 'none', zIndex: 0,
       }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Top bar: logo | label | hamburger */}
+        {/* ── Top row ── */}
         <div style={{
-          height: 50, display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', padding: '0 13px 0 12px',
+          height: '3.125rem', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', padding: '0 0.8125rem 0 0.5625rem',
         }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', opacity: 0.88 }}>
-            <CapaCCircle size={22} />
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', opacity: 0.90, padding: '0 4px' }}>
+            <CapaCCircle size={20} />
           </Link>
 
+          {/* Centre contextual label */}
           <span style={{
             position: 'absolute', left: '50%', transform: 'translateX(-50%)',
-            fontFamily: 'ui-monospace,"SF Mono","Fira Code",monospace',
-            fontSize: 9, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.42)', pointerEvents: 'none', whiteSpace: 'nowrap',
+            fontFamily: MONO, fontSize: '0.5625rem', fontWeight: 500,
+            letterSpacing: '0.06em', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.38)', pointerEvents: 'none', whiteSpace: 'nowrap',
           }}>
-            {open ? 'Navigation' : 'Invest Globally.'}
+            {open ? 'Menu' : 'Invest Globally.'}
           </span>
 
           {/* Hamburger → X */}
           <button onClick={() => setOpen(v => !v)} aria-label="Toggle menu" style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: '10px 6px',
+            background: 'none', border: 'none', cursor: 'pointer',
+            padding: '0.625rem 0.375rem',
             display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'flex-end',
           }}>
             {([0, 1, 2] as const).map(i => (
               <span key={i} style={{
                 display: 'block', width: 16, height: 1.5, borderRadius: 1,
-                background: 'rgba(255,255,255,0.82)',
-                transition: 'transform 0.28s ease, opacity 0.25s ease',
+                background: 'rgba(255,255,255,0.75)',
+                transition: 'transform 0.3s ease, opacity 0.3s ease',
                 opacity: i === 1 ? (open ? 0 : 1) : 1,
                 transform: i === 0 ? (open ? 'translateY(6.5px) rotate(45deg)' : 'none')
                          : i === 2 ? (open ? 'translateY(-6.5px) rotate(-45deg)' : 'none')
@@ -131,48 +149,53 @@ function FloatingNav() {
           </button>
         </div>
 
-        {/* Expandable menu */}
+        {/* ── Expandable nav items ── */}
         <div style={{
-          maxHeight: open ? 520 : 0, overflow: 'hidden',
-          transition: 'max-height 0.45s cubic-bezier(0.4,0,0.2,1)',
+          maxHeight: open ? 600 : 0, overflow: 'hidden',
+          transition: 'max-height 0.5s cubic-bezier(0.77,0,0.18,1)',
         }}>
           {NAV_ITEMS.map(({ label, href }, i) => (
             <Link key={label} to={href} onClick={() => setOpen(false)}
               className="capa-nav-item"
               style={{
-                display: 'flex', alignItems: 'center', height: 50,
-                padding: '0 16px 0 14px',
-                borderTop: '1px solid rgba(255,255,255,0.07)',
-                textDecoration: 'none', position: 'relative', gap: 16,
+                display: 'flex', alignItems: 'center',
+                height: '3.125rem',
+                padding: '0 0.875rem 0 0.8125rem',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                textDecoration: 'none', position: 'relative', gap: '1rem',
+                overflow: 'hidden',
               }}>
+              {/* Accent top line on hover */}
               <div className="capa-nav-line" style={{
                 position: 'absolute', top: -1, left: 0, right: 0, height: 1,
                 background: 'var(--accent)', transform: 'scaleX(0)',
-                transformOrigin: 'left', transition: 'transform 0.3s ease',
+                transformOrigin: 'left', transition: 'transform 0.28s ease',
               }} />
-              <PixelIcon size={11} color="rgba(255,255,255,0.28)" />
+              {/* Animated pixel icon */}
+              <PixelIcon size={13} color="rgba(255,255,255,0.30)" animDelay={i * 0.4} />
+              {/* Clipped text reveal */}
               <span style={{
-                fontFamily: 'ui-monospace,"SF Mono","Fira Code",monospace',
-                fontSize: 11, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
+                fontFamily: MONO, fontSize: '0.8125rem', fontWeight: 500,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.78)', display: 'block',
+                transition: `clip-path 0.44s ease ${0.06 + i * 0.06}s, transform 0.44s ease ${0.06 + i * 0.06}s, color 0.2s`,
                 clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
                 transform: open ? 'translateY(0%)' : 'translateY(80%)',
-                transition: `clip-path 0.42s ease ${0.05 + i * 0.055}s, transform 0.42s ease ${0.05 + i * 0.055}s`,
               }}>{label}</span>
             </Link>
           ))}
 
-          {/* Open Account CTA */}
-          <div style={{ padding: '10px 13px 13px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+          {/* Open Account button */}
+          <div style={{ padding: '0.625rem 0.8125rem 0.8125rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <Link to="/register" onClick={() => setOpen(false)} style={{
-              display: 'block', textAlign: 'center', padding: '11px 16px', borderRadius: 5,
+              display: 'block', textAlign: 'center',
+              padding: '0.6875rem 1rem', borderRadius: 3,
               background: 'var(--accent)', color: 'var(--accent-text,#fff)',
-              textDecoration: 'none',
-              fontFamily: 'ui-monospace,"SF Mono","Fira Code",monospace',
-              fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase',
+              textDecoration: 'none', fontFamily: MONO,
+              fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              transition: `clip-path 0.44s ease 0.42s, transform 0.44s ease 0.42s`,
               clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
               transform: open ? 'translateY(0%)' : 'translateY(80%)',
-              transition: 'clip-path 0.42s ease 0.38s, transform 0.42s ease 0.38s',
             }}>
               Open Account
             </Link>
@@ -205,6 +228,17 @@ export default function LandingPage() {
 
         .capa-nav-item:hover .capa-nav-line { transform: scaleX(1) !important; }
         .capa-nav-item:hover > span { color: rgba(255,255,255,1) !important; }
+
+        @keyframes px-a {
+          0%,45%  { opacity: 1; }
+          50%,95% { opacity: 0.15; }
+          100%    { opacity: 1; }
+        }
+        @keyframes px-b {
+          0%,45%  { opacity: 0.15; }
+          50%,95% { opacity: 1; }
+          100%    { opacity: 0.15; }
+        }
 
         @media (max-width: 640px) {
           .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
