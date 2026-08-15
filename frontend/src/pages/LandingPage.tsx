@@ -1,448 +1,422 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
+import { TrendingUp, Shield, Zap, Globe, ChevronRight, UserCheck, DollarSign, BarChart2, Check } from 'lucide-react';
+import CapaLogo from '../components/ui/CapaLogo';
+import CapaCIcon from '../components/ui/CapaCIcon';
 import CapaCCircle from '../components/ui/CapaCCircle';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme, THEMES } from '../context/ThemeContext';
 
-/* ─── Background ──────────────────────────────────────────────────────────────
-   To use your own image or video:
-     1. Drop it in  frontend/public/  (e.g. hero-bg.mp4)
-     2. Set CUSTOM_BG to '/hero-bg.mp4'
-   ─────────────────────────────────────────────────────────────────────────── */
-const CUSTOM_BG: string = '/hero-bg.mp4';
+const ACCENT = 'var(--accent)';
+const TEXT = 'var(--text)';
+const SEC = 'var(--text-secondary)';
 
-function BackgroundCanvas() {
-  if (CUSTOM_BG) {
-    const isVid = CUSTOM_BG.endsWith('.mp4') || CUSTOM_BG.endsWith('.webm');
-    return (
-      <>
-        {isVid
-          ? <video autoPlay loop muted playsInline src={CUSTOM_BG}
-              style={{ position:'fixed',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0 }} />
-          : <div style={{ position:'fixed',inset:0,zIndex:0,backgroundImage:`url(${CUSTOM_BG})`,backgroundSize:'cover',backgroundPosition:'center' }} />
-        }
-        <div style={{ position:'fixed',inset:0,zIndex:1,background:'linear-gradient(to bottom,rgba(0,0,0,.50) 0%,rgba(0,0,0,.20) 50%,rgba(0,0,0,.65) 100%)',pointerEvents:'none' }} />
-      </>
-    );
-  }
-  return (
-    <div style={{ position:'fixed',inset:0,zIndex:0,background:'#060a10',overflow:'hidden' }}>
-      <div className="wd-blob wd-blob-1" />
-      <div className="wd-blob wd-blob-2" />
-      <div className="wd-blob wd-blob-3" />
-    </div>
-  );
-}
-
-/* ─── Clock ─── */
-function Clock() {
-  const [t, setT] = useState('');
-  useEffect(() => {
-    const fn = () => setT(new Date().toLocaleTimeString('en-KE',
-      { timeZone:'Africa/Nairobi', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }));
-    fn(); const id = setInterval(fn, 1000); return () => clearInterval(id);
-  }, []);
-  return <span style={{ fontVariantNumeric:'tabular-nums' }}>[ {t} EAT ]</span>;
-}
-
-/* ─── Rotating nav label ─── */
-const NAV_LABELS = ['TRADE NSE STOCKS. SIMPLY.','NSE LIVE MARKET DATA','M-PESA DEPOSITS','CMA REGULATED'];
-function NavLabel() {
-  const [idx, setIdx] = useState(0);
-  const [vis, setVis] = useState(true);
-  useEffect(() => {
-    const id = setInterval(() => {
-      setVis(false);
-      setTimeout(() => { setIdx(i => (i+1) % NAV_LABELS.length); setVis(true); }, 280);
-    }, 3600);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <span style={{ fontFamily:'monospace',fontSize:11,letterSpacing:'0.12em',color:'rgba(255,255,255,0.38)',textTransform:'uppercase',opacity:vis?1:0,transition:'opacity 0.28s ease' }}>
-      {NAV_LABELS[idx]}
-    </span>
-  );
-}
-
-/* ─── Status bar ─── */
-function StatusBar() {
-  const items: [React.ReactNode, boolean][] = [
-    ['64+ STOCKS', true],
-    ['NAIROBI BASED', true],
-    [<Clock key="c" />, true],
-    [<><span style={{ color:'var(--accent)',marginRight:5 }}>●</span>NSE LIVE</>, true],
-    ['CMA REGULATED', false],
-  ];
-  return (
-    <div style={{ display:'flex',alignItems:'stretch',borderTop:'1px solid rgba(255,255,255,0.08)',fontFamily:'monospace',fontSize:11,color:'rgba(255,255,255,0.34)',letterSpacing:'0.08em',textTransform:'uppercase' }}>
-      {items.map(([label, div], i) => (
-        <span key={i} style={{ display:'flex',alignItems:'center' }}>
-          <span style={{ padding:'0 22px',lineHeight:'44px' }}>{label}</span>
-          {div && <span style={{ color:'rgba(255,255,255,0.10)' }}>|</span>}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/* ─── Expandable pillar card (lamalama core-values style) ─── */
-function PillarCard({ num, title, body, PAD, BORDER }: { num:string; title:string; body:string; PAD:string; BORDER:string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ borderTop:BORDER }}>
-      <div onClick={() => setOpen(o => !o)}
-        style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:`24px ${PAD}`,cursor:'pointer',userSelect:'none' }}>
-        <div style={{ display:'flex',gap:40,alignItems:'center' }}>
-          <span style={{ fontFamily:'monospace',fontSize:11,letterSpacing:'0.10em',color:'rgba(255,255,255,0.28)',textTransform:'uppercase',minWidth:24 }}>{num}</span>
-          <h3 style={{ fontSize:'clamp(17px,2.2vw,28px)',fontWeight:800,margin:0,letterSpacing:'-0.02em',color:'#fff',textTransform:'uppercase' }}>{title}</h3>
-        </div>
-        <span style={{ fontFamily:'monospace',fontSize:11,letterSpacing:'0.08em',color:'rgba(255,255,255,0.40)',border:'1px solid rgba(255,255,255,0.15)',padding:'5px 14px',borderRadius:2 }}>
-          ( {open ? '−' : '+'} )
-        </span>
-      </div>
-      <div style={{ overflow:'hidden',maxHeight:open?300:0,transition:'max-height 0.4s cubic-bezier(0.4,0,0.2,1)',paddingLeft:`calc(${PAD} + 64px)`,paddingRight:PAD }}>
-        <p style={{ fontSize:'clamp(14px,1.5vw,18px)',color:'rgba(255,255,255,0.50)',lineHeight:1.65,margin:`0 0 32px`,maxWidth:620 }}>{body}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Market card (lamalama featured-work style) ─── */
-function MarketCard({ name, tags, stat, statLabel, desc }: { name:string; tags:string[]; stat:string; statLabel:string; desc:string }) {
-  const LS = { fontFamily:'monospace',fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase' as const,color:'rgba(255,255,255,0.34)' };
-  return (
-    <div style={{ padding:'44px 48px',background:'rgba(255,255,255,0.02)',position:'relative',overflow:'hidden',minHeight:320 }}>
-      <div style={{ position:'absolute',top:0,right:0,width:220,height:220,background:`radial-gradient(ellipse at top right,rgba(var(--accent-rgb),0.08) 0%,transparent 70%)`,pointerEvents:'none' }} />
-      <div style={{ display:'flex',gap:6,flexWrap:'wrap',marginBottom:28 }}>
-        {tags.map(t => <span key={t} style={{ ...LS,border:'1px solid rgba(255,255,255,0.12)',padding:'3px 10px',borderRadius:2 }}>{t}</span>)}
-      </div>
-      <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:20 }}>
-        <h3 style={{ fontSize:'clamp(22px,3vw,40px)',fontWeight:900,margin:0,letterSpacing:'-0.03em',color:'#fff',textTransform:'uppercase',lineHeight:0.95 }}>{name}</h3>
-        <div style={{ textAlign:'right',flexShrink:0,marginLeft:20 }}>
-          <p style={{ fontSize:'clamp(22px,2.5vw,36px)',fontWeight:900,margin:0,color:'var(--accent)',letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums' }}>{stat}</p>
-          <p style={{ ...LS,margin:'4px 0 0' }}>{statLabel}</p>
-        </div>
-      </div>
-      <p style={{ fontSize:14,color:'rgba(255,255,255,0.44)',lineHeight:1.6,margin:'0 0 28px',maxWidth:380 }}>{desc}</p>
-      <Link to="/register" style={{ fontFamily:'monospace',fontSize:11,letterSpacing:'0.10em',textTransform:'uppercase',color:'var(--accent)',textDecoration:'none' }}>
-        TRADE NOW →
-      </Link>
-    </div>
-  );
-}
-
-/* ─── Page ─── */
-export default function LandingPage() {
-  const { theme } = useTheme(); void theme;
-  const [scrolled, setScrolled] = useState(false);
-  const [revealed, setRevealed] = useState(false);
+// ── Sky + water canvas ───────────────────────────────────────
+function HeroCanvas({ theme }: { theme: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', fn, { passive:true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
+    const elRaw = canvasRef.current;
+    if (!elRaw) return;
+    const ctxRaw = elRaw.getContext('2d');
+    if (!ctxRaw) return;
+    const el  = elRaw  as HTMLCanvasElement;
+    const ctx = ctxRaw as CanvasRenderingContext2D;
+    let animId: number, t = 0, W = 0, H = 0;
 
+    let skyC: string[], waterC: string[];
+    if (theme === 'black') {
+      skyC   = ['#0a1628','#0f2d5c','#1a4aad','#2563eb','#3b82f6'];
+      waterC = ['#2563eb','#1a4aad','#0f2d5c'];
+    } else {
+      const bg = (THEMES[theme as keyof typeof THEMES] ?? THEMES.blue).bg;
+      skyC   = [bg[0], bg[1], bg[2], bg[3], bg[4]];
+      waterC = [bg[4], bg[2], bg[0]];
+    }
+
+    function init() {
+      const dpr = window.devicePixelRatio || 1;
+      W = el.offsetWidth;
+      H = el.offsetHeight;
+      el.width  = Math.ceil(W * dpr);
+      el.height = Math.ceil(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw() {
+      t++;
+      ctx.clearRect(0, 0, W, H);
+      const hy = H * 0.70;
+
+      // Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, hy);
+      sky.addColorStop(0,    skyC[0]);
+      sky.addColorStop(0.22, skyC[1]);
+      sky.addColorStop(0.52, skyC[2]);
+      sky.addColorStop(0.80, skyC[3]);
+      sky.addColorStop(1,    skyC[4]);
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hy);
+
+      // Sun glow
+      const sg = ctx.createRadialGradient(W*0.28, hy*0.78, 0, W*0.28, hy*0.78, W*0.38);
+      sg.addColorStop(0,    'rgba(255,218,110,0.28)');
+      sg.addColorStop(0.45, 'rgba(255,175,55,0.07)');
+      sg.addColorStop(1,    'transparent');
+      ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+
+      // Water
+      const wg = ctx.createLinearGradient(0, hy, 0, H);
+      wg.addColorStop(0,   waterC[0]);
+      wg.addColorStop(0.5, waterC[1]);
+      wg.addColorStop(1,   waterC[2]);
+      ctx.fillStyle = wg; ctx.fillRect(0, hy, W, H - hy);
+
+      // Water shimmer — horizontal gradient-filled rects instead of thin
+      // ellipses; fillRect is rendered identically on all browsers including
+      // Safari (no sub-pixel ellipse anti-aliasing issue)
+      ctx.save();
+      for (let i = 0; i < 38; i++) {
+        const sx  = ((i * 137.5 + t * 0.35) % W);
+        const sy  = hy + ((i * 79.3) % ((H - hy) * 0.65));
+        const sa  = (Math.sin(t * 0.055 + i * 1.9) * 0.5 + 0.5) * 0.28;
+        const hw  = 10 + (i % 5) * 4; // half-width 10–26 px
+        const gr  = ctx.createLinearGradient(sx - hw, 0, sx + hw, 0);
+        gr.addColorStop(0,   'rgba(255,255,230,0)');
+        gr.addColorStop(0.5, `rgba(255,255,230,${sa})`);
+        gr.addColorStop(1,   'rgba(255,255,230,0)');
+        ctx.fillStyle = gr;
+        ctx.fillRect(sx - hw, sy - 2, hw * 2, 4);
+      }
+      ctx.restore();
+
+      // Horizon glow
+      const hg = ctx.createLinearGradient(0, hy - 18, 0, hy + 24);
+      hg.addColorStop(0,   'rgba(255,255,255,0.00)');
+      hg.addColorStop(0.5, 'rgba(255,255,255,0.07)');
+      hg.addColorStop(1,   'rgba(255,255,255,0.00)');
+      ctx.fillStyle = hg; ctx.fillRect(0, hy - 18, W, 42);
+
+      // Text-legibility overlay
+      const ov = ctx.createLinearGradient(0, 0, 0, H);
+      ov.addColorStop(0,    'rgba(0,0,0,0.54)');
+      ov.addColorStop(0.40, 'rgba(0,0,0,0.18)');
+      ov.addColorStop(0.65, 'rgba(0,0,0,0.06)');
+      ov.addColorStop(1,    'rgba(0,0,0,0.42)');
+      ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    init(); animId = requestAnimationFrame(draw);
+    const ro = new ResizeObserver(() => { init(); });
+    ro.observe(el);
+    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
+  }, [theme]); // restart whenever theme changes
+
+  return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />;
+}
+
+
+
+// ── Typewriter (one-shot) ─────────────────────────────────────
+const HERO_TEXT = 'Invest in global markets with real-time data and instant execution.';
+
+function useTypeOnce(text: string, speed = 38) {
+  const [displayed, setDisplayed] = useState('');
   useEffect(() => {
-    const t = setTimeout(() => setRevealed(true), 380);
+    if (displayed.length >= text.length) return;
+    const t = setTimeout(() => setDisplayed(text.slice(0, displayed.length + 1)), speed);
     return () => clearTimeout(t);
+  }, [displayed, text, speed]);
+  return displayed;
+}
+
+// ── Section fade-in hook ─────────────────────────────────────
+function useFadeIn() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; } },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
+  return ref;
+}
 
-  const PAD    = 'max(28px, 5.5vw)';
-  const BORDER = '1px solid rgba(255,255,255,0.08)';
-  const H2     = { fontSize:'clamp(48px,8vw,112px)',fontWeight:900,letterSpacing:'-0.035em',lineHeight:0.90,color:'#fff',margin:0,textTransform:'uppercase' as const };
-  const LABEL  = { fontFamily:'monospace',fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase' as const,color:'rgba(255,255,255,0.34)' };
-  const BODY   = { fontSize:'clamp(15px,1.6vw,20px)',color:'rgba(255,255,255,0.52)',lineHeight:1.65 };
-
-  const MARKETS = [
-    { name:'NSE Main Market',  tags:['Blue Chip','Live Data','KES'],       stat:'64+',  statLabel:'Listed companies',   desc:'Trade Kenya\'s largest and most liquid stocks — Safaricom, KCB, Equity Group and more.' },
-    { name:'Growth Stocks',    tags:['Mid-cap','High Upside'],             stat:'20+',  statLabel:'Growth counters',    desc:'High-growth Kenyan companies with strong fundamentals and significant upside potential.' },
-    { name:'Dividend Stocks',  tags:['Income','Regular Payouts'],          stat:'30+',  statLabel:'Dividend payers',    desc:'NSE companies with a consistent history of paying shareholder dividends — earn while you hold.' },
-    { name:'GEMS',             tags:['SME','Growth Enterprise'],           stat:'5+',   statLabel:'GEMS listings',      desc:'Growth Enterprise Market Segment — Kenya\'s emerging small and mid-size companies.' },
-  ];
-
-  const PARTNERS = ['CMA KENYA','NAIROBI SECURITIES EXCHANGE','M-PESA','SAFARICOM','KCB GROUP','EQUITY GROUP','EABL','BAMBURI','STANBIC','ABSA KENYA','NCBA','DIAMOND TRUST BANK'];
-
-  const PILLARS = [
-    { num:'01', title:'Think global, invest local',
-      body:"We built Capa so any Kenyan — regardless of income or background — can access the same global financial instruments available to the world's wealthiest investors. No middlemen. No gatekeeping." },
-    { num:'02', title:'Radical transparency',
-      body:"0.5% flat fee. That's it. No management fees, no withdrawal fees, no subscription tiers. You see exactly what you pay before confirming any trade. Trust built through clarity." },
-    { num:'03', title:'Built for real impact',
-      body:"Every dividend, every return, every shilling stays in your account. We don't lend your holdings or use them for our benefit. Your money is yours — working as hard as you are." },
-    { num:'04', title:"Everything we've got",
-      body:"When we say CMA-regulated, we mean it. When we say same-day KYC, we mean it. When we say instant M-Pesa deposits, we mean it. We make one promise at a time and deliver on every one." },
-  ];
-
+function FadeSection({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  const ref = useFadeIn();
   return (
-    <>
-      <BackgroundCanvas />
+    <div ref={ref} style={{ opacity: 0, transform: 'translateY(40px)', transition: 'opacity 0.7s ease, transform 0.7s ease', ...style }}>
+      {children}
+    </div>
+  );
+}
 
-      {/* Dot-grid — only when no custom bg */}
-      {!CUSTOM_BG && (
-        <div aria-hidden style={{ position:'fixed',inset:0,zIndex:2,backgroundImage:'radial-gradient(rgba(255,255,255,0.22) 2px,transparent 0)',backgroundSize:'22px 22px',pointerEvents:'none' }} />
-      )}
+// ── Data ─────────────────────────────────────────────────────
+const features = [
+  { icon: TrendingUp, title: 'Live Markets',      desc: 'Real-time prices across global markets. Never miss a move.' },
+  { icon: Shield,     title: 'Capital Protected', desc: 'Your assets are held by a regulated custodian, segregated from company funds.' },
+  { icon: Zap,        title: 'Instant Execution', desc: 'Orders filled in milliseconds. Your timing, your price, zero slippage.' },
+];
+const steps = [
+  { icon: UserCheck,  num: '01', title: 'Create your account',  desc: 'Register with your email. Takes under 2 minutes.' },
+  { icon: Shield,     num: '02', title: 'Verify your identity', desc: 'Upload your ID and a selfie. KYC typically approved same day.' },
+  { icon: DollarSign, num: '03', title: 'Fund your account',    desc: 'Deposit via M-Pesa, bank transfer, or card. Funds appear instantly.' },
+  { icon: BarChart2,  num: '04', title: 'Start investing',      desc: 'Browse global markets and place your first trade in seconds.' },
+];
+// ── Page ─────────────────────────────────────────────────────
+export default function LandingPage() {
+  const { theme } = useTheme();
+  const typedText = useTypeOnce(HERO_TEXT);
+  return (
+    <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
-      {/* Page-reveal */}
-      <div aria-hidden style={{ position:'fixed',inset:0,zIndex:300,backgroundColor:'#060a10',opacity:revealed?0:1,transition:'opacity 1.1s cubic-bezier(0.4,0,0.2,1)',pointerEvents:'none',display:'flex',alignItems:'center',justifyContent:'center' }}>
-        <div style={{ opacity:revealed?0:1,transition:'opacity 0.4s' }}>
-          <CapaCCircle size={52} />
-        </div>
-      </div>
-
+      {/* Inject keyframes + mobile overrides */}
       <style>{`
-        .wd-blob { position:absolute; border-radius:50%; }
-        .wd-blob-1 { width:1100px;height:1100px;left:42%;top:40%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(var(--accent-rgb),.22) 0%,rgba(var(--accent-rgb),.06) 42%,transparent 68%);filter:blur(72px);animation:wdBlob1 22s ease-in-out infinite; }
-        .wd-blob-2 { width:780px;height:780px;left:70%;top:68%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(var(--accent-rgb),.14) 0%,transparent 65%);filter:blur(60px);animation:wdBlob2 30s ease-in-out infinite; }
-        .wd-blob-3 { width:650px;height:650px;left:18%;top:58%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(var(--accent-rgb),.09) 0%,transparent 65%);filter:blur(80px);animation:wdBlob3 38s ease-in-out infinite; }
-        @keyframes wdBlob1 { 0%,100%{transform:translate(-50%,-50%) scale(1)} 33%{transform:translate(calc(-50% + 100px),calc(-50% - 80px)) scale(1.18)} 66%{transform:translate(calc(-50% - 60px),calc(-50% + 55px)) scale(0.88)} }
-        @keyframes wdBlob2 { 0%,100%{transform:translate(-50%,-50%) scale(1)} 40%{transform:translate(calc(-50% - 120px),calc(-50% + 90px)) scale(1.22)} 72%{transform:translate(calc(-50% + 80px),calc(-50% - 45px)) scale(0.85)} }
-        @keyframes wdBlob3 { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(calc(-50% + 70px),calc(-50% + 65px)) scale(1.14)} }
-        @keyframes ll-up { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
-        .ll-in { animation:ll-up 0.9s cubic-bezier(.16,1,.3,1) both; }
-        .ll-in-1{animation-delay:.08s} .ll-in-2{animation-delay:.18s} .ll-in-3{animation-delay:.28s} .ll-in-4{animation-delay:.40s}
-        .ll-btn { display:inline-flex;align-items:center;gap:8px;padding:13px 26px;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);transition:border-color .2s,color .2s,background .2s;font-family:monospace;border-radius:2px; }
-        .ll-btn:hover { border-color:rgba(255,255,255,0.50);color:#fff; }
-        .ll-btn-primary { background:var(--accent);border-color:var(--accent);color:#fff; }
-        .ll-btn-primary:hover { opacity:.86; }
-        .ll-nlink { font-family:monospace;font-size:11px;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,255,255,0.34);text-decoration:none;transition:color .2s; }
-        .ll-nlink:hover { color:rgba(255,255,255,0.80); }
-        @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        @media(max-width:820px){
-          .rg2{grid-template-columns:1fr !important}
-          .rg2>.hero-right{margin-top:32px}
-          .rg3{grid-template-columns:1fr !important}
-          .rg3>div{border-left:none !important;border-top:1px solid rgba(255,255,255,0.08);padding-left:0 !important}
-          .rg-cta>div:last-child{text-align:left}
+        @keyframes hero-text-in {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        @media(max-width:560px){ .nav-center{display:none !important} }
-        @media(prefers-reduced-motion:reduce){ .ll-in{animation:none !important;opacity:1 !important;transform:none !important} }
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
+        }
+        .hero-text { animation: hero-text-in 1s ease both; }
+        .hero-text-1 { animation-delay: 0.1s; }
+        .hero-text-2 { animation-delay: 0.3s; }
+        .hero-text-3 { animation-delay: 0.5s; }
+        .hero-text-4 { animation-delay: 0.7s; }
+
+        @media (max-width: 640px) {
+          /* Nav: hide middle links, tighten padding */
+          .nav-links { display: none !important; }
+          .lp-nav { padding: 0 16px !important; }
+
+          /* Push hero content below fixed nav */
+          .hero-content { padding-top: 52px !important; }
+          .hero-trust-grid { grid-template-columns: repeat(2,1fr) !important; max-width: 340px !important; }
+
+          /* Hero */
+          .hero-logo-wrap { margin-bottom: 0px !important; }
+          .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
+          .hero-tagline { margin-top: -62px !important; }
+          .hero-title { font-size: clamp(24px,7vw,48px) !important; letter-spacing: 0.06em !important; margin-bottom: 14px !important; }
+          .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
+          .hero-buttons a { justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
+
+          /* Stats: 2×2 */
+          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .stats-grid > div { border-right: none !important; border-bottom: 1px solid var(--card-border) !important; padding: 28px 12px !important; }
+          .stats-grid > div:nth-child(odd)  { border-right: 1px solid var(--card-border) !important; }
+          .stats-grid > div:nth-child(3),
+          .stats-grid > div:nth-child(4)    { border-bottom: none !important; }
+
+          /* Sections: less vertical padding */
+          .lp-section-pad { padding-top: 60px !important; padding-bottom: 60px !important; }
+          .lp-section-pad-sm { padding-top: 48px !important; padding-bottom: 48px !important; }
+
+          /* Features: tighter card padding */
+          .feature-card { padding: 22px !important; }
+
+          /* How it works: single column */
+          .steps-grid { grid-template-columns: 1fr !important; gap: 36px !important; text-align: left !important; }
+          .step-icon  { margin: 0 0 12px !important; }
+
+          /* CTA */
+          .cta-features { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 0 8px !important; }
+          .cta-btn { width: 100% !important; max-width: 320px !important; justify-content: center !important; padding: 14px 24px !important; font-size: 16px !important; }
+
+          /* Footer */
+          .lp-footer { padding: 40px 20px 28px !important; }
+        }
+
+        @media (max-width: 380px) {
+          .hero-title { font-size: 22px !important; }
+          .hero-logo-wrap img { width: min(200px, 88vw) !important; height: auto !important; }
+          .hero-tagline { margin-top: -34px !important; }
+        }
       `}</style>
 
-      <div style={{ position:'relative',zIndex:10,color:'#fff',fontFamily:'-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',WebkitFontSmoothing:'antialiased' }}>
+      {/* NAV */}
+      <nav className="lp-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(180%) blur(24px)', WebkitBackdropFilter: 'saturate(180%) blur(24px)', borderBottom: '1px solid var(--card-border)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <CapaCCircle size={34} />
+        </div>
+        <div style={{ display: 'flex', gap: 20, alignItems: 'center' }} className="nav-links">
+          {[['About', '/about'], ['Contact', '/contact']].map(([l, h]) => (
+            <Link key={l} to={h} style={{ fontSize: 13, color: SEC, textDecoration: 'none' }}>{l}</Link>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Link to="/login"    style={{ padding: '6px 16px', borderRadius: 980, fontSize: 13, fontWeight: 500, color: TEXT, textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.08)' }}>Log In</Link>
+          <Link to="/register" style={{ padding: '6px 16px', borderRadius: 980, fontSize: 13, fontWeight: 500, color: '#fff', textDecoration: 'none', backgroundColor: ACCENT }}>Get Started</Link>
+        </div>
+      </nav>
 
-        {/* ───── NAV ───── */}
-        <nav style={{ position:'fixed',top:0,left:0,right:0,zIndex:200,height:52,display:'flex',alignItems:'center',justifyContent:'space-between',padding:`0 ${PAD}`,background:scrolled?'rgba(6,10,16,0.94)':'transparent',backdropFilter:scrolled?'blur(20px)':'none',WebkitBackdropFilter:scrolled?'blur(20px)':'none',borderBottom:scrolled?BORDER:'none',transition:'background .35s,border-color .35s' }}>
-          <CapaCCircle size={28} />
-          <div className="nav-center"><NavLabel /></div>
-          <div style={{ display:'flex',gap:12,alignItems:'center' }}>
-            <Link to="/login" className="ll-nlink">Sign In</Link>
-            <Link to="/register" className="ll-btn ll-btn-primary" style={{ padding:'7px 18px',fontSize:12 }}>GET STARTED →</Link>
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+
+        {/* Canvas animation layer */}
+        <HeroCanvas theme={theme} />
+
+        {/* Bottom gradient fade */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
+        {/* Top fade (for nav) */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, var(--sidebar-bg) 0%, transparent 100%)', zIndex: 2 }} />
+
+        {/* Hero content */}
+        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: -32 }}>
+            <CapaLogo size={260} />
           </div>
-        </nav>
 
-        {/* ───── HERO ───── */}
-        <section style={{ minHeight:'100dvh',display:'flex',flexDirection:'column',justifyContent:'flex-end',borderBottom:BORDER }}>
-          <div style={{ padding:`0 ${PAD}`,borderTop:BORDER }}>
-            <p style={{ ...LABEL,padding:'20px 0 16px',margin:0 }} className="ll-in ll-in-1">[ WE ARE CAPA ]</p>
-            <div className="rg2 ll-in ll-in-2" style={{ display:'grid',gridTemplateColumns:'1fr 400px',gap:'0 64px',alignItems:'flex-end',paddingBottom:44 }}>
-              <h1 style={{ fontSize:'clamp(38px,6.8vw,100px)',fontWeight:900,letterSpacing:'-0.035em',lineHeight:0.92,color:'#fff',margin:0,textTransform:'uppercase' }}>
-                A GLOBAL INVESTMENT<br />PLATFORM BUILT FOR<br /><span style={{ color:'var(--accent)' }}>AMBITIOUS KENYANS.</span>
-              </h1>
-              <div className="hero-right ll-in ll-in-4">
-                <p style={{ ...BODY,marginBottom:32 }}>
-                  We build wealth pathways for Kenyans everywhere. Real-time NSE data, instant execution, M-Pesa deposits — all on one CMA-regulated platform.
-                </p>
-                <div style={{ display:'flex',gap:10,flexWrap:'wrap',marginBottom:36 }}>
-                  <Link to="/register" className="ll-btn ll-btn-primary">OPEN ACCOUNT →</Link>
-                  <Link to="/login" className="ll-btn">SIGN IN</Link>
+          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px', minHeight: '1.5em' }}>
+            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
+          </p>
+
+          <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
+              Start Investing Free <ChevronRight size={16} />
+            </Link>
+            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              Sign In
+            </Link>
+          </div>
+          <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit</p>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <FadeSection>
+        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
+          <h2 style={{ fontSize: 'clamp(32px,5vw,54px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
+            Everything you need.<br />Nothing you don't.
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+            {features.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="feature-card" style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid var(--card-border)', transition: 'border-color 0.2s', cursor: 'default' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.35)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--card-border)')}>
+                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                  <Icon size={22} color={ACCENT} strokeWidth={1.8} />
                 </div>
-                <div style={{ display:'flex',gap:32 }}>
-                  {[['64+','NSE stocks'],['0.5%','Flat fee'],['CMA','Regulated']].map(([v,l]) => (
-                    <div key={l}>
-                      <p style={{ fontSize:22,fontWeight:700,margin:0,letterSpacing:'-0.025em',fontVariantNumeric:'tabular-nums' }}>{v}</p>
-                      <p style={{ ...LABEL,margin:'4px 0 0',fontSize:10 }}>{l}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          <StatusBar />
-        </section>
-
-        {/* ───── FEATURED MARKETS ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER,display:'flex',justifyContent:'space-between',alignItems:'center' }}>
-            <p style={LABEL}>[ LIVE MARKETS ]</p>
-            <Link to="/register" style={{ ...LABEL,color:'var(--accent)',textDecoration:'none' }}>VIEW ALL →</Link>
-          </div>
-          <div className="rg2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:1,background:'rgba(255,255,255,0.06)' }}>
-            {MARKETS.map(m => <MarketCard key={m.name} {...m} />)}
-          </div>
-        </section>
-
-        {/* ───── WHAT WE DO ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER,display:'flex',justifyContent:'space-between',alignItems:'center' }}>
-            <p style={LABEL}>[ HOW WE INVEST ]</p>
-            <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
-              {['NSE Equities','Live Trading','Dividends'].map(t => (
-                <span key={t} style={{ ...LABEL,border:'1px solid rgba(255,255,255,0.12)',padding:'4px 12px',borderRadius:2 }}>{t} ↗</span>
-              ))}
-            </div>
-          </div>
-          <div className="rg2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 80px',padding:`56px ${PAD} 0` }}>
-            <h2 style={H2}>WHAT<br />WE DO.</h2>
-            <div style={{ paddingTop:8 }}>
-              <p style={{ ...BODY,marginBottom:24 }}>We make it simple for Kenyans to buy and sell stocks on the Nairobi Securities Exchange. Real-time prices, instant execution, M-Pesa deposits — no broker, no paperwork, no gatekeeping.</p>
-              <p style={{ fontSize:'clamp(13px,1.3vw,16px)',color:'rgba(255,255,255,0.30)',margin:0 }}>
-                TLDR; we just want you to grow your money.{' '}
-                <Link to="/register" style={{ color:'var(--accent)',textDecoration:'none' }}>OPEN AN ACCOUNT →</Link>
-              </p>
-            </div>
-          </div>
-          <div className="rg3" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',margin:`48px ${PAD} 0`,borderTop:BORDER }}>
-            {[
-              ['TRADING',   ['Buy & sell NSE stocks','Market & limit orders','Real-time price quotes','Price alerts','Instant M-Pesa funding']],
-              ['RESEARCH',  ['Live market data','Company financials','Price charts','NSE announcements','Watchlists']],
-              ['PORTFOLIO', ['Holdings tracker','P&L analysis','Dividend calendar','Performance reports','Transaction history']],
-            ].map(([title, items], i) => (
-              <div key={title as string} style={{ padding:'40px 0',paddingLeft:i>0?40:0,borderLeft:i>0?BORDER:'none' }}>
-                <p style={{ ...LABEL,marginBottom:24,color:'rgba(255,255,255,0.28)' }}>[ {title} ]</p>
-                {(items as string[]).map(item => (
-                  <p key={item} style={{ fontSize:14,color:'rgba(255,255,255,0.52)',margin:'0 0 10px',lineHeight:1.4 }}>{item}</p>
-                ))}
+                <h3 style={{ fontSize: 19, fontWeight: 600, color: TEXT, marginBottom: 8, letterSpacing: '-0.02em' }}>{title}</h3>
+                <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
               </div>
             ))}
           </div>
-          <div style={{ margin:`0 ${PAD}`,height:1,background:'rgba(255,255,255,0.08)' }} />
-          <div style={{ padding:`32px ${PAD}` }}>
-            <Link to="/register" className="ll-btn">START INVESTING ↗</Link>
+        </section>
+      </FadeSection>
+
+      {/* HOW IT WORKS */}
+      <FadeSection>
+        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '80px 24px', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <h2 style={{ fontSize: 'clamp(28px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.08 }}>
+              How Capa works
+            </h2>
+            <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
+              {steps.map(({ icon: Icon, num, title, desc }) => (
+                <div key={num} style={{ textAlign: 'center' }}>
+                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <Icon size={24} color={ACCENT} strokeWidth={1.8} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
+                  <h3 style={{ fontSize: 17, fontWeight: 600, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
+      </FadeSection>
 
-        {/* ───── TRUSTED BY ───── */}
-        <section style={{ borderBottom:BORDER,overflow:'hidden' }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ TRUSTED BY ]</p>
+      {/* SOCIAL PROOF */}
+      <FadeSection>
+        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
+          <h2 style={{ fontSize: 'clamp(28px,5vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
+            Built on trust. Backed by data.
+          </h2>
+          {/* Trust pillars */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
+            {[
+              { label: 'CMA Regulated', desc: 'Licensed by the Capital Markets Authority of Kenya.' },
+              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
+              { label: 'No Hidden Fees', desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
+            ].map(({ label, desc }) => (
+              <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
+                <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{label}</p>
+                <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+              </div>
+            ))}
           </div>
-          <div style={{ padding:'32px 0',overflow:'hidden' }}>
-            <div style={{ display:'flex',animation:'ticker 30s linear infinite',width:'max-content' }}>
-              {[...PARTNERS,...PARTNERS].map((p,i) => (
-                <span key={i} style={{ fontFamily:'monospace',fontSize:12,letterSpacing:'0.10em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',whiteSpace:'nowrap',padding:'0 40px',borderRight:'1px solid rgba(255,255,255,0.08)' }}>
-                  {p}
+        </section>
+      </FadeSection>
+
+      {/* CTA */}
+      <FadeSection>
+        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid var(--card-border)', position: 'relative', overflow: 'hidden' }}>
+          {/* Subtle glow behind CTA */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(var(--accent-rgb),0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'relative' }}>
+            <h2 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginBottom: 16, lineHeight: 1.06 }}>
+              Start investing today.
+            </h2>
+            <p style={{ fontSize: 17, color: SEC, marginBottom: 16, maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.55 }}>
+              Open your free account in under 10 minutes. No minimum deposit.
+            </p>
+            <div className="cta-features" style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+              {['Regulated platform', 'Instant M-Pesa deposits'].map(f => (
+                <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: SEC }}>
+                  <Check size={13} color={ACCENT} />{f}
                 </span>
               ))}
             </div>
+            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600 }}>
+              Create Free Account <ChevronRight size={18} />
+            </Link>
           </div>
         </section>
+      </FadeSection>
 
-        {/* ───── CREDENTIALS ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ OUR CREDENTIALS ]</p>
-          </div>
-          <div className="rg2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 80px',padding:`56px ${PAD}` }}>
-            <h2 style={{ ...H2,fontSize:'clamp(40px,6.5vw,88px)' }}>CMA<br />REGULATED.</h2>
-            <div style={{ paddingTop:8 }}>
-              <p style={{ ...BODY,marginBottom:36 }}>
-                Capa is fully licensed by the Capital Markets Authority of Kenya. Every trade, every deposit — protected under Kenyan law and CMA oversight.
-              </p>
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'24px 32px' }}>
-                {[
-                  ['&lt; 10 min','Account opening'],
-                  ['Same day','KYC verification'],
-                  ['24 / 7','Market access'],
-                  ['Insured','Client funds'],
-                ].map(([v,l]) => (
-                  <div key={l} style={{ borderTop:BORDER,paddingTop:20 }}>
-                    <p style={{ fontSize:'clamp(20px,2.5vw,32px)',fontWeight:900,margin:'0 0 6px',letterSpacing:'-0.025em',fontVariantNumeric:'tabular-nums',color:'var(--accent)' }}
-                      dangerouslySetInnerHTML={{ __html: v }} />
-                    <p style={{ ...LABEL,margin:0,fontSize:10 }}>{l}</p>
-                  </div>
-                ))}
+      {/* FOOTER */}
+      <footer className="lp-footer" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <CapaLogo size={18} />
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* ───── OUR STORY ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ OUR STORY ]</p>
-          </div>
-          <div style={{ padding:`80px ${PAD}`,maxWidth:920 }}>
-            <p style={{ fontSize:'clamp(22px,3.2vw,42px)',fontWeight:700,color:'#fff',lineHeight:1.28,letterSpacing:'-0.025em',margin:0 }}>
-              Built in the beating heart of Nairobi. We believe every Kenyan deserves the same financial access as anyone in New York, London or Tokyo — starting today.
-            </p>
-          </div>
-          <div className="rg3" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',margin:`0 ${PAD}`,borderTop:BORDER }}>
             {[
-              ['No minimum deposit',  'Start with whatever you have. No limits, no gatekeeping.'],
-              ['Flat 0.5% fee',       'One rate, every trade. No hidden costs, ever.'],
-              ["Same-day KYC",        "Verified and investing the same day. We don't slow you down."],
-            ].map(([title, sub], i) => (
-              <div key={title} style={{ padding:'36px 0',paddingLeft:i>0?40:0,borderLeft:i>0?BORDER:'none' }}>
-                <p style={{ fontSize:16,fontWeight:700,color:'#fff',margin:'0 0 8px' }}>{title}</p>
-                <p style={{ fontSize:13,color:'rgba(255,255,255,0.40)',margin:0 }}>{sub}</p>
+              { heading: 'Company',  links: [['About', '/about'], ['Contact', '/contact']] },
+              { heading: 'Legal',    links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Security', '/security']] },
+              { heading: 'Account',  links: [['Sign In', '/login'], ['Register', '/register']] },
+            ].map(({ heading, links }) => (
+              <div key={heading}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(235,235,245,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {links.map(([label, href]) => (
+                    <Link key={label} to={href} style={{ fontSize: 14, color: SEC, textDecoration: 'none' }}>{label}</Link>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
-        </section>
-
-        {/* ───── PLATFORM PILLARS ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ WHAT WE STAND FOR ]</p>
-          </div>
-          {PILLARS.map(p => <PillarCard key={p.num} {...p} PAD={PAD} BORDER={BORDER} />)}
-          <div style={{ borderTop:BORDER }} />
-        </section>
-
-        {/* ───── PHILOSOPHY ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ OUR PHILOSOPHY ]</p>
-          </div>
-          <div className="rg2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 80px',padding:`64px ${PAD}`,alignItems:'center' }}>
-            <h2 style={H2}>ALL IN<br />OR<br /><span style={{ color:'var(--accent)' }}>NOTHING.</span></h2>
-            <div>
-              <p style={{ ...BODY,marginBottom:24 }}>
-                When we say we're all in for every Kenyan investor, we mean it. We don't do halfway platforms, halfway transparency, or halfway commitment. When you open an account with Capa, you get everything we've got.
-              </p>
-              <p style={{ fontSize:14,color:'rgba(255,255,255,0.30)',lineHeight:1.65,margin:0 }}>
-                We don't do halfway.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ───── FOOTER CTA ───── */}
-        <section style={{ borderBottom:BORDER }}>
-          <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER }}>
-            <p style={LABEL}>[ READY? ]</p>
-          </div>
-          <div className="rg2 rg-cta" style={{ display:'grid',gridTemplateColumns:'1fr auto',gap:'0 80px',alignItems:'flex-end',padding:`64px ${PAD} 60px` }}>
-            <h2 style={H2}>OPEN YOUR<br />ACCOUNT.<br /><span style={{ color:'var(--accent)' }}>IT'S THAT SIMPLE.</span></h2>
-            <div style={{ paddingBottom:8,textAlign:'right' }}>
-              <p style={{ ...BODY,fontSize:14,marginBottom:28,maxWidth:300,textAlign:'left' }}>
-                Feel free to reach out. We'll make it work.
-              </p>
-              <div style={{ display:'flex',gap:10,flexWrap:'wrap' }}>
-                <Link to="/register" className="ll-btn ll-btn-primary">START INVESTING ↗</Link>
-                <Link to="/login" className="ll-btn">SIGN IN</Link>
-              </div>
-            </div>
-          </div>
-          <StatusBar />
-        </section>
-
-        {/* ───── FOOTER ───── */}
-        <footer>
-          <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:`18px ${PAD}`,flexWrap:'wrap',gap:16 }}>
-            <div style={{ display:'flex',gap:28,alignItems:'center',flexWrap:'wrap' }}>
-              <CapaCCircle size={24} />
-              {[['About','/about'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Security','/security'],['FAQ','/faq']].map(([l,h]) => (
-                <Link key={l} to={h} style={{ fontFamily:'monospace',fontSize:11,letterSpacing:'0.08em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',textDecoration:'none' }}>{l}</Link>
-              ))}
-            </div>
-            <p style={{ fontFamily:'monospace',fontSize:11,color:'rgba(255,255,255,0.20)',margin:0,letterSpacing:'0.06em',textTransform:'uppercase' }}>
-              © {new Date().getFullYear()} Capa Investments Ltd. — CMA Regulated
+          <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: 24 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'rgba(235,235,245,0.3)', lineHeight: 1.7 }}>
+              © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
             </p>
           </div>
-        </footer>
-
-      </div>
-    </>
+        </div>
+      </footer>
+    </div>
   );
 }
