@@ -37,191 +37,15 @@ function useCounter(target: number, active: boolean, duration = 1600) {
   return val;
 }
 
-// ─── Globe Canvas ─────────────────────────────────────────────────────────────
-const GOLDEN = Math.PI * (3 - Math.sqrt(5));
-
-type GlobePoint = { x: number; y: number; z: number; accent: boolean; s: number };
-
-function buildSpherePoints(n: number): GlobePoint[] {
-  const pts: GlobePoint[] = [];
-  for (let i = 0; i < n; i++) {
-    const y = 1 - (i / (n - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    const t = GOLDEN * i;
-    pts.push({ x: Math.cos(t) * r, y, z: Math.sin(t) * r,
-               accent: Math.random() < 0.055, s: 0.65 + Math.random() * 0.9 });
-  }
-  return pts;
-}
-
-function slerp(a: GlobePoint, b: GlobePoint, t: number): { x: number; y: number; z: number } {
-  const d = Math.max(-1, Math.min(1, a.x * b.x + a.y * b.y + a.z * b.z));
-  const omega = Math.acos(d);
-  if (omega < 1e-4) return a;
-  const s = Math.sin(omega);
-  const f1 = Math.sin((1 - t) * omega) / s;
-  const f2 = Math.sin(t * omega) / s;
-  return { x: f1 * a.x + f2 * b.x, y: f1 * a.y + f2 * b.y, z: f1 * a.z + f2 * b.z };
-}
-
-const SPHERE_PTS = buildSpherePoints(820);
-
-type Arc = { i: number; j: number; prog: number; speed: number; alpha: number; fading: boolean };
-
-function mkArc(): Arc {
-  const i = Math.floor(Math.random() * SPHERE_PTS.length);
-  let j = Math.floor(Math.random() * SPHERE_PTS.length);
-  while (j === i) j = Math.floor(Math.random() * SPHERE_PTS.length);
-  return { i, j, prog: 0, speed: 0.004 + Math.random() * 0.004, alpha: 0, fading: false };
-}
-
-function GlobeCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
-    let raf: number, W = 0, H = 0, cx = 0, cy = 0, R = 0;
-    let rotation = 0;
-    let glitchTimer = 0;
-    let glitchOn = false, glitchFrames = 0;
-    let glitchStripY = 0, glitchStripH = 0, glitchShift = 0;
-
-    const arcs: Arc[] = Array.from({ length: 8 }, mkArc);
-
-    const setup = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = canvas.offsetWidth; H = canvas.offsetHeight;
-      canvas.width = W * dpr; canvas.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cx = W * 0.5; cy = H * 0.5;
-      R = Math.min(W, H) * (W < 768 ? 0.42 : 0.40);
-    };
-
-    const getAccentRgb = (): [number, number, number] => {
-      const v = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim();
-      const parts = v.split(',').map(Number);
-      return (parts.length === 3 ? parts : [32, 212, 184]) as [number, number, number];
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      const [ar, ag, ab] = getAccentRgb();
-      const cosR = Math.cos(rotation), sinR = Math.sin(rotation);
-
-      // — globe limb ring (faint) —
-      ctx.save();
-      ctx.globalAlpha = 0.07;
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-
-      // — dots with RGB fringe (chromatic aberration) —
-      for (const p of SPHERE_PTS) {
-        const rx = p.x * cosR + p.z * sinR;
-        const rz = -p.x * sinR + p.z * cosR;
-        const ry = p.y;
-        if (rz < -0.06) continue;
-        const depth = Math.max(0, rz);
-        const alpha = 0.08 + depth * 0.72;
-        const dotR = p.s * (0.4 + depth * 0.8);
-        const sx = cx + rx * R;
-        const sy = cy - ry * R;
-
-        if (p.accent) {
-          // glowing accent dot
-          ctx.save();
-          ctx.globalAlpha = alpha * 0.45;
-          ctx.fillStyle = `rgba(${ar},${ag},${ab},1)`;
-          ctx.beginPath(); ctx.arc(sx - 2.5, sy, dotR * 0.8, 0, Math.PI * 2); ctx.fill();
-          ctx.globalAlpha = alpha * 0.45;
-          ctx.fillStyle = `rgba(${Math.max(0,ar-80)},${Math.min(255,ag+60)},${Math.min(255,ab+120)},1)`;
-          ctx.beginPath(); ctx.arc(sx + 2.5, sy, dotR * 0.8, 0, Math.PI * 2); ctx.fill();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = `rgba(${ar},${ag},${ab},1)`;
-          ctx.beginPath(); ctx.arc(sx, sy, dotR * 1.3, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        } else {
-          // chromatic fringe on regular dots
-          const fr = Math.min(1, alpha * 0.6);
-          ctx.save();
-          ctx.globalAlpha = fr * 0.45;
-          ctx.fillStyle = `rgba(255,30,60,1)`;
-          ctx.beginPath(); ctx.arc(sx - 2, sy, dotR * 0.7, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = `rgba(30,140,255,1)`;
-          ctx.beginPath(); ctx.arc(sx + 2, sy, dotR * 0.7, 0, Math.PI * 2); ctx.fill();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#f0f0f0';
-          ctx.beginPath(); ctx.arc(sx, sy, dotR, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        }
-      }
-
-      // — great-circle arcs (capital flows) —
-      for (const arc of arcs) {
-        if (!arc.fading) { arc.alpha = Math.min(1, arc.alpha + 0.06); arc.prog += arc.speed; }
-        else { arc.alpha -= 0.04; }
-        if (arc.alpha <= 0 && arc.fading) { Object.assign(arc, mkArc()); continue; }
-        if (arc.prog >= 1) arc.fading = true;
-
-        const pa = SPHERE_PTS[arc.i], pb = SPHERE_PTS[arc.j];
-        const STEPS = 36;
-        ctx.save();
-        ctx.strokeStyle = `rgba(${ar},${ag},${ab},${arc.alpha * 0.45})`;
-        ctx.lineWidth = 0.7;
-        ctx.beginPath();
-        let started = false;
-        for (let k = 0; k <= STEPS * arc.prog; k++) {
-          const t = k / STEPS;
-          const sp = slerp(pa, pb, t);
-          const rx2 = sp.x * cosR + sp.z * sinR;
-          const rz2 = -sp.x * sinR + sp.z * cosR;
-          const ry2 = sp.y;
-          if (rz2 < 0) { started = false; continue; }
-          const sx2 = cx + rx2 * R, sy2 = cy - ry2 * R;
-          if (!started) { ctx.moveTo(sx2, sy2); started = true; }
-          else ctx.lineTo(sx2, sy2);
-        }
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // — occasional glitch strip —
-      glitchTimer++;
-      if (!glitchOn && glitchTimer > 280 + Math.random() * 200) {
-        glitchOn = true; glitchFrames = 3 + Math.floor(Math.random() * 3);
-        glitchStripY = Math.floor(Math.random() * H * 0.7 + H * 0.15);
-        glitchStripH = Math.floor(20 + Math.random() * 60);
-        glitchShift = (Math.random() > 0.5 ? 1 : -1) * (12 + Math.floor(Math.random() * 22));
-        glitchTimer = 0;
-      }
-      if (glitchOn && glitchFrames > 0) {
-        try {
-          const strip = ctx.getImageData(0, glitchStripY, W, glitchStripH);
-          ctx.clearRect(0, glitchStripY, W, glitchStripH);
-          ctx.putImageData(strip, glitchShift, glitchStripY);
-        } catch (_) { /* ignore cors/security */ }
-        glitchFrames--;
-        if (glitchFrames === 0) glitchOn = false;
-      }
-
-      rotation += 0.0025;
-      raf = requestAnimationFrame(draw);
-    };
-
-    setup();
-    window.addEventListener('resize', setup);
-    draw();
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', setup); };
-  }, []);
-
+// ─── Hero video ───────────────────────────────────────────────────────────────
+function HeroVideo() {
   return (
-    <canvas ref={canvasRef}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+    <video
+      autoPlay muted loop playsInline
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.82 }}
+    >
+      <source src="/hero-bg.mp4" type="video/mp4" />
+    </video>
   );
 }
 
@@ -605,8 +429,8 @@ export default function LandingPage() {
       <section style={{ height: '100dvh', minHeight: 580, position: 'relative',
         overflow: 'hidden', background: '#060606' }}>
 
-        {/* Globe canvas */}
-        <GlobeCanvas />
+        {/* Hero video */}
+        <HeroVideo />
 
         {/* Scanlines */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
