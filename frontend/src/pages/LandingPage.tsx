@@ -180,7 +180,7 @@ export default function LandingPage() {
   const isBlack = theme === 'black';
 
   return (
-    <div style={{ color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', ...(isBlack ? { backgroundImage: 'radial-gradient(rgba(255,255,255,0.13) 1.5px, transparent 0)', backgroundSize: '20px 20px', backgroundColor: '#0d0d0d', backgroundAttachment: 'fixed' } : {}) }}>
+    <div style={{ color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', ...(isBlack ? { backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 2px, transparent 0)', backgroundSize: '22px 22px', backgroundColor: '#0c0c0c', backgroundAttachment: 'fixed' } : {}) }}>
 
       {/* ── Global styles ── */}
       <style>{`
