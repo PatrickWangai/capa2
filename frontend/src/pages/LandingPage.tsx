@@ -177,9 +177,10 @@ export default function LandingPage() {
   const { ref: ctaRef,   inView: ctaIn   } = useInView(0.15);
 
   const PAD = 'max(24px, 5.5vw)';
+  const isBlack = theme === 'black';
 
   return (
-    <div style={{ color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased', ...(isBlack ? { backgroundImage: 'radial-gradient(rgba(255,255,255,0.13) 1.5px, transparent 0)', backgroundSize: '20px 20px', backgroundColor: '#0d0d0d', backgroundAttachment: 'fixed' } : {}) }}>
 
       {/* ── Global styles ── */}
       <style>{`
@@ -274,11 +275,11 @@ export default function LandingPage() {
 
       {/* ────────────── HERO ────────────── */}
       <section style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <HeroCanvas theme={theme} />
+        {!isBlack && <HeroCanvas theme={theme} />}
         {/* directional overlay — heavier left so left-column text reads clearly */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,.68) 0%, rgba(0,0,0,.20) 55%, rgba(0,0,0,.06) 100%)', zIndex: 1 }} />
+        <div style={{ position: 'absolute', inset: 0, background: isBlack ? 'linear-gradient(to right, rgba(0,0,0,.52) 0%, rgba(0,0,0,.10) 55%, rgba(0,0,0,.0) 100%)' : 'linear-gradient(to right, rgba(0,0,0,.68) 0%, rgba(0,0,0,.20) 55%, rgba(0,0,0,.06) 100%)', zIndex: 1 }} />
         {/* bottom fade into page background */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
+        {!isBlack && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />}
 
         {/* Content */}
         <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `80px ${PAD} 56px` }}>
