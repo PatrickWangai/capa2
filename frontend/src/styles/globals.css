@@ -49,6 +49,7 @@
 
   body {
     background: var(--bg-gradient);
+    background-size: var(--bg-size, auto);
     background-attachment: fixed;
     overflow-x: hidden;
     color: var(--text);
