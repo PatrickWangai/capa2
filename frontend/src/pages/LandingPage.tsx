@@ -285,7 +285,7 @@ export default function LandingPage() {
 
         {/* Bottom-left content */}
         <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'left', padding: '0 0 72px 52px', maxWidth: 620, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: 18 }}>
+          <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: 8 }}>
             <CapaLogo size={130} />
           </div>
 
