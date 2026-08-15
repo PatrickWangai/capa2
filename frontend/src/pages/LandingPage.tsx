@@ -1,35 +1,141 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme } from '../context/ThemeContext';
 
-/* ─── Background ──────────────────────────────────────────────────────────────
-   To use your own image or video:
-     1. Drop it in  frontend/public/  (e.g. hero-bg.mp4)
-     2. Set CUSTOM_BG to '/hero-bg.mp4'
+/* ─── Organic cellular background (lamalama-inspired) ─────────────────────────
+   Voronoi cells rendered at 200×112, scaled up by the browser (bilinear = smooth
+   organic edges). Gold sparkle particles float above on a separate canvas layer.
    ─────────────────────────────────────────────────────────────────────────── */
-const CUSTOM_BG: string = '/hero-bg.mp4';
-
 function BackgroundCanvas() {
-  if (CUSTOM_BG) {
-    const isVid = CUSTOM_BG.endsWith('.mp4') || CUSTOM_BG.endsWith('.webm');
-    return (
-      <>
-        {isVid
-          ? <video autoPlay loop muted playsInline src={CUSTOM_BG}
-              style={{ position:'fixed',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0 }} />
-          : <div style={{ position:'fixed',inset:0,zIndex:0,backgroundImage:`url(${CUSTOM_BG})`,backgroundSize:'cover',backgroundPosition:'center' }} />
+  const bgRef = useRef<HTMLCanvasElement>(null);
+  const fxRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const bgEl = bgRef.current;
+    const fxRaw = fxRef.current;
+    if (!bgEl || !fxRaw) return;
+    const fe: HTMLCanvasElement = fxRaw; // non-null for closures
+
+    // Low-res Voronoi canvas — browser upscales with bilinear smoothing
+    const BW = 200, BH = 112;
+    bgEl.width = BW; bgEl.height = BH;
+    const bgCtx = bgEl.getContext('2d')!;
+
+    const onResize = () => { fe.width = window.innerWidth; fe.height = window.innerHeight; };
+    onResize();
+    window.addEventListener('resize', onResize);
+    const fxCtx = fe.getContext('2d')!;
+
+    // Organic seed points that drift slowly — form the cell structure
+    const seeds = Array.from({ length: 14 }, () => ({
+      x: Math.random() * BW, y: Math.random() * BH,
+      vx: (Math.random() - 0.5) * 0.06, vy: (Math.random() - 0.5) * 0.06,
+    }));
+
+    // Gold dust particles (0–1 normalised coords)
+    const particles = Array.from({ length: 80 }, () => ({
+      x: Math.random(), y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.00012, vy: (Math.random() - 0.5) * 0.00012,
+      r: 0.4 + Math.random() * 1.6,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.018 + Math.random() * 0.035,
+      alpha: 0.15 + Math.random() * 0.65,
+    }));
+
+    const imgData = bgCtx.createImageData(BW, BH);
+    const px = imgData.data;
+
+    function drawBg() {
+      for (const s of seeds) {
+        s.x += s.vx; s.y += s.vy;
+        if (s.x < -5) s.vx = Math.abs(s.vx);
+        if (s.x > BW + 5) s.vx = -Math.abs(s.vx);
+        if (s.y < -5) s.vy = Math.abs(s.vy);
+        if (s.y > BH + 5) s.vy = -Math.abs(s.vy);
+      }
+      for (let y = 0; y < BH; y++) {
+        for (let x = 0; x < BW; x++) {
+          let d1 = 1e18, d2 = 1e18;
+          for (const s of seeds) {
+            const dd = (x - s.x) ** 2 + (y - s.y) ** 2;
+            if (dd < d1) { d2 = d1; d1 = dd; } else if (dd < d2) { d2 = dd; }
+          }
+          const r1 = Math.sqrt(d1), r2 = Math.sqrt(d2);
+          // 0 = on cell boundary, →1 = cell interior
+          const bv = (r2 - r1) / (r2 + r1 + 0.001);
+          const i = (y * BW + x) * 4;
+          if (bv < 0.14) {
+            // Cell wall — warm amber/gold glow that fades toward interior
+            const glow = Math.pow(1 - bv / 0.14, 2);
+            px[i]   = Math.floor(8  + 162 * glow);
+            px[i+1] = Math.floor(6  + 78  * glow);
+            px[i+2] = Math.floor(4  + 10  * glow);
+            px[i+3] = 255;
+          } else {
+            // Cell interior — near-black with subtle depth variation
+            const depth = Math.min(1, (bv - 0.14) / 0.4);
+            const v = Math.floor(6 + depth * 7);
+            px[i] = v + 1; px[i+1] = v; px[i+2] = v; px[i+3] = 255;
+          }
         }
-        <div style={{ position:'fixed',inset:0,zIndex:1,background:'linear-gradient(to bottom,rgba(0,0,0,.50) 0%,rgba(0,0,0,.20) 50%,rgba(0,0,0,.65) 100%)',pointerEvents:'none' }} />
-      </>
-    );
-  }
+      }
+      bgCtx.putImageData(imgData, 0, 0);
+    }
+
+    function drawFx() {
+      const W = fe.width, H = fe.height;
+      fxCtx.clearRect(0, 0, W, H);
+      for (const p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = 1; if (p.x > 1) p.x = 0;
+        if (p.y < 0) p.y = 1; if (p.y > 1) p.y = 0;
+        p.phase += p.speed;
+        const a = p.alpha * (0.2 + 0.8 * Math.abs(Math.sin(p.phase)));
+        fxCtx.save();
+        fxCtx.globalAlpha = a;
+        fxCtx.shadowBlur = 8;
+        fxCtx.shadowColor = '#e8a030';
+        fxCtx.fillStyle = '#f5c030';
+        fxCtx.beginPath();
+        fxCtx.arc(p.x * W, p.y * H, p.r, 0, 6.283);
+        fxCtx.fill();
+        fxCtx.restore();
+      }
+    }
+
+    drawBg();
+    let raf: number, frame = 0;
+    const loop = () => {
+      frame++;
+      if (frame % 4 === 0) drawBg(); // cells update at ~15fps
+      drawFx();                       // particles at 60fps
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
+  }, []);
+
   return (
-    <div style={{ position:'fixed',inset:0,zIndex:0,background:'#060a10',overflow:'hidden' }}>
-      <div className="wd-blob wd-blob-1" />
-      <div className="wd-blob wd-blob-2" />
-      <div className="wd-blob wd-blob-3" />
-    </div>
+    <>
+      {/* Low-res Voronoi — browser bilinear-upscales to full screen (naturally smooth) */}
+      <canvas ref={bgRef} style={{
+        position:'fixed', inset:0, width:'100%', height:'100%',
+        objectFit:'cover', zIndex:0, imageRendering:'auto',
+        filter:'blur(3px)',
+      }} />
+      {/* Dark gradient vignette */}
+      <div style={{
+        position:'fixed', inset:0, zIndex:1,
+        background:'linear-gradient(to bottom,rgba(0,0,0,.52) 0%,rgba(0,0,0,.16) 48%,rgba(0,0,0,.62) 100%)',
+        pointerEvents:'none',
+      }} />
+      {/* Gold sparkle particles */}
+      <canvas ref={fxRef} style={{
+        position:'fixed', inset:0, width:'100%', height:'100%',
+        zIndex:2, pointerEvents:'none',
+      }} />
+    </>
   );
 }
 
@@ -176,11 +282,6 @@ export default function LandingPage() {
   return (
     <>
       <BackgroundCanvas />
-
-      {/* Dot-grid — only when no custom bg */}
-      {!CUSTOM_BG && (
-        <div aria-hidden style={{ position:'fixed',inset:0,zIndex:2,backgroundImage:'radial-gradient(rgba(255,255,255,0.22) 2px,transparent 0)',backgroundSize:'22px 22px',pointerEvents:'none' }} />
-      )}
 
       {/* Page-reveal */}
       <div aria-hidden style={{ position:'fixed',inset:0,zIndex:300,backgroundColor:'#060a10',opacity:revealed?0:1,transition:'opacity 1.1s cubic-bezier(0.4,0,0.2,1)',pointerEvents:'none',display:'flex',alignItems:'center',justifyContent:'center' }}>
