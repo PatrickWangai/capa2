@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme } from '../context/ThemeContext';
 
-/* ─── Watch Dogs 2-style network background (nodes + edge particles) ─── */
+/* ─── Watch Dogs 2-style circuit network background ─── */
 function BackgroundCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -11,86 +11,114 @@ function BackgroundCanvas() {
     const ctxRaw = canvasRaw.getContext('2d'); if (!ctxRaw) return;
     const canvas = canvasRaw as HTMLCanvasElement;
     const ctx = ctxRaw as CanvasRenderingContext2D;
-    let W = 0, H = 0, animId: number;
+    let W = 0, H = 0, animId: number, frame = 0;
 
-    type Node = { x: number; y: number; vx: number; vy: number; r: number; isHub: boolean; pulse: number; pulseSpeed: number; alpha: number; };
-    type Particle = { fromIdx: number; toIdx: number; t: number; speed: number; trail: { x: number; y: number }[]; };
+    type Kind = 'major' | 'minor' | 'small';
+    type Node = { x: number; y: number; vx: number; vy: number; kind: Kind; r: number; pulse: number; ps: number; alpha: number; };
+    type Particle = { fi: number; ti: number; t: number; spd: number; trail: { x: number; y: number }[]; };
 
-    const NODE_COUNT    = 68;
-    const CONNECT_DIST  = 220;
-    const PARTICLE_COUNT = 90;
-    const TRAIL_LEN     = 10;
-
-    let nodes: Node[]       = [];
+    const CD = 280; // connect distance
+    const TRAIL = 14;
+    let nodes: Node[] = [];
     let particles: Particle[] = [];
+    let activeSet = new Set<string>();
 
-    function mkNodes() {
-      nodes = Array.from({ length: NODE_COUNT }, () => ({
-        x: Math.random() * W, y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
-        r:  Math.random() < 0.14 ? 3.6 : Math.random() < 0.4 ? 2.0 : 1.1,
-        isHub: Math.random() < 0.14,
-        pulse: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.016 + Math.random() * 0.022,
-        alpha: 0.45 + Math.random() * 0.55,
-      }));
+    function hex(cx: number, cy: number, sz: number) {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (Math.PI / 3) * i - Math.PI / 6;
+        const x = cx + sz * Math.cos(a), y = cy + sz * Math.sin(a);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
     }
 
-    function pickNeighbor(fromIdx: number): number {
-      const from = nodes[fromIdx];
-      const nearby: number[] = [];
+    function neighbor(fi: number): number {
+      const f = nodes[fi], near: number[] = [];
       nodes.forEach((n, i) => {
-        if (i === fromIdx) return;
-        const dx = n.x - from.x, dy = n.y - from.y;
-        if (dx*dx + dy*dy < CONNECT_DIST * CONNECT_DIST * 1.44) nearby.push(i);
+        if (i === fi) return;
+        const dx = n.x - f.x, dy = n.y - f.y;
+        if (dx*dx + dy*dy < CD*CD*1.5) near.push(i);
       });
-      return nearby.length
-        ? nearby[Math.floor(Math.random() * nearby.length)]
-        : Math.floor(Math.random() * NODE_COUNT);
+      return near.length ? near[Math.floor(Math.random() * near.length)] : Math.floor(Math.random() * nodes.length);
     }
 
-    function mkParticles() {
-      particles = Array.from({ length: PARTICLE_COUNT }, () => {
-        const fromIdx = Math.floor(Math.random() * NODE_COUNT);
-        return { fromIdx, toIdx: pickNeighbor(fromIdx), t: Math.random(), speed: 0.004 + Math.random() * 0.007, trail: [] };
+    function build() {
+      nodes = [];
+      // 5 major hex hubs — spread intentionally
+      for (let i = 0; i < 5; i++) {
+        nodes.push({ x: (0.12 + i * 0.19) * W + (Math.random()-0.5)*50, y: (0.22 + Math.random()*0.56)*H, vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.12, kind: 'major', r: 7, pulse: Math.random()*Math.PI*2, ps: 0.010+Math.random()*0.012, alpha: 1 });
+      }
+      // 14 minor nodes
+      for (let i = 0; i < 14; i++) {
+        nodes.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18, kind: 'minor', r: 3.5, pulse: Math.random()*Math.PI*2, ps: 0.014+Math.random()*0.018, alpha: 0.8+Math.random()*0.2 });
+      }
+      // 16 small nodes
+      for (let i = 0; i < 16; i++) {
+        nodes.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-0.5)*0.22, vy: (Math.random()-0.5)*0.22, kind: 'small', r: 1.3, pulse: Math.random()*Math.PI*2, ps: 0.018+Math.random()*0.024, alpha: 0.3+Math.random()*0.4 });
+      }
+
+      // Mark ~25% of edges as "active" (bright)
+      activeSet = new Set();
+      for (let i = 0; i < nodes.length; i++)
+        for (let j = i+1; j < nodes.length; j++)
+          if (Math.random() < 0.25) activeSet.add(`${i}-${j}`);
+
+      // 72 particles
+      particles = Array.from({ length: 72 }, () => {
+        const fi = Math.floor(Math.random() * nodes.length);
+        return { fi, ti: neighbor(fi), t: Math.random(), spd: 0.005 + Math.random()*0.009, trail: [] };
       });
     }
 
     function resize() {
       const dpr = devicePixelRatio || 1;
       W = window.innerWidth; H = window.innerHeight;
-      canvas.width = Math.ceil(W * dpr); canvas.height = Math.ceil(H * dpr);
+      canvas.width = Math.ceil(W*dpr); canvas.height = Math.ceil(H*dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      mkNodes(); mkParticles();
+      build();
     }
 
     function draw() {
+      frame++;
       const rgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '32,212,184';
 
-      // Dark navy-black background
-      ctx.fillStyle = '#05080f'; ctx.fillRect(0, 0, W, H);
+      // Background — deep navy-black
+      ctx.fillStyle = '#060a10'; ctx.fillRect(0, 0, W, H);
 
-      // Vignette
-      const vig = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W, H) * 0.78);
-      vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.60)');
-      ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+      // Faint hexagonal grid
+      const HS = 95, HH = HS * Math.sqrt(3);
+      ctx.strokeStyle = `rgba(${rgb},0.045)`; ctx.lineWidth = 0.6;
+      for (let r = -1; r < H/HH + 2; r++)
+        for (let c = -1; c < W/(HS*1.5) + 2; c++) {
+          hex(c*HS*1.5, r*HH + (c%2===0 ? 0 : HH/2), HS); ctx.stroke();
+        }
 
       // Move nodes
       nodes.forEach(n => {
-        n.x += n.vx; n.y += n.vy; n.pulse += n.pulseSpeed;
-        if (n.x < -70) n.x = W + 70; if (n.x > W + 70) n.x = -70;
-        if (n.y < -70) n.y = H + 70; if (n.y > H + 70) n.y = -70;
+        n.x += n.vx; n.y += n.vy; n.pulse += n.ps;
+        if (n.x < -90) n.x = W+90; if (n.x > W+90) n.x = -90;
+        if (n.y < -90) n.y = H+90; if (n.y > H+90) n.y = -90;
       });
 
+      // Refresh active edges every ~4s
+      if (frame % 240 === 0) {
+        activeSet = new Set();
+        for (let i = 0; i < nodes.length; i++)
+          for (let j = i+1; j < nodes.length; j++)
+            if (Math.random() < 0.25) activeSet.add(`${i}-${j}`);
+      }
+
       // Edges
-      ctx.lineWidth = 0.55;
       for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
+        for (let j = i+1; j < nodes.length; j++) {
           const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 < CONNECT_DIST * CONNECT_DIST) {
-            const a = (1 - Math.sqrt(d2) / CONNECT_DIST) * 0.16;
-            ctx.strokeStyle = `rgba(${rgb},${a})`;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < CD) {
+            const b = 1 - d/CD;
+            const isActive = activeSet.has(`${i}-${j}`);
+            ctx.strokeStyle = `rgba(${rgb},${isActive ? b*0.55 : b*0.16})`;
+            ctx.lineWidth = isActive ? 1.0 : 0.5;
             ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
           }
         }
@@ -98,61 +126,56 @@ function BackgroundCanvas() {
 
       // Particles
       particles.forEach(p => {
-        p.t += p.speed;
-        if (p.t >= 1) {
-          p.t = 0; p.trail = [];
-          p.fromIdx = p.toIdx;
-          p.toIdx = pickNeighbor(p.fromIdx);
-        }
-        const from = nodes[p.fromIdx], to = nodes[p.toIdx];
-        const dx = to.x - from.x, dy = to.y - from.y;
-        if (dx*dx + dy*dy > CONNECT_DIST * CONNECT_DIST * 2.25) return;
-
-        const px = from.x + dx * p.t, py = from.y + dy * p.t;
+        p.t += p.spd;
+        if (p.t >= 1) { p.t = 0; p.trail = []; p.fi = p.ti; p.ti = neighbor(p.fi); }
+        const f = nodes[p.fi], t = nodes[p.ti];
+        const dx = t.x - f.x, dy = t.y - f.y;
+        if (dx*dx + dy*dy > CD*CD*2.2) return;
+        const px = f.x + dx*p.t, py = f.y + dy*p.t;
         p.trail.push({ x: px, y: py });
-        if (p.trail.length > TRAIL_LEN) p.trail.shift();
-
+        if (p.trail.length > TRAIL) p.trail.shift();
         // Trail
         p.trail.forEach((pt, ti) => {
-          const frac = ti / TRAIL_LEN;
-          const ta = frac * 0.5;
-          const tr = frac * 2.2;
-          const g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, tr + 4);
-          g.addColorStop(0, `rgba(${rgb},${ta * 0.65})`);
-          g.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pt.x, pt.y, tr + 4, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = `rgba(255,255,255,${ta * 0.85})`;
-          ctx.beginPath(); ctx.arc(pt.x, pt.y, Math.max(0.4, tr * 0.35), 0, Math.PI * 2); ctx.fill();
+          const fr = (ti+1) / p.trail.length;
+          const tg = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, fr*3.5+5);
+          tg.addColorStop(0, `rgba(${rgb},${fr*0.75})`); tg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = tg; ctx.beginPath(); ctx.arc(pt.x, pt.y, fr*3.5+5, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = `rgba(255,255,255,${fr*0.9})`; ctx.beginPath(); ctx.arc(pt.x, pt.y, fr*1.8, 0, Math.PI*2); ctx.fill();
         });
-
-        // Head glow
-        const hg = ctx.createRadialGradient(px, py, 0, px, py, 8);
-        hg.addColorStop(0, `rgba(${rgb},0.95)`); hg.addColorStop(0.45, `rgba(${rgb},0.35)`); hg.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2); ctx.fill();
+        // Head
+        const hg = ctx.createRadialGradient(px, py, 0, px, py, 11);
+        hg.addColorStop(0, `rgba(${rgb},1)`); hg.addColorStop(0.4, `rgba(${rgb},0.45)`); hg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(px, py, 11, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px, py, 2.2, 0, Math.PI*2); ctx.fill();
       });
 
       // Nodes
       nodes.forEach(n => {
-        const p = Math.sin(n.pulse) * 0.5 + 0.5;
+        const p = Math.sin(n.pulse)*0.5 + 0.5;
 
-        if (n.isHub) {
-          // Pulse ring
-          ctx.strokeStyle = `rgba(${rgb},${0.10 + p * 0.12})`; ctx.lineWidth = 0.8;
-          ctx.beginPath(); ctx.arc(n.x, n.y, 15 + p * 9, 0, Math.PI * 2); ctx.stroke();
-          // Outer glow
-          const og = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 26 + p * 12);
-          og.addColorStop(0, `rgba(${rgb},${0.28 + p * 0.18})`); og.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = og; ctx.beginPath(); ctx.arc(n.x, n.y, 26 + p * 12, 0, Math.PI * 2); ctx.fill();
-        }
+        if (n.kind === 'major') {
+          // Double hex ring
+          ctx.strokeStyle = `rgba(${rgb},${0.18+p*0.18})`; ctx.lineWidth = 1.0; hex(n.x, n.y, 19+p*7); ctx.stroke();
+          ctx.strokeStyle = `rgba(${rgb},${0.07+p*0.07})`; ctx.lineWidth = 0.6; hex(n.x, n.y, 30+p*10); ctx.stroke();
+          // Glow blob
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 34+p*14);
+          g.addColorStop(0, `rgba(${rgb},${0.42+p*0.28})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 34+p*14, 0, Math.PI*2); ctx.fill();
+          // Hex body
+          ctx.fillStyle = `rgba(${rgb},${0.75+p*0.25})`; hex(n.x, n.y, n.r+1); ctx.fill();
+          ctx.fillStyle = `rgba(255,255,255,${0.92+p*0.08})`; ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2); ctx.fill();
 
-        // Node body
-        ctx.fillStyle = `rgba(${rgb},${n.alpha * (0.55 + p * 0.45)})`;
-        ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
+        } else if (n.kind === 'minor') {
+          ctx.strokeStyle = `rgba(${rgb},${0.13+p*0.13})`; ctx.lineWidth = 0.7;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 11+p*6, 0, Math.PI*2); ctx.stroke();
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 16+p*8);
+          g.addColorStop(0, `rgba(${rgb},${0.30+p*0.20})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, 16+p*8, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = `rgba(${rgb},${n.alpha*(0.78+p*0.22)})`; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = `rgba(255,255,255,${0.80+p*0.20})`; ctx.beginPath(); ctx.arc(n.x, n.y, 1.1, 0, Math.PI*2); ctx.fill();
 
-        if (n.r > 2) {
-          ctx.fillStyle = `rgba(255,255,255,${0.80 + p * 0.20})`;
-          ctx.beginPath(); ctx.arc(n.x, n.y, 1.0, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.fillStyle = `rgba(${rgb},${n.alpha*(0.45+p*0.55)})`; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
         }
       });
 
@@ -323,7 +346,7 @@ export default function LandingPage() {
 
               {/* Left — headline */}
               <div className="ll-in ll-in-1">
-                <h1 style={H1}>YOUR<br />GATEWAY<br /><span style={{ color: 'var(--accent)' }}>TO.</span></h1>
+                <h1 style={H1}>ACCESS<br />GLOBAL<br /><span style={{ color: 'var(--accent)' }}>MARKETS.</span></h1>
               </div>
 
               {/* Right — description + CTA + stats */}
