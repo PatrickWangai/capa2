@@ -8,15 +8,22 @@ import { useTheme } from '../context/ThemeContext';
      1. Drop the file into  frontend/public/  (e.g. hero-bg.jpg or hero-bg.mp4)
      2. Set CUSTOM_BG below to match the filename  (e.g. '/hero-bg.jpg')
    ─────────────────────────────────────────────────────────────────────────── */
-const CUSTOM_BG: string = ''; // ← set to '/hero-bg.jpg' or '/hero-bg.mp4'
+const CUSTOM_BG: string = '/hero-bg.mp4'; // ← set to '/hero-bg.jpg' or '/hero-bg.mp4'
 
 function BackgroundCanvas() {
   // Custom image or video — GPU-composited, zero JS cost
   if (CUSTOM_BG) {
     const isVid = CUSTOM_BG.endsWith('.mp4') || CUSTOM_BG.endsWith('.webm');
-    return isVid
-      ? <video autoPlay loop muted playsInline src={CUSTOM_BG} style={{ position:'fixed', inset:0, width:'100%', height:'100%', objectFit:'cover', zIndex:0 }} />
-      : <div style={{ position:'fixed', inset:0, zIndex:0, backgroundImage:`url(${CUSTOM_BG})`, backgroundSize:'cover', backgroundPosition:'center' }} />;
+    return (
+      <>
+        {isVid
+          ? <video autoPlay loop muted playsInline src={CUSTOM_BG} style={{ position:'fixed', inset:0, width:'100%', height:'100%', objectFit:'cover', zIndex:0 }} />
+          : <div style={{ position:'fixed', inset:0, zIndex:0, backgroundImage:`url(${CUSTOM_BG})`, backgroundSize:'cover', backgroundPosition:'center' }} />
+        }
+        {/* Dark overlay so text stays readable */}
+        <div style={{ position:'fixed', inset:0, zIndex:1, background:'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.60) 100%)', pointerEvents:'none' }} />
+      </>
+    );
   }
 
   // Fallback: 3 CSS-animated blobs — pure GPU, no JS draw loop
@@ -124,8 +131,8 @@ export default function LandingPage() {
       {/* ── Layer 0: animated blob canvas ── */}
       <BackgroundCanvas />
 
-      {/* ── Layer 1: dot-grid overlay (pointer-events:none so clicks pass through) ── */}
-      <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 1, backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 2px, transparent 0)', backgroundSize: '22px 22px', pointerEvents: 'none' }} />
+      {/* ── Layer 2: dot-grid overlay — only shown without custom bg ── */}
+      {!CUSTOM_BG && <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 2, backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 2px, transparent 0)', backgroundSize: '22px 22px', pointerEvents: 'none' }} />}
 
       {/* ── Page-reveal overlay: dark screen that fades out on every load ── */}
       <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 300, backgroundColor: '#0c0c0c', opacity: revealed ? 0 : 1, transition: 'opacity 1.1s cubic-bezier(0.4,0,0.2,1)', pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -191,7 +198,7 @@ export default function LandingPage() {
       `}</style>
 
       {/* ── Page wrapper (z-index:2 sits above dot-grid overlay) ── */}
-      <div style={{ position: 'relative', zIndex: 2, color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ position: 'relative', zIndex: 10, color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* ───── NAV ───── */}
         <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${PAD}`, background: scrolled ? 'rgba(12,12,12,0.94)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none', WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none', borderBottom: scrolled ? BORDER : 'none', transition: 'background .35s, border-color .35s' }}>
