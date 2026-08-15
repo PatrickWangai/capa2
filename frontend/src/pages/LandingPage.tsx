@@ -339,7 +339,7 @@ export default function LandingPage() {
       <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
 
         {/* Video — no blur */}
-        <video autoPlay muted loop playsInline
+        <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
