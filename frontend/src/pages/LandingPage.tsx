@@ -1,8 +1,62 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import CapaLogo from '../components/ui/CapaLogo';
 import { useTheme } from '../context/ThemeContext';
+
+/* ─── Animated background canvas (slow drifting blobs — mimics lamalama video bg) ─── */
+function BackgroundCanvas() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvasRaw = ref.current; if (!canvasRaw) return;
+    const ctxRaw = canvasRaw.getContext('2d'); if (!ctxRaw) return;
+    const canvas = canvasRaw as HTMLCanvasElement;
+    const ctx = ctxRaw as CanvasRenderingContext2D;
+    let W = 0, H = 0, animId: number;
+
+    // Blob definitions: normalised pos (0-1), velocity per-frame, radius factor, alpha
+    const blobs = [
+      { x: 0.22, y: 0.32, vx:  0.00016, vy:  0.00010, rf: 0.52, a: 0.11 },
+      { x: 0.74, y: 0.62, vx: -0.00012, vy:  0.00015, rf: 0.44, a: 0.08 },
+      { x: 0.48, y: 0.85, vx:  0.00018, vy: -0.00013, rf: 0.60, a: 0.07 },
+      { x: 0.12, y: 0.68, vx:  0.00014, vy: -0.00009, rf: 0.38, a: 0.06 },
+      { x: 0.88, y: 0.20, vx: -0.00010, vy:  0.00017, rf: 0.42, a: 0.05 },
+    ];
+
+    function resize() {
+      const dpr = devicePixelRatio || 1;
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = Math.ceil(W * dpr); canvas.height = Math.ceil(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw() {
+      const rgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '32,212,184';
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#0c0c0c'; ctx.fillRect(0, 0, W, H);
+
+      blobs.forEach(b => {
+        b.x += b.vx; b.y += b.vy;
+        if (b.x > 1.6) b.x = -0.6; if (b.x < -0.6) b.x = 1.6;
+        if (b.y > 1.6) b.y = -0.6; if (b.y < -0.6) b.y = 1.6;
+        const px = b.x * W, py = b.y * H, r = b.rf * Math.max(W, H);
+        const g = ctx.createRadialGradient(px, py, 0, px, py, r);
+        g.addColorStop(0,   `rgba(${rgb},${b.a})`);
+        g.addColorStop(0.45,`rgba(${rgb},${+(b.a * 0.25).toFixed(3)})`);
+        g.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      });
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    resize(); draw();
+    window.addEventListener('resize', resize);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+  }, []);
+
+  return <canvas ref={ref} style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', display: 'block', zIndex: 0 }} />;
+}
 
 /* ─── Live Nairobi clock ─── */
 function Clock() {
@@ -73,10 +127,18 @@ export default function LandingPage() {
   const { theme } = useTheme();
   void theme; // used for potential future theming
   const [scrolled, setScrolled] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  // Page-reveal: dark screen fades out on every load/refresh
+  useEffect(() => {
+    const t = setTimeout(() => setRevealed(true), 380);
+    return () => clearTimeout(t);
   }, []);
 
   const PAD = 'max(28px, 5.5vw)';
@@ -88,8 +150,18 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* ── Fixed dot-grid background ── */}
-      <div aria-hidden style={{ position: 'fixed', inset: 0, backgroundColor: '#0c0c0c', backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 2px, transparent 0)', backgroundSize: '22px 22px' }} />
+      {/* ── Layer 0: animated blob canvas ── */}
+      <BackgroundCanvas />
+
+      {/* ── Layer 1: dot-grid overlay (pointer-events:none so clicks pass through) ── */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 1, backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 2px, transparent 0)', backgroundSize: '22px 22px', pointerEvents: 'none' }} />
+
+      {/* ── Page-reveal overlay: dark screen that fades out on every load ── */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 300, backgroundColor: '#0c0c0c', opacity: revealed ? 0 : 1, transition: 'opacity 1.1s cubic-bezier(0.4,0,0.2,1)', pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ opacity: revealed ? 0 : 1, transition: 'opacity 0.4s' }}>
+          <CapaCCircle size={52} />
+        </div>
+      </div>
 
       <style>{`
         @keyframes ll-up { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
@@ -121,8 +193,8 @@ export default function LandingPage() {
         }
       `}</style>
 
-      {/* ── Page wrapper ── */}
-      <div style={{ position: 'relative', color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+      {/* ── Page wrapper (z-index:2 sits above dot-grid overlay) ── */}
+      <div style={{ position: 'relative', zIndex: 2, color: '#fff', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
         {/* ───── NAV ───── */}
         <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${PAD}`, background: scrolled ? 'rgba(12,12,12,0.94)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none', WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none', borderBottom: scrolled ? BORDER : 'none', transition: 'background .35s, border-color .35s' }}>
