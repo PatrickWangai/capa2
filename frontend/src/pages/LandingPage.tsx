@@ -51,6 +51,26 @@ function HeroCanvas({ theme }: { theme: string }) {
     }
     function draw() {
       t++; ctx.clearRect(0, 0, W, H);
+
+      // Black theme: transparent canvas so body dot-grid shows through
+      if (theme === 'black') {
+        ctx.save();
+        for (let i = 0; i < 22; i++) {
+          const sx = ((i * 137.5 + t * 0.22) % W);
+          const sy = H * 0.52 + ((i * 79.3) % (H * 0.38));
+          const sa = (Math.sin(t * 0.038 + i * 1.9) * 0.5 + 0.5) * 0.10;
+          const hw = 14 + (i % 5) * 7;
+          const gr = ctx.createLinearGradient(sx - hw, 0, sx + hw, 0);
+          gr.addColorStop(0, 'rgba(255,255,255,0)');
+          gr.addColorStop(0.5, `rgba(255,255,255,${sa})`);
+          gr.addColorStop(1, 'rgba(255,255,255,0)');
+          ctx.fillStyle = gr; ctx.fillRect(sx - hw, sy - 2, hw * 2, 3);
+        }
+        ctx.restore();
+        animId = requestAnimationFrame(draw);
+        return;
+      }
+
       const hy = H * 0.70;
       const sky = ctx.createLinearGradient(0, 0, 0, hy);
       sky.addColorStop(0, skyC[0]); sky.addColorStop(0.22, skyC[1]);

@@ -187,7 +187,7 @@ function applyTheme(name: ThemeName) {
   r.style.setProperty('--bg-5', t.bg[4]);
   r.style.setProperty('--bg-6', t.bg[5]);
   if (name === 'black') {
-    const dotGrad = 'radial-gradient(rgba(255,255,255,0.058) 1px, #0d0d0d 0)';
+    const dotGrad = 'radial-gradient(rgba(255,255,255,0.13) 1.5px, #0d0d0d 0)';
     r.style.setProperty('--bg-gradient', dotGrad);
     r.style.setProperty('--bg-size', '22px 22px');
     document.body.style.background = dotGrad;
