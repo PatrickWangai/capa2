@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
 import { useTheme } from '../context/ThemeContext';
 
-/* ─── Animated background canvas (slow drifting blobs — mimics lamalama video bg) ─── */
+/* ─── Watch Dogs 2-style network background (nodes + edge particles) ─── */
 function BackgroundCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -13,37 +13,147 @@ function BackgroundCanvas() {
     const ctx = ctxRaw as CanvasRenderingContext2D;
     let W = 0, H = 0, animId: number;
 
-    // Blob definitions: normalised pos (0-1), velocity per-frame, radius factor, alpha
-    const blobs = [
-      { x: 0.22, y: 0.32, vx:  0.00016, vy:  0.00010, rf: 0.52, a: 0.11 },
-      { x: 0.74, y: 0.62, vx: -0.00012, vy:  0.00015, rf: 0.44, a: 0.08 },
-      { x: 0.48, y: 0.85, vx:  0.00018, vy: -0.00013, rf: 0.60, a: 0.07 },
-      { x: 0.12, y: 0.68, vx:  0.00014, vy: -0.00009, rf: 0.38, a: 0.06 },
-      { x: 0.88, y: 0.20, vx: -0.00010, vy:  0.00017, rf: 0.42, a: 0.05 },
-    ];
+    type Node = { x: number; y: number; vx: number; vy: number; r: number; isHub: boolean; pulse: number; pulseSpeed: number; alpha: number; };
+    type Particle = { fromIdx: number; toIdx: number; t: number; speed: number; trail: { x: number; y: number }[]; };
+
+    const NODE_COUNT    = 68;
+    const CONNECT_DIST  = 220;
+    const PARTICLE_COUNT = 90;
+    const TRAIL_LEN     = 10;
+
+    let nodes: Node[]       = [];
+    let particles: Particle[] = [];
+
+    function mkNodes() {
+      nodes = Array.from({ length: NODE_COUNT }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
+        r:  Math.random() < 0.14 ? 3.6 : Math.random() < 0.4 ? 2.0 : 1.1,
+        isHub: Math.random() < 0.14,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.016 + Math.random() * 0.022,
+        alpha: 0.45 + Math.random() * 0.55,
+      }));
+    }
+
+    function pickNeighbor(fromIdx: number): number {
+      const from = nodes[fromIdx];
+      const nearby: number[] = [];
+      nodes.forEach((n, i) => {
+        if (i === fromIdx) return;
+        const dx = n.x - from.x, dy = n.y - from.y;
+        if (dx*dx + dy*dy < CONNECT_DIST * CONNECT_DIST * 1.44) nearby.push(i);
+      });
+      return nearby.length
+        ? nearby[Math.floor(Math.random() * nearby.length)]
+        : Math.floor(Math.random() * NODE_COUNT);
+    }
+
+    function mkParticles() {
+      particles = Array.from({ length: PARTICLE_COUNT }, () => {
+        const fromIdx = Math.floor(Math.random() * NODE_COUNT);
+        return { fromIdx, toIdx: pickNeighbor(fromIdx), t: Math.random(), speed: 0.004 + Math.random() * 0.007, trail: [] };
+      });
+    }
 
     function resize() {
       const dpr = devicePixelRatio || 1;
       W = window.innerWidth; H = window.innerHeight;
       canvas.width = Math.ceil(W * dpr); canvas.height = Math.ceil(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      mkNodes(); mkParticles();
     }
 
     function draw() {
       const rgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '32,212,184';
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#0c0c0c'; ctx.fillRect(0, 0, W, H);
 
-      blobs.forEach(b => {
-        b.x += b.vx; b.y += b.vy;
-        if (b.x > 1.6) b.x = -0.6; if (b.x < -0.6) b.x = 1.6;
-        if (b.y > 1.6) b.y = -0.6; if (b.y < -0.6) b.y = 1.6;
-        const px = b.x * W, py = b.y * H, r = b.rf * Math.max(W, H);
-        const g = ctx.createRadialGradient(px, py, 0, px, py, r);
-        g.addColorStop(0,   `rgba(${rgb},${b.a})`);
-        g.addColorStop(0.45,`rgba(${rgb},${+(b.a * 0.25).toFixed(3)})`);
-        g.addColorStop(1,   'rgba(0,0,0,0)');
-        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // Dark navy-black background
+      ctx.fillStyle = '#05080f'; ctx.fillRect(0, 0, W, H);
+
+      // Vignette
+      const vig = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W, H) * 0.78);
+      vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.60)');
+      ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+
+      // Move nodes
+      nodes.forEach(n => {
+        n.x += n.vx; n.y += n.vy; n.pulse += n.pulseSpeed;
+        if (n.x < -70) n.x = W + 70; if (n.x > W + 70) n.x = -70;
+        if (n.y < -70) n.y = H + 70; if (n.y > H + 70) n.y = -70;
+      });
+
+      // Edges
+      ctx.lineWidth = 0.55;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < CONNECT_DIST * CONNECT_DIST) {
+            const a = (1 - Math.sqrt(d2) / CONNECT_DIST) * 0.16;
+            ctx.strokeStyle = `rgba(${rgb},${a})`;
+            ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+          }
+        }
+      }
+
+      // Particles
+      particles.forEach(p => {
+        p.t += p.speed;
+        if (p.t >= 1) {
+          p.t = 0; p.trail = [];
+          p.fromIdx = p.toIdx;
+          p.toIdx = pickNeighbor(p.fromIdx);
+        }
+        const from = nodes[p.fromIdx], to = nodes[p.toIdx];
+        const dx = to.x - from.x, dy = to.y - from.y;
+        if (dx*dx + dy*dy > CONNECT_DIST * CONNECT_DIST * 2.25) return;
+
+        const px = from.x + dx * p.t, py = from.y + dy * p.t;
+        p.trail.push({ x: px, y: py });
+        if (p.trail.length > TRAIL_LEN) p.trail.shift();
+
+        // Trail
+        p.trail.forEach((pt, ti) => {
+          const frac = ti / TRAIL_LEN;
+          const ta = frac * 0.5;
+          const tr = frac * 2.2;
+          const g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, tr + 4);
+          g.addColorStop(0, `rgba(${rgb},${ta * 0.65})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pt.x, pt.y, tr + 4, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(255,255,255,${ta * 0.85})`;
+          ctx.beginPath(); ctx.arc(pt.x, pt.y, Math.max(0.4, tr * 0.35), 0, Math.PI * 2); ctx.fill();
+        });
+
+        // Head glow
+        const hg = ctx.createRadialGradient(px, py, 0, px, py, 8);
+        hg.addColorStop(0, `rgba(${rgb},0.95)`); hg.addColorStop(0.45, `rgba(${rgb},0.35)`); hg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // Nodes
+      nodes.forEach(n => {
+        const p = Math.sin(n.pulse) * 0.5 + 0.5;
+
+        if (n.isHub) {
+          // Pulse ring
+          ctx.strokeStyle = `rgba(${rgb},${0.10 + p * 0.12})`; ctx.lineWidth = 0.8;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 15 + p * 9, 0, Math.PI * 2); ctx.stroke();
+          // Outer glow
+          const og = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 26 + p * 12);
+          og.addColorStop(0, `rgba(${rgb},${0.28 + p * 0.18})`); og.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = og; ctx.beginPath(); ctx.arc(n.x, n.y, 26 + p * 12, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // Node body
+        ctx.fillStyle = `rgba(${rgb},${n.alpha * (0.55 + p * 0.45)})`;
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
+
+        if (n.r > 2) {
+          ctx.fillStyle = `rgba(255,255,255,${0.80 + p * 0.20})`;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 1.0, 0, Math.PI * 2); ctx.fill();
+        }
       });
 
       animId = requestAnimationFrame(draw);
