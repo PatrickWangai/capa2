@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import CapaCCircle from '../components/ui/CapaCCircle';
-import CapaLogo from '../components/ui/CapaLogo';
 import { useTheme } from '../context/ThemeContext';
 
 /* ─── Animated background canvas (slow drifting blobs — mimics lamalama video bg) ─── */
@@ -212,9 +211,9 @@ export default function LandingPage() {
           <div style={{ padding: `0 ${PAD}`, borderTop: BORDER }}>
             <div className="ll-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '0 64px', alignItems: 'flex-end', padding: '48px 0 44px' }}>
 
-              {/* Left — logo */}
+              {/* Left — headline */}
               <div className="ll-in ll-in-1">
-                <CapaLogo size={140} />
+                <h1 style={H1}>YOUR<br />GATEWAY<br /><span style={{ color: 'var(--accent)' }}>TO.</span></h1>
               </div>
 
               {/* Right — description + CTA + stats */}
