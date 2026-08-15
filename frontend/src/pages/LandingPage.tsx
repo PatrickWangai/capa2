@@ -241,10 +241,11 @@ export default function LandingPage() {
         }
 
         @media (max-width: 640px) {
-          .hero-logo-wrap img { width: min(420px, 92vw) !important; height: auto !important; }
-          .hero-subtitle { font-size: 15px !important; margin-bottom: 28px !important; }
-          .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; }
-          .hero-buttons a { justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
+          .hero-content { padding: 0 0 60px 24px !important; }
+          .hero-logo-wrap img { width: min(100px, 60vw) !important; height: auto !important; }
+          .hero-subtitle { font-size: 14px !important; margin-bottom: 20px !important; }
+          .hero-buttons { flex-direction: column !important; align-items: flex-start !important; width: 100% !important; max-width: 280px !important; }
+          .hero-buttons a { justify-content: center !important; padding: 12px 20px !important; font-size: 14px !important; }
           .lp-section-pad { padding-top: 60px !important; padding-bottom: 60px !important; }
           .lp-section-pad-sm { padding-top: 48px !important; padding-bottom: 48px !important; }
           .feature-card { padding: 22px !important; }
@@ -255,48 +256,52 @@ export default function LandingPage() {
           .lp-footer { padding: 40px 20px 28px !important; }
         }
         @media (max-width: 380px) {
-          .hero-logo-wrap img { width: min(200px, 88vw) !important; height: auto !important; }
+          .hero-content { padding: 0 0 48px 18px !important; }
         }
       `}</style>
 
       <FloatingNav />
 
       {/* HERO */}
-      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
 
+        {/* Video — no blur */}
         <video autoPlay muted loop playsInline
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0,
-            filter: 'blur(18px)', transform: 'scale(1.08)' }}>
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
 
+        {/* Subtle theme tint */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'var(--accent)',
-          opacity: 0.55, mixBlendMode: 'color' as const, pointerEvents: 'none' }} />
+          opacity: 0.18, mixBlendMode: 'color' as const, pointerEvents: 'none' }} />
 
+        {/* Cinematic gradient — dark bottom-left for text legibility */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1,
-          background: 'linear-gradient(160deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.42) 100%)' }} />
+          background: 'linear-gradient(to top right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, rgba(0,0,0,0.12) 65%, transparent 100%)' }} />
 
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%',
+        {/* Bottom page-blend fade */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
           background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
 
-        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="hero-logo-wrap hero-text hero-text-2" style={{ marginBottom: -32 }}>
-            <CapaLogo size={260} />
+        {/* Bottom-left content */}
+        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'left', padding: '0 0 72px 52px', maxWidth: 620, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: 18 }}>
+            <CapaLogo size={130} />
           </div>
 
-          <p className="hero-text hero-text-3 hero-subtitle" style={{ fontSize: 20, fontWeight: 400, color: SEC, lineHeight: 1.5, maxWidth: 520, margin: '0 auto 36px', minHeight: '1.5em' }}>
+          <p className="hero-text hero-text-2 hero-subtitle" style={{ fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', minHeight: '1.5em' }}>
             {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
           </p>
 
-          <div className="hero-text hero-text-4 hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '14px 28px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
-              Start Investing Free <ChevronRight size={16} />
+          <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '13px 26px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 600, letterSpacing: '-0.01em' }}>
+              Start Investing Free <ChevronRight size={15} />
             </Link>
-            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '14px 28px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 17, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 16, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
               Sign In
             </Link>
           </div>
-          <p className="hero-text hero-text-4" style={{ fontSize: 12, color: 'rgba(235,235,245,0.3)', margin: '10px 0 0' }}>No minimum deposit</p>
+          <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
         </div>
       </section>
 
