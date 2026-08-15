@@ -45,7 +45,7 @@ function Clock() {
 }
 
 /* ─── Rotating nav label ─── */
-const NAV_LABELS = ['INVEST GLOBAL. TRADE SIMPLE.','NSE LIVE MARKET DATA','M-PESA DEPOSITS','CMA REGULATED'];
+const NAV_LABELS = ['TRADE NSE STOCKS. SIMPLY.','NSE LIVE MARKET DATA','M-PESA DEPOSITS','CMA REGULATED'];
 function NavLabel() {
   const [idx, setIdx] = useState(0);
   const [vis, setVis] = useState(true);
@@ -66,7 +66,7 @@ function NavLabel() {
 /* ─── Status bar ─── */
 function StatusBar() {
   const items: [React.ReactNode, boolean][] = [
-    ['15+ MARKETS', true],
+    ['64+ STOCKS', true],
     ['NAIROBI BASED', true],
     [<Clock key="c" />, true],
     [<><span style={{ color:'var(--accent)',marginRight:5 }}>●</span>NSE LIVE</>, true],
@@ -154,15 +154,13 @@ export default function LandingPage() {
   const BODY   = { fontSize:'clamp(15px,1.6vw,20px)',color:'rgba(255,255,255,0.52)',lineHeight:1.65 };
 
   const MARKETS = [
-    { name:'NSE Equities',    tags:['Stocks','Live Data','KES'],           stat:'65+',    statLabel:'Listed companies', desc:'Trade Kenyan blue-chip and growth stocks live on the Nairobi Securities Exchange.' },
-    { name:'Forex',           tags:['USD/KES','EUR/KES','GBP/KES'],        stat:'10+',    statLabel:'Currency pairs',   desc:'Exchange at live mid-market rates with no hidden spreads and instant settlement.' },
-    { name:'Treasury Bills',  tags:['Government','91–364 days'],           stat:'~16%',   statLabel:'Current yield',    desc:'Short-term government securities backed by the Central Bank of Kenya.' },
-    { name:'Treasury Bonds',  tags:['Fixed Income','Long-term'],           stat:'14–17%', statLabel:'Annual return',    desc:'Medium to long-term government bonds with predictable, guaranteed returns.' },
-    { name:'Unit Trusts',     tags:['Managed','Diversified'],              stat:'12+',    statLabel:'Fund options',     desc:'Professionally managed funds across risk profiles — money market to equity.' },
-    { name:'ETFs',            tags:['Pan-African','Global'],               stat:'5+',     statLabel:'Markets covered',  desc:'Exchange-traded funds for diversified exposure across African and global markets.' },
+    { name:'NSE Main Market',  tags:['Blue Chip','Live Data','KES'],       stat:'64+',  statLabel:'Listed companies',   desc:'Trade Kenya\'s largest and most liquid stocks — Safaricom, KCB, Equity Group and more.' },
+    { name:'Growth Stocks',    tags:['Mid-cap','High Upside'],             stat:'20+',  statLabel:'Growth counters',    desc:'High-growth Kenyan companies with strong fundamentals and significant upside potential.' },
+    { name:'Dividend Stocks',  tags:['Income','Regular Payouts'],          stat:'30+',  statLabel:'Dividend payers',    desc:'NSE companies with a consistent history of paying shareholder dividends — earn while you hold.' },
+    { name:'GEMS',             tags:['SME','Growth Enterprise'],           stat:'5+',   statLabel:'GEMS listings',      desc:'Growth Enterprise Market Segment — Kenya\'s emerging small and mid-size companies.' },
   ];
 
-  const PARTNERS = ['CMA KENYA','NAIROBI SECURITIES EXCHANGE','M-PESA','SAFARICOM','EQUITY BANK','KCB','CO-OP BANK','STANBIC','ICEA LION','BRITAM','OLD MUTUAL','JUBILEE'];
+  const PARTNERS = ['CMA KENYA','NAIROBI SECURITIES EXCHANGE','M-PESA','SAFARICOM','KCB GROUP','EQUITY GROUP','EABL','BAMBURI','STANBIC','ABSA KENYA','NCBA','DIAMOND TRUST BANK'];
 
   const PILLARS = [
     { num:'01', title:'Think global, invest local',
@@ -249,7 +247,7 @@ export default function LandingPage() {
                   <Link to="/login" className="ll-btn">SIGN IN</Link>
                 </div>
                 <div style={{ display:'flex',gap:32 }}>
-                  {[['15+','Markets'],['0.5%','Flat fee'],['CMA','Regulated']].map(([v,l]) => (
+                  {[['64+','NSE stocks'],['0.5%','Flat fee'],['CMA','Regulated']].map(([v,l]) => (
                     <div key={l}>
                       <p style={{ fontSize:22,fontWeight:700,margin:0,letterSpacing:'-0.025em',fontVariantNumeric:'tabular-nums' }}>{v}</p>
                       <p style={{ ...LABEL,margin:'4px 0 0',fontSize:10 }}>{l}</p>
@@ -278,7 +276,7 @@ export default function LandingPage() {
           <div style={{ padding:`22px ${PAD}`,borderBottom:BORDER,display:'flex',justifyContent:'space-between',alignItems:'center' }}>
             <p style={LABEL}>[ HOW WE INVEST ]</p>
             <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
-              {['Equities','Fixed Income','Forex'].map(t => (
+              {['NSE Equities','Live Trading','Dividends'].map(t => (
                 <span key={t} style={{ ...LABEL,border:'1px solid rgba(255,255,255,0.12)',padding:'4px 12px',borderRadius:2 }}>{t} ↗</span>
               ))}
             </div>
@@ -286,7 +284,7 @@ export default function LandingPage() {
           <div className="rg2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 80px',padding:`56px ${PAD} 0` }}>
             <h2 style={H2}>WHAT<br />WE DO.</h2>
             <div style={{ paddingTop:8 }}>
-              <p style={{ ...BODY,marginBottom:24 }}>We create simple pathways for Kenyans to build wealth. Real-time NSE equities, fixed-income instruments, and global forex — all on one regulated platform. Sharp execution. No hidden fees. No gatekeeping.</p>
+              <p style={{ ...BODY,marginBottom:24 }}>We make it simple for Kenyans to buy and sell stocks on the Nairobi Securities Exchange. Real-time prices, instant execution, M-Pesa deposits — no broker, no paperwork, no gatekeeping.</p>
               <p style={{ fontSize:'clamp(13px,1.3vw,16px)',color:'rgba(255,255,255,0.30)',margin:0 }}>
                 TLDR; we just want you to grow your money.{' '}
                 <Link to="/register" style={{ color:'var(--accent)',textDecoration:'none' }}>OPEN AN ACCOUNT →</Link>
@@ -295,9 +293,9 @@ export default function LandingPage() {
           </div>
           <div className="rg3" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',margin:`48px ${PAD} 0`,borderTop:BORDER }}>
             {[
-              ['EQUITIES',     ['NSE-listed stocks','Pan-African ETFs','Global shares','Dividend reinvestment','Real-time quotes']],
-              ['FIXED INCOME', ['Treasury Bills','Treasury Bonds','Corporate bonds','Unit trusts','Money market funds']],
-              ['FOREX',        ['USD / KES','EUR / KES','GBP / KES','Live mid-market rates','Instant conversion']],
+              ['TRADING',   ['Buy & sell NSE stocks','Market & limit orders','Real-time price quotes','Price alerts','Instant M-Pesa funding']],
+              ['RESEARCH',  ['Live market data','Company financials','Price charts','NSE announcements','Watchlists']],
+              ['PORTFOLIO', ['Holdings tracker','P&L analysis','Dividend calendar','Performance reports','Transaction history']],
             ].map(([title, items], i) => (
               <div key={title as string} style={{ padding:'40px 0',paddingLeft:i>0?40:0,borderLeft:i>0?BORDER:'none' }}>
                 <p style={{ ...LABEL,marginBottom:24,color:'rgba(255,255,255,0.28)' }}>[ {title} ]</p>
