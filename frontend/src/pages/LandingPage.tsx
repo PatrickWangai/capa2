@@ -136,6 +136,10 @@ export default function LandingPage() {
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
 
+        {/* Theme color tint — recolors video to match current accent */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'var(--accent)',
+          opacity: 0.55, mixBlendMode: 'color', pointerEvents: 'none' }} />
+
         {/* Dark overlay for text legibility */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1,
           background: 'linear-gradient(160deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.42) 100%)' }} />
