@@ -349,7 +349,11 @@ export default function LandingPage() {
           border-radius: 980px;
           padding: 1.5px;
           overflow: hidden;
-          box-shadow: 0 0 8px 2px rgba(255,32,96,0.22);
+          background: rgba(255,255,255,0.08);
+          transition: box-shadow 0.3s;
+        }
+        .glow-pill:hover {
+          box-shadow: 0 0 14px 4px rgba(255,32,96,0.35);
         }
         .glow-pill::before {
           content: '';
@@ -363,7 +367,14 @@ export default function LandingPage() {
             #ff2060 0deg, #c5003f 60deg, #7d0022 120deg,
             #3a000e 180deg, #7d0022 240deg, #c5003f 300deg, #ff2060 360deg
           );
-          animation: spin-ring 3s linear 10s infinite;
+          opacity: 0;
+          transition: opacity 0.3s;
+          animation: spin-ring 3s linear infinite;
+          animation-play-state: paused;
+        }
+        .glow-pill:hover::before {
+          opacity: 1;
+          animation-play-state: running;
         }
         .glow-pill-inner {
           position: relative; z-index: 1;
