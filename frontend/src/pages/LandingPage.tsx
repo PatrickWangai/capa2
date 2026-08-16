@@ -366,8 +366,8 @@ export default function LandingPage() {
       <ScrollGlitchOverlay active={glitching} />
       <FloatingNav />
 
-      {/* HERO */}
-      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
+      {/* HERO — sticky so it stays pinned while the content sheet slides over it */}
+      <section style={{ position: 'sticky', top: 0, height: '100vh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
 
         {/* Video — no blur */}
         <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
@@ -406,6 +406,9 @@ export default function LandingPage() {
           <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
         </div>
       </section>
+
+      {/* Content sheet — slides up over the sticky hero */}
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg-1)', borderRadius: '24px 24px 0 0', boxShadow: '0 -24px 64px rgba(0,0,0,0.75)' }}>
 
       {/* FEATURES */}
       <GlitchSection>
@@ -530,6 +533,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      </div>{/* end content sheet */}
     </div>
   );
 }
