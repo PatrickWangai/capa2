@@ -271,9 +271,20 @@ function FloatingNav() {
   );
 }
 
+function useHeroProgress() {
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    const h = () => setP(Math.min(window.scrollY / window.innerHeight, 1));
+    window.addEventListener('scroll', h, { passive: true });
+    return () => window.removeEventListener('scroll', h);
+  }, []);
+  return p;
+}
+
 export default function LandingPage() {
   const typedText = useTypeOnce(HERO_TEXT);
   const glitching = useScrollGlitch();
+  const heroP = useHeroProgress();
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
 
@@ -366,46 +377,55 @@ export default function LandingPage() {
       <ScrollGlitchOverlay active={glitching} />
       <FloatingNav />
 
-      {/* HERO — sticky so it stays pinned while the content sheet slides over it */}
-      <section style={{ position: 'sticky', top: 0, height: '100vh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
+      {/* HERO — fixed so it stays pinned even when overflow:hidden is on body */}
+      <div style={{ height: '100vh', minHeight: 600, position: 'relative' }}>
+        <section style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', willChange: 'transform' }}>
 
-        {/* Video — no blur */}
-        <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
-          <source src="/hero-bg.mp4" type="video/mp4" />
-        </video>
+          {/* Video */}
+          <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
+            <source src="/hero-bg.mp4" type="video/mp4" />
+          </video>
 
-        {/* Subtle theme tint */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'var(--accent)',
-          opacity: 0.18, mixBlendMode: 'color' as const, pointerEvents: 'none' }} />
+          {/* Subtle theme tint */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'var(--accent)',
+            opacity: 0.18, mixBlendMode: 'color' as const, pointerEvents: 'none' }} />
 
-        {/* Cinematic gradient — dark bottom-left for text legibility */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1,
-          background: 'linear-gradient(to top right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, rgba(0,0,0,0.12) 65%, transparent 100%)' }} />
+          {/* Cinematic gradient */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1,
+            background: 'linear-gradient(to top right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, rgba(0,0,0,0.12) 65%, transparent 100%)' }} />
 
-        {/* Bottom page-blend fade */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
-          background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
+          {/* Bottom blend */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
+            background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
 
-        {/* Bottom-left content */}
-        <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'left', padding: '0 0 72px 52px', maxWidth: 620, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: -36, marginLeft: -44 }}>
-            <CapaLogo size={130} />
+          {/* Content — fades + recedes as the card slides over */}
+          <div className="hero-content" style={{
+            position: 'relative', zIndex: 10, textAlign: 'left',
+            padding: '0 0 72px 52px', maxWidth: 620,
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+            opacity: Math.max(0, 1 - heroP * 2.2),
+            transform: `scale(${1 - heroP * 0.06}) translateY(${heroP * -36}px)`,
+            willChange: 'opacity, transform',
+          }}>
+            <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: -36, marginLeft: -44 }}>
+              <CapaLogo size={130} />
+            </div>
+
+            <p className="hero-text hero-text-2 hero-subtitle" style={{ fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', minHeight: '1.5em' }}>
+              {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
+            </p>
+
+            <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
+              <GlowPill to="/register">Start <ChevronRight size={15} /></GlowPill>
+              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 16, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                Sign In
+              </Link>
+            </div>
+            <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
           </div>
-
-          <p className="hero-text hero-text-2 hero-subtitle" style={{ fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', minHeight: '1.5em' }}>
-            {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
-          </p>
-
-          <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
-            <GlowPill to="/register">Start <ChevronRight size={15} /></GlowPill>
-            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 16, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
-              Sign In
-            </Link>
-          </div>
-          <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* Content sheet — slides up over the sticky hero */}
       <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg-1)', borderRadius: '24px 24px 0 0', boxShadow: '0 -24px 64px rgba(0,0,0,0.75)' }}>
