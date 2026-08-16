@@ -123,6 +123,45 @@ const steps = [
 
 const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
 
+// ── Preloader ─────────────────────────────────────────────────
+function usePreloader() {
+  const [pct, setPct] = useState(0);
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let p = 0;
+    const id = setInterval(() => {
+      const step = p < 60 ? 8 : p < 85 ? 4 : p < 95 ? 2 : 1;
+      p = Math.min(100, p + step);
+      setPct(p);
+      if (p >= 100) {
+        clearInterval(id);
+        setTimeout(() => setHidden(true), 900);
+      }
+    }, 70);
+    return () => clearInterval(id);
+  }, []);
+  return { pct, hidden };
+}
+
+function Preloader() {
+  const { pct, hidden } = usePreloader();
+  if (hidden) return null;
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9998,
+      background: '#000',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      opacity: pct >= 100 ? 0 : 1,
+      transition: 'opacity 0.8s ease',
+      pointerEvents: pct >= 100 ? 'none' : 'all',
+    }}>
+      <span style={{ fontFamily: MONO, fontSize: 13, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.06em' }}>
+        {pct}%
+      </span>
+    </div>
+  );
+}
+
 // Animated 10×10 pixel art icon — two interleaved frames that toggle
 function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?: number; color?: string; animDelay?: number }) {
   const d = animDelay;
@@ -287,6 +326,7 @@ export default function LandingPage() {
   const heroP = useHeroProgress();
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+      <Preloader />
 
       <style>{`
         @keyframes hero-text-in {
