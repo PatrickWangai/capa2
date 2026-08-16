@@ -208,7 +208,7 @@ function FloatingNav() {
   const [open, setOpen] = useState(false);
   return (
     <div style={{
-      position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)',
+      position: 'fixed', top: 'max(16px, env(safe-area-inset-top, 0px) + 8px)', left: '50%', transform: 'translateX(-50%)',
       width: 'calc(100vw - 2rem)', maxWidth: '27.375rem', zIndex: 200,
       fontFamily: MONO,
     }}>
@@ -383,12 +383,12 @@ export default function LandingPage() {
         }
 
         @media (max-width: 640px) {
-          .hero-content { padding: 0 0 60px 24px !important; }
-          .hero-logo-wrap { margin-bottom: -22px !important; margin-left: -26px !important; }
-          .hero-logo-wrap img { width: min(100px, 60vw) !important; height: auto !important; }
-          .hero-subtitle { font-size: 14px !important; margin-bottom: 20px !important; }
-          .hero-buttons { flex-direction: column !important; align-items: flex-start !important; width: 100% !important; max-width: 280px !important; }
-          .hero-buttons a { justify-content: center !important; padding: 12px 20px !important; font-size: 14px !important; }
+          .hero-content { padding: 0 20px max(80px, env(safe-area-inset-bottom, 0px) + 60px) 20px !important; }
+          .hero-logo-wrap { margin-bottom: -16px !important; margin-left: -4px !important; }
+          .hero-logo-wrap img { width: min(110px, 55vw) !important; height: auto !important; }
+          .hero-subtitle { font-size: 15px !important; margin-bottom: 20px !important; max-width: 100% !important; }
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 100% !important; gap: 10px !important; }
+          .hero-buttons a { justify-content: center !important; padding: 14px 20px !important; font-size: 15px !important; }
           .lp-section-pad { padding-top: 60px !important; padding-bottom: 60px !important; }
           .lp-section-pad-sm { padding-top: 48px !important; padding-bottom: 48px !important; }
           .feature-card { padding: 22px !important; }
@@ -396,10 +396,11 @@ export default function LandingPage() {
           .step-icon  { margin: 0 0 12px !important; }
           .cta-features { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 0 8px !important; }
           .cta-btn { width: 100% !important; max-width: 320px !important; justify-content: center !important; padding: 14px 24px !important; font-size: 16px !important; }
-          .lp-footer { padding: 40px 20px 28px !important; }
+          .lp-footer { padding: 40px 20px max(28px, env(safe-area-inset-bottom, 0px) + 16px) !important; }
         }
         @media (max-width: 380px) {
-          .hero-content { padding: 0 0 48px 18px !important; }
+          .hero-content { padding: 0 16px max(72px, env(safe-area-inset-bottom, 0px) + 52px) 16px !important; }
+          .hero-subtitle { font-size: 14px !important; }
         }
 
         /* ── Pill buttons ── */
@@ -427,7 +428,7 @@ export default function LandingPage() {
       <FloatingNav />
 
       {/* HERO */}
-      <section style={{ position: 'relative', height: '100vh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
+      <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
 
           {/* Video */}
           <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
@@ -453,7 +454,7 @@ export default function LandingPage() {
             transform: `scale(${1 - heroP * 0.06}) translateY(${heroP * -36}px)`,
             willChange: 'opacity, transform',
           }}>
-            <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: -36, marginLeft: -44 }}>
+            <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: -36, marginLeft: -28 }}>
               <CapaLogo size={130} />
             </div>
 
