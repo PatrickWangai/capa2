@@ -387,9 +387,6 @@ export default function LandingPage() {
             <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
 
-          {/* Subtle theme tint */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'var(--accent)',
-            opacity: 0.18, mixBlendMode: 'color' as const, pointerEvents: 'none' }} />
 
           {/* Cinematic gradient */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 1,
@@ -418,7 +415,7 @@ export default function LandingPage() {
 
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
               <GlowPill to="/register">Start <ChevronRight size={15} /></GlowPill>
-              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 16, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.14)', color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 500, border: '1px solid rgba(255,255,255,0.22)' }}>
                 Sign In
               </Link>
             </div>
