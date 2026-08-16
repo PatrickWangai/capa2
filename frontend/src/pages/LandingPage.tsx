@@ -126,7 +126,7 @@ const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
 // ── Preloader ─────────────────────────────────────────────────
 function usePreloader() {
   const [pct, setPct] = useState(0);
-  const [hidden, setHidden] = useState(false);
+  const [gone, setGone] = useState(false);
   useEffect(() => {
     let p = 0;
     const id = setInterval(() => {
@@ -135,27 +135,36 @@ function usePreloader() {
       setPct(p);
       if (p >= 100) {
         clearInterval(id);
-        setTimeout(() => setHidden(true), 900);
+        setTimeout(() => setGone(true), 1200); // remove after transition
       }
     }, 70);
     return () => clearInterval(id);
   }, []);
-  return { pct, hidden };
+  return { pct, gone };
 }
 
 function Preloader() {
-  const { pct, hidden } = usePreloader();
-  if (hidden) return null;
+  const { pct, gone } = usePreloader();
+  if (gone) return null;
+  const exiting = pct >= 100;
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
       background: '#000',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      opacity: pct >= 100 ? 0 : 1,
-      transition: 'opacity 0.8s ease',
-      pointerEvents: pct >= 100 ? 'none' : 'all',
+      opacity: exiting ? 0 : 1,
+      transform: exiting ? 'scale(1.06)' : 'scale(1)',
+      transition: exiting
+        ? 'opacity 1.1s cubic-bezier(0.76,0,0.24,1), transform 1.1s cubic-bezier(0.76,0,0.24,1)'
+        : 'none',
+      pointerEvents: exiting ? 'none' : 'all',
     }}>
-      <span style={{ fontFamily: MONO, fontSize: 13, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.06em' }}>
+      <span style={{
+        fontFamily: MONO, fontSize: 13,
+        color: 'rgba(255,255,255,0.65)', letterSpacing: '0.06em',
+        opacity: pct >= 96 ? 0 : 1,
+        transition: 'opacity 0.35s ease',
+      }}>
         {pct}%
       </span>
     </div>
@@ -337,11 +346,11 @@ export default function LandingPage() {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
-        .hero-text { animation: hero-text-in 1s ease both; }
-        .hero-text-1 { animation-delay: 0.1s; }
-        .hero-text-2 { animation-delay: 0.3s; }
-        .hero-text-3 { animation-delay: 0.5s; }
-        .hero-text-4 { animation-delay: 0.7s; }
+        .hero-text { animation: hero-text-in 0.9s ease both; }
+        .hero-text-1 { animation-delay: 2.5s; }
+        .hero-text-2 { animation-delay: 2.75s; }
+        .hero-text-3 { animation-delay: 3.0s; }
+        .hero-text-4 { animation-delay: 3.2s; }
 
         .capa-nav-item:hover .capa-nav-line { transform: scaleX(1) !important; }
         .capa-nav-item:hover > span { color: rgba(255,255,255,1) !important; }
