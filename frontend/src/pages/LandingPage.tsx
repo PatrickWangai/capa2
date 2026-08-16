@@ -342,62 +342,24 @@ export default function LandingPage() {
           .hero-content { padding: 0 0 48px 18px !important; }
         }
 
-        /* ── Spinning gradient ring pill ── */
-        .glow-pill {
-          position: relative;
-          display: inline-flex;
-          border-radius: 980px;
-          padding: 1.5px;
-          overflow: hidden;
-          background: rgba(255,255,255,0.08);
-          transition: box-shadow 0.3s;
-        }
-        .glow-pill:hover {
-          box-shadow: 0 0 14px 4px rgba(255,32,96,0.35);
-        }
-        .glow-pill::before {
-          content: '';
-          position: absolute;
-          width: 220%;
-          height: 220%;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: conic-gradient(from 0deg,
-            #ff2060 0deg, #c5003f 60deg, #7d0022 120deg,
-            #3a000e 180deg, #7d0022 240deg, #c5003f 300deg, #ff2060 360deg
-          );
-          opacity: 0;
-          transition: opacity 0.3s;
-          animation: spin-ring 3s linear infinite;
-          animation-play-state: paused;
-        }
-        .glow-pill:hover::before {
-          opacity: 1;
-          animation-play-state: running;
-        }
+        /* ── Pill buttons ── */
+        .glow-pill { display: inline-flex; border-radius: 980px; }
         .glow-pill-inner {
-          position: relative; z-index: 1;
           display: inline-flex; align-items: center; justify-content: center;
           gap: 6px; border-radius: 980px;
-          background: rgba(10,10,14,0.95);
-          color: #fff !important; text-decoration: none;
+          background: var(--accent);
+          color: var(--accent-text, #fff) !important; text-decoration: none;
           font-size: 16px; font-weight: 600; letter-spacing: -0.01em;
-          padding: 12px 25px;
-          white-space: nowrap;
-          transition: background 0.2s;
+          padding: 13px 26px; white-space: nowrap;
+          transition: opacity 0.15s;
         }
-        .glow-pill-inner:hover { background: rgba(22,14,18,0.98); }
-        .cta-glow .glow-pill-inner { font-size: 18px; padding: 14px 37px; }
-        @keyframes spin-ring {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to   { transform: translate(-50%, -50%) rotate(360deg); }
-        }
+        .glow-pill-inner:hover { opacity: 0.88; }
+        .cta-glow .glow-pill-inner { font-size: 18px; padding: 15px 38px; }
         @media (max-width: 640px) {
           .hero-buttons .glow-pill { width: 100%; }
           .hero-buttons .glow-pill-inner { width: 100%; padding: 12px 20px !important; font-size: 14px !important; }
           .cta-glow { width: 100%; max-width: 320px; }
-          .cta-glow .glow-pill-inner { padding: 13px 23px !important; font-size: 16px !important; width: 100%; }
+          .cta-glow .glow-pill-inner { padding: 14px 24px !important; font-size: 16px !important; width: 100%; }
         }
       `}</style>
 
