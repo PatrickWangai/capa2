@@ -342,15 +342,31 @@ export default function LandingPage() {
           .hero-content { padding: 0 0 48px 18px !important; }
         }
 
-        /* ── Gradient glow pill ── */
+        /* ── Spinning gradient ring pill ── */
         .glow-pill {
+          position: relative;
           display: inline-flex;
-          background: linear-gradient(135deg, #ff2060 0%, #c5003f 55%, #7d0022 100%);
-          padding: 1.5px;
           border-radius: 980px;
-          animation: ring-glow 7s ease-in-out 2s infinite;
+          padding: 1.5px;
+          overflow: hidden;
+          box-shadow: 0 0 8px 2px rgba(255,32,96,0.22);
+        }
+        .glow-pill::before {
+          content: '';
+          position: absolute;
+          width: 220%;
+          height: 220%;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: conic-gradient(from 0deg,
+            #ff2060 0deg, #c5003f 60deg, #7d0022 120deg,
+            #3a000e 180deg, #7d0022 240deg, #c5003f 300deg, #ff2060 360deg
+          );
+          animation: spin-ring 3s linear 10s infinite;
         }
         .glow-pill-inner {
+          position: relative; z-index: 1;
           display: inline-flex; align-items: center; justify-content: center;
           gap: 6px; border-radius: 980px;
           background: rgba(10,10,14,0.95);
@@ -362,10 +378,9 @@ export default function LandingPage() {
         }
         .glow-pill-inner:hover { background: rgba(22,14,18,0.98); }
         .cta-glow .glow-pill-inner { font-size: 18px; padding: 14px 37px; }
-        @keyframes ring-glow {
-          0%, 13%, 100% { box-shadow: 0 0 5px 1px rgba(255,32,96,0.18); }
-          5%  { box-shadow: 0 0 16px 5px rgba(255,32,96,0.68), 0 0 28px 10px rgba(197,0,63,0.38); }
-          9%  { box-shadow: 0 0 26px 9px rgba(255,32,96,0.82), 0 0 52px 22px rgba(197,0,63,0.48); }
+        @keyframes spin-ring {
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to   { transform: translate(-50%, -50%) rotate(360deg); }
         }
         @media (max-width: 640px) {
           .hero-buttons .glow-pill { width: 100%; }
