@@ -76,6 +76,17 @@ function ScrollGlitchOverlay({ active }: { active: boolean }) {
   );
 }
 
+// ── Gradient-border glow pill button ─────────────────────────
+function GlowPill({ to, children, className = '', innerStyle }: { to: string; children: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
+  return (
+    <div className={`glow-pill${className ? ' ' + className : ''}`}>
+      <Link to={to} className="glow-pill-inner" style={innerStyle}>
+        {children}
+      </Link>
+    </div>
+  );
+}
+
 // ── Glitch section entrance ───────────────────────────────────
 function GlitchSection({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -330,6 +341,38 @@ export default function LandingPage() {
         @media (max-width: 380px) {
           .hero-content { padding: 0 0 48px 18px !important; }
         }
+
+        /* ── Gradient glow pill ── */
+        .glow-pill {
+          display: inline-flex;
+          background: linear-gradient(135deg, #ff2060 0%, #c5003f 55%, #7d0022 100%);
+          padding: 1.5px;
+          border-radius: 980px;
+          animation: ring-glow 7s ease-in-out 2s infinite;
+        }
+        .glow-pill-inner {
+          display: inline-flex; align-items: center; justify-content: center;
+          gap: 6px; border-radius: 980px;
+          background: rgba(10,10,14,0.95);
+          color: #fff !important; text-decoration: none;
+          font-size: 16px; font-weight: 600; letter-spacing: -0.01em;
+          padding: 12px 25px;
+          white-space: nowrap;
+          transition: background 0.2s;
+        }
+        .glow-pill-inner:hover { background: rgba(22,14,18,0.98); }
+        .cta-glow .glow-pill-inner { font-size: 18px; padding: 14px 37px; }
+        @keyframes ring-glow {
+          0%, 13%, 100% { box-shadow: 0 0 5px 1px rgba(255,32,96,0.18); }
+          5%  { box-shadow: 0 0 16px 5px rgba(255,32,96,0.68), 0 0 28px 10px rgba(197,0,63,0.38); }
+          9%  { box-shadow: 0 0 26px 9px rgba(255,32,96,0.82), 0 0 52px 22px rgba(197,0,63,0.48); }
+        }
+        @media (max-width: 640px) {
+          .hero-buttons .glow-pill { width: 100%; }
+          .hero-buttons .glow-pill-inner { width: 100%; padding: 12px 20px !important; font-size: 14px !important; }
+          .cta-glow { width: 100%; max-width: 320px; }
+          .cta-glow .glow-pill-inner { padding: 13px 23px !important; font-size: 16px !important; width: 100%; }
+        }
       `}</style>
 
       <ScrollGlitchOverlay active={glitching} />
@@ -367,9 +410,7 @@ export default function LandingPage() {
           </p>
 
           <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
-            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '13px 26px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 600, letterSpacing: '-0.01em' }}>
-              Start <ChevronRight size={15} />
-            </Link>
+            <GlowPill to="/register">Start <ChevronRight size={15} /></GlowPill>
             <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.08)', color: TEXT, textDecoration: 'none', fontSize: 16, fontWeight: 500, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
               Sign In
             </Link>
@@ -465,9 +506,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <Link to="/register" className="cta-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '15px 38px', borderRadius: 980, backgroundColor: ACCENT, color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 600 }}>
-              Create Free Account <ChevronRight size={18} />
-            </Link>
+            <GlowPill to="/register" className="cta-glow">Create Free Account <ChevronRight size={18} /></GlowPill>
           </div>
         </section>
       </GlitchSection>
