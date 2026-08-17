@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 
 const yf = new YahooFinance({
   suppressNotices: ['yahooSurvey'],
-  validation: { logErrors: false, logWarnings: false },
+  validation: { logErrors: false },
 });
 
 const TICK_MS          = 1_000;        // broadcast every 1 second
