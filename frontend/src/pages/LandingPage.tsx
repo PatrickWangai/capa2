@@ -21,7 +21,8 @@ function useTypeOnce(text: string, speed = 38) {
 }
 
 // ── Scramble text effect ──────────────────────────────────────
-const SCRAMBLE_CHARS = '!@#$%^&*<>?/|[]{}~=+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+// Lamalama uses only punctuation/symbol noise — no letters, no digits
+const SCRAMBLE_CHARS = '!@#$%^&*():{};|,.<>/?';
 
 function useScramble(text: string) {
   const [display, setDisplay] = useState(text);
@@ -30,7 +31,10 @@ function useScramble(text: string) {
   const scramble = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     let tick = 0;
-    const TPChar = 3;
+    // 2 frames per character; adjust ms so total ≈ 500ms for any length
+    const TPChar = 2;
+    const nonSpace = text.replace(/ /g, '').length || 1;
+    const ms = Math.max(16, Math.round(500 / (nonSpace * TPChar)));
     timerRef.current = setInterval(() => {
       const resolved = Math.floor(tick / TPChar);
       setDisplay(
@@ -44,7 +48,7 @@ function useScramble(text: string) {
         clearInterval(timerRef.current!);
         setDisplay(text);
       }
-    }, 38);
+    }, ms);
   };
 
   return { display, scramble };
