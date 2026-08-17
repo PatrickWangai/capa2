@@ -402,22 +402,20 @@ export default function LandingPage() {
       <FloatingNav />
 
       {/* HERO */}
-      <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
+      <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start',
+        background: 'linear-gradient(135deg, #060d1f 0%, #0a1628 30%, #0d2348 60%, #0a1a3a 80%, #060d1f 100%)' }}>
 
-          {/* Video */}
-          <video autoPlay muted loop playsInline poster="/hero-poster.jpg"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
-            <source src="/hero-bg.mp4" type="video/mp4" />
-          </video>
-
+          {/* Subtle radial glow */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1,
+            background: 'radial-gradient(ellipse 80% 60% at 60% 40%, rgba(41,98,255,0.12) 0%, transparent 70%)' }} />
 
           {/* Cinematic gradient */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 1,
-            background: 'linear-gradient(to top right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, rgba(0,0,0,0.12) 65%, transparent 100%)' }} />
+            background: 'linear-gradient(to top right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 40%, transparent 100%)' }} />
 
           {/* Bottom blend */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
-            background: 'linear-gradient(to top, var(--bg-1) 0%, transparent 100%)', zIndex: 2 }} />
+            background: 'linear-gradient(to top, #060d1f 0%, transparent 100%)', zIndex: 2 }} />
 
           {/* Content — fades + recedes as the card slides over */}
           <div className="hero-content" style={{
