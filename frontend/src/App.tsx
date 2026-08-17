@@ -75,12 +75,49 @@ function LoadingSpinner() {
   return (
     <div style={{
       position: 'fixed', inset: 0,
-      background: 'linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif',
+      background: '#07090f',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 9999,
     }}>
-      <img src="/capa-logo.png" style={{ width: 200, height: 'auto', objectFit: 'contain' }} alt="CAPA" draggable={false} />
+      <style>{`
+        @keyframes capa-spin-cw  { to { transform: rotate(360deg);  } }
+        @keyframes capa-spin-ccw { to { transform: rotate(-360deg); } }
+        .capa-ring {
+          position: absolute; border-radius: 50%;
+          border: 11px solid transparent;
+        }
+        .capa-ring-1 {
+          width: 200px; height: 200px;
+          border-top-color:    #1a6fa8;
+          border-right-color:  #1a6fa8;
+          border-bottom-color: #1a6fa8;
+          animation: capa-spin-cw 1.6s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+        .capa-ring-2 {
+          width: 152px; height: 152px;
+          border-top-color:   #b8620a;
+          border-left-color:  #b8620a;
+          border-bottom-color:#b8620a;
+          animation: capa-spin-ccw 1.2s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+        .capa-ring-3 {
+          width: 104px; height: 104px;
+          border-top-color:   #9b2d7a;
+          border-right-color: #9b2d7a;
+          animation: capa-spin-cw 0.9s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+      `}</style>
+      <div style={{ position: 'relative', width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="capa-ring capa-ring-1" />
+        <div className="capa-ring capa-ring-2" />
+        <div className="capa-ring capa-ring-3" />
+        <img
+          src="/capa-logo.png"
+          style={{ width: 52, height: 'auto', objectFit: 'contain', position: 'relative', zIndex: 1, opacity: 0.92 }}
+          alt="CAPA"
+          draggable={false}
+        />
+      </div>
     </div>
   );
 }
