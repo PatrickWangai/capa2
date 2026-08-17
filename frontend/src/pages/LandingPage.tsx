@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ChevronRight } from 'lucide-react';
+import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ArrowUpRight } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCCircle from '../components/ui/CapaCCircle';
 
@@ -351,10 +351,11 @@ function FloatingNav() {
           <div style={{ padding: '0.625rem 0.8125rem 0.8125rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <Link to="/register" onClick={() => setOpen(false)} onMouseEnter={scrambleOpenAcc} style={{
               display: 'block', textAlign: 'center',
-              padding: '0.6875rem 1rem', borderRadius: 3,
-              background: 'var(--accent)', color: 'var(--accent-text,#fff)',
+              padding: '0.75rem 1rem', borderRadius: 3,
+              background: '#fff', color: '#000',
               textDecoration: 'none', fontFamily: MONO,
-              fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              border: '1px solid #fff',
               transition: `clip-path 0.44s ease 0.42s, transform 0.44s ease 0.42s`,
               clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
               transform: open ? 'translateY(0%)' : 'translateY(80%)',
@@ -453,24 +454,27 @@ export default function LandingPage() {
           .hero-subtitle { font-size: 14px !important; }
         }
 
-        /* ── Pill buttons ── */
-        .glow-pill { display: inline-flex; border-radius: 980px; }
+        /* ── Lamalama-style rectangular buttons ── */
+        .glow-pill { display: inline-flex; }
         .glow-pill-inner {
           display: inline-flex; align-items: center; justify-content: center;
-          gap: 6px; border-radius: 980px;
-          background: var(--accent);
-          color: var(--accent-text, #fff) !important; text-decoration: none;
-          font-size: 16px; font-weight: 600; letter-spacing: -0.01em;
-          padding: 13px 26px; white-space: nowrap;
-          transition: opacity 0.15s;
+          gap: 7px; border-radius: 3px;
+          background: #fff;
+          color: #000 !important; text-decoration: none;
+          font-family: 'Sometype Mono', ui-monospace, 'SF Mono', monospace;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+          text-transform: uppercase;
+          padding: 14px 22px; white-space: nowrap;
+          transition: background 0.15s, color 0.15s, border-color 0.15s;
+          border: 1px solid #fff;
         }
-        .glow-pill-inner:hover { opacity: 0.88; }
-        .cta-glow .glow-pill-inner { font-size: 18px; padding: 15px 38px; }
+        .glow-pill-inner:hover { background: transparent; color: #fff !important; }
+        .cta-glow .glow-pill-inner { font-size: 12px; padding: 16px 32px; }
         @media (max-width: 640px) {
           .hero-buttons .glow-pill { width: 100%; }
-          .hero-buttons .glow-pill-inner { width: 100%; padding: 12px 20px !important; font-size: 14px !important; }
-          .cta-glow { width: 100%; max-width: 320px; }
-          .cta-glow .glow-pill-inner { padding: 14px 24px !important; font-size: 16px !important; width: 100%; }
+          .hero-buttons .glow-pill-inner { width: 100%; padding: 14px 20px !important; justify-content: center; }
+          .cta-glow { width: 100%; max-width: 340px; }
+          .cta-glow .glow-pill-inner { width: 100%; }
         }
       `}</style>
 
@@ -513,8 +517,8 @@ export default function LandingPage() {
             </p>
 
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
-              <GlowPill to="/register" text="Start" icon={<ChevronRight size={15} />} />
-              <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.14)', color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 500, border: '1px solid rgba(255,255,255,0.22)' }}>
+              <GlowPill to="/register" text="Start" icon={<ArrowUpRight size={13} />} />
+              <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '14px 22px', borderRadius: 3, backgroundColor: 'transparent', color: '#fff', textDecoration: 'none', fontFamily: "'Sometype Mono', ui-monospace, monospace", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.45)', transition: 'background 0.15s, border-color 0.15s' }}>
                 <span ref={signInRef} style={signInLock}>{signInText}</span>
               </Link>
             </div>
@@ -611,7 +615,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <GlowPill to="/register" text="Create Free Account" icon={<ChevronRight size={18} />} className="cta-glow" />
+            <GlowPill to="/register" text="Create Free Account" icon={<ArrowUpRight size={15} />} className="cta-glow" />
           </div>
         </section>
       </GlitchSection>
