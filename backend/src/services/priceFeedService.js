@@ -3,7 +3,10 @@ import { prisma } from '../utils/db.js';
 import { broadcastPrice } from './socketService.js';
 import logger from '../utils/logger.js';
 
-const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
+const yf = new YahooFinance({
+  suppressNotices: ['yahooSurvey'],
+  validation: { logErrors: false, logWarnings: false },
+});
 
 const TICK_MS          = 1_000;        // broadcast every 1 second
 const DB_WRITE_MS      = 15_000;       // persist to DB every 15 seconds
