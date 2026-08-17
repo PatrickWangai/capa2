@@ -187,14 +187,39 @@ function Preloader() {
       opacity: exiting ? 0 : 1,
       transition: exiting ? 'opacity 1s cubic-bezier(0.76,0,0.24,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
+      {/* Video — inverted so white becomes black */}
       <video
         ref={videoRef}
         src="/preloader.mp4"
         muted
         playsInline
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover',
+          filter: 'invert(1)',
+        }}
       />
+
+      {/* CAPA branding overlay */}
+      <div style={{
+        position: 'relative', zIndex: 1, pointerEvents: 'none',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+      }}>
+        <img
+          src="/capa-logo.png"
+          style={{ width: 110, height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1) drop-shadow(0 0 20px rgba(255,255,255,0.15))' }}
+          alt="CAPA"
+          draggable={false}
+        />
+        <span style={{
+          fontFamily: MONO, fontSize: 10, letterSpacing: '0.28em',
+          color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
+        }}>
+          Invest Globally
+        </span>
+      </div>
     </div>
   );
 }
