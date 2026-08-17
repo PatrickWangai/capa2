@@ -187,7 +187,7 @@ function Preloader() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
-      background: '#000',
+      background: '#07090f',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       opacity: exiting ? 0 : 1,
       transform: exiting ? 'scale(1.06)' : 'scale(1)',
@@ -196,14 +196,37 @@ function Preloader() {
         : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
-      <span style={{
-        fontFamily: MONO, fontSize: 13,
-        color: 'rgba(255,255,255,0.65)', letterSpacing: '0.06em',
-        opacity: pct >= 96 ? 0 : 1,
-        transition: 'opacity 0.35s ease',
-      }}>
-        {pct}%
-      </span>
+      <style>{`
+        @keyframes pl-cw  { to { transform: rotate(360deg);  } }
+        @keyframes pl-ccw { to { transform: rotate(-360deg); } }
+        .pl-ring { position: absolute; border-radius: 50%; border: 11px solid transparent; }
+        .pl-r1 {
+          width: 200px; height: 200px;
+          border-top-color: #1a6fa8; border-right-color: #1a6fa8; border-bottom-color: #1a6fa8;
+          animation: pl-cw 1.6s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+        .pl-r2 {
+          width: 152px; height: 152px;
+          border-top-color: #b8620a; border-left-color: #b8620a; border-bottom-color: #b8620a;
+          animation: pl-ccw 1.2s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+        .pl-r3 {
+          width: 104px; height: 104px;
+          border-top-color: #9b2d7a; border-right-color: #9b2d7a;
+          animation: pl-cw 0.9s cubic-bezier(.6,.1,.4,.9) infinite;
+        }
+      `}</style>
+      <div style={{ position: 'relative', width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="pl-ring pl-r1" />
+        <div className="pl-ring pl-r2" />
+        <div className="pl-ring pl-r3" />
+        <img
+          src="/capa-logo.png"
+          style={{ width: 52, height: 'auto', objectFit: 'contain', position: 'relative', zIndex: 1, opacity: exiting ? 0 : 0.9, transition: 'opacity 0.4s ease' }}
+          alt="CAPA"
+          draggable={false}
+        />
+      </div>
     </div>
   );
 }
