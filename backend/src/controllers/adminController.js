@@ -162,7 +162,7 @@ export async function getAnalytics(req, res) {
     `,
   ]);
 
-  const fmt = (rows: any[]) => rows.map(r => ({
+  const fmt = (rows) => rows.map(r => ({
     date: new Date(r.day).toISOString().slice(0, 10),
     count: r.count,
     ...(r.volume !== undefined && { volume: Number(r.volume) }),
