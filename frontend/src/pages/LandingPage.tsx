@@ -56,61 +56,6 @@ function ScrambleSpan({ text, style }: { text: string; style?: React.CSSProperti
   return <span onMouseEnter={scramble} style={style}>{display}</span>;
 }
 
-// ── Scroll glitch overlay ─────────────────────────────────────
-const GLITCH_STRIPS = [
-  { top: '7%',  h: '4.5%', dx:  9, color: 'rgba(var(--accent-rgb),0.22)', dur: '0.28s', delay: '0s'    },
-  { top: '20%', h: '2%',   dx: -14,color: 'rgba(255,0,130,0.13)',         dur: '0.18s', delay: '0.04s' },
-  { top: '33%', h: '7%',   dx:  5, color: 'rgba(0,240,200,0.09)',         dur: '0.32s', delay: '0.02s' },
-  { top: '50%', h: '3%',   dx: -9, color: 'rgba(var(--accent-rgb),0.15)', dur: '0.24s', delay: '0.06s' },
-  { top: '62%', h: '5.5%', dx: 11, color: 'rgba(255,0,130,0.09)',         dur: '0.28s', delay: '0.01s' },
-  { top: '76%', h: '3.5%', dx: -4, color: 'rgba(0,240,200,0.11)',         dur: '0.22s', delay: '0.05s' },
-  { top: '87%', h: '6%',   dx:  7, color: 'rgba(var(--accent-rgb),0.17)', dur: '0.30s', delay: '0.03s' },
-];
-
-function useScrollGlitch() {
-  const [active, setActive] = useState(false);
-  const cooldownRef = useRef(false);
-  const prevRef = useRef(0);
-  useEffect(() => {
-    const handle = () => {
-      const sy = window.scrollY;
-      const prev = prevRef.current;
-      prevRef.current = sy;
-      if (!cooldownRef.current && prev < window.innerHeight * 0.55 && sy >= window.innerHeight * 0.55) {
-        cooldownRef.current = true;
-        setActive(true);
-        setTimeout(() => {
-          setActive(false);
-          setTimeout(() => { cooldownRef.current = false; }, 1500);
-        }, 600);
-      }
-    };
-    window.addEventListener('scroll', handle, { passive: true });
-    return () => window.removeEventListener('scroll', handle);
-  }, []);
-  return active;
-}
-
-function ScrollGlitchOverlay({ active }: { active: boolean }) {
-  if (!active) return null;
-  return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none', overflow: 'hidden' }}>
-      {GLITCH_STRIPS.map((s, i) => (
-        <div key={i} style={{
-          position: 'absolute', top: s.top, left: 0, right: 0, height: s.h,
-          background: s.color, transform: `translateX(${s.dx}px)`,
-          animation: `strip-flash ${s.dur} ${s.delay} ease both`,
-          mixBlendMode: 'screen' as const,
-        }} />
-      ))}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 3px)',
-        animation: 'strip-flash 0.5s ease both',
-      }} />
-    </div>
-  );
-}
 
 // ── Gradient-border glow pill button ─────────────────────────
 function GlowPill({ to, text, icon, className = '', innerStyle }: { to: string; text: string; icon?: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
@@ -132,7 +77,7 @@ function GlitchSection({ children, style }: { children: React.ReactNode; style?:
     if (!el) return;
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        el.style.animation = 'glitch-section-in 0.65s ease both';
+        el.style.animation = 'section-fade-in 0.7s ease both';
         obs.disconnect();
       }
     }, { threshold: 0.08 });
@@ -370,7 +315,6 @@ function useHeroProgress() {
 
 export default function LandingPage() {
   const typedText = useTypeOnce(HERO_TEXT);
-  const glitching = useScrollGlitch();
   const heroP = useHeroProgress();
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
@@ -405,20 +349,9 @@ export default function LandingPage() {
           100%    { opacity: 0.15; }
         }
 
-        @keyframes glitch-section-in {
-          0%   { opacity: 0; transform: translateY(18px) translateX(0); }
-          8%   { opacity: 1; transform: translateY(-3px) translateX(6px); filter: brightness(2) saturate(3) hue-rotate(20deg); }
-          16%  { transform: translateY(1px) translateX(-4px); filter: brightness(1.4) hue-rotate(-10deg); }
-          24%  { transform: translateY(0) translateX(2px); filter: brightness(1.1); }
-          32%  { transform: translateY(0) translateX(-1px); filter: none; }
-          42%  { transform: translateY(0) translateX(0); }
-          100% { opacity: 1; transform: translateY(0); filter: none; }
-        }
-        @keyframes strip-flash {
-          0%   { opacity: 0; }
-          20%  { opacity: 1; }
-          75%  { opacity: 0.5; }
-          100% { opacity: 0; }
+        @keyframes section-fade-in {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 640px) {
@@ -466,7 +399,6 @@ export default function LandingPage() {
         }
       `}</style>
 
-      <ScrollGlitchOverlay active={glitching} />
       <FloatingNav />
 
       {/* HERO */}
