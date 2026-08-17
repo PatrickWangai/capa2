@@ -26,12 +26,15 @@ const SCRAMBLE_CHARS = '#@%^&*()_<>!?-+';
 
 function useScramble(text: string) {
   const [display, setDisplay] = useState(text);
+  const [lockedW, setLockedW] = useState<number | undefined>(undefined);
+  const elRef = useRef<HTMLSpanElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const scramble = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    // Freeze the element width before scramble so symbol chars can't shift the layout
+    if (elRef.current) setLockedW(elRef.current.offsetWidth);
     let tick = 0;
-    // 2 frames per character; adjust ms so total ≈ 500ms for any length
     const TPChar = 2;
     const nonSpace = text.replace(/ /g, '').length || 1;
     const ms = Math.max(16, Math.round(500 / (nonSpace * TPChar)));
@@ -47,16 +50,21 @@ function useScramble(text: string) {
       if (resolved >= text.length) {
         clearInterval(timerRef.current!);
         setDisplay(text);
+        setLockedW(undefined);
       }
     }, ms);
   };
 
-  return { display, scramble };
+  const lockStyle: React.CSSProperties = lockedW !== undefined
+    ? { display: 'inline-block', minWidth: lockedW, textAlign: 'center' }
+    : {};
+
+  return { display, scramble, elRef, lockStyle };
 }
 
 function ScrambleSpan({ text, style }: { text: string; style?: React.CSSProperties }) {
-  const { display, scramble } = useScramble(text);
-  return <span onMouseEnter={scramble} style={style}>{display}</span>;
+  const { display, scramble, elRef, lockStyle } = useScramble(text);
+  return <span ref={elRef} onMouseEnter={scramble} style={{ ...lockStyle, ...style }}>{display}</span>;
 }
 
 // ── Scroll glitch overlay ─────────────────────────────────────
@@ -117,11 +125,11 @@ function ScrollGlitchOverlay({ active }: { active: boolean }) {
 
 // ── Gradient-border glow pill button ─────────────────────────
 function GlowPill({ to, text, icon, className = '', innerStyle }: { to: string; text: string; icon?: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
-  const { display, scramble } = useScramble(text);
+  const { display, scramble, elRef, lockStyle } = useScramble(text);
   return (
     <div className={`glow-pill${className ? ' ' + className : ''}`}>
       <Link to={to} className="glow-pill-inner" style={innerStyle} onMouseEnter={scramble}>
-        {display}{icon && <>{' '}{icon}</>}
+        <span ref={elRef} style={lockStyle}>{display}</span>{icon && <>{' '}{icon}</>}
       </Link>
     </div>
   );
@@ -246,7 +254,7 @@ const NAV_ITEMS = [
 
 function FloatingNav() {
   const [open, setOpen] = useState(false);
-  const { display: openAccText, scramble: scrambleOpenAcc } = useScramble('Open Account');
+  const { display: openAccText, scramble: scrambleOpenAcc, elRef: openAccRef, lockStyle: openAccLock } = useScramble('Open Account');
   return (
     <div style={{
       position: 'fixed', top: 'max(16px, env(safe-area-inset-top, 0px) + 8px)', left: '50%', transform: 'translateX(-50%)',
@@ -351,7 +359,7 @@ function FloatingNav() {
               clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
               transform: open ? 'translateY(0%)' : 'translateY(80%)',
             }}>
-              {openAccText}
+              <span ref={openAccRef} style={openAccLock}>{openAccText}</span>
             </Link>
           </div>
         </div>
@@ -374,7 +382,7 @@ export default function LandingPage() {
   const typedText = useTypeOnce(HERO_TEXT);
   const glitching = useScrollGlitch();
   const heroP = useHeroProgress();
-  const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
+  const { display: signInText, scramble: scrambleSignIn, elRef: signInRef, lockStyle: signInLock } = useScramble('Sign In');
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Preloader />
@@ -507,7 +515,7 @@ export default function LandingPage() {
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
               <GlowPill to="/register" text="Start" icon={<ChevronRight size={15} />} />
               <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.14)', color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 500, border: '1px solid rgba(255,255,255,0.22)' }}>
-                {signInText}
+                <span ref={signInRef} style={signInLock}>{signInText}</span>
               </Link>
             </div>
             <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
