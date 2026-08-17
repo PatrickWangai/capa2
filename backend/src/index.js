@@ -45,22 +45,10 @@ import { startLimitOrderJob } from './jobs/limitOrderJob.js';
 import { checkPriceAlerts } from './jobs/priceAlertJob.js';
 import { startPortfolioSnapshotJob } from './jobs/portfolioSnapshotJob.js';
 
-// Fail fast on missing security-critical env vars
-{
-  const required = ['DATABASE_URL', 'REDIS_URL'];
-  const missing = required.filter(k => !process.env[k]);
-  if (missing.length) {
-    console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
-    process.exit(1);
-  }
-  if (process.env.NODE_ENV === 'production') {
-    const prodRequired = ['ADMIN_PASSWORD', 'ADMIN2_PASSWORD'];
-    const missingProd = prodRequired.filter(k => !process.env[k]);
-    if (missingProd.length) {
-      console.error(`FATAL: Missing security-critical env vars in production: ${missingProd.join(', ')}`);
-      process.exit(1);
-    }
-  }
+// Fail fast only on vars with no fallback — everything else is warned about below or in its own module
+if (!process.env.DATABASE_URL) {
+  console.error('FATAL: DATABASE_URL is not set — cannot connect to PostgreSQL');
+  process.exit(1);
 }
 
 // Prisma can return BigInt values; JSON.stringify doesn't handle them natively
@@ -206,6 +194,8 @@ const PORT = process.env.PORT || 4000;
 (async () => {
   await prisma.$connect();
   logger.info('PostgreSQL connected via Prisma');
+  if (!process.env.ADMIN_PASSWORD)  logger.warn('ADMIN_PASSWORD is not set — admin account uses the default password');
+  if (!process.env.ADMIN2_PASSWORD) logger.warn('ADMIN2_PASSWORD is not set — second admin account uses the default password');
   if (!process.env.MPESA_WEBHOOK_SECRET) logger.warn('MPESA_WEBHOOK_SECRET is not set — M-Pesa webhook accepts unauthenticated callbacks');
   setupSocketHandlers(io);
   await startPriceFeed(io);
