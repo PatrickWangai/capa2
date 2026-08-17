@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import {
   TrendingUp, TrendingDown, Flame, Star,
-  BarChart2, Activity, Clock,
+  BarChart2, Activity, Clock, Search, X,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
@@ -46,10 +46,11 @@ const VIEWS: { id: View; label: string; icon: React.ElementType }[] = [
 export default function MarketsPage() {
   const [exchange, setExchange] = useState('NSE');
   const [view, setView]         = useState<View>('all');
+  const [search, setSearch]     = useState('');
   const [watchlistIds, setWIds] = useState<Set<string>>(new Set());
   const qc = useQueryClient();
 
-  const switchExchange = (ex: string) => { setExchange(ex); setView('all'); };
+  const switchExchange = (ex: string) => { setExchange(ex); setView('all'); setSearch(''); };
 
   const currEx = EXCHANGES.find(e => e.id === exchange)!;
 
@@ -78,6 +79,12 @@ export default function MarketsPage() {
 
   const displayed = (() => {
     let list = [...assets];
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter(a =>
+        a.symbol?.toLowerCase().includes(q) || a.name?.toLowerCase().includes(q),
+      );
+    }
     if (view === 'gainers') {
       list = list
         .filter(a => a.price?.changePercent != null)
@@ -191,6 +198,23 @@ export default function MarketsPage() {
           })}
         </div>
       )}
+
+      {/* Search */}
+      <div className="relative">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+        <input
+          className="input pl-9 pr-9 w-full"
+          placeholder="Search by ticker or company name…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {search && (
+          <button onClick={() => setSearch('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+            <X size={13} />
+          </button>
+        )}
+      </div>
 
       <>
       {/* Stock list */}

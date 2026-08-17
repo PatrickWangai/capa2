@@ -16,4 +16,5 @@ router.patch('/kyc/:docId/review', ...guard, kycC.reviewDocument);
 router.get('/audit',               ...guard, c.getAuditLogs);
 router.get('/wallet-conversions',  ...guard, c.listWalletConversions);
 router.get('/wallet-stats',        ...guard, c.getWalletStats);
+router.get('/analytics',           ...guard, c.getAnalytics);
 export default router;

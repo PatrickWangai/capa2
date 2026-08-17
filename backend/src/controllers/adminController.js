@@ -129,3 +129,45 @@ export async function getWalletStats(req, res) {
     },
   });
 }
+
+// GET /api/admin/analytics — 30-day daily time-series for charts
+export async function getAnalytics(req, res) {
+  const days = Number(req.query.days ?? 30);
+  const clampedDays = Math.min(Math.max(days, 7), 365);
+
+  const [signups, orders, deposits] = await Promise.all([
+    prisma.$queryRaw`
+      SELECT DATE_TRUNC('day', created_at AT TIME ZONE 'UTC') AS day, COUNT(*)::int AS count
+      FROM users
+      WHERE created_at >= NOW() - (${clampedDays}::int * INTERVAL '1 day')
+      GROUP BY day ORDER BY day ASC
+    `,
+    prisma.$queryRaw`
+      SELECT DATE_TRUNC('day', created_at AT TIME ZONE 'UTC') AS day,
+             COUNT(*)::int AS count,
+             COALESCE(SUM(estimated_total), 0)::float AS volume
+      FROM orders
+      WHERE created_at >= NOW() - (${clampedDays}::int * INTERVAL '1 day')
+        AND status = 'FILLED'
+      GROUP BY day ORDER BY day ASC
+    `,
+    prisma.$queryRaw`
+      SELECT DATE_TRUNC('day', created_at AT TIME ZONE 'UTC') AS day,
+             COUNT(*)::int AS count,
+             COALESCE(SUM(amount), 0)::float AS amount
+      FROM transactions
+      WHERE created_at >= NOW() - (${clampedDays}::int * INTERVAL '1 day')
+        AND type = 'DEPOSIT' AND status = 'COMPLETED'
+      GROUP BY day ORDER BY day ASC
+    `,
+  ]);
+
+  const fmt = (rows: any[]) => rows.map(r => ({
+    date: new Date(r.day).toISOString().slice(0, 10),
+    count: r.count,
+    ...(r.volume !== undefined && { volume: Number(r.volume) }),
+    ...(r.amount !== undefined && { amount: Number(r.amount) }),
+  }));
+
+  res.json({ signups: fmt(signups), orders: fmt(orders), deposits: fmt(deposits), days: clampedDays });
+}
