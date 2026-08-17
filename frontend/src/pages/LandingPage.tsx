@@ -160,84 +160,6 @@ const steps = [
 
 const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
 
-// ── Preloader ─────────────────────────────────────────────────
-function usePreloader() {
-  const [gone, setGone] = useState(false);
-  const [exiting, setExiting] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-
-    const finish = () => {
-      setExiting(true);
-      setTimeout(() => setGone(true), 1100);
-    };
-
-    vid.addEventListener('ended', finish);
-
-    // Safety: if video fails to load/play, fall back after 4s
-    const fallback = setTimeout(finish, 4000);
-
-    vid.play().catch(() => {});
-
-    return () => {
-      vid.removeEventListener('ended', finish);
-      clearTimeout(fallback);
-    };
-  }, []);
-
-  return { gone, exiting, videoRef };
-}
-
-function Preloader() {
-  const { gone, exiting, videoRef } = usePreloader();
-  if (gone) return null;
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9998,
-      background: '#000',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      opacity: exiting ? 0 : 1,
-      transition: exiting ? 'opacity 1.1s cubic-bezier(0.76,0,0.24,1)' : 'none',
-      pointerEvents: exiting ? 'none' : 'all',
-    }}>
-      {/* Fullscreen video */}
-      <video
-        ref={videoRef}
-        src="/preloader.mp4"
-        muted
-        playsInline
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-        }}
-      />
-
-      {/* CAPA branding overlay */}
-      <div style={{
-        position: 'relative', zIndex: 1,
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18,
-        pointerEvents: 'none',
-      }}>
-        <img
-          src="/capa-logo.png"
-          style={{ width: 120, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 24px rgba(0,0,0,0.7))' }}
-          alt="CAPA"
-          draggable={false}
-        />
-        <span style={{
-          fontFamily: MONO, fontSize: 11, letterSpacing: '0.22em',
-          color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
-        }}>
-          Invest Globally
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // Animated 10×10 pixel art icon — two interleaved frames that toggle
 function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?: number; color?: string; animDelay?: number }) {
@@ -406,8 +328,6 @@ export default function LandingPage() {
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
-      <Preloader />
-
       <style>{`
         @keyframes hero-text-in {
           from { opacity: 0; transform: translateY(24px); }
