@@ -45,6 +45,24 @@ import { startLimitOrderJob } from './jobs/limitOrderJob.js';
 import { checkPriceAlerts } from './jobs/priceAlertJob.js';
 import { startPortfolioSnapshotJob } from './jobs/portfolioSnapshotJob.js';
 
+// Fail fast on missing security-critical env vars
+{
+  const required = ['DATABASE_URL', 'REDIS_URL'];
+  const missing = required.filter(k => !process.env[k]);
+  if (missing.length) {
+    console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
+    process.exit(1);
+  }
+  if (process.env.NODE_ENV === 'production') {
+    const prodRequired = ['ADMIN_PASSWORD', 'ADMIN2_PASSWORD'];
+    const missingProd = prodRequired.filter(k => !process.env[k]);
+    if (missingProd.length) {
+      console.error(`FATAL: Missing security-critical env vars in production: ${missingProd.join(', ')}`);
+      process.exit(1);
+    }
+  }
+}
+
 // Prisma can return BigInt values; JSON.stringify doesn't handle them natively
 BigInt.prototype.toJSON = function () { return this.toString(); };
 
@@ -53,11 +71,20 @@ app.set('trust proxy', 1); // Render sits behind a reverse proxy
 const httpServer = http.createServer(app);
 
 // ── Socket.IO ────────────────────────────────────────────────
+function parseCorsOrigins() {
+  if (process.env.CORS_ORIGINS === '*') {
+    if (process.env.NODE_ENV === 'production') {
+      logger.warn('CORS_ORIGINS=* is not allowed in production — falling back to localhost only');
+      return ['http://localhost:5173'];
+    }
+    return true; // reflect origin in dev
+  }
+  return process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173'];
+}
+const corsOrigins = parseCorsOrigins();
+
 const io = new Server(httpServer, {
-  cors: {
-    origin: process.env.CORS_ORIGINS === '*' ? true : (process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173']),
-    credentials: true,
-  },
+  cors: { origin: corsOrigins, credentials: true },
   transports: ['websocket', 'polling'],
 });
 app.set('io', io);
@@ -68,7 +95,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https://logo.clearbit.com', 'https://www.google.com'],
       connectSrc: ["'self'", 'wss:', 'ws:', 'https:'],
@@ -77,10 +104,7 @@ app.use(helmet({
   },
 }));
 app.use(compression());
-app.use(cors({
-  origin: process.env.CORS_ORIGINS === '*' ? true : (process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173']),
-  credentials: true,
-}));
+app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use('/api/webhooks', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -182,8 +206,7 @@ const PORT = process.env.PORT || 4000;
 (async () => {
   await prisma.$connect();
   logger.info('PostgreSQL connected via Prisma');
-  if (!process.env.ADMIN_PASSWORD)  logger.warn('ADMIN_PASSWORD env var is not set — admin account will use the insecure default password');
-  if (!process.env.ADMIN2_PASSWORD) logger.warn('ADMIN2_PASSWORD env var is not set — second admin account will use the insecure default password');
+  if (!process.env.MPESA_WEBHOOK_SECRET) logger.warn('MPESA_WEBHOOK_SECRET is not set — M-Pesa webhook accepts unauthenticated callbacks');
   setupSocketHandlers(io);
   await startPriceFeed(io);
   startLimitOrderJob();

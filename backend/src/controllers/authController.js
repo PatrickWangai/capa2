@@ -12,6 +12,33 @@ import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../config/jwt.js';
 const ACCESS_TTL = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_DAYS = 30;
 
+const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#^()+={}\[\]|:;<>,.?/~`]).{10,}$/;
+
+// AES-256-GCM encryption for MFA secrets stored in DB
+const MFA_KEY_HEX = process.env.MFA_ENCRYPTION_KEY || '';
+const MFA_KEY = MFA_KEY_HEX.length === 64 ? Buffer.from(MFA_KEY_HEX, 'hex') : null;
+
+function encryptMfaSecret(plaintext) {
+  if (!MFA_KEY) return plaintext;
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', MFA_KEY, iv);
+  const enc = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `enc:${iv.toString('hex')}:${tag.toString('hex')}:${enc.toString('hex')}`;
+}
+
+function decryptMfaSecret(stored) {
+  if (!stored || !stored.startsWith('enc:')) return stored;
+  if (!MFA_KEY) throw new Error('MFA_ENCRYPTION_KEY not configured but encrypted secret found');
+  const parts = stored.split(':');
+  const iv  = Buffer.from(parts[1], 'hex');
+  const tag = Buffer.from(parts[2], 'hex');
+  const enc = Buffer.from(parts[3], 'hex');
+  const decipher = crypto.createDecipheriv('aes-256-gcm', MFA_KEY, iv);
+  decipher.setAuthTag(tag);
+  return decipher.update(enc).toString('utf8') + decipher.final('utf8');
+}
+
 const sign = (sub, secret, expiresIn) =>
   jwt.sign({ sub }, secret, { expiresIn });
 
@@ -62,7 +89,7 @@ export async function register(req, res) {
         referralCode,
         accounts: {
           create: {
-            accountNumber: 'IG' + Date.now().toString().slice(-8),
+            accountNumber: 'IG' + crypto.randomBytes(4).toString('hex').toUpperCase(),
             isPrimary: true,
             baseCurrency: country === 'KE' ? 'KES' : country === 'GB' ? 'GBP' : 'USD',
             balances: {
@@ -119,8 +146,13 @@ export async function login(req, res) {
 
   if (user.mfaEnabled) {
     if (!mfaCode) return res.status(200).json({ requiresMfa: true });
-    const valid = speakeasy.totp.verify({ secret: user.mfaSecret, encoding: 'base32', token: mfaCode, window: 1 });
+    const mfaKey = `mfa_attempts:${user.id}`;
+    const attempts = await redis.incr(mfaKey);
+    if (attempts === 1) await redis.expire(mfaKey, 900);
+    if (attempts > 5) return res.status(429).json({ error: 'Too many MFA attempts. Try again in 15 minutes.' });
+    const valid = speakeasy.totp.verify({ secret: decryptMfaSecret(user.mfaSecret), encoding: 'base32', token: mfaCode, window: 1 });
     if (!valid) return res.status(401).json({ error: 'Invalid MFA code.' });
+    await redis.del(mfaKey);
   }
 
   await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
@@ -205,7 +237,7 @@ export async function logout(req, res) {
 // POST /api/auth/mfa/setup
 export async function mfaSetup(req, res) {
   const secret = speakeasy.generateSecret({ name: `Capa:${req.user.email}`, length: 20 });
-  await prisma.user.update({ where: { id: req.user.id }, data: { mfaSecret: secret.base32 } });
+  await prisma.user.update({ where: { id: req.user.id }, data: { mfaSecret: encryptMfaSecret(secret.base32) } });
   const qrCode = await QRCode.toDataURL(secret.otpauth_url);
   res.json({ secret: secret.base32, qrCode });
 }
@@ -214,7 +246,7 @@ export async function mfaSetup(req, res) {
 export async function mfaVerify(req, res) {
   const { code } = req.body;
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-  const valid = speakeasy.totp.verify({ secret: user.mfaSecret, encoding: 'base32', token: code, window: 1 });
+  const valid = speakeasy.totp.verify({ secret: decryptMfaSecret(user.mfaSecret), encoding: 'base32', token: code, window: 1 });
   if (!valid) return res.status(400).json({ error: 'Invalid code.' });
   await prisma.user.update({ where: { id: req.user.id }, data: { mfaEnabled: true } });
   res.json({ message: 'MFA enabled successfully.' });
@@ -226,7 +258,7 @@ export async function mfaDisable(req, res) {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.mfaEnabled) return res.status(400).json({ error: 'MFA is not enabled.' });
   if (!code) return res.status(400).json({ error: 'Verification code required to disable MFA.' });
-  const valid = speakeasy.totp.verify({ secret: user.mfaSecret, encoding: 'base32', token: code, window: 1 });
+  const valid = speakeasy.totp.verify({ secret: decryptMfaSecret(user.mfaSecret), encoding: 'base32', token: code, window: 1 });
   if (!valid) return res.status(401).json({ error: 'Invalid code.' });
   await prisma.user.update({ where: { id: req.user.id }, data: { mfaEnabled: false, mfaSecret: null } });
   res.json({ message: 'MFA disabled.' });
@@ -249,7 +281,7 @@ export async function forgotPassword(req, res) {
 export async function resetPassword(req, res) {
   const { token, password } = req.body;
   if (!token || !password) return res.status(400).json({ error: 'Token and new password required.' });
-  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  if (!PASSWORD_RE.test(password)) return res.status(400).json({ error: 'Password must be at least 10 characters and include uppercase, lowercase, a number, and a special character.' });
   const userId = await redis.get(`reset:${token}`);
   if (!userId) return res.status(400).json({ error: 'Invalid or expired reset link.' });
   const passwordHash = await bcrypt.hash(password, Number(process.env.BCRYPT_ROUNDS) || 12);
@@ -297,7 +329,7 @@ export async function updateProfile(req, res) {
 export async function changePassword(req, res) {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both passwords required.' });
-  if (newPassword.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+  if (!PASSWORD_RE.test(newPassword)) return res.status(400).json({ error: 'Password must be at least 10 characters and include uppercase, lowercase, a number, and a special character.' });
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!(await bcrypt.compare(currentPassword, user.passwordHash))) {
     return res.status(400).json({ error: 'Current password is incorrect.' });

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { prisma } from '../utils/db.js';
 import { initiateMpesaSTKPush } from '../services/mpesaService.js';
 import Decimal from 'decimal.js';
@@ -8,11 +9,13 @@ export async function mpesaDeposit(req, res) {
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
   if (!account) return res.status(404).json({ error: 'No active account found.' });
 
+  // Call M-Pesa first — only persist if the STK push succeeds, avoiding dangling PENDING records
+  const reference = crypto.randomUUID();
+  const mpesaRes = await initiateMpesaSTKPush({ phone, amount, reference });
+
   const tx = await prisma.transaction.create({
     data: { accountId: account.id, type: 'DEPOSIT', status: 'PENDING', amount, currency, description: 'M-Pesa deposit' },
   });
-
-  const mpesaRes = await initiateMpesaSTKPush({ phone, amount, reference: tx.id });
 
   await prisma.paymentInstruction.create({
     data: { transactionId: tx.id, paymentMethod: 'MPESA', direction: 'in', amount, currency, phoneNumber: phone, providerRef: mpesaRes.CheckoutRequestID, metadata: mpesaRes },

@@ -28,8 +28,9 @@ export async function placeOrder(req, res) {
   const { assetId, side, orderType = 'MARKET', quantity, limitPrice, stopPrice } = req.body;
 
   const trader = await prisma.user.findUnique({ where: { id: req.user.id }, select: { taxId: true } });
-  if (!trader?.taxId) {
-    return res.status(403).json({ error: 'KRA PIN required to trade. Please add your KRA PIN in Profile settings.' });
+  const KRA_PIN_RE = /^[A-Z]\d{9}[A-Z]$/;
+  if (!trader?.taxId || !KRA_PIN_RE.test(trader.taxId)) {
+    return res.status(403).json({ error: 'Valid KRA PIN required to trade. Please update your KRA PIN in Profile settings.' });
   }
 
   const account = await prisma.investmentAccount.findFirst({

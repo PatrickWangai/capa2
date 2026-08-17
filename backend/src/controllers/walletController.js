@@ -283,12 +283,34 @@ export async function deposit(req, res) {
   });
 }
 
+// Per-transaction and daily withdrawal caps (in each currency)
+const WITHDRAWAL_LIMITS = { KES: { single: 300_000, daily: 1_000_000 }, USD: { single: 3_000, daily: 10_000 }, GBP: { single: 2_500, daily: 8_000 }, EUR: { single: 2_800, daily: 9_000 } };
+
 // ── POST /api/wallets/withdraw ────────────────────────────────────────────────
 export async function withdraw(req, res) {
   const { amount, currency = 'KES', method = 'MPESA', phone, bankAccount, bankCode } = req.body;
 
   if (!amount || Number(amount) <= 0) return res.status(400).json({ error: 'Amount must be positive.' });
   if (!SUPPORTED_CURRENCIES.includes(currency)) return res.status(400).json({ error: 'Unsupported currency.' });
+
+  const limit = WITHDRAWAL_LIMITS[currency];
+  if (limit) {
+    if (Number(amount) > limit.single) {
+      return res.status(400).json({ error: `Single withdrawal cannot exceed ${currency} ${limit.single.toLocaleString()}.` });
+    }
+    const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+    const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
+    if (account) {
+      const todayWithdrawals = await prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: { accountId: account.id, type: 'WITHDRAWAL', currency, status: { not: 'CANCELLED' }, createdAt: { gte: startOfDay } },
+      });
+      const todayTotal = Number(todayWithdrawals._sum.amount || 0);
+      if (todayTotal + Number(amount) > limit.daily) {
+        return res.status(400).json({ error: `Daily withdrawal limit of ${currency} ${limit.daily.toLocaleString()} exceeded. Today's total: ${currency} ${todayTotal.toFixed(2)}.` });
+      }
+    }
+  }
 
   const result = await prisma.$transaction(async (db) => {
     const account = await db.investmentAccount.findFirst({

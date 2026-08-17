@@ -10,13 +10,12 @@ export default async (req, res, next) => {
 
   const token = auth.slice(7);
 
-  // Blacklist is defense-in-depth on top of short-lived JWTs — if Redis is
-  // temporarily down, fail open here rather than locking out every session.
   let blacklisted = false;
   try {
     blacklisted = await redis.get(`blacklist:${token}`);
   } catch (err) {
-    logger.warn('Blacklist check failed (Redis unavailable) — proceeding without it', { error: err.message });
+    logger.error('Redis unavailable during blacklist check — rejecting request', { error: err.message });
+    return res.status(503).json({ error: 'Authentication service temporarily unavailable.' });
   }
   if (blacklisted) return res.status(401).json({ error: 'Token revoked.' });
 

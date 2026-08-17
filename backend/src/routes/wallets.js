@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import auth from '../middleware/authenticate.js';
+import requireKyc from '../middleware/requireKyc.js';
 import validate from '../middleware/validate.js';
 import Joi from 'joi';
 import {
@@ -31,7 +32,7 @@ const depositSchema = Joi.object({
 });
 
 const withdrawSchema = Joi.object({
-  amount:      Joi.number().positive().max(100_000_000).required(),
+  amount:      Joi.number().positive().max(1_000_000).required(),
   currency:    Joi.string().valid(...CURRENCIES).uppercase().default('KES'),
   method:      Joi.string().valid(...METHODS).default('MPESA'),
   phone:       Joi.string().max(20).optional(),
@@ -47,8 +48,8 @@ router.get ('/transactions',  auth, getWalletTransactions);
 
 // Actions
 router.post('/convert',       auth, validate(convertSchema),  convertCurrency);
-router.post('/deposit',       auth, validate(depositSchema),  deposit);
-router.post('/withdraw',      auth, validate(withdrawSchema), withdraw);
+router.post('/deposit',       auth, requireKyc, validate(depositSchema),  deposit);
+router.post('/withdraw',      auth, requireKyc, validate(withdrawSchema), withdraw);
 
 // Legacy (kept for backwards compat)
 router.post('/deposit-kes',   auth, depositKes);

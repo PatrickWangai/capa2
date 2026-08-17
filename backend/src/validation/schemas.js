@@ -1,8 +1,16 @@
 import Joi from 'joi';
 
+const strongPassword = Joi.string()
+  .min(10).max(128)
+  .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#^()+={}\[\]|:;<>,.?/~`])/)
+  .messages({
+    'string.pattern.base': 'Password must include uppercase, lowercase, a number, and a special character.',
+    'string.min': 'Password must be at least 10 characters.',
+  });
+
 export const registerSchema = Joi.object({
   email: Joi.string().email({ tlds: { allow: false } }).required(),
-  password: Joi.string().min(8).max(128).required(),
+  password: strongPassword.required(),
   firstName: Joi.string().min(1).max(100).required(),
   lastName: Joi.string().min(1).max(100).required(),
   phone: Joi.string().max(20).allow('', null),
@@ -25,12 +33,12 @@ export const forgotPasswordSchema = Joi.object({
 
 export const resetPasswordSchema = Joi.object({
   token: Joi.string().required(),
-  password: Joi.string().min(8).max(128).required(),
+  password: strongPassword.required(),
 });
 
 export const changePasswordSchema = Joi.object({
   currentPassword: Joi.string().required(),
-  newPassword: Joi.string().min(8).max(128).required(),
+  newPassword: strongPassword.required(),
 });
 
 export const placeOrderSchema = Joi.object({

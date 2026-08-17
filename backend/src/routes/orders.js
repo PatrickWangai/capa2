@@ -7,5 +7,5 @@ import validate from '../middleware/validate.js';
 import { placeOrderSchema } from '../validation/schemas.js';
 router.get('/', auth, c.getOrders);
 router.post('/', auth, requireKyc, validate(placeOrderSchema), c.placeOrder);
-router.delete('/:id', auth, c.cancelOrder);
+router.delete('/:id', auth, requireKyc, c.cancelOrder);
 export default router;
