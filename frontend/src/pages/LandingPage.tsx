@@ -21,8 +21,8 @@ function useTypeOnce(text: string, speed = 38) {
 }
 
 // ── Scramble text effect ──────────────────────────────────────
-// Lamalama uses only punctuation/symbol noise — no letters, no digits
-const SCRAMBLE_CHARS = '!@#$%^&*():{};|,.<>/?';
+// Exact chars visible in Lamalama's scramble: >##_%(__)%@# family
+const SCRAMBLE_CHARS = '#@%^&*()_<>!?-+';
 
 function useScramble(text: string) {
   const [display, setDisplay] = useState(text);
