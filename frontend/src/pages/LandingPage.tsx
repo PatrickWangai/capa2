@@ -20,6 +20,41 @@ function useTypeOnce(text: string, speed = 38) {
   return displayed;
 }
 
+// ── Scramble text effect ──────────────────────────────────────
+const SCRAMBLE_CHARS = '!@#$%^&*<>?/|[]{}~=+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function useScramble(text: string) {
+  const [display, setDisplay] = useState(text);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const scramble = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    let tick = 0;
+    const TPChar = 3;
+    timerRef.current = setInterval(() => {
+      const resolved = Math.floor(tick / TPChar);
+      setDisplay(
+        text.split('').map((ch, i) =>
+          i < resolved || ch === ' ' ? ch
+          : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+        ).join('')
+      );
+      tick++;
+      if (resolved >= text.length) {
+        clearInterval(timerRef.current!);
+        setDisplay(text);
+      }
+    }, 38);
+  };
+
+  return { display, scramble };
+}
+
+function ScrambleSpan({ text, style }: { text: string; style?: React.CSSProperties }) {
+  const { display, scramble } = useScramble(text);
+  return <span onMouseEnter={scramble} style={style}>{display}</span>;
+}
+
 // ── Scroll glitch overlay ─────────────────────────────────────
 const GLITCH_STRIPS = [
   { top: '7%',  h: '4.5%', dx:  9, color: 'rgba(var(--accent-rgb),0.22)', dur: '0.28s', delay: '0s'    },
@@ -77,11 +112,12 @@ function ScrollGlitchOverlay({ active }: { active: boolean }) {
 }
 
 // ── Gradient-border glow pill button ─────────────────────────
-function GlowPill({ to, children, className = '', innerStyle }: { to: string; children: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
+function GlowPill({ to, text, icon, className = '', innerStyle }: { to: string; text: string; icon?: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
+  const { display, scramble } = useScramble(text);
   return (
     <div className={`glow-pill${className ? ' ' + className : ''}`}>
-      <Link to={to} className="glow-pill-inner" style={innerStyle}>
-        {children}
+      <Link to={to} className="glow-pill-inner" style={innerStyle} onMouseEnter={scramble}>
+        {display}{icon && <>{' '}{icon}</>}
       </Link>
     </div>
   );
@@ -206,6 +242,7 @@ const NAV_ITEMS = [
 
 function FloatingNav() {
   const [open, setOpen] = useState(false);
+  const { display: openAccText, scramble: scrambleOpenAcc } = useScramble('Open Account');
   return (
     <div style={{
       position: 'fixed', top: 'max(16px, env(safe-area-inset-top, 0px) + 8px)', left: '50%', transform: 'translateX(-50%)',
@@ -287,20 +324,20 @@ function FloatingNav() {
               {/* Animated pixel icon */}
               <PixelIcon size={13} color="rgba(255,255,255,0.30)" animDelay={i * 0.4} />
               {/* Clipped text reveal */}
-              <span style={{
+              <ScrambleSpan text={label} style={{
                 fontFamily: MONO, fontSize: '0.8125rem', fontWeight: 500,
                 letterSpacing: '0.06em', textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.78)', display: 'block',
                 transition: `clip-path 0.44s ease ${0.06 + i * 0.06}s, transform 0.44s ease ${0.06 + i * 0.06}s, color 0.2s`,
                 clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
                 transform: open ? 'translateY(0%)' : 'translateY(80%)',
-              }}>{label}</span>
+              }} />
             </Link>
           ))}
 
           {/* Open Account button */}
           <div style={{ padding: '0.625rem 0.8125rem 0.8125rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <Link to="/register" onClick={() => setOpen(false)} style={{
+            <Link to="/register" onClick={() => setOpen(false)} onMouseEnter={scrambleOpenAcc} style={{
               display: 'block', textAlign: 'center',
               padding: '0.6875rem 1rem', borderRadius: 3,
               background: 'var(--accent)', color: 'var(--accent-text,#fff)',
@@ -310,7 +347,7 @@ function FloatingNav() {
               clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
               transform: open ? 'translateY(0%)' : 'translateY(80%)',
             }}>
-              Open Account
+              {openAccText}
             </Link>
           </div>
         </div>
@@ -333,6 +370,7 @@ export default function LandingPage() {
   const typedText = useTypeOnce(HERO_TEXT);
   const glitching = useScrollGlitch();
   const heroP = useHeroProgress();
+  const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Preloader />
@@ -463,9 +501,9 @@ export default function LandingPage() {
             </p>
 
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
-              <GlowPill to="/register">Start <ChevronRight size={15} /></GlowPill>
-              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.14)', color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 500, border: '1px solid rgba(255,255,255,0.22)' }}>
-                Sign In
+              <GlowPill to="/register" text="Start" icon={<ChevronRight size={15} />} />
+              <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '13px 26px', borderRadius: 980, backgroundColor: 'rgba(255,255,255,0.14)', color: '#fff', textDecoration: 'none', fontSize: 16, fontWeight: 500, border: '1px solid rgba(255,255,255,0.22)' }}>
+                {signInText}
               </Link>
             </div>
             <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
@@ -561,7 +599,7 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
-            <GlowPill to="/register" className="cta-glow">Create Free Account <ChevronRight size={18} /></GlowPill>
+            <GlowPill to="/register" text="Create Free Account" icon={<ChevronRight size={18} />} className="cta-glow" />
           </div>
         </section>
       </GlitchSection>
