@@ -83,7 +83,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https://www.googletagmanager.com'],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https://logo.clearbit.com', 'https://www.google.com'],
       connectSrc: ["'self'", 'wss:', 'ws:', 'https:'],

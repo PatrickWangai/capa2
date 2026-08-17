@@ -1,7 +1,7 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
+import { initGA, trackPageView } from './lib/analytics';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import CookieBanner from './components/ui/CookieBanner';
 import CapaLogo from './components/ui/CapaLogo';
@@ -56,8 +56,18 @@ const PricingPage           = lazy(() => import('./pages/PricingPage'));
 const SecurityPage          = lazy(() => import('./pages/SecurityPage'));
 const NotFoundPage          = lazy(() => import('./pages/NotFoundPage'));
 
+initGA();
+
 function PageTitle({ title }: { title: string }) {
   useEffect(() => { document.title = `${title} | Capa`; }, [title]);
+  return null;
+}
+
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname + location.search, document.title);
+  }, [location]);
   return null;
 }
 
@@ -95,6 +105,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <RouteTracker />
       <CookieBanner />
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>

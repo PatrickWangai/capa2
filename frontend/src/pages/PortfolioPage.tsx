@@ -2,25 +2,36 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { Briefcase, DollarSign, ArrowUpDown, Download } from 'lucide-react';
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+} from 'recharts';
+import { Briefcase, DollarSign, ArrowUpDown, Download, TrendingUp, TrendingDown, BarChart2 } from 'lucide-react';
 import { StatCard, EmptyState, Badge, PageLoader } from '../components/ui';
 import { StockLogo } from '../components/ui/StockLogo';
 import clsx from 'clsx';
 
 const TABS = ['Holdings', 'Transactions', 'Dividends'];
 type SortKey = 'value' | 'name';
+type Period = '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL';
+const PERIODS: Period[] = ['1W', '1M', '3M', '6M', '1Y', 'ALL'];
 
 const COLORS = ['#2563EB', '#14B8A6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#F97316', '#06B6D4'];
 
 export default function PortfolioPage() {
   const [tab, setTab] = useState('Holdings');
   const [sort, setSort] = useState<SortKey>('value');
+  const [period, setPeriod] = useState<Period>('1M');
 
   const { data: portfolio, isLoading } = useQuery({
     queryKey: ['portfolio'],
     queryFn: () => api.get('/api/portfolio').then(r => r.data),
     refetchInterval: 30_000,
+  });
+
+  const { data: historyData } = useQuery({
+    queryKey: ['portfolio-history', period],
+    queryFn: () => api.get(`/api/portfolio/history?period=${period}`).then(r => r.data),
   });
 
   const { data: divData } = useQuery({
@@ -40,6 +51,11 @@ export default function PortfolioPage() {
   const summary = portfolio?.summary || {};
   const positions: any[] = portfolio?.positions || [];
 
+  const totalGainLoss = Number(summary.totalGainLoss || 0);
+  const totalGainLossPct = Number(summary.totalGainLossPct || 0);
+  const dailyChange = Number(summary.dailyChange || 0);
+  const dailyChangePct = Number(summary.dailyChangePct || 0);
+
   const sortedPositions = [...positions].sort((a, b) => {
     if (sort === 'value') return Number(b.marketValue) - Number(a.marketValue);
     return a.symbol.localeCompare(b.symbol);
@@ -48,6 +64,21 @@ export default function PortfolioPage() {
   const pieData = positions.map((p, i) => ({
     name: p.symbol, value: Number(p.marketValue), fill: COLORS[i % COLORS.length],
   }));
+
+  // Best & worst performers
+  let bestPerformer: any = null, worstPerformer: any = null;
+  for (const p of positions) {
+    const pct = Number(p.gainLossPct);
+    if (!bestPerformer || pct > Number(bestPerformer.gainLossPct)) bestPerformer = p;
+    if (!worstPerformer || pct < Number(worstPerformer.gainLossPct)) worstPerformer = p;
+  }
+
+  // Chart
+  const chartPoints = (historyData?.history || []).map((h: any) => ({
+    date: new Date(h.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
+    value: Number(h.value),
+  }));
+  const chartColor = totalGainLoss >= 0 ? 'var(--accent)' : '#ef4444';
 
   const downloadCSV = () => {
     const rows = [
@@ -73,7 +104,7 @@ export default function PortfolioPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Portfolio</h1>
-          <p className="text-gray-400 mt-1">Your holdings</p>
+          <p className="text-gray-400 mt-1">Your holdings and performance</p>
         </div>
         {sortedPositions.length > 0 && (
           <button onClick={downloadCSV}
@@ -84,8 +115,8 @@ export default function PortfolioPage() {
         )}
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* Summary — 4 stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Value"
           value={`$${Number(summary.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
@@ -96,7 +127,105 @@ export default function PortfolioPage() {
           value={`$${Number(summary.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
           icon={DollarSign}
         />
+        <StatCard
+          label="Total Return"
+          value={`${totalGainLoss >= 0 ? '+' : '−'}$${Math.abs(totalGainLoss).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+          icon={totalGainLoss >= 0 ? TrendingUp : TrendingDown}
+          positive={totalGainLoss >= 0}
+          sub={`${totalGainLossPct >= 0 ? '+' : ''}${totalGainLossPct.toFixed(2)}% all time`}
+        />
+        <StatCard
+          label="Today's Change"
+          value={`${dailyChange >= 0 ? '+' : '−'}$${Math.abs(dailyChange).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+          icon={BarChart2}
+          positive={dailyChange >= 0}
+          sub={`${dailyChangePct >= 0 ? '+' : ''}${dailyChangePct.toFixed(2)}% today`}
+        />
       </div>
+
+      {/* P&L Chart */}
+      {chartPoints.length > 1 && (
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-white">Portfolio Value</h2>
+            <div className="flex gap-1">
+              {PERIODS.map(p => (
+                <button key={p} onClick={() => setPeriod(p)}
+                  className={clsx('text-xs px-2.5 py-1 rounded-lg font-medium transition-colors',
+                    period === p ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
+                  style={period === p ? { backgroundColor: 'var(--accent)', opacity: 0.9 } : {}}>
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={chartPoints} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="portGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={chartColor} stopOpacity={0.2} />
+                  <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+              <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false}
+                tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} width={44} />
+              <Tooltip
+                contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
+                formatter={(v: any) => [`$${Number(v).toLocaleString('en', { minimumFractionDigits: 2 })}`, 'Value']}
+              />
+              <Area type="monotone" dataKey="value" stroke={chartColor} strokeWidth={2} fill="url(#portGrad)" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Best / Worst performers */}
+      {positions.length >= 2 && bestPerformer && worstPerformer && bestPerformer.id !== worstPerformer.id && (
+        <div className="grid grid-cols-2 gap-4">
+          <div className="card">
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Best Performer</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <StockLogo symbol={bestPerformer.symbol} size="sm" />
+                <div>
+                  <p className="font-semibold text-white text-sm">{bestPerformer.symbol}</p>
+                  <p className="text-xs text-gray-500">{bestPerformer.exchange}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-green-400 font-bold text-sm">
+                  +{Number(bestPerformer.gainLossPct).toFixed(2)}%
+                </p>
+                <p className="text-xs text-gray-500">
+                  +${Number(bestPerformer.gainLoss).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Worst Performer</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <StockLogo symbol={worstPerformer.symbol} size="sm" />
+                <div>
+                  <p className="font-semibold text-white text-sm">{worstPerformer.symbol}</p>
+                  <p className="text-xs text-gray-500">{worstPerformer.exchange}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className={clsx('font-bold text-sm', Number(worstPerformer.gainLossPct) < 0 ? 'text-red-400' : 'text-green-400')}>
+                  {Number(worstPerformer.gainLossPct) >= 0 ? '+' : ''}{Number(worstPerformer.gainLossPct).toFixed(2)}%
+                </p>
+                <p className="text-xs text-gray-500">
+                  {Number(worstPerformer.gainLoss) >= 0 ? '+' : ''}${Number(worstPerformer.gainLoss).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-800">
@@ -116,7 +245,6 @@ export default function PortfolioPage() {
       {tab === 'Holdings' && (
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            {/* Sort controls */}
             {sortedPositions.length > 0 && (
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-400">
@@ -167,7 +295,9 @@ export default function PortfolioPage() {
                   <p className="font-semibold text-white">
                     {pos.currency} {Number(pos.marketValue).toLocaleString('en', { minimumFractionDigits: 2 })}
                   </p>
-                  <span className="text-xs text-gray-500">{pos.allocation}%</span>
+                  <p className={clsx('text-xs font-medium', Number(pos.gainLossPct) >= 0 ? 'text-green-400' : 'text-red-400')}>
+                    {Number(pos.gainLossPct) >= 0 ? '+' : ''}{Number(pos.gainLossPct).toFixed(2)}%
+                  </p>
                 </div>
               </Link>
             ))}

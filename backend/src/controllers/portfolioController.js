@@ -95,28 +95,44 @@ export async function getPortfolio(req, res) {
 export async function getPortfolioHistory(req, res) {
   const { period = '1M' } = req.query;
 
-  const periodMap = { '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, 'ALL': 3650 }
+  const periodMap = { '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, 'ALL': 1825 };
   const days = periodMap[period] || 30;
   const from = new Date(Date.now() - days * 86_400_000);
 
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
   if (!account) return res.json({ history: [], period });
 
+  // Use daily portfolio snapshots (most accurate)
+  const snapshots = await prisma.portfolioSnapshot.findMany({
+    where: { accountId: account.id, snapshotAt: { gte: from } },
+    orderBy: { snapshotAt: 'asc' },
+    select: { snapshotAt: true, totalValue: true, equityValue: true },
+  });
+
+  if (snapshots.length > 0) {
+    const history = snapshots.map(s => ({
+      date: s.snapshotAt,
+      value: Number(s.totalValue).toFixed(2),
+      equity: Number(s.equityValue).toFixed(2),
+    }));
+    return res.json({ history, period, source: 'snapshots' });
+  }
+
+  // Fallback: build approximation from completed transactions
   const txs = await prisma.transaction.findMany({
     where: { accountId: account.id, createdAt: { gte: from }, status: 'COMPLETED' },
     orderBy: { createdAt: 'asc' },
   });
 
-  // Simplified: return transaction-based chart points
   let runningValue = 0;
   const history = txs.map(tx => {
     const amount = Number(tx.amount);
     if (['DEPOSIT', 'BUY'].includes(tx.type)) runningValue += amount;
     if (['WITHDRAWAL', 'SELL'].includes(tx.type)) runningValue -= amount;
-    return { date: tx.createdAt, value: runningValue.toFixed(2) }
+    return { date: tx.createdAt, value: runningValue.toFixed(2) };
   });
 
-  res.json({ history, period });
+  res.json({ history, period, source: 'transactions' });
 }
 
 // GET /api/portfolio/dividends
