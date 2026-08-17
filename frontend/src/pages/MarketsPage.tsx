@@ -2,22 +2,25 @@ import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import {
-  TrendingUp, TrendingDown, Flame, Star,
-  BarChart2, Activity, Clock, Search, X,
-} from 'lucide-react';
+import { Star, Search, X, TrendingUp, TrendingDown, ChevronUp, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
 import toast from 'react-hot-toast';
 
 // ── Helpers ───────────────────────────────────────────────────
 function fmtVol(v: number | string | undefined): string {
-  if (!v) return '—';
+  if (v == null || v === '') return '—';
   const n = Number(v);
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000)     return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000)         return `${(n / 1_000).toFixed(0)}K`;
+  if (isNaN(n)) return '—';
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(2)}B`;
+  if (n >= 1_000_000)     return `${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000)         return `${(n / 1_000).toFixed(2)}K`;
   return n.toLocaleString();
+}
+
+function fmtPrice(price: number | undefined, currency: string) {
+  if (price == null) return '—';
+  return `${Number(price).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function isNSEOpen(): boolean {
@@ -29,38 +32,33 @@ function isNSEOpen(): boolean {
   return m >= 9 * 60 && m < 15 * 60;
 }
 
-// ── Config ────────────────────────────────────────────────────
-const EXCHANGES = [
-  { id: 'NSE', label: 'Nairobi', flag: '🇰🇪', currency: 'KES' },
-];
+type SortKey = 'name' | 'price' | 'changePercent' | 'volume' | 'marketCap' | 'peRatio';
+type SortDir = 'asc' | 'desc';
 
 type View = 'all' | 'gainers' | 'losers' | 'active';
-const VIEWS: { id: View; label: string; icon: React.ElementType }[] = [
-  { id: 'all',     label: 'All',         icon: BarChart2   },
-  { id: 'gainers', label: 'Gainers',     icon: TrendingUp  },
-  { id: 'losers',  label: 'Losers',      icon: TrendingDown },
-  { id: 'active',  label: 'Most Active', icon: Flame        },
+
+const TABS: { id: View; label: string }[] = [
+  { id: 'all',     label: 'Overview' },
+  { id: 'gainers', label: 'Gainers' },
+  { id: 'losers',  label: 'Losers' },
+  { id: 'active',  label: 'Most Active' },
 ];
 
 // ── Page ─────────────────────────────────────────────────────
 export default function MarketsPage() {
-  const [exchange, setExchange] = useState('NSE');
-  const [view, setView]         = useState<View>('all');
-  const [search, setSearch]     = useState('');
+  const [view, setView]       = useState<View>('all');
+  const [search, setSearch]   = useState('');
+  const [sortKey, setSortKey] = useState<SortKey>('marketCap');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [watchlistIds, setWIds] = useState<Set<string>>(new Set());
   const qc = useQueryClient();
-
-  const switchExchange = (ex: string) => { setExchange(ex); setView('all'); setSearch(''); };
-
-  const currEx = EXCHANGES.find(e => e.id === exchange)!;
+  const nseOpen = isNSEOpen();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['assets', exchange],
-    queryFn: () =>
-      api.get('/api/assets', { params: { exchange, limit: 300 } }).then(r => r.data),
+    queryKey: ['assets', 'NSE'],
+    queryFn: () => api.get('/api/assets', { params: { exchange: 'NSE', limit: 300 } }).then(r => r.data),
     staleTime: 15_000,
     refetchInterval: 30_000,
-    enabled: true,
   });
 
   const { data: wlData } = useQuery({
@@ -79,275 +77,308 @@ export default function MarketsPage() {
 
   const displayed = (() => {
     let list = [...assets];
+
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter(a =>
         a.symbol?.toLowerCase().includes(q) || a.name?.toLowerCase().includes(q),
       );
     }
-    if (view === 'gainers') {
-      list = list
-        .filter(a => a.price?.changePercent != null)
-        .sort((a, b) => Number(b.price.changePercent) - Number(a.price.changePercent));
-    } else if (view === 'losers') {
-      list = list
-        .filter(a => a.price?.changePercent != null)
-        .sort((a, b) => Number(a.price.changePercent) - Number(b.price.changePercent));
-    } else if (view === 'active') {
-      list = list
-        .filter(a => a.price?.volume != null)
-        .sort((a, b) => Number(b.price.volume || 0) - Number(a.price.volume || 0));
+
+    if (view === 'gainers') list = list.filter(a => Number(a.price?.changePercent ?? 0) > 0);
+    if (view === 'losers')  list = list.filter(a => Number(a.price?.changePercent ?? 0) < 0);
+
+    list.sort((a, b) => {
+      let av: number, bv: number;
+      if (sortKey === 'name') {
+        return sortDir === 'asc'
+          ? (a.name ?? '').localeCompare(b.name ?? '')
+          : (b.name ?? '').localeCompare(a.name ?? '');
+      }
+      av = Number(a.price?.[sortKey] ?? 0);
+      bv = Number(b.price?.[sortKey] ?? 0);
+      if (sortKey === 'changePercent' && view === 'losers') return sortDir === 'asc' ? av - bv : bv - av;
+      return sortDir === 'asc' ? av - bv : bv - av;
+    });
+
+    if (view === 'active') {
+      list = list.filter(a => a.price?.volume != null)
+        .sort((a, b) => Number(b.price.volume ?? 0) - Number(a.price.volume ?? 0));
     }
+
     return list;
   })();
 
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortKey(key); setSortDir('desc'); }
+  };
+
   const toggleWatchlist = async (assetId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     const isWatched = watchlistIds.has(assetId);
-    setWIds(prev => {
-      const next = new Set(prev);
-      isWatched ? next.delete(assetId) : next.add(assetId);
-      return next;
-    });
+    setWIds(prev => { const n = new Set(prev); isWatched ? n.delete(assetId) : n.add(assetId); return n; });
     try {
-      if (isWatched) {
-        await api.delete(`/api/assets/watchlist/${assetId}`);
-        toast.success('Removed from watchlist');
-      } else {
-        await api.post(`/api/assets/watchlist/${assetId}`);
-        toast.success('Added to watchlist');
-      }
+      if (isWatched) { await api.delete(`/api/assets/watchlist/${assetId}`); toast.success('Removed from watchlist'); }
+      else           { await api.post(`/api/assets/watchlist/${assetId}`);   toast.success('Added to watchlist'); }
       qc.invalidateQueries({ queryKey: ['watchlist'] });
     } catch {
-      setWIds(prev => {
-        const next = new Set(prev);
-        isWatched ? next.add(assetId) : next.delete(assetId);
-        return next;
-      });
+      setWIds(prev => { const n = new Set(prev); isWatched ? n.add(assetId) : n.delete(assetId); return n; });
       toast.error('Failed to update watchlist');
     }
   };
 
-  const nseOpen = isNSEOpen();;
+  const SortIcon = ({ k }: { k: SortKey }) =>
+    sortKey === k
+      ? (sortDir === 'desc' ? <ChevronDown size={11} className="inline ml-0.5 opacity-70" /> : <ChevronUp size={11} className="inline ml-0.5 opacity-70" />)
+      : <ChevronDown size={11} className="inline ml-0.5 opacity-20" />;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-5">
+    <div className="max-w-7xl mx-auto space-y-4">
 
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-white">Markets</h1>
-          <p className="text-gray-400 mt-0.5 text-sm">Global stocks and ETFs</p>
+          <p className="text-gray-400 mt-0.5 text-sm">Nairobi Securities Exchange · 57 stocks</p>
         </div>
-        {exchange === 'NSE' && (
-          <div className={clsx(
-            'flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border',
-            nseOpen
-              ? 'bg-green-900/20 text-green-400 border-green-800/40'
-              : 'bg-gray-800/60 text-gray-500 border-gray-700/40',
-          )}>
-            <span className={clsx('w-1.5 h-1.5 rounded-full', nseOpen ? 'bg-green-400 animate-pulse' : 'bg-gray-600')} />
-            NSE {nseOpen ? 'Open · 09:00–15:00 EAT' : 'Closed'}
-          </div>
-        )}
+        <div className={clsx(
+          'flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border',
+          nseOpen ? 'bg-green-900/20 text-green-400 border-green-800/40' : 'bg-gray-800/60 text-gray-500 border-gray-700/40',
+        )}>
+          <span className={clsx('w-1.5 h-1.5 rounded-full', nseOpen ? 'bg-green-400 animate-pulse' : 'bg-gray-600')} />
+          🇰🇪 NSE {nseOpen ? 'Open · 09:00–15:00 EAT' : 'Closed'}
+        </div>
       </div>
 
-      {/* Exchange tabs */}
-      <div className="flex gap-1.5 flex-wrap">
-        {EXCHANGES.map(ex => (
-          <button
-            key={ex.id}
-            onClick={() => switchExchange(ex.id)}
-            className={clsx(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
-              exchange === ex.id
-                ? 'text-white shadow-lg'
-                : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60',
-            )}
-            style={exchange === ex.id ? { backgroundColor: 'var(--accent)' } : {}}
-          >
-            <span role="img" aria-label={ex.label}>{ex.flag}</span>
-            {ex.label}
-          </button>
-        ))}
-      </div>
+      {/* ── White table card ── */}
+      <div style={{ background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.10)' }}>
 
-      {/* View tabs */}
-      {(
-        <div
-          className="flex gap-0.5 p-1 rounded-xl self-start"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
-        >
-          {VIEWS.map(v => {
-            const Icon = v.icon;
-            return (
+        {/* Tabs + search bar */}
+        <div style={{ borderBottom: '1px solid #e8eaed', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12, flexWrap: 'wrap', gap: 0 }}>
+          <div style={{ display: 'flex' }}>
+            {TABS.map(t => (
               <button
-                key={v.id}
-                onClick={() => setView(v.id)}
-                className={clsx(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap',
-                  view === v.id ? 'text-white' : 'text-gray-500 hover:text-gray-300',
-                )}
-                style={view === v.id ? { backgroundColor: 'rgba(255,255,255,0.10)' } : {}}
+                key={t.id}
+                onClick={() => { setView(t.id); setSearch(''); }}
+                style={{
+                  padding: '12px 18px',
+                  fontSize: 13,
+                  fontWeight: view === t.id ? 600 : 400,
+                  color: view === t.id ? '#131722' : '#6b7280',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: view === t.id ? '2px solid #2962ff' : '2px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap' as const,
+                  transition: 'color 0.15s',
+                  marginBottom: -1,
+                }}
               >
-                <Icon size={12} />
-                {v.label}
+                {t.label}
               </button>
-            );
-          })}
-        </div>
-      )}
+            ))}
+          </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-        <input
-          className="input pl-9 pr-9 w-full"
-          placeholder="Search by ticker or company name…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        {search && (
-          <button onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
-            <X size={13} />
-          </button>
-        )}
-      </div>
-
-      <>
-      {/* Stock list */}
-      <div className="card overflow-hidden p-0">
-        {/* Table header */}
-        <div
-          className="hidden sm:grid px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider"
-          style={{
-            gridTemplateColumns: '2.5fr 1fr 90px 90px 100px 36px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-          }}
-        >
-          <span>Stock</span>
-          <span className="text-right">Price</span>
-          <span className="text-right">Change</span>
-          <span className="text-right hidden lg:block">Volume</span>
-          <span className="text-right hidden xl:block">Mkt Cap</span>
-          <span />
+          {/* Search */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', pointerEvents: 'none' }} />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search symbol or name…"
+              style={{
+                paddingLeft: 30, paddingRight: search ? 28 : 10,
+                paddingTop: 7, paddingBottom: 7,
+                fontSize: 12, border: '1px solid #e5e7eb', borderRadius: 6,
+                outline: 'none', background: '#f9fafb', color: '#131722', width: 210,
+              }}
+            />
+            {search && (
+              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', lineHeight: 1 }}>
+                <X size={12} />
+              </button>
+            )}
+          </div>
         </div>
 
-        {isLoading ? (
-          <div className="py-16 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: 'var(--accent)' }} />
-          </div>
-        ) : displayed.length === 0 ? (
-          <div className="py-20 text-center">
-            <Activity size={32} className="mx-auto mb-3 text-gray-700" />
-            <p className="text-gray-400 font-semibold">No stocks found</p>
-            <p className="text-gray-600 text-sm mt-1">No data available for this exchange yet</p>
-          </div>
-        ) : (
-          displayed.map((asset: any, idx: number) => {
-            const chg     = Number(asset.price?.changePercent ?? 0);
-            const up      = chg >= 0;
-            const price   = asset.price?.price;
-            const watched = watchlistIds.has(asset.id);
+        {/* Table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: '#f8f9fa' }}>
+                <th style={TH}>#</th>
+                <th style={{ ...TH, textAlign: 'left', paddingLeft: 12 }}>Symbol</th>
+                <th style={{ ...TH, textAlign: 'left', cursor: 'pointer' }} onClick={() => toggleSort('name')}>
+                  Name <SortIcon k="name" />
+                </th>
+                <th style={{ ...TH, cursor: 'pointer' }} onClick={() => toggleSort('price')}>
+                  Price <SortIcon k="price" />
+                </th>
+                <th style={{ ...TH, cursor: 'pointer' }} onClick={() => toggleSort('changePercent')}>
+                  Chg % <SortIcon k="changePercent" />
+                </th>
+                <th style={{ ...TH, cursor: 'pointer' }} onClick={() => toggleSort('volume')}>
+                  Volume <SortIcon k="volume" />
+                </th>
+                <th style={{ ...TH, cursor: 'pointer' }} onClick={() => toggleSort('marketCap')}>
+                  Mkt Cap <SortIcon k="marketCap" />
+                </th>
+                <th style={{ ...TH, cursor: 'pointer' }} onClick={() => toggleSort('peRatio')}>
+                  P/E <SortIcon k="peRatio" />
+                </th>
+                <th style={TH}>52W Range</th>
+                <th style={TH}>Sector</th>
+                <th style={TH} />
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={11} style={{ padding: '60px 0', textAlign: 'center' }}>
+                    <div style={{ display: 'inline-block', width: 28, height: 28, borderRadius: '50%', borderTop: '2px solid #2962ff', borderRight: '2px solid transparent', animation: 'spin 0.8s linear infinite' }} />
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                  </td>
+                </tr>
+              ) : displayed.length === 0 ? (
+                <tr>
+                  <td colSpan={11} style={{ padding: '60px 0', textAlign: 'center', color: '#6b7280', fontSize: 13 }}>
+                    No stocks found
+                  </td>
+                </tr>
+              ) : displayed.map((asset, idx) => {
+                const chg      = Number(asset.price?.changePercent ?? 0);
+                const up       = chg >= 0;
+                const price    = asset.price?.price;
+                const vol      = asset.price?.volume;
+                const mktCap   = asset.price?.marketCap;
+                const pe       = asset.price?.peRatio;
+                const hi52     = asset.price?.weekHigh52;
+                const lo52     = asset.price?.weekLow52;
+                const watched  = watchlistIds.has(asset.id);
 
-            return (
-              <Link
-                to={`/markets/${asset.id}`}
-                key={asset.id}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <div
-                  className="group sm:grid flex items-center justify-between px-5 py-3.5 transition-colors sm:items-center cursor-pointer"
-                  style={{
-                    gridTemplateColumns: '2.5fr 1fr 90px 90px 100px 36px',
-                    borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.025)')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = '')}
-                >
-                  {/* Stock identity */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <StockLogo symbol={asset.symbol} size="sm" />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-white text-sm">{asset.symbol}</span>
-                        <span
-                          className="text-[9px] px-1.5 py-0.5 rounded-md hidden sm:inline-block"
-                          style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.45)' }}
-                        >
-                          {asset.assetClass}
-                        </span>
-                      </div>
-                      <p className="text-xs mt-0.5 truncate max-w-[180px]" style={{ color: 'rgba(235,235,245,0.45)' }}>{asset.name}</p>
-                    </div>
-                  </div>
+                // 52W progress bar
+                const range = hi52 && lo52 && hi52 !== lo52
+                  ? Math.max(0, Math.min(100, ((Number(price ?? lo52) - Number(lo52)) / (Number(hi52) - Number(lo52))) * 100))
+                  : null;
 
-                  {/* Price — desktop */}
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-semibold text-white">
-                      {price != null
-                        ? `${asset.currency} ${Number(price).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                        : '—'}
-                    </p>
-                  </div>
-
-                  {/* Mobile: price+change stacked */}
-                  <div className="sm:hidden text-right mr-2">
-                    <p className="text-sm font-semibold text-white">{price != null ? Number(price).toFixed(2) : '—'}</p>
-                    <p className={clsx('text-xs font-semibold', up ? 'text-green-400' : 'text-red-400')}>
-                      {up ? '+' : ''}{chg.toFixed(2)}%
-                    </p>
-                  </div>
-
-                  {/* Change % — desktop */}
-                  <div className="hidden sm:flex justify-end">
-                    <span className={clsx(
-                      'inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full',
-                      up ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400',
-                    )}>
-                      {up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                      {up ? '+' : ''}{chg.toFixed(2)}%
-                    </span>
-                  </div>
-
-                  {/* Volume */}
-                  <p className="text-xs text-right hidden lg:block" style={{ color: 'rgba(235,235,245,0.4)' }}>
-                    {fmtVol(asset.price?.volume)}
-                  </p>
-
-                  {/* Mkt Cap */}
-                  <p className="text-xs text-right hidden xl:block" style={{ color: 'rgba(235,235,245,0.4)' }}>
-                    {asset.price?.marketCap ? fmtVol(asset.price.marketCap) : '—'}
-                  </p>
-
-                  {/* Watchlist */}
-                  <div className="flex justify-end">
-                    <button
-                      onClick={e => toggleWatchlist(asset.id, e)}
-                      className={clsx(
-                        'p-1.5 rounded-lg transition-all',
-                        watched ? 'text-yellow-400' : 'text-gray-700 hover:text-yellow-400 group-hover:text-gray-500',
-                      )}
+                return (
+                  <Link to={`/markets/${asset.id}`} key={asset.id} style={{ display: 'contents', textDecoration: 'none' }}>
+                    <tr
+                      style={{ borderTop: '1px solid #f0f0f0', cursor: 'pointer' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#f8faff')}
+                      onMouseLeave={e => (e.currentTarget.style.background = '')}
                     >
-                      <Star size={13} fill={watched ? 'currentColor' : 'none'} />
-                    </button>
-                  </div>
-                </div>
-              </Link>
-            );
-          })
+                      {/* # */}
+                      <td style={{ ...TD, color: '#9ca3af', width: 40, textAlign: 'center' }}>{idx + 1}</td>
+
+                      {/* Symbol + logo */}
+                      <td style={{ ...TD, paddingLeft: 12, whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <StockLogo symbol={asset.symbol} size="sm" />
+                          <span style={{ fontWeight: 700, color: '#131722', fontSize: 13 }}>{asset.symbol}</span>
+                        </div>
+                      </td>
+
+                      {/* Name */}
+                      <td style={{ ...TD, color: '#374151', maxWidth: 200 }}>
+                        <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</span>
+                      </td>
+
+                      {/* Price */}
+                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: '#131722', whiteSpace: 'nowrap' }}>
+                        {price != null ? (
+                          <>{fmtPrice(price, asset.currency)} <span style={{ fontSize: 10, color: '#9ca3af', fontWeight: 400 }}>KES</span></>
+                        ) : '—'}
+                      </td>
+
+                      {/* Chg % */}
+                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: up ? '#089981' : '#f23645', whiteSpace: 'nowrap' }}>
+                        {up ? '+' : ''}{chg.toFixed(2)}%
+                      </td>
+
+                      {/* Volume */}
+                      <td style={{ ...TD, textAlign: 'right', color: '#374151' }}>{fmtVol(vol)}</td>
+
+                      {/* Mkt Cap */}
+                      <td style={{ ...TD, textAlign: 'right', color: '#374151', whiteSpace: 'nowrap' }}>
+                        {mktCap ? <>{fmtVol(mktCap)} <span style={{ fontSize: 10, color: '#9ca3af' }}>KES</span></> : '—'}
+                      </td>
+
+                      {/* P/E */}
+                      <td style={{ ...TD, textAlign: 'right', color: '#374151' }}>
+                        {pe ? Number(pe).toFixed(2) : '—'}
+                      </td>
+
+                      {/* 52W Range */}
+                      <td style={{ ...TD, minWidth: 120 }}>
+                        {range != null ? (
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#9ca3af', marginBottom: 3 }}>
+                              <span>{Number(lo52).toFixed(0)}</span>
+                              <span>{Number(hi52).toFixed(0)}</span>
+                            </div>
+                            <div style={{ height: 4, background: '#e5e7eb', borderRadius: 2, position: 'relative' }}>
+                              <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${range}%`, background: '#2962ff', borderRadius: 2 }} />
+                              <div style={{ position: 'absolute', top: -2, left: `calc(${range}% - 3px)`, width: 8, height: 8, borderRadius: '50%', background: '#2962ff', border: '2px solid #fff', boxShadow: '0 0 0 1px #2962ff' }} />
+                            </div>
+                          </div>
+                        ) : <span style={{ color: '#d1d5db' }}>—</span>}
+                      </td>
+
+                      {/* Sector */}
+                      <td style={{ ...TD, whiteSpace: 'nowrap' }}>
+                        {asset.assetClass ? (
+                          <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, background: '#f0f4ff', color: '#3b5bdb', fontWeight: 500 }}>
+                            {asset.assetClass}
+                          </span>
+                        ) : '—'}
+                      </td>
+
+                      {/* Watchlist */}
+                      <td style={{ ...TD, textAlign: 'center', width: 40 }}>
+                        <button
+                          onClick={e => toggleWatchlist(asset.id, e)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: watched ? '#f59e0b' : '#d1d5db', padding: 4, lineHeight: 1 }}
+                        >
+                          <Star size={13} fill={watched ? 'currentColor' : 'none'} />
+                        </button>
+                      </td>
+                    </tr>
+                  </Link>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer */}
+        {!isLoading && displayed.length > 0 && (
+          <div style={{ borderTop: '1px solid #f0f0f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 12, color: '#9ca3af' }}>{displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · Nairobi Securities Exchange</span>
+            <span style={{ fontSize: 11, color: '#d1d5db' }}>Prices delayed up to 15 min</span>
+          </div>
         )}
       </div>
-
-      {/* Footer */}
-      {!isLoading && displayed.length > 0 && (
-        <p className="text-center text-xs pb-1" style={{ color: 'rgba(235,235,245,0.25)' }}>
-          {displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · {currEx.label}
-        </p>
-      )}
-      </>
     </div>
   );
 }
+
+// ── Style constants ───────────────────────────────────────────
+const TH: React.CSSProperties = {
+  padding: '9px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: '#6b7280',
+  textAlign: 'right',
+  whiteSpace: 'nowrap',
+  userSelect: 'none',
+  borderBottom: '1px solid #e5e7eb',
+  letterSpacing: '0.02em',
+};
+
+const TD: React.CSSProperties = {
+  padding: '10px 12px',
+  fontSize: 13,
+  verticalAlign: 'middle',
+};
