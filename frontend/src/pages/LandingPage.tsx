@@ -162,70 +162,78 @@ const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
 
 // ── Preloader ─────────────────────────────────────────────────
 function usePreloader() {
-  const [pct, setPct] = useState(0);
   const [gone, setGone] = useState(false);
+  const [exiting, setExiting] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
-    let p = 0;
-    const id = setInterval(() => {
-      const step = p < 60 ? 8 : p < 85 ? 4 : p < 95 ? 2 : 1;
-      p = Math.min(100, p + step);
-      setPct(p);
-      if (p >= 100) {
-        clearInterval(id);
-        setTimeout(() => setGone(true), 1200); // remove after transition
-      }
-    }, 70);
-    return () => clearInterval(id);
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    const finish = () => {
+      setExiting(true);
+      setTimeout(() => setGone(true), 1100);
+    };
+
+    vid.addEventListener('ended', finish);
+
+    // Safety: if video fails to load/play, fall back after 4s
+    const fallback = setTimeout(finish, 4000);
+
+    vid.play().catch(() => {});
+
+    return () => {
+      vid.removeEventListener('ended', finish);
+      clearTimeout(fallback);
+    };
   }, []);
-  return { pct, gone };
+
+  return { gone, exiting, videoRef };
 }
 
 function Preloader() {
-  const { pct, gone } = usePreloader();
+  const { gone, exiting, videoRef } = usePreloader();
   if (gone) return null;
-  const exiting = pct >= 100;
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
-      background: '#07090f',
+      background: '#000',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       opacity: exiting ? 0 : 1,
-      transform: exiting ? 'scale(1.06)' : 'scale(1)',
-      transition: exiting
-        ? 'opacity 1.1s cubic-bezier(0.76,0,0.24,1), transform 1.1s cubic-bezier(0.76,0,0.24,1)'
-        : 'none',
+      transition: exiting ? 'opacity 1.1s cubic-bezier(0.76,0,0.24,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
-      <style>{`
-        @keyframes pl-cw  { to { transform: rotate(360deg);  } }
-        @keyframes pl-ccw { to { transform: rotate(-360deg); } }
-        .pl-ring { position: absolute; border-radius: 50%; border: 11px solid transparent; }
-        .pl-r1 {
-          width: 200px; height: 200px;
-          border-top-color: #1a6fa8; border-right-color: #1a6fa8; border-bottom-color: #1a6fa8;
-          animation: pl-cw 1.6s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
-        .pl-r2 {
-          width: 152px; height: 152px;
-          border-top-color: #b8620a; border-left-color: #b8620a; border-bottom-color: #b8620a;
-          animation: pl-ccw 1.2s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
-        .pl-r3 {
-          width: 104px; height: 104px;
-          border-top-color: #9b2d7a; border-right-color: #9b2d7a;
-          animation: pl-cw 0.9s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
-      `}</style>
-      <div style={{ position: 'relative', width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="pl-ring pl-r1" />
-        <div className="pl-ring pl-r2" />
-        <div className="pl-ring pl-r3" />
+      {/* Fullscreen video */}
+      <video
+        ref={videoRef}
+        src="/preloader.mp4"
+        muted
+        playsInline
+        style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+        }}
+      />
+
+      {/* CAPA branding overlay */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18,
+        pointerEvents: 'none',
+      }}>
         <img
           src="/capa-logo.png"
-          style={{ width: 52, height: 'auto', objectFit: 'contain', position: 'relative', zIndex: 1, opacity: exiting ? 0 : 0.9, transition: 'opacity 0.4s ease' }}
+          style={{ width: 120, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 24px rgba(0,0,0,0.7))' }}
           alt="CAPA"
           draggable={false}
         />
+        <span style={{
+          fontFamily: MONO, fontSize: 11, letterSpacing: '0.22em',
+          color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+        }}>
+          Invest Globally
+        </span>
       </div>
     </div>
   );
