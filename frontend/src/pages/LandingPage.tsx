@@ -26,45 +26,34 @@ const SCRAMBLE_CHARS = '#@%^&*()_<>!?-+';
 
 function useScramble(text: string) {
   const [display, setDisplay] = useState(text);
-  const [lockedW, setLockedW] = useState<number | undefined>(undefined);
-  const elRef = useRef<HTMLSpanElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const noise = () =>
+    text.split('').map(ch =>
+      ch === ' ' ? ' ' : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+    ).join('');
 
   const scramble = () => {
     if (timerRef.current) clearInterval(timerRef.current);
-    // Freeze the element width before scramble so symbol chars can't shift the layout
-    if (elRef.current) setLockedW(elRef.current.offsetWidth);
-    let tick = 0;
-    const TPChar = 2;
-    const nonSpace = text.replace(/ /g, '').length || 1;
-    const ms = Math.max(16, Math.round(500 / (nonSpace * TPChar)));
+    let frame = 0;
+    const FRAMES = 7; // flicker 7 full-word scrambles then snap
     timerRef.current = setInterval(() => {
-      const resolved = Math.floor(tick / TPChar);
-      setDisplay(
-        text.split('').map((ch, i) =>
-          i < resolved || ch === ' ' ? ch
-          : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
-        ).join('')
-      );
-      tick++;
-      if (resolved >= text.length) {
+      frame++;
+      if (frame >= FRAMES) {
         clearInterval(timerRef.current!);
         setDisplay(text);
-        setLockedW(undefined);
+      } else {
+        setDisplay(noise());
       }
-    }, ms);
+    }, 45);
   };
 
-  const lockStyle: React.CSSProperties = lockedW !== undefined
-    ? { display: 'inline-block', minWidth: lockedW, textAlign: 'center' }
-    : {};
-
-  return { display, scramble, elRef, lockStyle };
+  return { display, scramble };
 }
 
 function ScrambleSpan({ text, style }: { text: string; style?: React.CSSProperties }) {
-  const { display, scramble, elRef, lockStyle } = useScramble(text);
-  return <span ref={elRef} onMouseEnter={scramble} style={{ ...lockStyle, ...style }}>{display}</span>;
+  const { display, scramble } = useScramble(text);
+  return <span onMouseEnter={scramble} style={style}>{display}</span>;
 }
 
 // ── Scroll glitch overlay ─────────────────────────────────────
@@ -125,11 +114,11 @@ function ScrollGlitchOverlay({ active }: { active: boolean }) {
 
 // ── Gradient-border glow pill button ─────────────────────────
 function GlowPill({ to, text, icon, className = '', innerStyle }: { to: string; text: string; icon?: React.ReactNode; className?: string; innerStyle?: React.CSSProperties }) {
-  const { display, scramble, elRef, lockStyle } = useScramble(text);
+  const { display, scramble } = useScramble(text);
   return (
     <div className={`glow-pill${className ? ' ' + className : ''}`}>
       <Link to={to} className="glow-pill-inner" style={innerStyle} onMouseEnter={scramble}>
-        <span ref={elRef} style={lockStyle}>{display}</span>{icon && <>{' '}{icon}</>}
+        {display}{icon && <>{' '}{icon}</>}
       </Link>
     </div>
   );
@@ -254,7 +243,7 @@ const NAV_ITEMS = [
 
 function FloatingNav() {
   const [open, setOpen] = useState(false);
-  const { display: openAccText, scramble: scrambleOpenAcc, elRef: openAccRef, lockStyle: openAccLock } = useScramble('Open Account');
+  const { display: openAccText, scramble: scrambleOpenAcc } = useScramble('Open Account');
   return (
     <div style={{
       position: 'fixed', top: 'max(16px, env(safe-area-inset-top, 0px) + 8px)', left: '50%', transform: 'translateX(-50%)',
@@ -360,7 +349,7 @@ function FloatingNav() {
               clipPath: open ? 'inset(0% 0% 0%)' : 'inset(0% 0% 100%)',
               transform: open ? 'translateY(0%)' : 'translateY(80%)',
             }}>
-              <span ref={openAccRef} style={openAccLock}>{openAccText}</span>
+              {openAccText}
             </Link>
           </div>
         </div>
@@ -383,7 +372,7 @@ export default function LandingPage() {
   const typedText = useTypeOnce(HERO_TEXT);
   const glitching = useScrollGlitch();
   const heroP = useHeroProgress();
-  const { display: signInText, scramble: scrambleSignIn, elRef: signInRef, lockStyle: signInLock } = useScramble('Sign In');
+  const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
     <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <Preloader />
@@ -519,7 +508,7 @@ export default function LandingPage() {
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
               <GlowPill to="/register" text="Start" icon={<ArrowUpRight size={13} />} />
               <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '14px 22px', borderRadius: 3, backgroundColor: 'transparent', color: '#fff', textDecoration: 'none', fontFamily: "'Sometype Mono', ui-monospace, monospace", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.45)', transition: 'background 0.15s, border-color 0.15s' }}>
-                <span ref={signInRef} style={signInLock}>{signInText}</span>
+                {signInText}
               </Link>
             </div>
             <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
