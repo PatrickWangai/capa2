@@ -403,13 +403,17 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start',
-        background: 'linear-gradient(135deg, #060d1f 0%, #0a1628 30%, #0d2348 60%, #0a1a3a 80%, #060d1f 100%)' }}>
+        background: '#060d1f' }}>
 
-          {/* Subtle radial glow */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 1,
-            background: 'radial-gradient(ellipse 80% 60% at 60% 40%, rgba(41,98,255,0.12) 0%, transparent 70%)' }} />
+          {/* Background video */}
+          <video
+            autoPlay muted loop playsInline
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, pointerEvents: 'none' }}
+          >
+            <source src="/hero-bg-compressed.mp4" type="video/mp4" />
+          </video>
 
-          {/* Cinematic gradient */}
+          {/* Cinematic gradient overlay */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 1,
             background: 'linear-gradient(to top right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 40%, transparent 100%)' }} />
 
