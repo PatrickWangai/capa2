@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import { Shield, Bell, Lock, Smartphone, CheckCircle, Copy, Eye, EyeOff, Gift } from 'lucide-react';
+import { Shield, Bell, Lock, Smartphone, CheckCircle, Copy, Eye, EyeOff, Gift, Sun, Moon } from 'lucide-react';
 import { PageLoader } from '../components/ui';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
+import { useTheme } from '../context/ThemeContext';
 
 type Tab = 'security' | 'notifications' | 'account';
 
@@ -303,6 +304,7 @@ function NotificationsTab() {
 // ── Account tab ───────────────────────────────────────────────────────────────
 function AccountTab() {
   const { user } = useAuthStore();
+  const { colorMode, setColorMode } = useTheme();
   const referralCode = (user as any)?.referralCode as string | undefined;
 
   const copyReferral = () => {
@@ -313,6 +315,34 @@ function AccountTab() {
 
   return (
     <div className="space-y-4">
+      {/* Appearance */}
+      <Section title="Appearance">
+        <p className="text-sm text-gray-400">Choose between dark and light mode.</p>
+        <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+          {(['dark', 'light'] as const).map(mode => {
+            const active = colorMode === mode;
+            return (
+              <button
+                key={mode}
+                onClick={() => setColorMode(mode)}
+                style={{
+                  flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '10px 16px', borderRadius: 12,
+                  background: active ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
+                  border: active ? '1px dashed var(--accent)' : '1px dashed rgba(255,255,255,0.10)',
+                  color: active ? '#fff' : 'var(--text-secondary)',
+                  cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: active ? 600 : 400,
+                  transition: 'all 0.15s',
+                }}
+              >
+                {mode === 'dark' ? <Moon size={15} /> : <Sun size={15} />}
+                {mode === 'dark' ? 'Dark' : 'Light'}
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+
       {/* Referral */}
       <Section title="Refer a Friend">
         <div className="space-y-3">

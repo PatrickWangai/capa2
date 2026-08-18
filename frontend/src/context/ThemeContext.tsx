@@ -212,33 +212,84 @@ function applyTheme(name: ThemeName) {
   r.removeAttribute('data-theme');
 }
 
+export type ColorMode = 'dark' | 'light';
+
+const LIGHT_GRAD = 'linear-gradient(160deg, #e8f1ff 0%, #d4e5ff 18%, #bdd5ff 45%, #a6c4fe 72%, #8fb3fd 88%, #7aa2fc 100%)';
+
+function applyLightMode() {
+  const r = document.documentElement;
+  r.setAttribute('data-color-mode', 'light');
+  r.style.setProperty('--text',           '#0f1628');
+  r.style.setProperty('--text-secondary', 'rgba(15,22,40,0.60)');
+  r.style.setProperty('--text-tertiary',  'rgba(15,22,40,0.30)');
+  r.style.setProperty('--border',         'rgba(37,99,235,0.12)');
+  r.style.setProperty('--border-sub',     'rgba(37,99,235,0.07)');
+  r.style.setProperty('--card-bg',        'rgba(255,255,255,0.78)');
+  r.style.setProperty('--card-border',    'rgba(37,99,235,0.10)');
+  r.style.setProperty('--sidebar-bg',     'rgba(220,234,255,0.92)');
+  r.style.setProperty('--input-bg',       'rgba(255,255,255,0.95)');
+  r.style.setProperty('--nav-text',       'rgba(15,22,40,0.72)');
+  r.style.setProperty('--bg-1', '#e8f1ff');
+  r.style.setProperty('--bg-2', '#d4e5ff');
+  r.style.setProperty('--bg-3', '#bdd5ff');
+  r.style.setProperty('--bg-4', '#a6c4fe');
+  r.style.setProperty('--bg-5', '#8fb3fd');
+  r.style.setProperty('--bg-6', '#7aa2fc');
+  r.style.setProperty('--bg-gradient', LIGHT_GRAD);
+  r.style.setProperty('--bg-size', 'auto');
+  document.body.style.background = LIGHT_GRAD;
+  document.body.style.backgroundSize = 'auto';
+  document.body.style.backgroundAttachment = 'fixed';
+}
+
+function applyDarkMode(themeName: ThemeName) {
+  document.documentElement.removeAttribute('data-color-mode');
+  applyTheme(themeName);
+}
+
 type ThemeCtx = {
   theme: ThemeName;
   setTheme: (t: ThemeName) => void;
+  colorMode: ColorMode;
+  setColorMode: (m: ColorMode) => void;
 };
 const ThemeContext = createContext<ThemeCtx>({
   theme: 'teal', setTheme: () => {},
+  colorMode: 'dark', setColorMode: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
     localStorage.removeItem('capa-mode');
     const savedTheme = localStorage.getItem('capa-theme') as ThemeName | null;
-    const t = (savedTheme && savedTheme in THEMES ? savedTheme : 'teal') as ThemeName;
-    applyTheme(t);
-    return t;
+    return (savedTheme && savedTheme in THEMES ? savedTheme : 'teal') as ThemeName;
   });
 
-  useEffect(() => { applyTheme(theme); }, [theme]);
+  const [colorMode, setColorModeState] = useState<ColorMode>(() => {
+    const saved = localStorage.getItem('capa-color-mode');
+    return saved === 'light' ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    if (colorMode === 'light') applyLightMode();
+    else applyDarkMode(theme);
+  }, []);
 
   function setTheme(t: ThemeName) {
-    applyTheme(t);
     setThemeState(t);
     localStorage.setItem('capa-theme', t);
+    if (colorMode === 'dark') applyTheme(t);
+  }
+
+  function setColorMode(m: ColorMode) {
+    setColorModeState(m);
+    localStorage.setItem('capa-color-mode', m);
+    if (m === 'light') applyLightMode();
+    else applyDarkMode(theme);
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, colorMode, setColorMode }}>
       {children}
     </ThemeContext.Provider>
   );

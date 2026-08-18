@@ -181,6 +181,23 @@
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
+/* ── Light mode overrides ── */
+[data-color-mode="light"] body { color: #0f1628; }
+[data-color-mode="light"] ::-webkit-scrollbar-thumb       { background: rgba(37,99,235,0.22); }
+[data-color-mode="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,0.38); }
+
+[data-color-mode="light"] .text-white    { color: #0f1628               !important; }
+[data-color-mode="light"] .text-gray-100 { color: rgba(15,22,40,0.90)   !important; }
+[data-color-mode="light"] .text-gray-200 { color: rgba(15,22,40,0.80)   !important; }
+[data-color-mode="light"] .text-gray-300 { color: rgba(15,22,40,0.70)   !important; }
+[data-color-mode="light"] .text-gray-400 { color: rgba(15,22,40,0.60)   !important; }
+[data-color-mode="light"] .text-gray-500 { color: rgba(15,22,40,0.45)   !important; }
+
+[data-color-mode="light"] .btn-secondary { background-color: rgba(37,99,235,0.10); color: var(--accent) !important; }
+[data-color-mode="light"] .btn-secondary:hover { background-color: rgba(37,99,235,0.18); }
+
+[data-color-mode="light"] .badge-gray { background: rgba(15,22,40,0.08); color: rgba(15,22,40,0.60); }
+
 /* Price flash on update */
 @keyframes flash {
   0%   { opacity: 0.4; }
