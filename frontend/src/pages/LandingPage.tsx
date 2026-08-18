@@ -410,7 +410,7 @@ export default function LandingPage() {
             autoPlay muted loop playsInline
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, pointerEvents: 'none' }}
           >
-            <source src="/hero-bg-compressed.mp4" type="video/mp4" />
+            <source src="/Untitled6.mp4" type="video/mp4" />
           </video>
 
           {/* Cinematic gradient overlay */}
