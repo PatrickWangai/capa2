@@ -353,6 +353,12 @@ export default function LandingPage() {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes scroll-line {
+          0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+          40%  { opacity: 1; transform: scaleY(1); transform-origin: top; }
+          80%  { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+          100% { opacity: 0; }
+        }
 
         @media (max-width: 640px) {
           .hero-content { padding: 0 20px max(80px, env(safe-area-inset-bottom, 0px) + 60px) 20px !important; }
@@ -401,9 +407,9 @@ export default function LandingPage() {
 
       <FloatingNav />
 
-      {/* HERO */}
-      <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', zIndex: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start',
-        background: '#060d1f' }}>
+      {/* HERO — sticky so the content sheet slides over it on scroll */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 0, height: '100svh', minHeight: 600 }}>
+        <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', background: '#060d1f' }}>
 
           {/* Background video */}
           <video
@@ -417,9 +423,9 @@ export default function LandingPage() {
           <div style={{ position: 'absolute', inset: 0, zIndex: 1,
             background: 'linear-gradient(to top right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 40%, transparent 100%)' }} />
 
-          {/* Bottom blend */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
-            background: 'linear-gradient(to top, #060d1f 0%, transparent 100%)', zIndex: 2 }} />
+          {/* Bottom fade — blends into content sheet */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)', zIndex: 2 }} />
 
           {/* Content — fades + recedes as the card slides over */}
           <div className="hero-content" style={{
@@ -446,10 +452,19 @@ export default function LandingPage() {
             </div>
             <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
           </div>
-        </section>
 
-      {/* Content sheet — slides up over the hero */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg-1)', borderRadius: '24px 24px 0 0', boxShadow: '0 -24px 64px rgba(0,0,0,0.75)' }}>
+          {/* Scroll indicator */}
+          <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 10,
+            opacity: Math.max(0, 1 - heroP * 5), transition: 'opacity 0.2s',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 10, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontFamily: 'inherit' }}>Scroll</span>
+            <div style={{ width: 1, height: 32, background: 'linear-gradient(to bottom, rgba(255,255,255,0.4), transparent)', animation: 'scroll-line 1.6s ease-in-out infinite' }} />
+          </div>
+        </section>
+      </div>
+
+      {/* Content sheet — slides over the pinned hero */}
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg-1)', borderRadius: '28px 28px 0 0', boxShadow: '0 -40px 80px rgba(0,0,0,0.7), 0 -1px 0 rgba(255,255,255,0.06)' }}>
 
       {/* FEATURES */}
       <GlitchSection>
