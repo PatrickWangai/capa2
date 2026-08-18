@@ -328,8 +328,8 @@ function AccountTab() {
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '10px 16px', borderRadius: 12,
-                  background: active ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                  border: active ? '1px dashed var(--accent)' : '1px dashed rgba(255,255,255,0.10)',
+                  background: active ? 'var(--accent)' : 'var(--input-bg)',
+                  border: active ? '1px dashed var(--accent)' : '1px dashed var(--border)',
                   color: active ? '#fff' : 'var(--text-secondary)',
                   cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: active ? 600 : 400,
                   transition: 'all 0.15s',

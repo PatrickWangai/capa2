@@ -182,21 +182,29 @@
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
 /* ── Light mode overrides ── */
-[data-color-mode="light"] body { color: #0f1628; }
-[data-color-mode="light"] ::-webkit-scrollbar-thumb       { background: rgba(37,99,235,0.22); }
-[data-color-mode="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,0.38); }
+[data-color-mode="light"] body { color: #111827; background: #f0f2f5; }
+[data-color-mode="light"] ::-webkit-scrollbar-track { background: #e5e7eb; }
+[data-color-mode="light"] ::-webkit-scrollbar-thumb       { background: rgba(0,0,0,0.18); }
+[data-color-mode="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.30); }
 
-[data-color-mode="light"] .text-white    { color: #0f1628               !important; }
-[data-color-mode="light"] .text-gray-100 { color: rgba(15,22,40,0.90)   !important; }
-[data-color-mode="light"] .text-gray-200 { color: rgba(15,22,40,0.80)   !important; }
-[data-color-mode="light"] .text-gray-300 { color: rgba(15,22,40,0.70)   !important; }
-[data-color-mode="light"] .text-gray-400 { color: rgba(15,22,40,0.60)   !important; }
-[data-color-mode="light"] .text-gray-500 { color: rgba(15,22,40,0.45)   !important; }
+[data-color-mode="light"] .text-white    { color: #111827               !important; }
+[data-color-mode="light"] .text-gray-100 { color: rgba(17,24,39,0.90)   !important; }
+[data-color-mode="light"] .text-gray-200 { color: rgba(17,24,39,0.80)   !important; }
+[data-color-mode="light"] .text-gray-300 { color: rgba(17,24,39,0.70)   !important; }
+[data-color-mode="light"] .text-gray-400 { color: rgba(17,24,39,0.60)   !important; }
+[data-color-mode="light"] .text-gray-500 { color: rgba(17,24,39,0.45)   !important; }
+[data-color-mode="light"] .placeholder-gray-500::placeholder,
+[data-color-mode="light"] .placeholder-gray-600::placeholder { color: rgba(17,24,39,0.35); }
 
-[data-color-mode="light"] .btn-secondary { background-color: rgba(37,99,235,0.10); color: var(--accent) !important; }
-[data-color-mode="light"] .btn-secondary:hover { background-color: rgba(37,99,235,0.18); }
+[data-color-mode="light"] .btn-secondary { background-color: #f3f4f6; color: var(--accent) !important; }
+[data-color-mode="light"] .btn-secondary:hover { background-color: #e5e7eb; }
 
-[data-color-mode="light"] .badge-gray { background: rgba(15,22,40,0.08); color: rgba(15,22,40,0.60); }
+[data-color-mode="light"] .badge-gray { background: rgba(0,0,0,0.06); color: rgba(17,24,39,0.55); }
+
+[data-color-mode="light"] .card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.07);
+}
 
 /* Price flash on update */
 @keyframes flash {

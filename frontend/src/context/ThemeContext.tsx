@@ -214,30 +214,30 @@ function applyTheme(name: ThemeName) {
 
 export type ColorMode = 'dark' | 'light';
 
-const LIGHT_GRAD = 'linear-gradient(160deg, #e8f1ff 0%, #d4e5ff 18%, #bdd5ff 45%, #a6c4fe 72%, #8fb3fd 88%, #7aa2fc 100%)';
+const LIGHT_BG = '#f0f2f5';
 
 function applyLightMode() {
   const r = document.documentElement;
   r.setAttribute('data-color-mode', 'light');
-  r.style.setProperty('--text',           '#0f1628');
-  r.style.setProperty('--text-secondary', 'rgba(15,22,40,0.60)');
-  r.style.setProperty('--text-tertiary',  'rgba(15,22,40,0.30)');
-  r.style.setProperty('--border',         'rgba(37,99,235,0.12)');
-  r.style.setProperty('--border-sub',     'rgba(37,99,235,0.07)');
-  r.style.setProperty('--card-bg',        'rgba(255,255,255,0.78)');
-  r.style.setProperty('--card-border',    'rgba(37,99,235,0.10)');
-  r.style.setProperty('--sidebar-bg',     'rgba(220,234,255,0.92)');
-  r.style.setProperty('--input-bg',       'rgba(255,255,255,0.95)');
-  r.style.setProperty('--nav-text',       'rgba(15,22,40,0.72)');
-  r.style.setProperty('--bg-1', '#e8f1ff');
-  r.style.setProperty('--bg-2', '#d4e5ff');
-  r.style.setProperty('--bg-3', '#bdd5ff');
-  r.style.setProperty('--bg-4', '#a6c4fe');
-  r.style.setProperty('--bg-5', '#8fb3fd');
-  r.style.setProperty('--bg-6', '#7aa2fc');
-  r.style.setProperty('--bg-gradient', LIGHT_GRAD);
+  r.style.setProperty('--text',           '#111827');
+  r.style.setProperty('--text-secondary', 'rgba(17,24,39,0.60)');
+  r.style.setProperty('--text-tertiary',  'rgba(17,24,39,0.38)');
+  r.style.setProperty('--border',         'rgba(0,0,0,0.09)');
+  r.style.setProperty('--border-sub',     'rgba(0,0,0,0.05)');
+  r.style.setProperty('--card-bg',        'rgba(255,255,255,0.98)');
+  r.style.setProperty('--card-border',    'rgba(0,0,0,0.07)');
+  r.style.setProperty('--sidebar-bg',     'rgba(255,255,255,0.98)');
+  r.style.setProperty('--input-bg',       '#ffffff');
+  r.style.setProperty('--nav-text',       'rgba(17,24,39,0.65)');
+  r.style.setProperty('--bg-1', LIGHT_BG);
+  r.style.setProperty('--bg-2', LIGHT_BG);
+  r.style.setProperty('--bg-3', LIGHT_BG);
+  r.style.setProperty('--bg-4', LIGHT_BG);
+  r.style.setProperty('--bg-5', LIGHT_BG);
+  r.style.setProperty('--bg-6', LIGHT_BG);
+  r.style.setProperty('--bg-gradient', LIGHT_BG);
   r.style.setProperty('--bg-size', 'auto');
-  document.body.style.background = LIGHT_GRAD;
+  document.body.style.background = LIGHT_BG;
   document.body.style.backgroundSize = 'auto';
   document.body.style.backgroundAttachment = 'fixed';
 }
