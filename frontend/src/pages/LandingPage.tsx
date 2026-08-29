@@ -177,6 +177,66 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
   );
 }
 
+// ── Wavy torn-edge divider between the sticky video hero and the content
+// sheet that slides over it — same "hand-cut paper edge" language as
+// Apocalypse Coffee's section seams, in the page's own token color.
+function WavyDivider() {
+  return (
+    <svg viewBox="0 0 1200 36" preserveAspectRatio="none" width="100%" height="36"
+      style={{ display: 'block', marginTop: -1 }}>
+      <path
+        d="M0,18 C 60,2 120,34 180,18 C 240,2 300,34 360,18 C 420,2 480,34 540,18 C 600,2 660,34 720,18 C 780,2 840,34 900,18 C 960,2 1020,34 1080,18 C 1140,2 1180,20 1200,18 L1200,36 L0,36 Z"
+        fill="var(--background)"
+      />
+    </svg>
+  );
+}
+
+// ── Squiggly hand-drawn underline accent ──────────────────────
+function Squiggle({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{ position: 'relative', display: 'inline-block' }}>
+      {children}
+      <svg viewBox="0 0 200 12" preserveAspectRatio="none"
+        style={{ position: 'absolute', left: 0, bottom: -6, width: '100%', height: 10, pointerEvents: 'none' }}>
+        <path d="M2,7 C 30,2 50,10 75,6 C 100,2 120,10 145,6 C 165,3 180,8 198,5"
+          fill="none" stroke="var(--primary)" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    </span>
+  );
+}
+
+// ── Floating drifting badge chips — the "physics-scattered coffee beans"
+// motif, reworked as small bordered brand chips that gently bob and rotate.
+// `dark` swaps the chip to a light-on-teal treatment for use on the teal CTA panel.
+const FLOAT_ICONS = ['$', '↑', '●', '%'];
+function FloatingBadges({ dark = false }: { dark?: boolean }) {
+  const items = [
+    { icon: FLOAT_ICONS[0], top: '6%',  left: '6%',  size: 34, delay: 0,    dur: 7 },
+    { icon: FLOAT_ICONS[1], top: '14%', left: '90%', size: 28, delay: 0.6,  dur: 8.5 },
+    { icon: FLOAT_ICONS[2], top: '78%', left: '4%',  size: 22, delay: 1.2,  dur: 6.5 },
+    { icon: FLOAT_ICONS[3], top: '85%', left: '92%', size: 30, delay: 0.3,  dur: 9 },
+  ];
+  return (
+    <div aria-hidden="true" className="float-badges-hide" style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+      {items.map((it, i) => (
+        <span key={i} style={{
+          position: 'absolute', top: it.top, left: it.left,
+          width: it.size, height: it.size, borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: it.size * 0.4,
+          color: dark ? ACCENT : '#fff',
+          background: dark ? '#fff' : ACCENT,
+          border: `2px solid var(--foreground)`,
+          animation: `float-drift ${it.dur}s ease-in-out ${it.delay}s infinite alternate`,
+        }}>
+          {it.icon}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 const NAV_ITEMS = [
   { label: 'Markets',   href: '/markets' },
   { label: 'Invest',    href: '/register' },
@@ -359,6 +419,13 @@ export default function LandingPage() {
           80%  { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
           100% { opacity: 0; }
         }
+        @keyframes float-drift {
+          0%   { transform: translate(0, 0) rotate(-6deg); }
+          100% { transform: translate(10px, -16px) rotate(8deg); }
+        }
+        @media (max-width: 768px) {
+          .float-badges-hide { display: none !important; }
+        }
 
         @media (max-width: 640px) {
           .hero-content { padding: 0 20px max(80px, env(safe-area-inset-bottom, 0px) + 60px) 20px !important; }
@@ -464,24 +531,26 @@ export default function LandingPage() {
       </div>
 
       {/* Content sheet — slides over the pinned hero */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg-1)', borderRadius: '28px 28px 0 0', boxShadow: '0 -40px 80px rgba(0,0,0,0.7), 0 -1px 0 rgba(255,255,255,0.06)' }}>
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--background)' }}>
+        <WavyDivider />
 
       {/* FEATURES */}
       <GlitchSection>
-        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
+        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto', position: 'relative' }}>
+          <FloatingBadges />
           <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
-          <h2 style={{ fontSize: 'clamp(32px,5vw,54px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
-            Everything you need.<br />Nothing you don't.
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
+            Everything you need.<br /><Squiggle>Nothing you don't.</Squiggle>
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="feature-card" style={{ backgroundColor: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: 32, border: '1px solid var(--card-border)', transition: 'border-color 0.2s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.35)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--card-border)')}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+              <div key={title} className="feature-card" style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: 32, border: '2px solid var(--foreground)', transition: 'transform 0.15s, box-shadow 0.15s', cursor: 'default' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '5px 5px 0 0 var(--foreground)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                <div style={{ width: 48, height: 48, borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <Icon size={22} color={ACCENT} strokeWidth={1.8} />
                 </div>
-                <h3 style={{ fontSize: 19, fontWeight: 600, color: TEXT, marginBottom: 8, letterSpacing: '-0.02em' }}>{title}</h3>
+                <h3 style={{ fontSize: 19, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{title}</h3>
                 <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
               </div>
             ))}
@@ -491,20 +560,20 @@ export default function LandingPage() {
 
       {/* HOW IT WORKS */}
       <GlitchSection>
-        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '80px 24px', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)' }}>
+        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--secondary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
             <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontSize: 'clamp(28px,5vw,52px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.08 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
               How Capa works
             </h2>
             <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {steps.map(({ icon: Icon, num, title, desc }) => (
                 <div key={num} style={{ textAlign: 'center' }}>
-                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                   </div>
                   <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
-                  <h3 style={{ fontSize: 17, fontWeight: 600, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
                   <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
                 </div>
               ))}
@@ -517,17 +586,22 @@ export default function LandingPage() {
       <GlitchSection>
         <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
-          <h2 style={{ fontSize: 'clamp(28px,5vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.08 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,42px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
             Built on trust. Backed by data.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
             {[
-              { label: 'CMA Regulated',      desc: 'Licensed by the Capital Markets Authority of Kenya.' },
-              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
-              { label: 'No Hidden Fees',      desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
-            ].map(({ label, desc }) => (
-              <div key={label} style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 20, backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
-                <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>{label}</p>
+              { label: 'CMA Regulated',      desc: 'Licensed by the Capital Markets Authority of Kenya.', dot: 'var(--success)' },
+              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.', dot: 'var(--info)' },
+              { label: 'No Hidden Fees',      desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.', dot: 'var(--warning)' },
+            ].map(({ label, desc, dot }) => (
+              <div key={label} className="trust-badge" style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 'var(--radius)', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', transition: 'transform 0.15s, box-shadow 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '4px 4px 0 0 var(--foreground)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: dot, flexShrink: 0 }} />
+                  {label}
+                </p>
                 <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
               </div>
             ))}
@@ -535,30 +609,33 @@ export default function LandingPage() {
         </section>
       </GlitchSection>
 
-      {/* CTA */}
+      {/* CTA — same teal-panel + hard-shadow-card language as the sign-in page */}
       <GlitchSection>
-        <section style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '88px 24px', textAlign: 'center', borderTop: '1px solid var(--card-border)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'relative' }}>
-            <h2 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, marginBottom: 16, lineHeight: 1.06 }}>
-              Start investing today.
+        <section style={{ position: 'relative', overflow: 'hidden', background: ACCENT, padding: '88px 24px', borderTop: '2px solid var(--foreground)' }}>
+          <FloatingBadges dark />
+          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
+              Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
             </h2>
-            <p style={{ fontSize: 17, color: SEC, maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.55 }}>
+            <p style={{ fontSize: 15, color: SEC, margin: '0 auto 20px', lineHeight: 1.55 }}>
               Open your free account in under 10 minutes. No minimum deposit.
             </p>
-            <div className="cta-features" style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+            <div className="cta-features" style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 24 }}>
               {['Regulated platform', 'Instant M-Pesa deposits'].map(f => (
-                <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, color: SEC }}>
+                <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: SEC }}>
                   <Check size={13} color={ACCENT} />{f}
                 </span>
               ))}
             </div>
-            <GlowPill to="/register" text="Create Free Account" icon={<ArrowUpRight size={15} />} className="cta-glow" />
+            <Link to="/register" className="btn-primary cta-btn" style={{ display: 'inline-flex', textDecoration: 'none', padding: '14px 32px', fontSize: 14 }}>
+              Create Free Account <ArrowUpRight size={15} />
+            </Link>
           </div>
         </section>
       </GlitchSection>
 
       {/* FOOTER */}
-      <footer className="lp-footer" style={{ backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--card-border)', padding: '48px 24px 32px' }}>
+      <footer className="lp-footer" style={{ backgroundColor: 'var(--secondary)', borderTop: '2px solid var(--foreground)', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
@@ -572,7 +649,7 @@ export default function LandingPage() {
               { heading: 'Account',  links: [['Sign In', '/login'], ['Register', '/register']] as const },
             ].map(({ heading, links }) => (
               <div key={heading}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(235,235,245,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {links.map(([label, href]) => (
                     <Link key={label} to={href} style={{ fontSize: 14, color: SEC, textDecoration: 'none' }}>{label}</Link>
@@ -581,8 +658,8 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: 24 }}>
-            <p style={{ margin: 0, fontSize: 12, color: 'rgba(235,235,245,0.3)', lineHeight: 1.7 }}>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted-foreground)', lineHeight: 1.7 }}>
               © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
             </p>
           </div>

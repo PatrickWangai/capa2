@@ -337,6 +337,7 @@
   --font-sans: 'Space Mono', ui-monospace, monospace;
   --font-mono: 'Space Mono', ui-monospace, monospace;
   --font-display: 'Archivo', var(--font-sans);
+  --font-script: 'Caveat', cursive;
 }
 
 /* The CAPA wordmark PNG is a white-on-transparent asset (correct on the
