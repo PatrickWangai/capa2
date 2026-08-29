@@ -18,7 +18,7 @@ export default function FxHistoryPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link to="/wallet" style={{ color: 'var(--accent)', display: 'flex' }}>
+        <Link to="/wallet" style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -42,7 +42,7 @@ export default function FxHistoryPage() {
           <div className="card overflow-x-auto p-0 hidden lg:block">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['From', 'To', 'Rate', 'Fee', 'Date'].map(h => (
                     <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">{h}</th>
                   ))}
@@ -51,7 +51,7 @@ export default function FxHistoryPage() {
               <tbody>
                 {conversions.map((c: any, i: number) => (
                   <tr key={c.id} className="hover:bg-white/[0.025] transition-colors"
-                    style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                    style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                     <td className="px-4 py-3">
                       <span className="text-lg mr-1">{FLAG[c.fromCurrency]}</span>
                       <span className="text-white font-semibold">{c.fromCurrency} {Number(c.fromAmount).toFixed(2)}</span>
@@ -87,7 +87,7 @@ export default function FxHistoryPage() {
                     {new Date(c.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short' })}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 }}>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1" style={{ borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                   <div className="flex justify-between"><span className="text-xs text-gray-500">Spent</span><span className="text-xs text-white">{c.fromCurrency} {Number(c.fromAmount).toFixed(2)}</span></div>
                   <div className="flex justify-between"><span className="text-xs text-gray-500">Received</span><span className="text-xs text-green-400">{c.toCurrency} {Number(c.toAmount).toFixed(2)}</span></div>
                   <div className="flex justify-between"><span className="text-xs text-gray-500">Rate</span><span className="text-xs text-gray-400">{Number(c.rate).toFixed(4)}</span></div>

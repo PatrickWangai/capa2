@@ -41,7 +41,7 @@ export default function AdminWalletsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="card">
           <div className="flex items-center gap-2 mb-2">
-            <ArrowRightLeft size={15} style={{ color: 'var(--accent)' }} />
+            <ArrowRightLeft size={15} style={{ color: 'var(--primary)' }} />
             <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">KES → USD Volume</span>
           </div>
           <p className="text-2xl font-bold text-white">KES {totalKesToUsd.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
@@ -49,7 +49,7 @@ export default function AdminWalletsPage() {
         </div>
         <div className="card">
           <div className="flex items-center gap-2 mb-2">
-            <ArrowRightLeft size={15} style={{ color: 'var(--accent)' }} />
+            <ArrowRightLeft size={15} style={{ color: 'var(--primary)' }} />
             <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">USD → KES Volume</span>
           </div>
           <p className="text-2xl font-bold text-white">USD {totalUsdToKes.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
@@ -57,7 +57,7 @@ export default function AdminWalletsPage() {
         </div>
         <div className="card">
           <div className="flex items-center gap-2 mb-2">
-            <DollarSign size={15} style={{ color: 'var(--accent)' }} />
+            <DollarSign size={15} style={{ color: 'var(--primary)' }} />
             <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Fees Collected</span>
           </div>
           <p className="text-2xl font-bold text-white">{totalFees.toFixed(4)}</p>
@@ -67,7 +67,7 @@ export default function AdminWalletsPage() {
 
       {/* Conversion history */}
       <div className="card p-0">
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <h2 className="font-semibold text-white">Conversion History</h2>
           <p className="text-xs text-gray-500 mt-0.5">All user FX conversions platform-wide</p>
         </div>
@@ -80,7 +80,7 @@ export default function AdminWalletsPage() {
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
                     {['From', 'To', 'Rate', 'Fee', 'Date'].map(h => (
                       <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
@@ -89,7 +89,7 @@ export default function AdminWalletsPage() {
                 <tbody>
                   {conversions.map((c: any, i: number) => (
                     <tr key={c.id} className="hover:bg-white/[0.025] transition-colors"
-                      style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                      style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                       <td className="px-4 py-3">
                         <span className="mr-1">{FLAG[c.fromCurrency]}</span>
                         <span className="text-white font-medium">{c.fromCurrency} {Number(c.fromAmount).toFixed(2)}</span>
@@ -114,7 +114,7 @@ export default function AdminWalletsPage() {
             {/* Mobile cards */}
             <div className="block lg:hidden p-4 space-y-2">
               {conversions.map((c: any) => (
-                <div key={c.id} className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div key={c.id} className="rounded-xl p-3" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-1 text-sm">
                       <span>{FLAG[c.fromCurrency]}</span>

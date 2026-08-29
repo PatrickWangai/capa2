@@ -2,7 +2,6 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import { LayoutDashboard, Users, ShieldCheck, ArrowDownUp, LogOut, ChevronLeft, Wallet } from 'lucide-react';
-import clsx from 'clsx';
 import { useAlertStore } from '../../store/alertStore';
 import CapaLogo from '../ui/CapaLogo';
 
@@ -27,34 +26,34 @@ export default function AdminLayout() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'transparent' }}>
+    <div style={{ display: 'flex', height: '100vh', background: 'var(--background)' }}>
       <aside style={{
         width: 240, display: 'flex', flexDirection: 'column',
-        backgroundColor: 'rgba(28,28,30,0.85)',
-        backdropFilter: 'saturate(180%) blur(20px)',
-        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-        borderRight: '1px solid rgba(84,84,88,0.45)',
-        boxShadow: '1px 0 0 rgba(0,0,0,0.4)',
+        backgroundColor: 'var(--sidebar)',
+        borderRight: '2px solid var(--sidebar-border)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(84,84,88,0.45)' }}>
-          <CapaLogo size={44} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid var(--sidebar-border)' }}>
+          <CapaLogo size={40} />
           <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#ffffff', margin: 0 }}>Capa</p>
-            <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.6)', margin: 0 }}>Admin Panel</p>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 900, textTransform: 'uppercase', color: 'var(--foreground)', margin: 0 }}>Capa</p>
+            <p style={{ fontSize: 11, color: 'var(--muted-foreground)', margin: 0 }}>Admin Panel</p>
           </div>
         </div>
 
-        <nav style={{ flex: 1, padding: '8px 12px' }}>
+        <nav style={{ flex: 1, padding: '8px 10px' }}>
           {nav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to} to={to}
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 10,
-                padding: '9px 12px', borderRadius: 10, marginBottom: 2,
-                fontSize: 15, fontWeight: 500, textDecoration: 'none',
-                backgroundColor: isActive ? 'rgba(var(--accent-rgb),0.15)' : 'transparent',
-                color: isActive ? 'var(--accent)' : 'rgba(235,235,245,0.85)',
-                transition: 'background 0.15s',
+                padding: '9px 10px', marginBottom: 2,
+                fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '-0.01em',
+                textDecoration: 'none',
+                borderLeft: `2px solid ${isActive ? 'var(--sidebar-primary)' : 'transparent'}`,
+                backgroundColor: isActive ? 'var(--sidebar-accent)' : 'transparent',
+                color: isActive ? 'var(--sidebar-foreground-active)' : 'var(--sidebar-foreground)',
+                textShadow: isActive ? 'var(--glow)' : 'none',
+                transition: 'background-color 0.15s, color 0.15s',
               })}
             >
               {({ isActive }) => (
@@ -67,11 +66,11 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <div style={{ padding: 12, borderTop: '1px solid rgba(84,84,88,0.45)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NavLink to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: 'rgba(235,235,245,0.6)', textDecoration: 'none' }}>
+        <div style={{ padding: 12, borderTop: '1px solid var(--sidebar-border)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavLink to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 10px', borderRadius: 'var(--radius)', fontSize: 13, color: 'var(--sidebar-foreground)', textDecoration: 'none' }}>
             <ChevronLeft size={16} /> Back to App
           </NavLink>
-          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, fontSize: 14, color: '#ff3b30', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 10px', borderRadius: 'var(--radius)', fontSize: 13, color: 'var(--destructive)', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
             <LogOut size={16} /> Logout
           </button>
         </div>

@@ -151,11 +151,10 @@ export default function MarketsPage() {
         </div>
       </div>
 
-      {/* ── Dark glass table card ── */}
-      <div style={{ background: 'var(--card-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 18, overflow: 'hidden', border: '1px solid var(--card-border)', boxShadow: '0 1px 6px rgba(0,0,0,0.12)' }}>
+      <div style={{ background: 'var(--card)', borderRadius: 'var(--radius)', overflow: 'hidden', border: '2px solid var(--foreground)' }}>
 
         {/* Tabs + search bar */}
-        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12, flexWrap: 'wrap', gap: 0 }}>
+        <div style={{ borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12, flexWrap: 'wrap', gap: 0 }}>
           <div style={{ display: 'flex' }}>
             {TABS.map(t => (
               <button
@@ -168,7 +167,7 @@ export default function MarketsPage() {
                   color: view === t.id ? '#ffffff' : 'rgba(235,235,245,0.45)',
                   background: 'none',
                   border: 'none',
-                  borderBottom: view === t.id ? '2px solid var(--accent)' : '2px solid transparent',
+                  borderBottom: view === t.id ? '2px solid var(--primary)' : '2px solid transparent',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap' as const,
                   transition: 'color 0.15s',
@@ -190,8 +189,8 @@ export default function MarketsPage() {
               style={{
                 paddingLeft: 30, paddingRight: search ? 28 : 10,
                 paddingTop: 7, paddingBottom: 7,
-                fontSize: 12, border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
-                outline: 'none', background: 'rgba(255,255,255,0.05)', color: '#ffffff', width: 210,
+                fontSize: 12, border: '1px solid var(--border)', borderRadius: 6,
+                outline: 'none', background: 'var(--border)', color: '#ffffff', width: 210,
               }}
             />
             {search && (
@@ -206,7 +205,7 @@ export default function MarketsPage() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
+              <tr style={{ background: 'var(--border)' }}>
                 <th style={TH}>#</th>
                 <th style={{ ...TH, textAlign: 'left', paddingLeft: 12 }}>Symbol</th>
                 <th style={{ ...TH, textAlign: 'left', cursor: 'pointer' }} onClick={() => toggleSort('name')}>
@@ -265,8 +264,8 @@ export default function MarketsPage() {
                 return (
                   <Link to={`/markets/${asset.id}`} key={asset.id} style={{ display: 'contents', textDecoration: 'none' }}>
                     <tr
-                      style={{ borderTop: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                      style={{ borderTop: '1px solid var(--border)', cursor: 'pointer' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'var(--border)')}
                       onMouseLeave={e => (e.currentTarget.style.background = '')}
                     >
                       {/* # */}
@@ -318,9 +317,9 @@ export default function MarketsPage() {
                               <span>{Number(lo52).toFixed(0)}</span>
                               <span>{Number(hi52).toFixed(0)}</span>
                             </div>
-                            <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 2, position: 'relative' }}>
-                              <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${range}%`, background: 'var(--accent)', borderRadius: 2 }} />
-                              <div style={{ position: 'absolute', top: -2, left: `calc(${range}% - 3px)`, width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', border: '2px solid rgba(255,255,255,0.15)', boxShadow: '0 0 0 1px var(--accent)' }} />
+                            <div style={{ height: 4, background: 'var(--secondary)', borderRadius: 2, position: 'relative' }}>
+                              <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${range}%`, background: 'var(--primary)', borderRadius: 2 }} />
+                              <div style={{ position: 'absolute', top: -2, left: `calc(${range}% - 3px)`, width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)', border: '2px solid var(--secondary)', boxShadow: '0 0 0 1px var(--primary)' }} />
                             </div>
                           </div>
                         ) : <span style={{ color: 'rgba(235,235,245,0.2)' }}>—</span>}
@@ -329,7 +328,7 @@ export default function MarketsPage() {
                       {/* Sector */}
                       <td style={{ ...TD, whiteSpace: 'nowrap' }}>
                         {asset.assetClass ? (
-                          <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'var(--accent-dim)', color: 'var(--accent)', fontWeight: 500 }}>
+                          <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'var(--accent-dim)', color: 'var(--primary)', fontWeight: 500 }}>
                             {asset.assetClass}
                           </span>
                         ) : '—'}
@@ -354,7 +353,7 @@ export default function MarketsPage() {
 
         {/* Footer */}
         {!isLoading && displayed.length > 0 && (
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ borderTop: '1px solid var(--border)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: 12, color: 'rgba(235,235,245,0.40)' }}>{displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · Nairobi Securities Exchange</span>
             <span style={{ fontSize: 11, color: 'rgba(235,235,245,0.25)' }}>Prices delayed up to 15 min</span>
           </div>
@@ -373,7 +372,7 @@ const TH: React.CSSProperties = {
   textAlign: 'right',
   whiteSpace: 'nowrap',
   userSelect: 'none',
-  borderBottom: '1px solid rgba(255,255,255,0.06)',
+  borderBottom: '1px solid var(--border)',
   letterSpacing: '0.02em',
 };
 

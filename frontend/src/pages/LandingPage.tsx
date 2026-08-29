@@ -4,7 +4,7 @@ import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, Arrow
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCCircle from '../components/ui/CapaCCircle';
 
-const ACCENT = 'var(--accent)';
+const ACCENT = 'var(--primary)';
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
 
@@ -103,7 +103,7 @@ const steps = [
   { icon: BarChart2,  num: '04', title: 'Start investing',      desc: 'Browse global markets and place your first trade in seconds.' },
 ];
 
-const MONO = "'Sometype Mono', ui-monospace, 'SF Mono', monospace";
+const MONO = "'Space Mono', ui-monospace, 'SF Mono', monospace";
 
 // ── Preloader ─────────────────────────────────────────────────
 function usePreloader() {
@@ -264,7 +264,7 @@ function FloatingNav() {
               {/* Accent top line on hover */}
               <div className="capa-nav-line" style={{
                 position: 'absolute', top: -1, left: 0, right: 0, height: 1,
-                background: 'var(--accent)', transform: 'scaleX(0)',
+                background: 'var(--primary)', transform: 'scaleX(0)',
                 transformOrigin: 'left', transition: 'transform 0.28s ease',
               }} />
               {/* Animated pixel icon */}
@@ -318,7 +318,7 @@ export default function LandingPage() {
   const heroP = useHeroProgress();
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
-    <div style={{ background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Preloader />
       <style>{`
         @keyframes hero-text-in {
@@ -388,7 +388,7 @@ export default function LandingPage() {
           gap: 7px; border-radius: 3px;
           background: #fff;
           color: #000 !important; text-decoration: none;
-          font-family: 'Sometype Mono', ui-monospace, 'SF Mono', monospace;
+          font-family: 'Space Mono', ui-monospace, 'SF Mono', monospace;
           font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
           text-transform: uppercase;
           padding: 14px 22px; white-space: nowrap;
@@ -437,7 +437,7 @@ export default function LandingPage() {
             willChange: 'opacity, transform',
           }}>
             <div className="hero-logo-wrap hero-text hero-text-1" style={{ marginBottom: -36, marginLeft: -28 }}>
-              <CapaLogo size={130} />
+              <CapaLogo size={130} className="capa-logo-on-dark" />
             </div>
 
             <p className="hero-text hero-text-2 hero-subtitle" style={{ fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', minHeight: '1.5em' }}>
@@ -446,7 +446,7 @@ export default function LandingPage() {
 
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
               <GlowPill to="/register" text="Start" icon={<ArrowUpRight size={13} />} />
-              <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '14px 22px', borderRadius: 3, backgroundColor: 'transparent', color: '#fff', textDecoration: 'none', fontFamily: "'Sometype Mono', ui-monospace, monospace", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.45)', transition: 'background 0.15s, border-color 0.15s' }}>
+              <Link to="/login" onMouseEnter={scrambleSignIn} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '14px 22px', borderRadius: 3, backgroundColor: 'transparent', color: '#fff', textDecoration: 'none', fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.45)', transition: 'background 0.15s, border-color 0.15s' }}>
                 {signInText}
               </Link>
             </div>

@@ -40,7 +40,7 @@ export default function WalletPage() {
 
       {/* Live rate banner */}
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
-        style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--accent)' }}>
+        style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--primary)' }}>
         <ArrowRightLeft size={14} />
         <span>Live rate: 1 USD = {Number(rate).toFixed(4)} KES</span>
         <span className="ml-auto text-xs opacity-60">
@@ -82,7 +82,7 @@ export default function WalletPage() {
         ].map(({ to, icon: Icon, label, sub }) => (
           <Link key={to} to={to} style={{ textDecoration: 'none' }}>
             <div className="card hover:border-gray-600 transition-all cursor-pointer text-center" style={{ padding: '12px 8px' }}>
-              <Icon size={16} style={{ color: 'var(--accent)', margin: '0 auto 6px' }} />
+              <Icon size={16} style={{ color: 'var(--primary)', margin: '0 auto 6px' }} />
               <p className="font-semibold text-white" style={{ fontSize: 11 }}>{label}</p>
               <p className="text-gray-500" style={{ fontSize: 10 }}>{sub}</p>
             </div>
@@ -93,14 +93,14 @@ export default function WalletPage() {
       {/* Recent conversions */}
       {(recentData?.conversions?.length ?? 0) > 0 && (
         <div className="card p-0">
-          <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
             <h2 className="font-semibold text-white text-sm">Recent Conversions</h2>
-            <Link to="/wallet/history" className="text-xs" style={{ color: 'var(--accent)' }}>View all</Link>
+            <Link to="/wallet/history" className="text-xs" style={{ color: 'var(--primary)' }}>View all</Link>
           </div>
           <div>
             {recentData.conversions.map((c: any, i: number) => (
               <div key={c.id} className="flex items-center justify-between px-5 py-3"
-                style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{FLAG[c.fromCurrency]}</span>
                   <ArrowRightLeft size={12} className="text-gray-600" />

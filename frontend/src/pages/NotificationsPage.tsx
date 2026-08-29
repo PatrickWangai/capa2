@@ -99,13 +99,13 @@ export default function NotificationsPage() {
               className={clsx('px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5',
                 filter === tab.id ? 'text-white' : 'text-gray-400 hover:text-white')}
               style={{
-                background: filter === tab.id ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                border: filter === tab.id ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                background: filter === tab.id ? 'var(--primary)' : 'var(--border)',
+                border: filter === tab.id ? 'none' : '1px solid var(--border)',
               }}>
               {tab.label}
               {count > 0 && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full"
-                  style={{ background: filter === tab.id ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.10)' }}>
+                  style={{ background: filter === tab.id ? 'var(--muted-foreground)' : 'var(--secondary)' }}>
                   {count}
                 </span>
               )}
@@ -117,7 +117,7 @@ export default function NotificationsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="card h-16 animate-pulse" style={{ background: 'rgba(255,255,255,0.05)' }} />
+            <div key={i} className="card h-16 animate-pulse" style={{ background: 'var(--border)' }} />
           ))}
         </div>
       ) : notifications.length === 0 ? (
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
                   <div className="flex items-start justify-between gap-2">
                     <p className={clsx('text-sm font-medium', n.isRead ? 'text-gray-300' : 'text-white')}>{n.title}</p>
                     <div className="flex items-center gap-2 shrink-0">
-                      {!n.isRead && <span className="w-2 h-2 rounded-full mt-0.5" style={{ background: 'var(--accent)' }} />}
+                      {!n.isRead && <span className="w-2 h-2 rounded-full mt-0.5" style={{ background: 'var(--primary)' }} />}
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{n.body}</p>

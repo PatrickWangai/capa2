@@ -23,6 +23,20 @@ const nav = [
   { to: '/settings',      label: 'Settings',     icon: Settings },
 ];
 
+const navItemStyle = (isActive: boolean, collapsed: boolean): React.CSSProperties => ({
+  display: 'flex', alignItems: 'center',
+  justifyContent: collapsed ? 'center' : 'flex-start', gap: 10,
+  padding: collapsed ? '10px 0' : '9px 10px',
+  marginBottom: 2, fontSize: 13, fontWeight: 700,
+  fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '-0.01em',
+  textDecoration: 'none', position: 'relative',
+  borderLeft: `2px solid ${isActive ? 'var(--sidebar-primary)' : 'transparent'}`,
+  backgroundColor: isActive ? 'var(--sidebar-accent)' : 'transparent',
+  color: isActive ? 'var(--sidebar-foreground-active)' : 'var(--sidebar-foreground)',
+  textShadow: isActive ? 'var(--glow)' : 'none',
+  transition: 'background-color 0.15s, color 0.15s',
+});
+
 export default function AppLayout() {
   const { user, logout, setAuth, accessToken, refreshToken } = useAuthStore();
   const navigate = useNavigate();
@@ -70,11 +84,18 @@ export default function AppLayout() {
 
   const kycBadge = user?.kycStatus !== 'APPROVED';
 
-  const SEP         = '1px dashed rgba(255,255,255,0.08)';
-  const navInactive = 'var(--nav-text)';
+  const SEP = '1px solid var(--sidebar-border)';
+  const initials = `${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`;
+
+  const avatarStyle: React.CSSProperties = {
+    borderRadius: 'var(--radius)', background: 'var(--primary)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    color: 'var(--primary-foreground)', fontSize: 13, fontWeight: 700,
+    fontFamily: 'var(--font-display)', border: '2px solid var(--foreground)', flexShrink: 0,
+  };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-gradient)' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--background)' }}>
 
       {/* ── Search Palette ── */}
       <SearchPalette open={searchOpen} onClose={() => setSearch(false)} />
@@ -85,21 +106,19 @@ export default function AppLayout() {
         <aside style={{
           width: collapsed ? 64 : 256, flexShrink: 0, display: 'flex', flexDirection: 'column',
           height: '100vh', overflowY: 'auto', overflowX: 'hidden',
-          backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(160%) blur(28px)',
-          WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderRight: `1px solid ${SEP}`,
-          boxShadow: '1px 0 0 rgba(0,0,0,0.08)',
+          backgroundColor: 'var(--sidebar)', borderRight: `2px solid var(--sidebar-border)`,
           transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)',
         }}>
 
           {/* Logo row + collapse toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between', padding: collapsed ? '16px 0' : '16px 12px 16px 20px', borderBottom: `1px solid ${SEP}`, flexShrink: 0 }}>
-            {!collapsed && <CapaLogo size={44} />}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between', padding: collapsed ? '16px 0' : '16px 12px 16px 20px', borderBottom: SEP, flexShrink: 0 }}>
+            {!collapsed && <CapaLogo size={36} />}
             <button
               onClick={toggleCollapsed}
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 8, display: 'flex', flexShrink: 0, transition: 'color 0.15s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(235,235,245,0.9)')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+              style={{ color: 'var(--sidebar-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 'var(--radius)', display: 'flex', flexShrink: 0, transition: 'color 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--sidebar-foreground-active)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--sidebar-foreground)')}>
               {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
             </button>
           </div>
@@ -108,11 +127,11 @@ export default function AppLayout() {
           {!collapsed && (
             <div style={{ padding: '10px 12px 4px' }}>
               <button onClick={() => setSearch(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, textAlign: 'left', transition: 'all 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(235,235,245,0.8)'; }}
-                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)', background: 'var(--card)', border: `1px solid var(--sidebar-border)`, color: 'var(--sidebar-foreground)', cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: 13, textAlign: 'left', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--sidebar-primary)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--sidebar-border)'; }}>
                 <Search size={15} /><span style={{ flex: 1 }}>Search stocks…</span>
-                <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(235,235,245,0.4)' }}>⌘K</kbd>
+                <kbd style={{ fontSize: 10, padding: '2px 5px', borderRadius: 4, background: 'var(--secondary)', border: `1px solid var(--sidebar-border)`, color: 'var(--muted-foreground)' }}>⌘K</kbd>
               </button>
             </div>
           )}
@@ -121,61 +140,61 @@ export default function AppLayout() {
           {collapsed && (
             <div style={{ padding: '10px 0 4px', display: 'flex', justifyContent: 'center' }}>
               <button onClick={() => setSearch(true)} title="Search stocks"
-                style={{ color: 'rgba(235,235,245,0.5)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, cursor: 'pointer', padding: 8, display: 'flex', transition: 'all 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(235,235,245,0.9)'; }}
-                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(235,235,245,0.5)'; }}>
+                style={{ color: 'var(--sidebar-foreground)', background: 'var(--card)', border: `1px solid var(--sidebar-border)`, borderRadius: 'var(--radius)', cursor: 'pointer', padding: 8, display: 'flex', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--sidebar-primary)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--sidebar-border)'; }}>
                 <Search size={16} />
               </button>
             </div>
           )}
 
-          <nav style={{ flex: 1, padding: collapsed ? '8px 0' : '8px 12px', overflowY: 'auto' }}>
+          <nav style={{ flex: 1, padding: collapsed ? '8px 0' : '8px 10px', overflowY: 'auto' }}>
             {user?.adminRole && (
               <NavLink to="/admin/dashboard"
                 title={collapsed ? 'Admin' : undefined}
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', gap: 10, padding: collapsed ? '10px 0' : '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive })}>
+                style={({ isActive }) => navItemStyle(isActive, collapsed)}>
                 {({ isActive }) => <><ShieldAlert size={18} strokeWidth={isActive ? 2.2 : 1.8} />{!collapsed && 'Admin'}</>}
               </NavLink>
             )}
             {nav.map(({ to, label, icon: Icon }) => (
               <NavLink key={to} to={to}
                 title={collapsed ? label : undefined}
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', gap: 10, padding: collapsed ? '10px 0' : '9px 12px', borderRadius: 10, marginBottom: 2, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background 0.15s', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive })}>
+                style={({ isActive }) => navItemStyle(isActive, collapsed)}>
                 {({ isActive }) => (<>
                   <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
                   {!collapsed && label}
-                  {!collapsed && label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}
-                  {collapsed && label === 'Verification' && kycBadge && <span style={{ position: 'absolute', top: 6, right: 10, width: 7, height: 7, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}
+                  {!collapsed && label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--warning)' }} />}
+                  {collapsed && label === 'Verification' && kycBadge && <span style={{ position: 'absolute', top: 6, right: 10, width: 7, height: 7, borderRadius: '50%', backgroundColor: 'var(--warning)' }} />}
                 </>)}
               </NavLink>
             ))}
           </nav>
 
           {/* User footer */}
-          <div style={{ padding: collapsed ? '12px 0' : 12, borderTop: `1px solid ${SEP}`, flexShrink: 0 }}>
+          <div style={{ padding: collapsed ? '12px 0' : 12, borderTop: SEP, flexShrink: 0 }}>
             {collapsed ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <div title={`${user?.firstName} ${user?.lastName}`} style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600 }}>
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                <div title={`${user?.firstName} ${user?.lastName}`} style={{ ...avatarStyle, width: 32, height: 32 }}>
+                  {initials}
                 </div>
-                <button onClick={handleLogout} title="Sign out" style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                <button onClick={handleLogout} title="Sign out" style={{ color: 'var(--sidebar-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--destructive)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--sidebar-foreground)')}>
                   <LogOut size={15} />
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 'var(--radius)', backgroundColor: 'var(--secondary)' }}>
+                <div style={{ ...avatarStyle, width: 32, height: 32 }}>
+                  {initials}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-                  <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-display)', textTransform: 'uppercase', color: 'var(--foreground)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+                  <p style={{ fontSize: 11, color: 'var(--muted-foreground)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
                 </div>
-                <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+                <button onClick={handleLogout} style={{ color: 'var(--sidebar-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--destructive)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--sidebar-foreground)')}>
                   <LogOut size={15} />
                 </button>
               </div>
@@ -186,48 +205,48 @@ export default function AppLayout() {
 
       {/* ── Mobile: backdrop + slide-over sidebar ── */}
       {isMobile && mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, backgroundColor: 'rgba(0,0,0,0.55)' }} onClick={() => setMobileOpen(false)} />
       )}
       {isMobile && (
-        <aside style={{ position: 'fixed', top: 0, left: 0, width: 256, height: '100vh', zIndex: 50, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'saturate(160%) blur(28px)', WebkitBackdropFilter: 'saturate(160%) blur(28px)', borderRight: `1px solid ${SEP}`, boxShadow: '4px 0 24px rgba(0,0,0,0.4)', overflowY: 'auto', transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.25s cubic-bezier(0.4,0,0.2,1)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${SEP}` }}>
-            <CapaLogo size={44} />
-            <button onClick={() => setMobileOpen(false)} style={{ color: 'rgba(235,235,245,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', borderRadius: 8 }}>
+        <aside style={{ position: 'fixed', top: 0, left: 0, width: 256, height: '100vh', zIndex: 50, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--sidebar)', borderRight: `2px solid var(--sidebar-border)`, overflowY: 'auto', transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.25s cubic-bezier(0.4,0,0.2,1)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: SEP }}>
+            <CapaLogo size={36} />
+            <button onClick={() => setMobileOpen(false)} style={{ color: 'var(--sidebar-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', borderRadius: 8 }}>
               <X size={20} />
             </button>
           </div>
           <div style={{ padding: '10px 12px 4px' }}>
             <button onClick={() => { setSearch(true); setMobileOpen(false); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, textAlign: 'left' }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)', background: 'var(--card)', border: `1px solid var(--sidebar-border)`, color: 'var(--sidebar-foreground)', cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: 14, textAlign: 'left' }}>
               <Search size={15} /><span style={{ flex: 1 }}>Search stocks…</span>
             </button>
           </div>
-          <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
+          <nav style={{ flex: 1, padding: '8px 10px', overflowY: 'auto' }}>
             {user?.adminRole && (
               <NavLink to="/admin/dashboard" onClick={() => setMobileOpen(false)}
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 10, marginBottom: 2, fontSize: 16, fontWeight: 500, textDecoration: 'none', backgroundColor: isActive ? 'rgba(168,85,247,0.15)' : 'transparent', color: isActive ? '#c084fc' : navInactive })}>
+                style={({ isActive }) => ({ ...navItemStyle(isActive, false), fontSize: 14, padding: '11px 10px' })}>
                 {({ isActive }) => <><ShieldAlert size={20} strokeWidth={isActive ? 2.2 : 1.8} />Admin</>}
               </NavLink>
             )}
             {nav.map(({ to, label, icon: Icon }) => (
               <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
-                style={({ isActive }) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 10, marginBottom: 2, fontSize: 16, fontWeight: 500, textDecoration: 'none', backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent', color: isActive ? 'var(--accent)' : navInactive })}>
-                {({ isActive }) => (<><Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />{label}{label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent)' }} />}</>)}
+                style={({ isActive }) => ({ ...navItemStyle(isActive, false), fontSize: 14, padding: '11px 10px' })}>
+                {({ isActive }) => (<><Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />{label}{label === 'Verification' && kycBadge && <span style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--warning)' }} />}</>)}
               </NavLink>
             ))}
           </nav>
           <div style={{ padding: 12, borderTop: SEP }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,var(--accent),var(--accent-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-text)', fontSize: 14, fontWeight: 600, flexShrink: 0 }}>
-                {user?.firstName?.[0]}{user?.lastName?.[0]}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 'var(--radius)', backgroundColor: 'var(--secondary)' }}>
+              <div style={{ ...avatarStyle, width: 36, height: 36 }}>
+                {initials}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
-                <p style={{ fontSize: 11, color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+                <p style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-display)', textTransform: 'uppercase', color: 'var(--foreground)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+                <p style={{ fontSize: 11, color: 'var(--muted-foreground)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
               </div>
-              <button onClick={handleLogout} style={{ color: '#aeaeb2', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#ff3b30')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#aeaeb2')}>
+              <button onClick={handleLogout} style={{ color: 'var(--sidebar-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, display: 'flex' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--destructive)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--sidebar-foreground)')}>
                 <LogOut size={15} />
               </button>
             </div>
@@ -240,20 +259,20 @@ export default function AppLayout() {
 
         {/* Mobile top bar with hamburger */}
         {isMobile && (
-          <header style={{ height: 52, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', gap: 12, backgroundColor: 'var(--sidebar-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: SEP }}>
-            <button onClick={() => setMobileOpen(true)} style={{ color: 'rgba(235,235,245,0.7)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}>
+          <header style={{ height: 52, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', gap: 12, backgroundColor: 'var(--card)', borderBottom: `2px solid var(--foreground)` }}>
+            <button onClick={() => setMobileOpen(true)} style={{ color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}>
               <Menu size={22} />
             </button>
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-              <CapaLogo size={34} />
+              <CapaLogo size={28} />
             </div>
-            <button onClick={() => setSearch(true)} style={{ color: 'rgba(235,235,245,0.7)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}>
+            <button onClick={() => setSearch(true)} style={{ color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8 }}>
               <Search size={20} />
             </button>
           </header>
         )}
 
-        <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '16px 12px' : '24px', background: 'var(--bg-gradient)', backgroundAttachment: 'fixed' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '16px 12px' : '24px', background: 'var(--background)' }}>
           <Outlet />
         </main>
       </div>

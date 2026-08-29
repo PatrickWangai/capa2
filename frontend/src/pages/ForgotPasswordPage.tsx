@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
 
-const TEXT = 'var(--text)';
-const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
+const TEXT = 'var(--foreground)';
+const SEC = 'var(--muted-foreground)';
+const ACCENT = 'var(--primary)';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -27,46 +27,46 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'var(--font-sans)' }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: TEXT, margin: '6px 0 4px' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, margin: '6px 0 4px' }}>
             {sent ? 'Check your inbox' : 'Reset your password'}
           </h1>
-          <p style={{ fontSize: 15, color: SEC, margin: 0 }}>
+          <p style={{ fontSize: 14, color: SEC, margin: 0 }}>
             {sent ? `We sent a reset link to ${email}` : "Enter your email and we'll send a reset link"}
           </p>
         </div>
 
         {sent ? (
-          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', textAlign: 'center' }}>
+          <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: '28px 24px', border: '2px solid var(--foreground)', textAlign: 'center' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>📬</div>
-            <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ fontSize: 14, color: SEC, lineHeight: 1.6, marginBottom: 24 }}>
               If an account exists for <strong style={{ color: TEXT }}>{email}</strong>, you'll receive a reset link within a few minutes. Check your spam folder if you don't see it.
             </p>
-            <Link to="/login" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '12px 28px', borderRadius: 980, fontSize: 16, fontWeight: 500 }}>
+            <Link to="/login" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '12px 28px', fontSize: 14 }}>
               Back to Sign In
             </Link>
           </div>
         ) : (
-          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: '28px 24px', border: '2px solid var(--foreground)' }}>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6 }}>Email address</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: SEC, marginBottom: 6 }}>Email address</label>
                 <input
                   type="email" required value={email}
                   onChange={e => setEmail(e.target.value)}
                   onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                   placeholder="you@example.com"
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, fontSize: 17, border: `1px solid ${focused ? ACCENT : 'rgba(84,84,88,0.65)'}`, outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT, fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius)', fontSize: 15, border: `2px solid ${focused ? ACCENT : 'var(--input)'}`, outline: 'none', backgroundColor: 'var(--card)', color: TEXT, fontFamily: 'var(--font-sans)', transition: 'border 0.15s', boxSizing: 'border-box' }}
                 />
               </div>
-              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 12, backgroundColor: loading ? 'var(--accent-dark)' : ACCENT, color: '#fff', border: 'none', fontSize: 17, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.15s', fontFamily: 'inherit' }}>
+              <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '13px', fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer' }}>
                 {loading ? 'Sending…' : 'Send Reset Link'}
               </button>
             </form>
-            <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: SEC }}>
-              Remembered it? <Link to="/login" style={{ color: ACCENT, textDecoration: 'none', fontWeight: 500 }}>Sign in</Link>
+            <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: SEC }}>
+              Remembered it? <Link to="/login" style={{ color: ACCENT, textDecoration: 'none', fontWeight: 700 }}>Sign in</Link>
             </p>
           </div>
         )}

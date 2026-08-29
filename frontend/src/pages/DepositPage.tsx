@@ -92,7 +92,7 @@ export default function DepositPage() {
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link to="/wallet" style={{ color: 'var(--accent)', display: 'flex' }}>
+        <Link to="/wallet" style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -117,8 +117,8 @@ export default function DepositPage() {
               <button key={c} onClick={() => setCurrency(c)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: currency === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                  color:      currency === c ? 'var(--accent-text)' : 'rgba(255,255,255,0.65)',
+                  background: currency === c ? 'var(--primary)' : 'var(--border)',
+                  color:      currency === c ? 'var(--accent-text)' : 'var(--muted-foreground)',
                 }}>
                 {FLAG[c]} {c}
               </button>
@@ -140,11 +140,11 @@ export default function DepositPage() {
                 <button key={val} onClick={() => setMethod(val as Method)}
                   className="flex items-center gap-3 p-3 rounded-xl transition-all text-left"
                   style={{
-                    background:  method === val ? 'var(--accent-dim)' : 'rgba(255,255,255,0.04)',
-                    border:      `1.5px solid ${method === val ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
+                    background:  method === val ? 'var(--accent-dim)' : 'var(--border)',
+                    border:      `1.5px solid ${method === val ? 'var(--primary)' : 'var(--border)'}`,
                   }}>
-                  <Icon size={18} style={{ color: method === val ? 'var(--accent)' : 'rgba(255,255,255,0.5)' }} />
-                  <span className="text-sm font-semibold" style={{ color: method === val ? 'var(--accent)' : 'rgba(255,255,255,0.75)' }}>
+                  <Icon size={18} style={{ color: method === val ? 'var(--primary)' : 'var(--muted-foreground)' }} />
+                  <span className="text-sm font-semibold" style={{ color: method === val ? 'var(--primary)' : 'var(--muted-foreground)' }}>
                     {label}
                   </span>
                 </button>
@@ -163,7 +163,7 @@ export default function DepositPage() {
             {quickAmts.map(n => (
               <button key={n} onClick={() => setAmount(String(n))}
                 className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                style={{ background: 'var(--border)', color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}>
                 {n.toLocaleString()}
               </button>
             ))}
@@ -191,7 +191,7 @@ export default function DepositPage() {
                 value={bankCode} onChange={e => setBankCode(e.target.value)} />
             </div>
             <div className="rounded-xl p-3 text-sm text-gray-400"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
               <p className="font-semibold text-white mb-1">Bank Transfer Instructions</p>
               <p>Account Name: <strong className="text-white">CAPA Investments Ltd</strong></p>
               <p>Account No: <strong className="text-white">1100123456</strong></p>

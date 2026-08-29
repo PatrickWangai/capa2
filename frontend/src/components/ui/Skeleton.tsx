@@ -9,7 +9,7 @@ export default function Skeleton({ width = '100%', height = 20, borderRadius = 8
   return (
     <div style={{
       width, height, borderRadius,
-      background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.05) 75%)',
+      background: 'linear-gradient(90deg, var(--secondary) 25%, var(--muted) 50%, var(--secondary) 75%)',
       backgroundSize: '200% 100%',
       animation: 'skeleton-shimmer 1.5s ease-in-out infinite',
       ...style,
@@ -26,7 +26,7 @@ export default function Skeleton({ width = '100%', height = 20, borderRadius = 8
 
 export function SkeletonCard({ lines = 3 }: { lines?: number }) {
   return (
-    <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 18, padding: 24, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+    <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: 24, border: '2px solid var(--foreground)' }}>
       <Skeleton width="40%" height={14} style={{ marginBottom: 12 }} />
       <Skeleton width="70%" height={28} style={{ marginBottom: 8 }} />
       {lines > 2 && <Skeleton width="55%" height={14} />}
@@ -36,7 +36,7 @@ export function SkeletonCard({ lines = 3 }: { lines?: number }) {
 
 export function SkeletonRow() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
       <Skeleton width={36} height={36} borderRadius={18} />
       <div style={{ flex: 1 }}>
         <Skeleton width="50%" height={14} style={{ marginBottom: 6 }} />

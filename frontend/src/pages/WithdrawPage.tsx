@@ -87,7 +87,7 @@ export default function WithdrawPage() {
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link to="/wallet" style={{ color: 'var(--accent)', display: 'flex' }}>
+        <Link to="/wallet" style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -112,8 +112,8 @@ export default function WithdrawPage() {
               <button key={c} onClick={() => setCurrency(c)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: currency === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                  color:      currency === c ? 'var(--accent-text)' : 'rgba(255,255,255,0.65)',
+                  background: currency === c ? 'var(--primary)' : 'var(--border)',
+                  color:      currency === c ? 'var(--accent-text)' : 'var(--muted-foreground)',
                 }}>
                 {FLAG[c]} {c}
               </button>
@@ -124,7 +124,7 @@ export default function WithdrawPage() {
               Available: <span className="text-white font-semibold">{currency} {avail.toLocaleString('en', { minimumFractionDigits: 2 })}</span>
             </p>
             {avail > 0 && (
-              <button onClick={setMax} className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>Max</button>
+              <button onClick={setMax} className="text-xs font-semibold" style={{ color: 'var(--primary)' }}>Max</button>
             )}
           </div>
         </div>
@@ -140,11 +140,11 @@ export default function WithdrawPage() {
                 <button key={m} onClick={() => setMethod(m)}
                   className="flex items-center gap-3 p-3 rounded-xl transition-all text-left"
                   style={{
-                    background: method === m ? 'var(--accent-dim)' : 'rgba(255,255,255,0.04)',
-                    border:     `1.5px solid ${method === m ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
+                    background: method === m ? 'var(--accent-dim)' : 'var(--border)',
+                    border:     `1.5px solid ${method === m ? 'var(--primary)' : 'var(--border)'}`,
                   }}>
-                  <Icon size={18} style={{ color: method === m ? 'var(--accent)' : 'rgba(255,255,255,0.5)' }} />
-                  <span className="text-sm font-semibold" style={{ color: method === m ? 'var(--accent)' : 'rgba(255,255,255,0.75)' }}>
+                  <Icon size={18} style={{ color: method === m ? 'var(--primary)' : 'var(--muted-foreground)' }} />
+                  <span className="text-sm font-semibold" style={{ color: method === m ? 'var(--primary)' : 'var(--muted-foreground)' }}>
                     {label}
                   </span>
                 </button>
@@ -186,7 +186,7 @@ export default function WithdrawPage() {
 
         {/* Summary */}
         {amount && Number(amount) > 0 && (
-          <div className="rounded-xl p-4 space-y-1.5 text-sm" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="rounded-xl p-4 space-y-1.5 text-sm" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
             <div className="flex justify-between"><span className="text-gray-400">You withdraw</span><span className="text-white font-semibold">{currency} {Number(amount).toLocaleString('en',{minimumFractionDigits:2})}</span></div>
             <div className="flex justify-between"><span className="text-gray-400">Remaining balance</span><span className="text-white">{currency} {Math.max(0, avail - Number(amount)).toLocaleString('en',{minimumFractionDigits:2})}</span></div>
             <div className="flex justify-between"><span className="text-gray-400">Method</span><span className="text-white">{method === 'MPESA' ? 'M-Pesa' : 'Bank Transfer'}</span></div>

@@ -63,28 +63,25 @@ export function SearchPalette({ open, onClose }: SearchPaletteProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)' }} />
       <div
         className="relative w-full max-w-xl"
         style={{
-          background: 'rgba(20,20,22,0.97)',
-          backdropFilter: 'blur(28px)',
-          WebkitBackdropFilter: 'blur(28px)',
-          borderRadius: 18,
-          border: '1px solid rgba(255,255,255,0.12)',
-          boxShadow: '0 32px 96px rgba(0,0,0,0.7)',
+          background: 'var(--card)',
+          borderRadius: 'var(--radius)',
+          border: '2px solid var(--foreground)',
         }}
         onClick={e => e.stopPropagation()}
       >
         {/* Search input */}
-        <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <Search size={17} className="text-gray-500 shrink-0" />
           <input
             ref={inputRef}
             value={query}
             onChange={e => { setQuery(e.target.value); setSelectedIdx(0); }}
             placeholder="Search stocks, ETFs..."
-            style={{ flex: 1, background: 'transparent', color: 'var(--text)', outline: 'none', fontSize: 16, fontFamily: 'inherit' }}
+            style={{ flex: 1, background: 'transparent', color: 'var(--text)', outline: 'none', fontSize: 15, fontFamily: 'var(--font-sans)' }}
           />
           {query ? (
             <button onClick={() => setQuery('')} className="text-gray-600 hover:text-gray-400 transition-colors">
@@ -92,7 +89,7 @@ export function SearchPalette({ open, onClose }: SearchPaletteProps) {
             </button>
           ) : (
             <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs text-gray-600"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}>
+              style={{ background: 'var(--secondary)', border: '1px solid var(--border)' }}>
               ESC
             </kbd>
           )}
@@ -120,18 +117,18 @@ export function SearchPalette({ open, onClose }: SearchPaletteProps) {
                 onClick={() => go(asset.id)}
                 onMouseEnter={() => setSelectedIdx(i)}
                 className="w-full flex items-center gap-3 px-5 py-3 transition-colors text-left"
-                style={{ backgroundColor: i === selectedIdx ? 'rgba(255,255,255,0.06)' : 'transparent' }}
+                style={{ backgroundColor: i === selectedIdx ? 'var(--secondary)' : 'transparent' }}
               >
                 <StockLogo symbol={asset.symbol} size="sm" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm font-semibold text-white">{asset.symbol}</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded"
-                      style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.45)' }}>
+                      style={{ background: 'var(--secondary)', color: 'var(--muted-foreground)' }}>
                       {asset.exchange}
                     </span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded"
-                      style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(235,235,245,0.35)' }}>
+                      style={{ background: 'var(--secondary)', color: 'var(--muted-foreground)' }}>
                       {asset.assetClass}
                     </span>
                   </div>
@@ -157,7 +154,7 @@ export function SearchPalette({ open, onClose }: SearchPaletteProps) {
 
         {assets.length > 0 && (
           <div className="px-5 py-2.5 flex items-center justify-between text-xs text-gray-600"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            style={{ borderTop: '1px solid var(--border)' }}>
             <span>↑↓ navigate · ↵ select · ESC close</span>
             <span>{assets.length} result{assets.length !== 1 ? 's' : ''}</span>
           </div>

@@ -4,21 +4,21 @@ import { Mail, MessageSquare, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import toast from 'react-hot-toast';
 
-const TEXT = 'var(--text)';
+const TEXT = 'var(--foreground)';
 const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
-const CARD = '#1c1c1e';
+const ACCENT = 'var(--primary)';
+const CARD = 'var(--card)';
 
 function Nav() {
   const navigate = useNavigate();
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
         <CapaLogo size={44} />
       </button>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
-        <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
+        <Link to="/register" className="btn-primary" style={{ textDecoration: 'none', fontSize: 13, padding: '6px 14px' }}>Get Started</Link>
       </div>
     </nav>
   );
@@ -33,11 +33,10 @@ export default function ContactPage() {
     setForm(p => ({ ...p, [k]: e.target.value }));
 
   const inputStyle = (name: string): React.CSSProperties => ({
-    width: '100%', padding: '11px 14px', borderRadius: 12, fontSize: 15,
-    border: `1px solid ${focused === name ? ACCENT : 'rgba(84,84,88,0.65)'}`,
-    
-    outline: 'none', backgroundColor: 'rgba(44,44,46,0.88)', color: TEXT,
-    fontFamily: 'inherit', transition: 'border 0.15s, box-shadow 0.15s', boxSizing: 'border-box',
+    width: '100%', padding: '11px 14px', borderRadius: 'var(--radius)', fontSize: 15,
+    border: `2px solid ${focused === name ? ACCENT : 'var(--input)'}`,
+    outline: 'none', backgroundColor: 'var(--card)', color: TEXT,
+    fontFamily: 'var(--font-sans)', transition: 'border 0.15s', boxSizing: 'border-box',
   });
 
   const submit = (e: React.FormEvent) => {
@@ -50,7 +49,7 @@ export default function ContactPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 500, color: SEC, marginBottom: 6 };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 80px' }}>
@@ -67,7 +66,7 @@ export default function ContactPage() {
               { icon: MessageSquare, label: 'Chat', value: 'Live chat in the app' },
               { icon: Clock, label: 'Hours', value: 'Mon–Fri, 8am–6pm EAT' },
             ].map(({ icon: Icon, label, value }) => (
-              <div key={label} style={{ backgroundColor: CARD, borderRadius: 16, padding: 20, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+              <div key={label} style={{ backgroundColor: CARD, borderRadius: 16, padding: 20, border: '2px solid var(--foreground)' }}>
                 <Icon size={18} color={ACCENT} style={{ marginBottom: 8 }} />
                 <p style={{ margin: '0 0 2px', fontSize: 13, color: SEC }}>{label}</p>
                 <p style={{ margin: 0, fontSize: 14, color: TEXT, fontWeight: 500 }}>{value}</p>
@@ -76,7 +75,7 @@ export default function ContactPage() {
           </div>
 
           {/* Form */}
-          <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '28px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '28px 28px', border: '2px solid var(--foreground)' }}>
             {sent ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✉️</div>
@@ -111,7 +110,7 @@ export default function ContactPage() {
                   <label style={lbl}>Message</label>
                   <textarea required style={{ ...inputStyle('message'), minHeight: 120, resize: 'vertical' } as React.CSSProperties} value={form.message} onChange={set('message')} placeholder="Describe your issue or question…" onFocus={() => setFocused('message')} onBlur={() => setFocused(null)} />
                 </div>
-                <button type="submit" style={{ padding: '13px', borderRadius: 12, backgroundColor: ACCENT, color: '#fff', border: 'none', fontSize: 16, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>
+                <button type="submit" className="btn-primary" style={{ padding: '13px', fontSize: 14 }}>
                   Send Message
                 </button>
               </form>
@@ -120,7 +119,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
           © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>

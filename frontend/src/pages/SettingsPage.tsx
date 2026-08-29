@@ -163,7 +163,7 @@ function SecurityTab() {
             )}
             {mfaData?.secret && (
               <div className="rounded-xl p-3 flex items-center justify-between"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Manual entry key</p>
                   <p className="text-sm font-mono text-white tracking-widest">{mfaData.secret}</p>
@@ -259,7 +259,7 @@ function NotificationsTab() {
       </div>
       <button onClick={() => toggle(k)}
         className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-        style={{ background: prefs[k] ? 'var(--accent)' : 'rgba(255,255,255,0.1)' }}>
+        style={{ background: prefs[k] ? 'var(--primary)' : 'rgba(255,255,255,0.1)' }}>
         <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
           style={{ transform: prefs[k] ? 'translateX(24px)' : 'translateX(4px)' }} />
       </button>
@@ -328,8 +328,8 @@ function AccountTab() {
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '10px 16px', borderRadius: 12,
-                  background: active ? 'var(--accent)' : 'var(--input-bg)',
-                  border: active ? '1px dashed var(--accent)' : '1px dashed var(--border)',
+                  background: active ? 'var(--primary)' : 'var(--input-bg)',
+                  border: active ? '1px dashed var(--primary)' : '1px dashed var(--border)',
                   color: active ? '#fff' : 'var(--text-secondary)',
                   cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: active ? 600 : 400,
                   transition: 'all 0.15s',
@@ -352,7 +352,7 @@ function AccountTab() {
           {referralCode ? (
             <div className="flex items-center gap-3 p-3 rounded-xl"
               style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)' }}>
-              <Gift size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+              <Gift size={16} style={{ color: 'var(--primary)', flexShrink: 0 }} />
               <span className="flex-1 font-mono font-bold text-white tracking-widest text-sm">{referralCode}</span>
               <button onClick={copyReferral} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
                 <Copy size={14} className="text-gray-400" />
@@ -382,7 +382,7 @@ function AccountTab() {
           {[['Terms of Service', '/terms'], ['Privacy Policy', '/privacy']].map(([label, path]) => (
             <a key={path} href={path} target="_blank" rel="noreferrer"
               className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors"
-              style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+              style={{ border: '1px solid var(--border)' }}>
               <span className="text-sm text-white">{label}</span>
               <span className="text-xs text-gray-500">→</span>
             </a>
@@ -417,13 +417,13 @@ export default function SettingsPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)' }}>
+      <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'var(--border)' }}>
         {tabs.map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setTab(id)}
             className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
             style={{
-              background: tab === id ? 'var(--accent)' : 'transparent',
-              color:      tab === id ? 'var(--accent-text)' : 'rgba(255,255,255,0.55)',
+              background: tab === id ? 'var(--primary)' : 'transparent',
+              color:      tab === id ? 'var(--accent-text)' : 'var(--muted-foreground)',
             }}>
             <Icon size={14} />
             {label}

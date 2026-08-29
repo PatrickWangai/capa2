@@ -79,8 +79,8 @@ export default function OrdersPage() {
               className={clsx('px-3 py-1.5 rounded-xl text-xs font-semibold transition-all',
                 statusFilter === s ? 'text-white' : 'text-gray-400 hover:text-white')}
               style={{
-                background: statusFilter === s ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                border: statusFilter === s ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                background: statusFilter === s ? 'var(--primary)' : 'var(--border)',
+                border: statusFilter === s ? 'none' : '1px solid var(--border)',
               }}>
               {s}
             </button>
@@ -97,9 +97,9 @@ export default function OrdersPage() {
                 sideFilter === s ? 'text-white' : 'text-gray-400 hover:text-white')}
               style={{
                 background: sideFilter === s
-                  ? s === 'BUY' ? '#10b981' : s === 'SELL' ? '#ef4444' : 'rgba(255,255,255,0.12)'
-                  : 'rgba(255,255,255,0.06)',
-                border: sideFilter === s ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                  ? s === 'BUY' ? '#10b981' : s === 'SELL' ? '#ef4444' : 'var(--secondary)'
+                  : 'var(--border)',
+                border: sideFilter === s ? 'none' : '1px solid var(--border)',
               }}>
               {s === 'BUY' && <TrendingUp size={10} />}
               {s === 'SELL' && <TrendingDown size={10} />}
@@ -116,7 +116,7 @@ export default function OrdersPage() {
           <div className="card overflow-x-auto p-0 hidden lg:block">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['Asset', 'Side', 'Type', 'Qty', 'Price', 'Total', 'Fee', 'Status', 'Date', ''].map(h => (
                     <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
                   ))}
@@ -130,7 +130,7 @@ export default function OrdersPage() {
                 ) : orders.map((o: any, idx: number) => (
                   <tr key={o.id}
                     className="hover:bg-white/[0.025] transition-colors"
-                    style={{ borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                    style={{ borderTop: idx > 0 ? '1px solid var(--border)' : 'none' }}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <StockLogo symbol={o.asset?.symbol ?? '?'} size="sm" />
@@ -212,7 +212,7 @@ export default function OrdersPage() {
 
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5"
-                  style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 }}>
+                  style={{ borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-500">Side</span>
                     <span className={clsx('text-xs font-bold', o.side === 'BUY' ? 'text-green-400' : 'text-red-400')}>{o.side}</span>
@@ -256,7 +256,7 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Date */}
-                <p className="text-xs text-gray-600 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 6 }}>
+                <p className="text-xs text-gray-600 mt-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 6 }}>
                   {new Date(o.createdAt).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
               </div>

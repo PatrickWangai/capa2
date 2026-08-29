@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
 
-const TEXT = 'var(--text)';
-const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
+const TEXT = 'var(--foreground)';
+const SEC = 'var(--muted-foreground)';
+const ACCENT = 'var(--primary)';
 
 export default function VerifyEmailPage() {
   const [params] = useSearchParams();
@@ -19,33 +19,33 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'var(--font-sans)' }}>
       <div style={{ width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {status === 'loading' && (
           <>
-            <div style={{ width: 40, height: 40, border: '3px solid rgba(var(--accent-rgb),0.2)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
-            <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700 }}>Verifying your email…</h2>
+            <div style={{ width: 40, height: 40, border: '3px solid var(--border)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 24px' }} />
+            <h2 style={{ fontFamily: 'var(--font-display)', color: TEXT, fontSize: 20, fontWeight: 900, textTransform: 'uppercase' }}>Verifying your email…</h2>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </>
         )}
 
         {status === 'success' && (
-          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: '36px 28px', border: '2px solid var(--foreground)' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-            <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Email verified!</h2>
-            <p style={{ color: SEC, fontSize: 15, lineHeight: 1.6, marginBottom: 28 }}>Your email address has been confirmed. Your account is now active.</p>
-            <Link to="/dashboard" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '13px 32px', borderRadius: 980, fontSize: 17, fontWeight: 500 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', color: TEXT, fontSize: 20, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>Email verified!</h2>
+            <p style={{ color: SEC, fontSize: 14, lineHeight: 1.6, marginBottom: 28 }}>Your email address has been confirmed. Your account is now active.</p>
+            <Link to="/dashboard" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '13px 32px', fontSize: 14 }}>
               Go to Dashboard
             </Link>
           </div>
         )}
 
         {status === 'error' && (
-          <div style={{ backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: 20, padding: '36px 28px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+          <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: '36px 28px', border: '2px solid var(--foreground)' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>❌</div>
-            <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Verification failed</h2>
-            <p style={{ color: SEC, fontSize: 15, lineHeight: 1.6, marginBottom: 28 }}>This link is invalid or has expired. Sign in and we'll send a new one.</p>
-            <Link to="/login" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '13px 32px', borderRadius: 980, fontSize: 17, fontWeight: 500 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', color: TEXT, fontSize: 20, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>Verification failed</h2>
+            <p style={{ color: SEC, fontSize: 14, lineHeight: 1.6, marginBottom: 28 }}>This link is invalid or has expired. Sign in and we'll send a new one.</p>
+            <Link to="/login" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '13px 32px', fontSize: 14 }}>
               Sign In
             </Link>
           </div>

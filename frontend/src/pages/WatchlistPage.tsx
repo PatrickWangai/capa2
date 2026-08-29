@@ -80,12 +80,12 @@ export default function WatchlistPage() {
           />
         </div>
         {searchResults.length > 0 && (
-          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
             {searchResults.map((a: any, i: number) => {
               const watched = watchedIds.has(a.id);
               return (
                 <div key={a.id} className="flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.04] transition-colors"
-                  style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
+                  style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                   <div>
                     <p className="text-sm font-semibold text-white">{a.symbol} <span className="text-gray-400 font-normal">· {a.exchange}</span></p>
                     <p className="text-xs text-gray-500">{a.name}</p>
@@ -95,8 +95,8 @@ export default function WatchlistPage() {
                     disabled={watched || addMutation.isPending}
                     className="text-xs px-3 py-1 rounded-lg font-semibold transition-all"
                     style={{
-                      background: watched ? 'rgba(255,255,255,0.06)' : 'var(--accent)',
-                      color:      watched ? 'rgba(255,255,255,0.4)' : 'var(--accent-text)',
+                      background: watched ? 'var(--border)' : 'var(--primary)',
+                      color:      watched ? 'var(--muted-foreground)' : 'var(--accent-text)',
                       cursor:     watched ? 'default' : 'pointer',
                     }}>
                     {watched ? 'Watching' : '+ Add'}
@@ -119,7 +119,7 @@ export default function WatchlistPage() {
         </div>
       ) : (
         <div className="card p-0">
-          <div className="px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
             <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Watching</p>
           </div>
           {items.map((item: any, i: number) => {
@@ -130,7 +130,7 @@ export default function WatchlistPage() {
             return (
               <div key={item.id ?? assetId}
                 className="flex items-center justify-between px-5 py-3 hover:bg-white/[0.025] transition-colors"
-                style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                 <Link to={`/markets/${assetId}`} className="flex items-center gap-3 flex-1 min-w-0" style={{ textDecoration: 'none' }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                     style={{ background: 'var(--accent-dim)' }}>
@@ -152,7 +152,7 @@ export default function WatchlistPage() {
                     onClick={() => removeMutation.mutate(assetId)}
                     disabled={removeMutation.isPending}
                     className="p-1.5 rounded-lg transition-colors hover:bg-red-500/10"
-                    style={{ color: 'rgba(255,255,255,0.3)' }}
+                    style={{ color: 'var(--muted-foreground)' }}
                     title="Remove">
                     <Trash2 size={14} />
                   </button>

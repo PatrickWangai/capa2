@@ -112,14 +112,14 @@ const { data: wlData } = useQuery({
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: TrendingUp,    label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--accent)' },
-          { icon: BarChart2,     label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: '#bf5af2' },
-          { icon: ArrowDownLeft, label: 'Deposit',   sub: 'Add funds',     to: '/deposit',   color: '#34d399' },
-          { icon: ArrowUpRight,  label: 'Withdraw',  sub: 'Cash out',      to: '/withdraw',  color: '#fb923c' },
+          { icon: TrendingUp,    label: 'Trade',     sub: 'Buy & sell',    to: '/markets',   color: 'var(--primary)' },
+          { icon: BarChart2,     label: 'Portfolio', sub: 'View holdings', to: '/portfolio', color: 'var(--chart-4)' },
+          { icon: ArrowDownLeft, label: 'Deposit',   sub: 'Add funds',     to: '/deposit',   color: 'var(--success)' },
+          { icon: ArrowUpRight,  label: 'Withdraw',  sub: 'Cash out',      to: '/withdraw',  color: 'var(--warning)' },
         ].map(({ icon: Icon, label, sub, to, color }) => (
           <Link key={label} to={to} style={{ textDecoration: 'none' }}>
-            <div className="card hover:border-gray-700 transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{ backgroundColor: `${color}18` }}>
+            <div className="card transition-all hover:-translate-y-0.5 cursor-pointer" style={{ padding: '16px 18px' }}>
+              <div className="w-9 h-9 flex items-center justify-center mb-2" style={{ borderRadius: 'var(--radius)', backgroundColor: 'var(--secondary)' }}>
                 <Icon size={18} style={{ color }} strokeWidth={1.8} />
               </div>
               <p className="font-semibold text-white text-sm">{label}</p>
@@ -134,17 +134,17 @@ const { data: wlData } = useQuery({
         <div className="card" style={{ padding: '16px 20px' }}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-white flex items-center gap-2">
-              <Wallet size={14} style={{ color: 'var(--accent)' }} />
+              <Wallet size={14} style={{ color: 'var(--primary)' }} />
               Wallet
             </h2>
-            <Link to="/wallet" className="text-sm flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+            <Link to="/wallet" className="text-sm flex items-center gap-1" style={{ color: 'var(--primary)' }}>
               View all <ArrowRight size={13} />
             </Link>
           </div>
           <div className="flex flex-wrap gap-3">
             {walletBalances.slice(0, 6).map((b: any) => (
               <div key={b.currency} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                style={{ background: 'var(--secondary)', border: '1px solid var(--border)' }}>
                 <span>{FLAG[b.currency] ?? '💱'}</span>
                 <span className="text-xs font-semibold text-white">{b.currency}</span>
                 <span className="text-xs text-gray-400">{Number(b.available).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -179,7 +179,7 @@ const { data: wlData } = useQuery({
               <Star size={14} className="text-yellow-400" fill="currentColor" />
               Watchlist
             </h2>
-            <Link to="/markets" className="text-sm flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+            <Link to="/markets" className="text-sm flex items-center gap-1" style={{ color: 'var(--primary)' }}>
               Markets <ArrowRight size={14} />
             </Link>
           </div>
@@ -187,7 +187,7 @@ const { data: wlData } = useQuery({
             <div className="text-center py-8">
               <Star size={28} className="mx-auto mb-2 text-gray-700" />
               <p className="text-sm text-gray-500">No watchlist items yet</p>
-              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--accent)' }}>
+              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--primary)' }}>
                 Star stocks in Markets →
               </Link>
             </div>
@@ -228,14 +228,14 @@ const { data: wlData } = useQuery({
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-white">Top Movers</h2>
-          <div className="flex gap-1 p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          <div className="flex gap-1 p-1 rounded-lg" style={{ background: 'var(--secondary)' }}>
             {(['gainers', 'losers', 'active'] as MoverTab[]).map(t => (
               <button key={t} onClick={() => setMoverTab(t)}
                 className={clsx(
                   'px-3 py-1 text-xs font-semibold rounded-md transition-all',
                   moverTab === t ? 'text-white' : 'text-gray-500 hover:text-gray-300',
                 )}
-                style={moverTab === t ? { backgroundColor: 'rgba(255,255,255,0.10)' } : {}}>
+                style={moverTab === t ? { backgroundColor: 'var(--card)' } : {}}>
                 {t === 'gainers' ? 'Gainers' : t === 'losers' ? 'Losers' : 'Active'}
               </button>
             ))}
@@ -252,7 +252,7 @@ const { data: wlData } = useQuery({
                 <Link key={asset.id} to={`/markets/${asset.id}`} style={{ textDecoration: 'none' }}>
                   <div
                     className="flex flex-col gap-1.5 px-4 py-3 rounded-xl border transition-all hover:-translate-y-0.5 min-w-[120px]"
-                    style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.08)' }}
+                    style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
                   >
                     <div className="flex items-center gap-1.5">
                       <StockLogo symbol={asset.symbol} size="sm" />
@@ -282,7 +282,7 @@ const { data: wlData } = useQuery({
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-white">Top Holdings</h2>
-            <Link to="/portfolio" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
+            <Link to="/portfolio" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--primary)' }}>
               View all <ArrowRight size={14} />
             </Link>
           </div>
@@ -329,7 +329,7 @@ const { data: wlData } = useQuery({
               <Clock size={15} className="text-gray-500" />
               Recent Orders
             </h2>
-            <Link to="/orders" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--accent)' }}>
+            <Link to="/orders" className="text-sm flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--primary)' }}>
               All orders <ArrowRight size={14} />
             </Link>
           </div>
@@ -337,7 +337,7 @@ const { data: wlData } = useQuery({
             <div className="text-center py-8">
               <Clock size={28} className="mx-auto mb-2 text-gray-700" />
               <p className="text-sm text-gray-500">No orders yet</p>
-              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--accent)' }}>
+              <Link to="/markets" className="text-xs mt-2 inline-block" style={{ color: 'var(--primary)' }}>
                 Start trading →
               </Link>
             </div>

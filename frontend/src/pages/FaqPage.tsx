@@ -5,8 +5,8 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
-const CARD = '#1c1c1e';
+const ACCENT = 'var(--primary)';
+const CARD = 'var(--card)';
 
 const faqs = [
   { category: 'Getting Started', items: [
@@ -34,7 +34,7 @@ const faqs = [
 function Accordion({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+    <div style={{ borderBottom: '1px solid var(--border)' }}>
       <button
         onClick={() => setOpen(o => !o)}
         style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
@@ -51,14 +51,14 @@ function Accordion({ q, a }: { q: string; a: string }) {
 
 function Nav() {
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
         <CapaLogo size={44} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
       </Link>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
-        <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
+        <Link to="/register" className="btn-primary" style={{ textDecoration: 'none', fontSize: 13, padding: '6px 14px' }}>Get Started</Link>
       </div>
     </nav>
   );
@@ -66,7 +66,7 @@ function Nav() {
 
 export default function FaqPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -77,7 +77,7 @@ export default function FaqPage() {
         {faqs.map(({ category, items }) => (
           <div key={category} style={{ marginBottom: 32 }}>
             <h2 style={{ fontSize: 13, fontWeight: 600, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>{category}</h2>
-            <div style={{ backgroundColor: CARD, borderRadius: 18, padding: '0 24px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+            <div style={{ backgroundColor: CARD, borderRadius: 18, padding: '0 24px', border: '2px solid var(--foreground)' }}>
               {items.map(item => <Accordion key={item.q} q={item.q} a={item.a} />)}
             </div>
           </div>
@@ -85,13 +85,13 @@ export default function FaqPage() {
 
         <div style={{ textAlign: 'center', marginTop: 48 }}>
           <p style={{ fontSize: 16, color: SEC, marginBottom: 16 }}>Still need help?</p>
-          <Link to="/contact" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '13px 32px', borderRadius: 980, fontSize: 16, fontWeight: 500 }}>
+          <Link to="/contact" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '13px 32px', fontSize: 14 }}>
             Contact Support
           </Link>
         </div>
       </div>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
           © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>

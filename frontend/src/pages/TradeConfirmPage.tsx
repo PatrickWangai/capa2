@@ -95,7 +95,7 @@ export default function TradeConfirmPage() {
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} style={{ color: 'var(--accent)', display: 'flex' }}>
+        <button onClick={() => navigate(-1)} style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={22} />
         </button>
         <div>
@@ -111,7 +111,7 @@ export default function TradeConfirmPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-lg font-bold text-white">{symbol}</p>
             <span className="text-xs px-2 py-0.5 rounded-md"
-              style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,235,245,0.5)' }}>
+              style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.5)' }}>
               {exchange}
             </span>
           </div>
@@ -167,7 +167,7 @@ export default function TradeConfirmPage() {
           </div>
           <div className="flex justify-between border-t border-white/5 pt-3">
             <span className="text-white font-semibold">Total</span>
-            <span className="text-xl font-bold" style={{ color: 'var(--accent)' }}>
+            <span className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
               {currency} {total.toFixed(2)}
             </span>
           </div>

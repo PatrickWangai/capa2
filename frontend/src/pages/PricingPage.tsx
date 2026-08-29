@@ -4,8 +4,8 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
-const CARD = '#1c1c1e';
+const ACCENT = 'var(--primary)';
+const CARD = 'var(--card)';
 
 const fees = [
   { category: 'Trading', items: [
@@ -35,14 +35,14 @@ const fees = [
 
 function Nav() {
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
         <CapaLogo size={44} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
       </Link>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
-        <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
+        <Link to="/register" className="btn-primary" style={{ textDecoration: 'none', fontSize: 13, padding: '6px 14px' }}>Get Started</Link>
       </div>
     </nav>
   );
@@ -50,7 +50,7 @@ function Nav() {
 
 export default function PricingPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '60px 24px 80px' }}>
@@ -63,9 +63,9 @@ export default function PricingPage() {
         {fees.map(({ category, items }) => (
           <div key={category} style={{ marginBottom: 24 }}>
             <h2 style={{ fontSize: 13, fontWeight: 600, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>{category}</h2>
-            <div style={{ backgroundColor: CARD, borderRadius: 18, overflow: 'hidden', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+            <div style={{ backgroundColor: CARD, borderRadius: 18, overflow: 'hidden', border: '2px solid var(--foreground)' }}>
               {items.map((item, i) => (
-                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: i < items.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: i < items.length - 1 ? '1px solid var(--border)' : 'none' }}>
                   <div>
                     <span style={{ fontSize: 15, color: TEXT }}>{item.label}</span>
                     {item.note && <span style={{ fontSize: 13, color: SEC, marginLeft: 8 }}>— {item.note}</span>}
@@ -78,7 +78,7 @@ export default function PricingPage() {
         ))}
 
         {/* What's always free */}
-        <div style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', marginTop: 16 }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, border: '2px solid var(--foreground)', marginTop: 16 }}>
           <h3 style={{ margin: '0 0 16px', fontSize: 17, fontWeight: 600 }}>Always free</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {['Account opening', 'Real-time price data', 'Portfolio tracking', 'Price alerts', 'Tax statements', 'Mobile app', 'Customer support', 'Account statements'].map(f => (
@@ -90,14 +90,14 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div style={{ marginTop: 40, padding: 20, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 12 }}>
+        <div style={{ marginTop: 40, padding: 20, backgroundColor: 'var(--border)', borderRadius: 12 }}>
           <p style={{ margin: 0, fontSize: 12, color: SEC, lineHeight: 1.6 }}>
             <strong style={{ color: 'rgba(235,235,245,0.8)' }}>Disclaimer:</strong> Fees are subject to change. FX conversion rates apply when investing in currencies other than your account base currency. All prices shown exclude applicable taxes. Capa Investments Ltd is a regulated entity.
           </p>
         </div>
       </div>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
           © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>

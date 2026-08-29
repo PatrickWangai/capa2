@@ -62,13 +62,12 @@ function PreviewModal({
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)',
+      backgroundColor: 'rgba(0,0,0,0.55)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
     }}>
       <div style={{
-        background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-        borderRadius: 22, padding: 28, maxWidth: 400, width: '100%',
-        backdropFilter: 'blur(24px)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+        background: 'var(--card)', border: '2px solid var(--foreground)',
+        borderRadius: 'var(--radius)', padding: 28, maxWidth: 400, width: '100%',
       }}>
         {success ? (
           <div className="text-center py-2">
@@ -94,7 +93,7 @@ function PreviewModal({
             </div>
 
             {/* Stock identity */}
-            <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid var(--border)' }}>
               <StockLogo symbol={asset.symbol} size="md" />
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-white">{asset.symbol}</p>
@@ -123,9 +122,9 @@ function PreviewModal({
               <Row label="CMA levy (0.06%)"  value={`${currency} ${fmtNum(cmaLevy)}`} />
               <Row label="CDSC levy (0.05%)" value={`${currency} ${fmtNum(cdscLevy)}`} />
               {isBuy && <Row label="Stamp duty (0.1%)" value={`${currency} ${fmtNum(stampDuty)}`} />}
-              <div className="flex justify-between pt-3 font-bold" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="flex justify-between pt-3 font-bold" style={{ borderTop: '1px solid var(--border)' }}>
                 <span className="text-white">Est. {isBuy ? 'Total Cost' : 'Proceeds'}</span>
-                <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
+                <span style={{ color: 'var(--primary)' }}>{currency} {fmtNum(total)}</span>
               </div>
             </div>
 
@@ -144,7 +143,7 @@ function PreviewModal({
                 onClick={onCancel}
                 disabled={loading}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold transition-colors"
-                style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.7)' }}
+                style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.7)' }}
               >
                 Cancel
               </button>
@@ -216,18 +215,18 @@ function BuyFlowModal({
   const stampDuty = subtotal * 0.001; // BUY only
 
   // shared styles — compact, fully themed
-  const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 };
+  const overlay: React.CSSProperties = { position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 };
   const card: React.CSSProperties   = { background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '18px 18px 16px', maxWidth: 340, width: '100%', boxShadow: '0 16px 60px rgba(0,0,0,0.55)', maxHeight: '90vh', overflowY: 'auto' };
-  const btnAccent: React.CSSProperties = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', backgroundColor: 'var(--accent)', color: 'var(--accent-text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
-  const btnGhost: React.CSSProperties  = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'rgba(255,255,255,0.06)', color: 'rgba(235,235,245,0.6)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
-  const infoBanner: React.CSSProperties = { background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)', borderRadius: 10, padding: '8px 12px', fontSize: 11, color: 'var(--accent)', lineHeight: 1.5 };
+  const btnAccent: React.CSSProperties = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', backgroundColor: 'var(--primary)', color: 'var(--accent-text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' };
+  const btnGhost: React.CSSProperties  = { width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'var(--border)', color: 'rgba(235,235,245,0.6)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
+  const infoBanner: React.CSSProperties = { background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)', borderRadius: 10, padding: '8px 12px', fontSize: 11, color: 'var(--primary)', lineHeight: 1.5 };
 
   const Header = ({ title, sub, back }: { title: string; sub?: string; back?: () => void }) => (
     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {back && <button onClick={back} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.45)', cursor: 'pointer', fontSize: 18, padding: 0, lineHeight: 1 }}>‹</button>}
         <div>
-          <p style={{ fontWeight: 700, color: '#fff', fontSize: 14, margin: 0 }}>{title}</p>
+          <p style={{ fontWeight: 700, color: 'var(--foreground)', fontSize: 14, margin: 0 }}>{title}</p>
           {sub && <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: '2px 0 0' }}>{sub}</p>}
         </div>
       </div>
@@ -236,7 +235,7 @@ function BuyFlowModal({
   );
 
   const OrderSummaryRows = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12, marginBottom: 14, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12, marginBottom: 14, padding: '10px 12px', borderRadius: 10, background: 'var(--border)', border: '1px solid var(--border)' }}>
       {([
         ['Shares', qty % 1 === 0 ? String(qty) : qty.toFixed(6)],
         [ordType === 'LIMIT' ? 'Limit price' : 'Est. price', `${currency} ${fmtNum(effPrice)}`],
@@ -253,9 +252,9 @@ function BuyFlowModal({
           <span style={{ color: 'rgba(235,235,245,0.85)' }}>{v}</span>
         </div>
       ))}
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.07)', marginTop: 2 }}>
-        <span style={{ color: '#fff' }}>Total</span>
-        <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, paddingTop: 6, borderTop: '1px solid var(--border)', marginTop: 2 }}>
+        <span style={{ color: 'var(--foreground)' }}>Total</span>
+        <span style={{ color: 'var(--primary)' }}>{currency} {fmtNum(total)}</span>
       </div>
     </div>
   );
@@ -354,13 +353,13 @@ function BuyFlowModal({
               {savedMethods.map(m => (
                 <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, border: '1px solid rgba(var(--accent-rgb),0.25)', background: 'rgba(var(--accent-rgb),0.06)' }}>
                   <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(var(--accent-rgb),0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {m.type === 'MPESA' ? <Smartphone size={14} style={{ color: 'var(--accent)' }} /> : <Building2 size={14} style={{ color: 'var(--accent)' }} />}
+                    {m.type === 'MPESA' ? <Smartphone size={14} style={{ color: 'var(--primary)' }} /> : <Building2 size={14} style={{ color: 'var(--primary)' }} />}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{m.type === 'MPESA' ? 'M-Pesa' : 'Bank'}</p>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)', margin: 0 }}>{m.type === 'MPESA' ? 'M-Pesa' : 'Bank'}</p>
                     <p style={{ fontSize: 10, color: 'rgba(235,235,245,0.38)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</p>
                   </div>
-                  <button onClick={() => selectMethod(m)} style={{ padding: '5px 12px', borderRadius: 8, border: 'none', backgroundColor: 'var(--accent)', color: 'var(--accent-text)', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>Pay</button>
+                  <button onClick={() => selectMethod(m)} style={{ padding: '5px 12px', borderRadius: 8, border: 'none', backgroundColor: 'var(--primary)', color: 'var(--accent-text)', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>Pay</button>
                   <button onClick={() => removeMethod(m.id)} style={{ background: 'none', border: 'none', color: 'rgba(235,235,245,0.25)', cursor: 'pointer', padding: 3, flexShrink: 0 }}>
                     <Trash2 size={12} />
                   </button>
@@ -380,13 +379,13 @@ function BuyFlowModal({
             ]).map(({ s, Icon, label, sub }) => (
               <button key={s} onClick={() => setStep(s)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, border: '1px dashed rgba(var(--accent-rgb),0.3)', background: 'transparent', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
                 <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(var(--accent-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={14} style={{ color: 'var(--accent)' }} />
+                  <Icon size={14} style={{ color: 'var(--primary)' }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{label}</p>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)', margin: 0 }}>{label}</p>
                   <p style={{ fontSize: 10, color: 'rgba(235,235,245,0.35)', margin: 0 }}>{sub}</p>
                 </div>
-                <Plus size={13} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                <Plus size={13} style={{ color: 'var(--primary)', flexShrink: 0 }} />
               </button>
             ))}
           </div>
@@ -462,11 +461,11 @@ function BuyFlowModal({
       <Header title="Check your phone" />
       <div style={{ textAlign: 'center', padding: '8px 0 16px' }}>
         <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(var(--accent-rgb),0.15)', border: '1px solid rgba(var(--accent-rgb),0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-          <Smartphone size={22} style={{ color: 'var(--accent)' }} />
+          <Smartphone size={22} style={{ color: 'var(--primary)' }} />
         </div>
-        <p style={{ color: '#fff', fontWeight: 600, fontSize: 13, margin: '0 0 6px' }}>M-Pesa prompt sent!</p>
+        <p style={{ color: 'var(--foreground)', fontWeight: 600, fontSize: 13, margin: '0 0 6px' }}>M-Pesa prompt sent!</p>
         <p style={{ color: 'rgba(235,235,245,0.42)', fontSize: 11, lineHeight: 1.55 }}>
-          Enter your <strong style={{ color: '#fff' }}>M-Pesa PIN</strong> on your phone, then tap below.
+          Enter your <strong style={{ color: 'var(--foreground)' }}>M-Pesa PIN</strong> on your phone, then tap below.
         </p>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -508,9 +507,9 @@ function BuyFlowModal({
             ['Account no.', bankDetails.accountNumber], ['Reference', bankDetails.reference],
             ['Amount', `${bankDetails.currency} ${Number(bankDetails.amount).toFixed(2)}`],
           ] as [string, string][]).filter(([, v]) => v).map(([k, v]) => (
-            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid var(--border)' }}>
               <span style={{ fontSize: 11, color: 'rgba(235,235,245,0.42)' }}>{k}</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#fff', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--foreground)', fontFamily: 'monospace', userSelect: 'all' }}>{v}</span>
             </div>
           ))}
           <button onClick={onClose} style={{ ...btnGhost, marginTop: 14 }}>Done — I'll transfer now</button>
@@ -523,10 +522,10 @@ function BuyFlowModal({
   if (step === 'review') return (
     <div style={overlay}><div style={card}>
       <Header title="Confirm order" back={() => setStep('mpesa-sent')} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
         <StockLogo symbol={asset.symbol} size="sm" />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontWeight: 700, color: '#fff', fontSize: 13, margin: 0 }}>{asset.symbol}</p>
+          <p style={{ fontWeight: 700, color: 'var(--foreground)', fontSize: 13, margin: 0 }}>{asset.symbol}</p>
           <p style={{ fontSize: 11, color: 'rgba(235,235,245,0.38)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
         </div>
         <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
@@ -551,9 +550,9 @@ function BuyFlowModal({
     <div style={overlay}><div style={card}>
       <div style={{ textAlign: 'center', padding: '10px 0 4px' }}>
         <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(var(--accent-rgb),0.15)', border: '1px solid rgba(var(--accent-rgb),0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-          <CheckCircle size={24} style={{ color: 'var(--accent)' }} />
+          <CheckCircle size={24} style={{ color: 'var(--primary)' }} />
         </div>
-        <p style={{ color: '#fff', fontWeight: 700, fontSize: 15, margin: '0 0 6px' }}>Order placed!</p>
+        <p style={{ color: 'var(--foreground)', fontWeight: 700, fontSize: 15, margin: '0 0 6px' }}>Order placed!</p>
         <p style={{ color: 'rgba(235,235,245,0.42)', fontSize: 11, lineHeight: 1.5 }}>
           BUY order for {qty % 1 === 0 ? qty : qty.toFixed(4)} {asset.symbol} submitted.
         </p>
@@ -656,7 +655,7 @@ export default function AssetDetailPage() {
   if (!asset) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--accent)' }} />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }} />
       </div>
     );
   }
@@ -739,9 +738,9 @@ export default function AssetDetailPage() {
       {showAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowAlert(false)} />
-          <div className="relative w-full max-w-sm" style={{ background: 'rgba(20,20,22,0.97)', backdropFilter: 'blur(24px)', borderRadius: 20, border: '1px solid rgba(255,255,255,0.12)', padding: 24 }}>
+          <div className="relative w-full max-w-sm" style={{ background: 'var(--card)', borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-semibold text-white flex items-center gap-2"><Bell size={16} style={{ color: 'var(--accent)' }} /> Set Price Alert</h3>
+              <h3 className="font-semibold text-white flex items-center gap-2"><Bell size={16} style={{ color: 'var(--primary)' }} /> Set Price Alert</h3>
               <button onClick={() => setShowAlert(false)} className="text-gray-500 hover:text-white transition-colors"><X size={18} /></button>
             </div>
 
@@ -753,9 +752,9 @@ export default function AssetDetailPage() {
                     <button key={c} onClick={() => setAlertCond(c)}
                       className="py-2.5 rounded-xl text-sm font-semibold capitalize transition-all"
                       style={{
-                        background: alertCond === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
+                        background: alertCond === c ? 'var(--primary)' : 'var(--border)',
                         color: alertCond === c ? '#fff' : 'rgba(235,235,245,0.5)',
-                        border: alertCond === c ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                        border: alertCond === c ? 'none' : '1px solid var(--border)',
                       }}>
                       Price goes {c}
                     </button>
@@ -781,9 +780,9 @@ export default function AssetDetailPage() {
                   <p className="text-xs text-gray-400 mb-2">Active alerts for {asset?.symbol}</p>
                   <div className="space-y-1.5">
                     {assetAlerts.map((a: any) => (
-                      <div key={a.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      <div key={a.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: 'var(--border)' }}>
                         <span className="text-xs text-gray-300">
-                          <span style={{ color: 'var(--accent)' }}>{a.condition}</span> {currency} {Number(a.targetPrice).toFixed(2)}
+                          <span style={{ color: 'var(--primary)' }}>{a.condition}</span> {currency} {Number(a.targetPrice).toFixed(2)}
                         </span>
                         <button onClick={() => deleteAlert(a.id)} className="text-gray-600 hover:text-red-400 transition-colors"><X size={13} /></button>
                       </div>
@@ -883,8 +882,8 @@ export default function AssetDetailPage() {
               className="p-2.5 rounded-xl transition-all"
               title="Set price alert"
               style={{
-                background: assetAlerts.length > 0 ? 'rgba(var(--accent-rgb),0.12)' : 'rgba(255,255,255,0.06)',
-                color: assetAlerts.length > 0 ? 'var(--accent)' : 'rgba(235,235,245,0.4)',
+                background: assetAlerts.length > 0 ? 'rgba(var(--accent-rgb),0.12)' : 'var(--border)',
+                color: assetAlerts.length > 0 ? 'var(--primary)' : 'rgba(235,235,245,0.4)',
               }}
             >
               {assetAlerts.length > 0 ? <BellRing size={18} /> : <Bell size={18} />}
@@ -893,7 +892,7 @@ export default function AssetDetailPage() {
               onClick={toggleWatchlist}
               className="p-2.5 rounded-xl transition-all"
               style={{
-                background: watched ? 'rgba(234,179,8,0.12)' : 'rgba(255,255,255,0.06)',
+                background: watched ? 'rgba(234,179,8,0.12)' : 'var(--border)',
                 color: watched ? '#facc15' : 'rgba(235,235,245,0.4)',
               }}
             >
@@ -928,8 +927,8 @@ export default function AssetDetailPage() {
                 <p className="text-sm text-gray-400 leading-relaxed">{asset.description}</p>
                 {(asset.sector || asset.industry) && (
                   <div className="flex flex-wrap gap-2 mt-3">
-                    {asset.sector   && <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.6)' }}>{asset.sector}</span>}
-                    {asset.industry && <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.6)' }}>{asset.industry}</span>}
+                    {asset.sector   && <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.6)' }}>{asset.sector}</span>}
+                    {asset.industry && <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.6)' }}>{asset.industry}</span>}
                   </div>
                 )}
               </div>
@@ -941,7 +940,7 @@ export default function AssetDetailPage() {
             <div className="card" style={{ padding: 20 }}>
 
               {/* BUY / SELL */}
-              <div className="grid grid-cols-2 gap-1 mb-4 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="grid grid-cols-2 gap-1 mb-4 p-1 rounded-xl" style={{ background: 'var(--border)' }}>
                 {(['BUY', 'SELL'] as Side[]).map(s => (
                   <button
                     key={s}
@@ -966,7 +965,7 @@ export default function AssetDetailPage() {
                       key={t}
                       onClick={() => { setOrdType(t); setInMode('SHARES'); setStopPrice(''); }}
                       className={clsx('py-2 rounded-lg text-xs font-semibold transition-all', ordType === t ? 'text-white' : 'text-gray-500 hover:text-white')}
-                      style={ordType === t ? { backgroundColor: 'var(--accent)' } : { background: 'rgba(255,255,255,0.06)' }}
+                      style={ordType === t ? { backgroundColor: 'var(--primary)' } : { background: 'var(--border)' }}
                     >
                       {t.replace('_', ' ')}
                     </button>
@@ -984,7 +983,7 @@ export default function AssetDetailPage() {
                         key={m}
                         onClick={() => { setInMode(m); setAmount(''); }}
                         className={clsx('py-2 rounded-lg text-xs font-semibold transition-all', inMode === m ? 'text-white' : 'text-gray-500 hover:text-white')}
-                        style={inMode === m ? { backgroundColor: 'var(--accent)' } : { background: 'rgba(255,255,255,0.06)' }}
+                        style={inMode === m ? { backgroundColor: 'var(--primary)' } : { background: 'var(--border)' }}
                       >
                         {m}
                       </button>
@@ -1033,7 +1032,7 @@ export default function AssetDetailPage() {
 
               {/* Estimate breakdown */}
               {sharesQty > 0 && (
-                <div className="rounded-xl p-3 mb-4 text-sm space-y-1.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="rounded-xl p-3 mb-4 text-sm space-y-1.5" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
                   <div className="flex justify-between">
                     <span style={{ color: 'rgba(235,235,245,0.45)' }}>
                       {asset.isFractional ? sharesQty.toFixed(6) : Math.round(sharesQty)} shares × {currency} {fmtNum(effPrice)}
@@ -1066,13 +1065,13 @@ export default function AssetDetailPage() {
                       <span className="text-white">{currency} {fmtNum(stampDuty)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between pt-1" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex justify-between pt-1" style={{ borderTop: '1px solid var(--border)' }}>
                     <span style={{ color: 'rgba(235,235,245,0.45)' }}>Total charges</span>
                     <span className="text-white">{currency} {fmtNum(fee)}</span>
                   </div>
-                  <div className="flex justify-between font-bold pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="flex justify-between font-bold pt-2" style={{ borderTop: '1px solid var(--border)' }}>
                     <span className="text-white">Est. {side === 'BUY' ? 'Cost' : 'Proceeds'}</span>
-                    <span style={{ color: 'var(--accent)' }}>{currency} {fmtNum(total)}</span>
+                    <span style={{ color: 'var(--primary)' }}>{currency} {fmtNum(total)}</span>
                   </div>
                 </div>
               )}
@@ -1105,7 +1104,7 @@ export default function AssetDetailPage() {
                   onClick={() => canBuy && setBuyFlow(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    backgroundColor: canBuy ? '#22c55e' : 'rgba(255,255,255,0.06)',
+                    backgroundColor: canBuy ? '#22c55e' : 'var(--border)',
                     color: canBuy ? '#fff' : 'rgba(235,235,245,0.28)',
                     cursor: canBuy ? 'pointer' : 'not-allowed',
                   }}
@@ -1118,7 +1117,7 @@ export default function AssetDetailPage() {
                   onClick={() => canOrder && setSellPreview(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    backgroundColor: canOrder ? '#ef4444' : 'rgba(255,255,255,0.06)',
+                    backgroundColor: canOrder ? '#ef4444' : 'var(--border)',
                     color: canOrder ? '#fff' : 'rgba(235,235,245,0.28)',
                     cursor: canOrder ? 'pointer' : 'not-allowed',
                   }}

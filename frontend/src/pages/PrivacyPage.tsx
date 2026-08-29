@@ -3,11 +3,11 @@ import CapaLogo from '../components/ui/CapaLogo';
 
 const TEXT = 'var(--text)';
 const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
+const ACCENT = 'var(--primary)';
 
 function Nav() {
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
         <CapaLogo size={44} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
@@ -32,7 +32,7 @@ const sections = [
 
 export default function PrivacyPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px' }}>
         <h1 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, letterSpacing: '-0.04em', marginBottom: 8 }}>Privacy Policy</h1>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
         </div>
       </div>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
           © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms of Service</Link> · <Link to="/contact" style={{ color: SEC }}>Contact</Link>

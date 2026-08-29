@@ -26,7 +26,7 @@ function MiniChart({ data, dataKey, color, label, formatter }: {
             <stop offset="95%" stopColor={color} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false}
           tickFormatter={d => d?.slice(5)} interval="preserveStartEnd" />
         <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} width={32}
@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
             {PERIODS.map(d => (
               <button key={d} onClick={() => setAnalyticsDays(d)}
                 className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${analyticsDays === d ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                style={analyticsDays === d ? { backgroundColor: 'var(--accent)', opacity: 0.9 } : {}}>
+                style={analyticsDays === d ? { backgroundColor: 'var(--primary)', opacity: 0.9 } : {}}>
                 {d}d
               </button>
             ))}
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Trades Filled</p>
               <p className="text-sm font-bold text-white">{totalNewOrders}</p>
             </div>
-            <MiniChart data={orders} dataKey="count" color="var(--accent)" label="Trades" />
+            <MiniChart data={orders} dataKey="count" color="var(--primary)" label="Trades" />
           </div>
 
           {/* Deposits */}
@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
             { label: 'Tax Collected',         value: Number(data?.taxCollected || 0), color: 'text-yellow-400' },
             { label: 'Trades (completed)',    value: null, count: Number(data?.totalTradeCount || 0), color: 'text-blue-400' },
           ].map(({ label, value, count, color }) => (
-            <div key={label} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div key={label} className="rounded-xl p-4" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
               <p className="text-xs text-gray-500 mb-1">{label}</p>
               <p className={`text-lg font-bold ${color}`}>
                 {count !== undefined
@@ -158,7 +158,7 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </div>
-        <div className="mt-4 rounded-xl p-3 text-xs" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="mt-4 rounded-xl p-3 text-xs" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
           <p className="text-gray-500 mb-2 font-semibold uppercase tracking-wide">Tax breakdown per trade</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5 text-gray-400">
             {[

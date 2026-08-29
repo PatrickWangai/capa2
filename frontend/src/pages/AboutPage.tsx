@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom';
 import CapaLogo from '../components/ui/CapaLogo';
 
 const SEC    = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
-const CARD   = '#1c1c1e';
-const DIVIDER = '1px solid rgba(255,255,255,0.08)';
+const ACCENT = 'var(--primary)';
+const CARD   = 'var(--card)';
+const DIVIDER = '1px solid var(--border)';
 
 function Nav() {
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
         <CapaLogo size={44} />
       </Link>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login"    style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
-        <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
+        <Link to="/register" className="btn-primary" style={{ textDecoration: 'none', fontSize: 13, padding: '6px 14px' }}>Get Started</Link>
       </div>
     </nav>
   );
@@ -27,7 +27,7 @@ const steps = [
     body: (
       <>
         <p style={{ margin: '0 0 10px' }}>Sign up in just a few minutes.</p>
-        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>You'll need:</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--foreground)' }}>You'll need:</p>
         <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
           {['Email address', 'Phone number', 'Government-issued ID or Passport', 'KRA PIN (for Kenyan residents)', 'A secure password'].map(i => <li key={i}>{i}</li>)}
         </ul>
@@ -41,7 +41,7 @@ const steps = [
     body: (
       <>
         <p style={{ margin: '0 0 10px' }}>Deposit funds securely using your preferred payment method.</p>
-        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>Supported methods (coming soon):</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--foreground)' }}>Supported methods (coming soon):</p>
         <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
           {['M-Pesa', 'Bank Transfer', 'Debit/Credit Card'].map(i => <li key={i}>{i}</li>)}
         </ul>
@@ -55,7 +55,7 @@ const steps = [
     body: (
       <>
         <p style={{ margin: '0 0 10px' }}>CAPA supports multi-currency investing. Convert your local currency into the currency required for your chosen market using competitive exchange rates.</p>
-        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>For example:</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--foreground)' }}>For example:</p>
         <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
           {['KES → USD (United States)', 'KES → GBP (United Kingdom)', 'KES → EUR (Europe)'].map(i => <li key={i}>{i}</li>)}
         </ul>
@@ -69,7 +69,7 @@ const steps = [
     body: (
       <>
         <p style={{ margin: '0 0 10px' }}>Explore stock markets from around the world and invest in companies you believe in.</p>
-        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fff' }}>With CAPA you can:</p>
+        <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--foreground)' }}>With CAPA you can:</p>
         <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
           {['Invest in individual stocks', 'Buy fractional shares', 'Invest in Exchange-Traded Funds (ETFs)', 'Build and manage a diversified portfolio', 'Track your investments in real time', 'Monitor market performance with live pricing and charts'].map(i => <li key={i}>{i}</li>)}
         </ul>
@@ -89,7 +89,7 @@ const whyPoints = [
 
 export default function AboutPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: '#f5f5f7', fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--background)', color: 'var(--foreground)', fontFamily: 'var(--font-sans)' }}>
       <Nav />
 
       {/* Hero */}
@@ -111,7 +111,7 @@ export default function AboutPage() {
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px 80px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* About */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', border: '2px solid var(--foreground)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 16px' }}>About CAPA</h2>
           <p style={{ fontSize: 16, color: SEC, lineHeight: 1.75, margin: '0 0 14px' }}>
             CAPA is a global stock investing platform built to give investors seamless access to multiple international stock exchanges through a single account. Our mission is to remove barriers to global investing by providing a secure, transparent, and user-friendly experience.
@@ -121,12 +121,12 @@ export default function AboutPage() {
           </p>
           <div style={{ marginTop: 20, paddingTop: 20, borderTop: DIVIDER, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 20 }}>🏢</span>
-            <span style={{ fontSize: 15, color: SEC }}><strong style={{ color: '#fff' }}>Head Office</strong> — Nairobi, Kenya</span>
+            <span style={{ fontSize: 15, color: SEC }}><strong style={{ color: 'var(--foreground)' }}>Head Office</strong> — Nairobi, Kenya</span>
           </div>
         </div>
 
         {/* Founder */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', border: '2px solid var(--foreground)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 24px' }}>Meet the Founder</h2>
           <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' as const }}>
             <img
@@ -135,7 +135,7 @@ export default function AboutPage() {
               style={{ width: 160, height: 200, objectFit: 'cover', objectPosition: 'center top', borderRadius: 16, flexShrink: 0, boxShadow: '0 4px 24px rgba(0,0,0,0.4)' }}
             />
             <div style={{ flex: 1, minWidth: 200 }}>
-              <p style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 4px' }}>Patrick Wangai</p>
+              <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--foreground)', margin: '0 0 4px' }}>Patrick Wangai</p>
               <p style={{ fontSize: 14, color: ACCENT, fontWeight: 600, margin: '0 0 16px', letterSpacing: '0.02em' }}>Founder & CEO</p>
               <p style={{ fontSize: 15, color: SEC, lineHeight: 1.75, margin: 0 }}>
                 Patrick is the visionary behind CAPA, driven by a passion for making global investment opportunities accessible to every African investor. With a deep understanding of both technology and financial markets, he built CAPA to bridge the gap between African capital and global stock exchanges.
@@ -145,7 +145,7 @@ export default function AboutPage() {
         </div>
 
         {/* Contact */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', border: '2px solid var(--foreground)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 8px' }}>Contact Us</h2>
           <p style={{ fontSize: 15, color: SEC, margin: '0 0 20px' }}>Our support team is always ready to help you with your investing journey.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -164,7 +164,7 @@ export default function AboutPage() {
           <p style={{ fontSize: 15, color: SEC, margin: '0 0 24px' }}>Everything you need to begin investing with CAPA.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {steps.map(({ n, title, body }) => (
-              <div key={n} style={{ backgroundColor: CARD, borderRadius: 18, padding: '28px 32px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+              <div key={n} style={{ backgroundColor: CARD, borderRadius: 18, padding: '28px 32px', border: '2px solid var(--foreground)', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
                 <div style={{ fontSize: 26, fontWeight: 800, color: ACCENT, opacity: 0.7, minWidth: 36, lineHeight: 1, flexShrink: 0 }}>{n}</div>
                 <div>
                   <h3 style={{ fontSize: 17, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.02em' }}>{title}</h3>
@@ -176,7 +176,7 @@ export default function AboutPage() {
         </div>
 
         {/* Why CAPA */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', border: '2px solid var(--foreground)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 20px' }}>Why Choose CAPA?</h2>
           <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {whyPoints.map(p => (
@@ -189,7 +189,7 @@ export default function AboutPage() {
         </div>
 
         {/* Mission */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '36px', border: '2px solid var(--foreground)' }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 14px' }}>Our Mission</h2>
           <p style={{ fontSize: 16, color: SEC, lineHeight: 1.75, margin: 0 }}>
             To empower every African investor with seamless access to global financial markets through innovative technology, transparency, and world-class investment tools.
@@ -199,10 +199,10 @@ export default function AboutPage() {
       </div>
 
       {/* CTA */}
-      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'rgba(28,28,30,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
-        <h2 style={{ fontSize: 30, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>Ready to start investing?</h2>
-        <p style={{ fontSize: 17, color: SEC, marginBottom: 28 }}>Open your account in minutes.</p>
-        <Link to="/register" style={{ display: 'inline-block', background: ACCENT, color: '#fff', textDecoration: 'none', padding: '14px 36px', borderRadius: 980, fontSize: 17, fontWeight: 600 }}>
+      <section style={{ textAlign: 'center', padding: '60px 24px 80px', backgroundColor: 'var(--card)' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', marginBottom: 12 }}>Ready to start investing?</h2>
+        <p style={{ fontSize: 16, color: SEC, marginBottom: 28 }}>Open your account in minutes.</p>
+        <Link to="/register" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '14px 36px', fontSize: 15 }}>
           Get Started
         </Link>
       </section>

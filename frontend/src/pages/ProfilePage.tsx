@@ -12,7 +12,7 @@ function SectionCard({ title, icon: Icon, children }: { title: string; icon: Rea
   return (
     <div className="card">
       <h3 className="font-semibold text-white flex items-center gap-2 mb-5">
-        <Icon size={16} style={{ color: 'var(--accent)' }} />
+        <Icon size={16} style={{ color: 'var(--primary)' }} />
         {title}
       </h3>
       {children}
@@ -122,7 +122,7 @@ export default function ProfilePage() {
       {/* Header card */}
       <div className="card flex items-center gap-5">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0"
-          style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))', color: 'var(--accent-text)' }}>
+          style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent-dark))', color: 'var(--accent-text)' }}>
           {user?.firstName?.[0]}{user?.lastName?.[0]}
         </div>
         <div className="flex-1 min-w-0">
@@ -145,7 +145,7 @@ export default function ProfilePage() {
             <p className="text-sm text-yellow-300">Please verify your email address to activate your account.</p>
           </div>
           <button onClick={resendVerification} className="text-xs font-semibold whitespace-nowrap"
-            style={{ color: 'var(--accent)' }}>
+            style={{ color: 'var(--primary)' }}>
             Resend
           </button>
         </div>

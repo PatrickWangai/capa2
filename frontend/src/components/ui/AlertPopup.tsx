@@ -107,7 +107,7 @@ export default function AlertPopup() {
           boxShadow: '4px 4px 0 #000',
           animation: 'nb-pop-in 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards',
           overflow: 'hidden',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif',
+          fontFamily: 'var(--font-sans)',
         }}
       >
         {/* Top label bar */}
@@ -130,8 +130,8 @@ export default function AlertPopup() {
             onClick={hide}
             aria-label="Close"
             style={{
-              background: 'rgba(255,255,255,0.25)',
-              border: '1.5px solid rgba(255,255,255,0.5)',
+              background: 'var(--muted-foreground)',
+              border: '1.5px solid var(--muted-foreground)',
               borderRadius: 5,
               width: 18,
               height: 18,

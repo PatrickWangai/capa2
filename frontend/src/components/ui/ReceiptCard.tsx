@@ -25,7 +25,7 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
   return (
     <div style={{
       background: 'var(--card-bg)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      border: '1px solid var(--border)',
       borderRadius: 18,
       overflow: 'hidden',
     }}>
@@ -35,16 +35,16 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
         <div style={{ position: 'relative', display: 'inline-block', marginBottom: 24 }}>
           <div style={{
             width: 70, height: 80,
-            background: 'rgba(255,255,255,0.05)',
+            background: 'var(--border)',
             borderRadius: 10,
-            border: '1px solid rgba(255,255,255,0.10)',
+            border: '1px solid var(--secondary)',
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center', gap: 7,
           }}>
             {[38, 38, 24].map((w, i) => (
               <div key={i} style={{
                 height: 2.5, width: w,
-                background: 'rgba(255,255,255,0.16)',
+                background: 'var(--secondary)',
                 borderRadius: 2,
               }} />
             ))}
@@ -69,7 +69,7 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
         </p>
         <p style={{
           fontSize: 38, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em',
-          fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif',
+          fontFamily: 'var(--font-sans)',
         }}>
           {amount}
         </p>
@@ -82,23 +82,23 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
 
       {/* Detail rows */}
       <div style={{
-        borderTop:    '1px solid rgba(255,255,255,0.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderTop:    '1px solid var(--border)',
+        borderBottom: '1px solid var(--border)',
         padding: '4px 28px',
       }}>
         {rows.map((row, i) => (
           <div key={i} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             padding: '13px 0',
-            borderBottom: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+            borderBottom: i < rows.length - 1 ? '1px solid var(--border)' : 'none',
           }}>
             <span style={{ fontSize: 14, color: 'rgba(235,235,245,0.45)' }}>
               {row.label}
             </span>
             <span style={{
               fontSize: 14, fontWeight: 500,
-              color: row.accent ? 'var(--accent)' : 'rgba(235,235,245,0.90)',
-              fontFamily: '-apple-system,BlinkMacSystemFont,sans-serif',
+              color: row.accent ? 'var(--primary)' : 'rgba(235,235,245,0.90)',
+              fontFamily: 'var(--font-sans)',
             }}>
               {row.value}
             </span>

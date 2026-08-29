@@ -35,7 +35,7 @@ export default function WalletTransactionsPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link to="/wallet" style={{ color: 'var(--accent)', display: 'flex' }}>
+        <Link to="/wallet" style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -50,10 +50,10 @@ export default function WalletTransactionsPage() {
           <button key={c} onClick={() => setCurrency(c)}
             className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all"
             style={{
-              background: currency === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-              color:      currency === c ? 'var(--accent-text)' : 'rgba(255,255,255,0.65)',
+              background: currency === c ? 'var(--primary)' : 'var(--border)',
+              color:      currency === c ? 'var(--accent-text)' : 'var(--muted-foreground)',
               border:     '1px solid',
-              borderColor: currency === c ? 'transparent' : 'rgba(255,255,255,0.08)',
+              borderColor: currency === c ? 'transparent' : 'var(--border)',
             }}>
             {c !== 'All' && FLAG[c]} {c}
           </button>
@@ -70,7 +70,7 @@ export default function WalletTransactionsPage() {
           <div className="card p-0 hidden lg:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['Type', 'Amount', 'Currency', 'Fee', 'Status', 'Description', 'Date'].map(h => (
                     <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">{h}</th>
                   ))}
@@ -82,7 +82,7 @@ export default function WalletTransactionsPage() {
                   const Icon = meta.icon;
                   return (
                     <tr key={tx.id} className="hover:bg-white/[0.025] transition-colors"
-                      style={{ borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                      style={{ borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Icon size={14} style={{ color: meta.color, flexShrink: 0 }} />

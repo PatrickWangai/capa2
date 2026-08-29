@@ -68,7 +68,7 @@ export default function CurrencyConverterPage() {
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link to="/wallet" style={{ color: 'var(--accent)', display: 'flex' }}>
+        <Link to="/wallet" style={{ color: 'var(--primary)', display: 'flex' }}>
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -79,7 +79,7 @@ export default function CurrencyConverterPage() {
 
       {/* Rate info */}
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
-        style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--accent)' }}>
+        style={{ background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.18)', color: 'var(--primary)' }}>
         <Info size={14} />
         <span>1 USD = {rateData?.rates?.USD_KES ? Number(rateData.rates.USD_KES).toFixed(4) : '…'} KES &nbsp;·&nbsp; 1% conversion fee</span>
       </div>
@@ -93,8 +93,8 @@ export default function CurrencyConverterPage() {
               <button key={c} onClick={() => setFrom(c)}
                 className="px-4 py-1.5 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: from === c ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                  color:      from === c ? 'var(--accent-text)' : 'rgba(255,255,255,0.6)',
+                  background: from === c ? 'var(--primary)' : 'var(--border)',
+                  color:      from === c ? 'var(--accent-text)' : 'var(--muted-foreground)',
                 }}>
                 {FLAG[c]} {c}
               </button>
@@ -125,12 +125,12 @@ export default function CurrencyConverterPage() {
 
         {/* Preview */}
         {preview && (
-          <div className="rounded-xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="rounded-xl p-4 space-y-2" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Fee (1%)</span>
               <span className="text-red-400">− {preview.fee.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm font-semibold" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 8 }}>
+            <div className="flex justify-between text-sm font-semibold" style={{ borderTop: '1px solid var(--border)', paddingTop: 8 }}>
               <span className="text-gray-300">You receive ({to})</span>
               <span className="text-white">{preview.net.toFixed(2)}</span>
             </div>
@@ -154,7 +154,7 @@ export default function CurrencyConverterPage() {
             <button key={n}
               onClick={() => setAmount(String(n))}
               className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              style={{ background: 'var(--border)', color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}>
               {from} {n.toLocaleString()}
             </button>
           ))}

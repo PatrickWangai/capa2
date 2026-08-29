@@ -78,7 +78,7 @@ export default function PortfolioPage() {
     date: new Date(h.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
     value: Number(h.value),
   }));
-  const chartColor = totalGainLoss >= 0 ? 'var(--accent)' : '#ef4444';
+  const chartColor = totalGainLoss >= 0 ? 'var(--primary)' : '#ef4444';
 
   const downloadCSV = () => {
     const rows = [
@@ -109,7 +109,7 @@ export default function PortfolioPage() {
         {sortedPositions.length > 0 && (
           <button onClick={downloadCSV}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,235,245,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.7)', border: '1px solid var(--border)' }}>
             <Download size={14} /> Export CSV
           </button>
         )}
@@ -153,7 +153,7 @@ export default function PortfolioPage() {
                 <button key={p} onClick={() => setPeriod(p)}
                   className={clsx('text-xs px-2.5 py-1 rounded-lg font-medium transition-colors',
                     period === p ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
-                  style={period === p ? { backgroundColor: 'var(--accent)', opacity: 0.9 } : {}}>
+                  style={period === p ? { backgroundColor: 'var(--primary)', opacity: 0.9 } : {}}>
                   {p}
                 </button>
               ))}
@@ -167,7 +167,7 @@ export default function PortfolioPage() {
                   <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
               <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false}
                 tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} width={44} />
@@ -234,7 +234,7 @@ export default function PortfolioPage() {
             <button key={t} onClick={() => setTab(t)}
               className={clsx('px-5 py-3 text-sm font-medium border-b-2 transition-colors -mb-px',
                 t === tab ? 'text-blue-400' : 'border-transparent text-gray-400 hover:text-white')}
-              style={t === tab ? { borderBottomColor: 'var(--accent)', color: 'var(--accent)' } : {}}>
+              style={t === tab ? { borderBottomColor: 'var(--primary)', color: 'var(--primary)' } : {}}>
               {t}
             </button>
           ))}
@@ -257,7 +257,7 @@ export default function PortfolioPage() {
                     <button key={s} onClick={() => setSort(s)}
                       className={clsx('text-xs px-2.5 py-1 rounded-lg font-medium transition-colors',
                         sort === s ? 'text-white' : 'text-gray-500 hover:text-gray-300')}
-                      style={sort === s ? { backgroundColor: 'var(--accent)', opacity: 0.9 } : {}}>
+                      style={sort === s ? { backgroundColor: 'var(--primary)', opacity: 0.9 } : {}}>
                       {s.charAt(0).toUpperCase() + s.slice(1)}
                     </button>
                   ))}

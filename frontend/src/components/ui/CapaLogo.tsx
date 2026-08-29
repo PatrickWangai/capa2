@@ -10,7 +10,7 @@ export default function CapaLogo({ size = 60, className = '' }: Props) {
       height={size}
       width={Math.round(size * ASPECT)}
       draggable={false}
-      className={className}
+      className={`capa-logo-img ${className}`}
       style={{ display: 'block', userSelect: 'none', flexShrink: 0 }}
     />
   );

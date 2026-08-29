@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 import { Shield, Lock, Eye, Server, Key, AlertTriangle } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 
-const TEXT = 'var(--text)';
+const TEXT = 'var(--foreground)';
 const SEC = 'var(--text-secondary)';
-const ACCENT = 'var(--accent)';
-const CARD = '#1c1c1e';
+const ACCENT = 'var(--primary)';
+const CARD = 'var(--card)';
 
 const pillars = [
   { icon: Lock, title: 'Encryption', desc: 'All data is encrypted at rest (AES-256) and in transit (TLS 1.3). Your passwords are hashed with bcrypt — we never store them in plain text.' },
@@ -18,14 +18,14 @@ const pillars = [
 
 function Nav() {
   return (
-    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(84,84,88,0.45)', zIndex: 100 }}>
+    <nav style={{ position: 'sticky', top: 0, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', backgroundColor: 'var(--card)', borderBottom: '2px solid var(--foreground)', zIndex: 100 }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
         <CapaLogo size={44} />
         <span style={{ color: TEXT, fontWeight: 600, fontSize: 15 }}>Capa</span>
       </Link>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
         <Link to="/login" style={{ color: SEC, textDecoration: 'none', fontSize: 14 }}>Sign In</Link>
-        <Link to="/register" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, background: ACCENT, padding: '5px 14px', borderRadius: 980 }}>Get Started</Link>
+        <Link to="/register" className="btn-primary" style={{ textDecoration: 'none', fontSize: 13, padding: '6px 14px' }}>Get Started</Link>
       </div>
     </nav>
   );
@@ -33,7 +33,7 @@ function Nav() {
 
 export default function SecurityPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Nav />
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 80px' }}>
@@ -48,7 +48,7 @@ export default function SecurityPage() {
         {/* Security pillars */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 40 }}>
           {pillars.map(({ icon: Icon, title, desc }) => (
-            <div key={title} style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)' }}>
+            <div key={title} style={{ backgroundColor: CARD, borderRadius: 18, padding: 28, border: '2px solid var(--foreground)' }}>
               <div style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(var(--accent-rgb),0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 <Icon size={20} color={ACCENT} />
               </div>
@@ -59,7 +59,7 @@ export default function SecurityPage() {
         </div>
 
         {/* Tips for users */}
-        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '32px', boxShadow: '0 0 0 0.5px rgba(255,255,255,0.08)', marginBottom: 24 }}>
+        <div style={{ backgroundColor: CARD, borderRadius: 20, padding: '32px', border: '2px solid var(--foreground)', marginBottom: 24 }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 20 }}>How to keep your account safe</h2>
           <ul style={{ margin: 0, padding: '0 0 0 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
@@ -75,13 +75,13 @@ export default function SecurityPage() {
           </ul>
         </div>
 
-        <div style={{ padding: '20px 24px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 12, textAlign: 'center' }}>
+        <div style={{ padding: '20px 24px', backgroundColor: 'var(--secondary)', borderRadius: 12, textAlign: 'center' }}>
           <p style={{ margin: '0 0 8px', fontSize: 14, color: SEC }}>Questions about security?</p>
           <Link to="/contact" style={{ color: ACCENT, fontSize: 14, fontWeight: 500 }}>Contact our security team →</Link>
         </div>
       </div>
 
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
         <p style={{ margin: 0, fontSize: 12, color: SEC }}>
           © 2026 Capa Investments Ltd.{' '}
           <Link to="/terms" style={{ color: SEC }}>Terms</Link> · <Link to="/privacy" style={{ color: SEC }}>Privacy</Link>
