@@ -531,7 +531,7 @@ export default function LandingPage() {
       </div>
 
       {/* Content sheet — slides over the pinned hero */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'var(--background)' }}>
+      <div className="force-dark-theme" style={{ position: 'relative', zIndex: 1, background: 'var(--background)' }}>
         <WavyDivider />
 
       {/* FEATURES */}
@@ -609,11 +609,11 @@ export default function LandingPage() {
         </section>
       </GlitchSection>
 
-      {/* CTA — same teal-panel + hard-shadow-card language as the sign-in page */}
+      {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
       <GlitchSection>
-        <section style={{ position: 'relative', overflow: 'hidden', background: ACCENT, padding: '88px 24px', borderTop: '2px solid var(--foreground)' }}>
-          <FloatingBadges dark />
-          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
+        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--secondary)', padding: '88px 24px', borderTop: '2px solid var(--border)' }}>
+          <FloatingBadges />
+          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--primary)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--primary)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
               Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
             </h2>

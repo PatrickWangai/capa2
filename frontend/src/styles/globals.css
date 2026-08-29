@@ -331,6 +331,97 @@
   --color-primary-to: var(--accent-dark);
 }
 
+/* ── Forced-dark scope — a class (not [data-theme]) so specific pages can
+   opt into the CRM's dark glow palette regardless of the app's own
+   light/dark toggle. Every var(--x) reference inside cascades to these
+   values for any descendant, same token set as [data-theme="dark"] above. */
+.force-dark-theme {
+  --background: #090d0e;
+  --foreground: #d7f5ef;
+
+  --card: #0e1517;
+  --card-foreground: #d7f5ef;
+
+  --popover: #121a1c;
+  --popover-foreground: #d7f5ef;
+
+  --primary: #2de3c2;
+  --primary-foreground: #04120f;
+
+  --secondary: #121a1c;
+  --secondary-foreground: #b9d9d2;
+
+  --muted: #121a1c;
+  --muted-foreground: #6d8a87;
+
+  --accent: #163330;
+  --accent-foreground: #2de3c2;
+
+  --destructive: #ff3b5c;
+  --destructive-foreground: #ffffff;
+  --destructive-muted: #2e0f16;
+
+  --success: #3ddc71;
+  --success-foreground: #04120f;
+  --success-muted: #123321;
+
+  --warning: #ffb648;
+  --warning-foreground: #1c1408;
+  --warning-muted: #2e2008;
+
+  --info: #4b9fe8;
+  --info-foreground: #ffffff;
+  --info-muted: #112a3a;
+
+  --border: #1c2e30;
+  --input: #2a4548;
+  --ring: #2de3c2;
+
+  --sidebar: #0e1517;
+  --sidebar-foreground: #6d8a87;
+  --sidebar-foreground-active: #2de3c2;
+  --sidebar-accent: #121a1c;
+  --sidebar-accent-foreground: #d7f5ef;
+  --sidebar-border: #1c2e30;
+  --sidebar-primary: #2de3c2;
+
+  --chart-1: #2de3c2;
+  --chart-2: #5fd4ff;
+  --chart-3: #ffb648;
+  --chart-4: #a78bfa;
+  --chart-5: #ff3b5c;
+
+  --shadow-tint: 0 0 0;
+  --scrollbar-thumb: #1c2e30;
+  --scrollbar-thumb-hover: #2a4548;
+
+  --glow: 0 0 12px -2px var(--primary);
+  --glow-lg: 0 0 28px -4px var(--primary);
+  --scan-rgb: 45 227 194;
+
+  --bg-1: var(--background);
+  --bg-gradient: var(--background);
+  --text: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-tertiary: var(--muted-foreground);
+  --card-bg: var(--card);
+  --card-border: var(--border);
+  --sidebar-bg: var(--sidebar);
+  --input-bg: var(--card);
+  --nav-text: var(--sidebar-foreground);
+  --accent-dark: #22b89d;
+  --accent-rgb: 45, 227, 194;
+  --accent-dim: rgba(45, 227, 194, 0.14);
+  --accent-glow: rgba(45, 227, 194, 0.22);
+  --accent-text: #04120f;
+  --color-primary-from: var(--primary);
+  --color-primary-to: var(--accent-dark);
+
+  background: var(--background);
+  color: var(--foreground);
+}
+.force-dark-theme .capa-logo-img { filter: none !important; }
+
 /* ── Fonts — Space Mono is the base UI face everywhere (matches the CRM);
    Archivo is reserved for hero/display headlines only. ── */
 :root {
