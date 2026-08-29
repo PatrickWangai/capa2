@@ -155,6 +155,12 @@
   .bg-gray-800\/40, .bg-gray-800\/50, .bg-gray-800\/60 { background-color: var(--secondary) !important; }
   .border-gray-600, .border-gray-700, .border-gray-800,
   .border-gray-700\/40, .border-gray-800\/40 { border-color: var(--border) !important; }
+
+  /* Row/item hover tints authored as "faint white overlay" for a dark
+     background — invisible on the new light surfaces, so remapped to the
+     token system's own hover tint. */
+  .hover\:bg-white\/\[0\.025\]:hover, .hover\:bg-white\/\[0\.04\]:hover,
+  .hover\:bg-white\/5:hover, .hover\:bg-white\/10:hover { background-color: var(--secondary) !important; }
 }
 
 @media (prefers-color-scheme: dark) {

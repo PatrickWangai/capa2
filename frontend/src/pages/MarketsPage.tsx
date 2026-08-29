@@ -164,7 +164,7 @@ export default function MarketsPage() {
                   padding: '12px 18px',
                   fontSize: 13,
                   fontWeight: view === t.id ? 600 : 400,
-                  color: view === t.id ? '#ffffff' : 'rgba(235,235,245,0.45)',
+                  color: view === t.id ? 'var(--foreground)' : 'var(--muted-foreground)',
                   background: 'none',
                   border: 'none',
                   borderBottom: view === t.id ? '2px solid var(--primary)' : '2px solid transparent',
@@ -181,7 +181,7 @@ export default function MarketsPage() {
 
           {/* Search */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
-            <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'rgba(235,235,245,0.3)', pointerEvents: 'none' }} />
+            <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-foreground)', pointerEvents: 'none' }} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -190,11 +190,11 @@ export default function MarketsPage() {
                 paddingLeft: 30, paddingRight: search ? 28 : 10,
                 paddingTop: 7, paddingBottom: 7,
                 fontSize: 12, border: '1px solid var(--border)', borderRadius: 6,
-                outline: 'none', background: 'var(--border)', color: '#ffffff', width: 210,
+                outline: 'none', background: 'var(--card)', color: 'var(--foreground)', width: 210,
               }}
             />
             {search && (
-              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(235,235,245,0.4)', lineHeight: 1 }}>
+              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', lineHeight: 1 }}>
                 <X size={12} />
               </button>
             )}
@@ -235,13 +235,13 @@ export default function MarketsPage() {
               {isLoading ? (
                 <tr>
                   <td colSpan={11} style={{ padding: '60px 0', textAlign: 'center' }}>
-                    <div style={{ display: 'inline-block', width: 28, height: 28, borderRadius: '50%', borderTop: '2px solid #2962ff', borderRight: '2px solid transparent', animation: 'spin 0.8s linear infinite' }} />
+                    <div style={{ display: 'inline-block', width: 28, height: 28, borderRadius: '50%', borderTop: '2px solid var(--primary)', borderRight: '2px solid transparent', animation: 'spin 0.8s linear infinite' }} />
                     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                   </td>
                 </tr>
               ) : displayed.length === 0 ? (
                 <tr>
-                  <td colSpan={11} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(235,235,245,0.35)', fontSize: 13 }}>
+                  <td colSpan={11} style={{ padding: '60px 0', textAlign: 'center', color: 'var(--muted-foreground)', fontSize: 13 }}>
                     No stocks found
                   </td>
                 </tr>
@@ -269,25 +269,25 @@ export default function MarketsPage() {
                       onMouseLeave={e => (e.currentTarget.style.background = '')}
                     >
                       {/* # */}
-                      <td style={{ ...TD, color: 'rgba(235,235,245,0.25)', width: 40, textAlign: 'center' }}>{idx + 1}</td>
+                      <td style={{ ...TD, color: 'var(--muted-foreground)', width: 40, textAlign: 'center' }}>{idx + 1}</td>
 
                       {/* Symbol + logo */}
                       <td style={{ ...TD, paddingLeft: 12, whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <StockLogo symbol={asset.symbol} size="sm" />
-                          <span style={{ fontWeight: 700, color: '#ffffff', fontSize: 13 }}>{asset.symbol}</span>
+                          <span style={{ fontWeight: 700, color: 'var(--foreground)', fontSize: 13 }}>{asset.symbol}</span>
                         </div>
                       </td>
 
                       {/* Name */}
-                      <td style={{ ...TD, color: 'rgba(235,235,245,0.55)', maxWidth: 200 }}>
+                      <td style={{ ...TD, color: 'var(--muted-foreground)', maxWidth: 200 }}>
                         <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</span>
                       </td>
 
                       {/* Price */}
-                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap' }}>
+                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: 'var(--foreground)', whiteSpace: 'nowrap' }}>
                         {price != null ? (
-                          <>{fmtPrice(price, asset.currency)} <span style={{ fontSize: 10, color: 'rgba(235,235,245,0.3)', fontWeight: 400 }}>KES</span></>
+                          <>{fmtPrice(price, asset.currency)} <span style={{ fontSize: 10, color: 'var(--muted-foreground)', fontWeight: 400 }}>KES</span></>
                         ) : '—'}
                       </td>
 
@@ -297,15 +297,15 @@ export default function MarketsPage() {
                       </td>
 
                       {/* Volume */}
-                      <td style={{ ...TD, textAlign: 'right', color: 'rgba(235,235,245,0.55)' }}>{fmtVol(vol)}</td>
+                      <td style={{ ...TD, textAlign: 'right', color: 'var(--muted-foreground)' }}>{fmtVol(vol)}</td>
 
                       {/* Mkt Cap */}
-                      <td style={{ ...TD, textAlign: 'right', color: 'rgba(235,235,245,0.55)', whiteSpace: 'nowrap' }}>
-                        {mktCap ? <>{fmtVol(mktCap)} <span style={{ fontSize: 10, color: 'rgba(235,235,245,0.3)' }}>KES</span></> : '—'}
+                      <td style={{ ...TD, textAlign: 'right', color: 'var(--muted-foreground)', whiteSpace: 'nowrap' }}>
+                        {mktCap ? <>{fmtVol(mktCap)} <span style={{ fontSize: 10, color: 'var(--muted-foreground)' }}>KES</span></> : '—'}
                       </td>
 
                       {/* P/E */}
-                      <td style={{ ...TD, textAlign: 'right', color: 'rgba(235,235,245,0.55)' }}>
+                      <td style={{ ...TD, textAlign: 'right', color: 'var(--muted-foreground)' }}>
                         {pe ? Number(pe).toFixed(2) : '—'}
                       </td>
 
@@ -313,7 +313,7 @@ export default function MarketsPage() {
                       <td style={{ ...TD, minWidth: 120 }}>
                         {range != null ? (
                           <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'rgba(235,235,245,0.3)', marginBottom: 3 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--muted-foreground)', marginBottom: 3 }}>
                               <span>{Number(lo52).toFixed(0)}</span>
                               <span>{Number(hi52).toFixed(0)}</span>
                             </div>
@@ -322,7 +322,7 @@ export default function MarketsPage() {
                               <div style={{ position: 'absolute', top: -2, left: `calc(${range}% - 3px)`, width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)', border: '2px solid var(--secondary)', boxShadow: '0 0 0 1px var(--primary)' }} />
                             </div>
                           </div>
-                        ) : <span style={{ color: 'rgba(235,235,245,0.2)' }}>—</span>}
+                        ) : <span style={{ color: 'var(--muted-foreground)' }}>—</span>}
                       </td>
 
                       {/* Sector */}
@@ -338,7 +338,7 @@ export default function MarketsPage() {
                       <td style={{ ...TD, textAlign: 'center', width: 40 }}>
                         <button
                           onClick={e => toggleWatchlist(asset.id, e)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: watched ? '#ffa00a' : 'rgba(235,235,245,0.2)', padding: 4, lineHeight: 1 }}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: watched ? '#ffa00a' : 'var(--muted-foreground)', padding: 4, lineHeight: 1 }}
                         >
                           <Star size={13} fill={watched ? 'currentColor' : 'none'} />
                         </button>
@@ -354,8 +354,8 @@ export default function MarketsPage() {
         {/* Footer */}
         {!isLoading && displayed.length > 0 && (
           <div style={{ borderTop: '1px solid var(--border)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 12, color: 'rgba(235,235,245,0.40)' }}>{displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · Nairobi Securities Exchange</span>
-            <span style={{ fontSize: 11, color: 'rgba(235,235,245,0.25)' }}>Prices delayed up to 15 min</span>
+            <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{displayed.length} {displayed.length === 1 ? 'stock' : 'stocks'} · Nairobi Securities Exchange</span>
+            <span style={{ fontSize: 11, color: 'var(--muted-foreground)' }}>Prices delayed up to 15 min</span>
           </div>
         )}
       </div>
@@ -368,7 +368,7 @@ const TH: React.CSSProperties = {
   padding: '9px 12px',
   fontSize: 11,
   fontWeight: 600,
-  color: 'rgba(235,235,245,0.40)',
+  color: 'var(--muted-foreground)',
   textAlign: 'right',
   whiteSpace: 'nowrap',
   userSelect: 'none',

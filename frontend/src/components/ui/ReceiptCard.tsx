@@ -24,9 +24,9 @@ interface ReceiptCardProps {
 export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardProps) {
   return (
     <div style={{
-      background: 'var(--card-bg)',
-      border: '1px solid var(--border)',
-      borderRadius: 18,
+      background: 'var(--card)',
+      border: '2px solid var(--foreground)',
+      borderRadius: 'var(--radius)',
       overflow: 'hidden',
     }}>
       {/* Top section: icon + amount */}
@@ -64,17 +64,17 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
           </div>
         </div>
 
-        <p style={{ fontSize: 13, color: 'rgba(235,235,245,0.45)', marginBottom: 6 }}>
+        <p style={{ fontSize: 13, color: 'var(--muted-foreground)', marginBottom: 6 }}>
           {title}
         </p>
         <p style={{
-          fontSize: 38, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em',
+          fontSize: 38, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.02em',
           fontFamily: 'var(--font-sans)',
         }}>
           {amount}
         </p>
         {note && (
-          <p style={{ fontSize: 13, color: 'rgba(235,235,245,0.40)', marginTop: 8 }}>
+          <p style={{ fontSize: 13, color: 'var(--muted-foreground)', marginTop: 8 }}>
             {note}
           </p>
         )}
@@ -92,12 +92,12 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
             padding: '13px 0',
             borderBottom: i < rows.length - 1 ? '1px solid var(--border)' : 'none',
           }}>
-            <span style={{ fontSize: 14, color: 'rgba(235,235,245,0.45)' }}>
+            <span style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
               {row.label}
             </span>
             <span style={{
               fontSize: 14, fontWeight: 500,
-              color: row.accent ? 'var(--primary)' : 'rgba(235,235,245,0.90)',
+              color: row.accent ? 'var(--primary)' : 'var(--muted-foreground)',
               fontFamily: 'var(--font-sans)',
             }}>
               {row.value}

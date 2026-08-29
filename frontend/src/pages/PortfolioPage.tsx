@@ -109,7 +109,7 @@ export default function PortfolioPage() {
         {sortedPositions.length > 0 && (
           <button onClick={downloadCSV}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.7)', border: '1px solid var(--border)' }}>
+            style={{ background: 'var(--border)', color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}>
             <Download size={14} /> Export CSV
           </button>
         )}

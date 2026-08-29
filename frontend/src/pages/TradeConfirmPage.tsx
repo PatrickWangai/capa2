@@ -111,7 +111,7 @@ export default function TradeConfirmPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-lg font-bold text-white">{symbol}</p>
             <span className="text-xs px-2 py-0.5 rounded-md"
-              style={{ background: 'var(--border)', color: 'rgba(235,235,245,0.5)' }}>
+              style={{ background: 'var(--border)', color: 'var(--muted-foreground)' }}>
               {exchange}
             </span>
           </div>
