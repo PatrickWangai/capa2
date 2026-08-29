@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
-import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ArrowUpRight } from 'lucide-react';
+import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ArrowUpRight, Percent, Lock, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCCircle from '../components/ui/CapaCCircle';
 
@@ -180,14 +180,16 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
 // ── Wavy torn-edge divider between the sticky video hero and the content
 // sheet that slides over it — same "hand-cut paper edge" language as
 // Apocalypse Coffee's section seams, in the page's own token color.
+const WAVE_PATH = "M0,30 C 50,4 100,56 150,30 C 200,4 250,56 300,30 C 350,4 400,56 450,30 C 500,4 550,56 600,30 C 650,4 700,56 750,30 C 800,4 850,56 900,30 C 950,4 1000,56 1050,30 C 1100,4 1150,56 1200,30";
+
 function WavyDivider() {
   return (
-    <svg viewBox="0 0 1200 36" preserveAspectRatio="none" width="100%" height="36"
-      style={{ display: 'block', marginTop: -1 }}>
-      <path
-        d="M0,18 C 60,2 120,34 180,18 C 240,2 300,34 360,18 C 420,2 480,34 540,18 C 600,2 660,34 720,18 C 780,2 840,34 900,18 C 960,2 1020,34 1080,18 C 1140,2 1180,20 1200,18 L1200,36 L0,36 Z"
-        fill="var(--background)"
-      />
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none" width="100%" height="60"
+      style={{ display: 'block', marginTop: -2, position: 'relative', zIndex: 2 }}>
+      {/* Fill — masks the seam with the content sheet's own background */}
+      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--background)" />
+      {/* Stroke — traces only the wave curve itself, not the rectangle it closes into */}
+      <path d={WAVE_PATH} fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
@@ -442,6 +444,7 @@ export default function LandingPage() {
           .cta-features { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 0 8px !important; }
           .cta-btn { width: 100% !important; max-width: 320px !important; justify-content: center !important; padding: 14px 24px !important; font-size: 16px !important; }
           .lp-footer { padding: 40px 20px max(28px, env(safe-area-inset-bottom, 0px) + 16px) !important; }
+          .trust-section { grid-template-columns: 1fr !important; gap: 32px !important; }
         }
         @media (max-width: 380px) {
           .hero-content { padding: 0 16px max(72px, env(safe-area-inset-bottom, 0px) + 52px) 16px !important; }
@@ -582,30 +585,49 @@ export default function LandingPage() {
         </section>
       </GlitchSection>
 
-      {/* SOCIAL PROOF */}
+      {/* SOCIAL PROOF — bold headline + CTA on one side, icon-row detail card on the other */}
       <GlitchSection>
-        <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,42px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
-            Built on trust. Backed by data.
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 64 }}>
+        <section className="lp-section-pad trust-section" style={{ padding: '88px 24px', maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', position: 'relative' }}>
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 16, lineHeight: 1.05 }}>
+              Built on trust.<br />Backed by data.
+            </h2>
+            <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
+              Regulated, transparent, and built the way a platform holding your money should be.
+            </p>
+            <Link to="/security" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '12px 24px', fontSize: 14 }}>
+              Learn about our security
+            </Link>
+          </div>
+
+          <div style={{ borderRadius: 'var(--radius)', border: '2px solid var(--primary)', background: 'var(--card)', boxShadow: '8px 8px 0 0 var(--primary)', overflow: 'hidden' }}>
             {[
-              { label: 'CMA Regulated',      desc: 'Licensed by the Capital Markets Authority of Kenya.', dot: 'var(--success)' },
-              { label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.', dot: 'var(--info)' },
-              { label: 'No Hidden Fees',      desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.', dot: 'var(--warning)' },
-            ].map(({ label, desc, dot }) => (
-              <div key={label} className="trust-badge" style={{ textAlign: 'center', padding: '28px 20px', borderRadius: 'var(--radius)', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', transition: 'transform 0.15s, box-shadow 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '4px 4px 0 0 var(--foreground)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
-                <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, fontSize: 15, fontWeight: 700, color: TEXT, marginBottom: 8, letterSpacing: '-0.01em' }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: dot, flexShrink: 0 }} />
-                  {label}
-                </p>
-                <p style={{ fontSize: 13, color: SEC, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+              { icon: Shield,   label: 'CMA Regulated',       desc: 'Licensed by the Capital Markets Authority of Kenya.' },
+              { icon: Lock,     label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
+              { icon: Percent,  label: 'No Hidden Fees',      desc: 'One transparent 0.5% trade fee. No inactivity or withdrawal charges.' },
+              { icon: Clock,    label: 'Same-Day KYC',        desc: 'Identity verification typically cleared within hours, not days.' },
+            ].map(({ icon: Icon, label, desc }, i) => (
+              <div key={label} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', padding: '22px 24px', borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}>
+                <Icon size={18} color={ACCENT} style={{ flexShrink: 0, marginTop: 2 }} strokeWidth={2} />
+                <div>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: TEXT, margin: '0 0 4px', letterSpacing: '-0.01em' }}>{label}</p>
+                  <p style={{ fontSize: 13, color: SEC, lineHeight: 1.55, margin: 0 }}>{desc}</p>
+                </div>
               </div>
             ))}
           </div>
+
+          {/* Corner badge — static hard-shadow pill, tilted, matching the reference's "SAVE 10%" corner tag */}
+          <span style={{
+            position: 'absolute', bottom: -14, right: 24, transform: 'rotate(-4deg)',
+            background: 'var(--primary)', color: 'var(--primary-foreground)',
+            border: '2px solid var(--foreground)', borderRadius: 'var(--radius)',
+            padding: '6px 14px', fontSize: 12, fontWeight: 900, textTransform: 'uppercase',
+            boxShadow: '3px 3px 0 0 var(--foreground)', letterSpacing: '0.02em',
+          }}>
+            0.5% flat fee
+          </span>
         </section>
       </GlitchSection>
 

@@ -28,13 +28,14 @@ export default function CookieBanner() {
   if (!visible) return null;
 
   return (
-    <div style={{
+    <div className="force-dark-theme" style={{
       position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)',
       zIndex: 9999, width: 'calc(100% - 32px)', maxWidth: 640,
       backgroundColor: 'var(--card)',
-      border: '2px solid var(--foreground)',
+      border: '2px solid var(--primary)',
       borderRadius: 'var(--radius)',
       padding: '20px 24px',
+      boxShadow: 'var(--glow-lg)',
       display: 'flex', alignItems: 'center', gap: 20,
       flexWrap: 'wrap',
       fontFamily: 'var(--font-sans)',
