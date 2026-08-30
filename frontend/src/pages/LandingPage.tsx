@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ArrowUpRight, Percent, Lock, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCCircle from '../components/ui/CapaCCircle';
-import { useForceDarkChrome } from '../hooks/useForceDarkChrome';
 
 const ACCENT = 'var(--primary)';
 const TEXT = 'var(--text)';
@@ -188,7 +187,7 @@ function WavyDivider() {
     <svg viewBox="0 0 1200 60" preserveAspectRatio="none" width="100%" height="60"
       style={{ display: 'block', marginTop: -2, position: 'relative', zIndex: 2 }}>
       {/* Fill — masks the seam with the content sheet's own background */}
-      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--background)" />
+      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--primary)" />
       {/* Stroke — traces only the wave curve itself, not the rectangle it closes into */}
       <path d={WAVE_PATH} fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
     </svg>
@@ -203,7 +202,7 @@ function Squiggle({ children }: { children: React.ReactNode }) {
       <svg viewBox="0 0 200 12" preserveAspectRatio="none"
         style={{ position: 'absolute', left: 0, bottom: -6, width: '100%', height: 10, pointerEvents: 'none' }}>
         <path d="M2,7 C 30,2 50,10 75,6 C 100,2 120,10 145,6 C 165,3 180,8 198,5"
-          fill="none" stroke="var(--primary)" strokeWidth="3" strokeLinecap="round" />
+          fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
       </svg>
     </span>
   );
@@ -377,7 +376,6 @@ function useHeroProgress() {
 }
 
 export default function LandingPage() {
-  useForceDarkChrome();
   const typedText = useTypeOnce(HERO_TEXT);
   const heroP = useHeroProgress();
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
@@ -536,14 +534,14 @@ export default function LandingPage() {
       </div>
 
       {/* Content sheet — slides over the pinned hero */}
-      <div className="force-dark-theme" style={{ position: 'relative', zIndex: 1, background: 'var(--background)' }}>
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--primary)' }}>
         <WavyDivider />
 
       {/* FEATURES */}
       <GlitchSection>
         <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto', position: 'relative' }}>
-          <FloatingBadges />
-          <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
+          <FloatingBadges dark />
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
             Everything you need.<br /><Squiggle>Nothing you don't.</Squiggle>
           </h2>
@@ -565,9 +563,9 @@ export default function LandingPage() {
 
       {/* HOW IT WORKS */}
       <GlitchSection>
-        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--secondary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
+        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
               How Capa works
             </h2>
@@ -577,7 +575,7 @@ export default function LandingPage() {
                   <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: ACCENT, letterSpacing: '0.06em' }}>{num}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>{num}</span>
                   <h3 style={{ fontSize: 17, fontWeight: 700, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
                   <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
                 </div>
@@ -591,19 +589,26 @@ export default function LandingPage() {
       <GlitchSection>
         <section className="lp-section-pad trust-section" style={{ padding: '88px 24px', maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', position: 'relative' }}>
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 16, lineHeight: 1.05 }}>
               Built on trust.<br />Backed by data.
             </h2>
-            <p style={{ fontSize: 15, color: SEC, lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
               Regulated, transparent, and built the way a platform holding your money should be.
             </p>
-            <Link to="/security" className="btn-primary" style={{ display: 'inline-flex', textDecoration: 'none', padding: '12px 24px', fontSize: 14 }}>
+            <Link to="/security" style={{
+              display: 'inline-flex', alignItems: 'center', textDecoration: 'none', padding: '12px 24px', fontSize: 14, fontWeight: 700,
+              borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', background: '#fff', color: TEXT,
+              boxShadow: '5px 5px 0 0 var(--foreground)', transition: 'transform 0.15s, box-shadow 0.15s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '7px 7px 0 0 var(--foreground)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '5px 5px 0 0 var(--foreground)'; }}
+            >
               Learn about our security
             </Link>
           </div>
 
-          <div style={{ borderRadius: 'var(--radius)', border: '2px solid var(--primary)', background: 'var(--card)', boxShadow: '8px 8px 0 0 var(--primary)', overflow: 'hidden' }}>
+          <div style={{ borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', background: 'var(--card)', boxShadow: '8px 8px 0 0 var(--foreground)', overflow: 'hidden' }}>
             {[
               { icon: Shield,   label: 'CMA Regulated',       desc: 'Licensed by the Capital Markets Authority of Kenya.' },
               { icon: Lock,     label: 'Bank-Grade Security', desc: 'AES-256 encryption, MFA, and segregated custodian accounts.' },
@@ -635,9 +640,9 @@ export default function LandingPage() {
 
       {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
       <GlitchSection>
-        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--secondary)', padding: '88px 24px', borderTop: '2px solid var(--border)' }}>
-          <FloatingBadges />
-          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--primary)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--primary)' }}>
+        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--primary)', padding: '88px 24px', borderTop: '2px solid var(--foreground)' }}>
+          <FloatingBadges dark />
+          <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
               Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
             </h2>
@@ -659,12 +664,12 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* FOOTER */}
-      <footer className="lp-footer" style={{ backgroundColor: 'var(--secondary)', borderTop: '2px solid var(--foreground)', padding: '48px 24px 32px' }}>
+      <footer className="lp-footer" style={{ backgroundColor: 'var(--primary)', borderTop: '2px solid var(--foreground)', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <CapaLogo size={18} />
+                <CapaLogo size={18} className="capa-logo-on-dark" />
               </div>
             </div>
             {[
@@ -673,17 +678,17 @@ export default function LandingPage() {
               { heading: 'Account',  links: [['Sign In', '/login'], ['Register', '/register']] as const },
             ].map(({ heading, links }) => (
               <div key={heading}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{heading}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {links.map(([label, href]) => (
-                    <Link key={label} to={href} style={{ fontSize: 14, color: SEC, textDecoration: 'none' }}>{label}</Link>
+                    <Link key={label} to={href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', textDecoration: 'none' }}>{label}</Link>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
-            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted-foreground)', lineHeight: 1.7 }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.25)', paddingTop: 24 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
               © {new Date().getFullYear()} Capa Investments Ltd. All rights reserved. Investing involves risk, including the possible loss of principal. Past performance is not indicative of future results.
             </p>
           </div>
