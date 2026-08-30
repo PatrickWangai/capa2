@@ -132,7 +132,7 @@ function Preloader() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
-      background: '#000',
+      background: 'var(--primary)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       opacity: exiting ? 0 : 1,
       transform: exiting ? 'scale(1.06)' : 'scale(1)',
@@ -141,13 +141,17 @@ function Preloader() {
         : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
+      <div style={{ animation: 'preloader-spin 1.1s linear infinite', display: 'flex' }}>
+        <CapaCCircle size={72} />
+      </div>
       <span style={{
-        fontFamily: MONO, fontSize: 13,
-        color: 'rgba(255,255,255,0.65)', letterSpacing: '0.06em',
+        position: 'absolute', bottom: 'max(40px, env(safe-area-inset-bottom, 0px) + 24px)',
+        fontFamily: MONO, fontSize: 13, fontWeight: 700,
+        color: 'var(--foreground)', letterSpacing: '0.14em', textTransform: 'uppercase',
         opacity: pct >= 96 ? 0 : 1,
         transition: 'opacity 0.35s ease',
       }}>
-        {pct}%
+        Load Capa
       </span>
     </div>
   );
@@ -425,6 +429,9 @@ export default function LandingPage() {
         @keyframes float-drift {
           0%   { transform: translate(0, 0) rotate(-6deg); }
           100% { transform: translate(10px, -16px) rotate(8deg); }
+        }
+        @keyframes preloader-spin {
+          to { transform: rotate(360deg); }
         }
         @media (max-width: 768px) {
           .float-badges-hide { display: none !important; }
