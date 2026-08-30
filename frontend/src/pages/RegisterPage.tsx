@@ -55,12 +55,12 @@ export default function RegisterPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: SEC, marginBottom: 6 };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: 'var(--font-sans)' }}>
+    <div style={{ minHeight: '100vh', background: ACCENT, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: 'var(--font-sans)' }}>
 
       {/* Back to home */}
-      <Link to="/" style={{ position: 'fixed', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: SEC, textDecoration: 'none', padding: '7px 14px', borderRadius: 'var(--radius)', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', transition: 'background 0.15s' }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary)')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--card)')}>
+      <Link to="/" style={{ position: 'fixed', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: TEXT, textDecoration: 'none', padding: '7px 14px', borderRadius: 'var(--radius)', backgroundColor: '#fff', border: '2px solid var(--foreground)', transition: 'transform 0.15s' }}
+        onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+        onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}>
         ← Home
       </Link>
 
@@ -68,11 +68,11 @@ export default function RegisterPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, margin: '6px 0 4px' }}>Create your account</h1>
-          <p style={{ fontSize: 14, color: SEC, margin: 0 }}>Start investing globally in minutes</p>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', margin: 0 }}>Start investing globally in minutes</p>
         </div>
 
         {/* Card */}
-        <div style={{ backgroundColor: 'var(--card)', borderRadius: 'var(--radius)', padding: '28px 24px', border: '2px solid var(--foreground)' }}>
+        <div style={{ backgroundColor: 'var(--card)', borderRadius: 'calc(var(--radius) + 8px)', padding: '28px 24px', border: '2px solid var(--foreground)', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -120,9 +120,9 @@ export default function RegisterPage() {
           </form>
         </div>
 
-        <p style={{ marginTop: 20, textAlign: 'center', fontSize: 13, color: SEC }}>
+        <p style={{ marginTop: 20, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: ACCENT, textDecoration: 'none', fontWeight: 700 }}>Sign in</Link>
+          <Link to="/login" style={{ color: '#fff', textDecoration: 'underline', fontWeight: 700 }}>Sign in</Link>
         </p>
       </div>
     </div>

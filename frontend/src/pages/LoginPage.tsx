@@ -5,7 +5,6 @@ import { useAuthStore } from '../store/authStore';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { useAlertStore } from '../store/alertStore';
 import CapaCCircle from '../components/ui/CapaCCircle';
-import { useForceDarkChrome } from '../hooks/useForceDarkChrome';
 
 const TEXT = 'var(--foreground)';
 const SEC = 'var(--muted-foreground)';
@@ -13,8 +12,8 @@ const ACCENT = 'var(--primary)';
 
 function Feature({ text }: { text: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, color: TEXT }}>
-      <span style={{ marginTop: 2, display: 'flex', width: 18, height: 18, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: ACCENT, color: 'var(--primary-foreground)', boxShadow: 'var(--glow)' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, color: '#fff' }}>
+      <span style={{ marginTop: 2, display: 'flex', width: 18, height: 18, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: '#fff', color: ACCENT }}>
         <Check size={11} strokeWidth={3} />
       </span>
       <span>{text}</span>
@@ -23,7 +22,6 @@ function Feature({ text }: { text: string }) {
 }
 
 export default function LoginPage() {
-  useForceDarkChrome();
   const [form, setForm] = useState({ email: '', password: '', mfaCode: '' });
   const [showPass, setShowPass] = useState(false);
   const [needsMfa, setNeedsMfa] = useState(false);
@@ -52,8 +50,7 @@ export default function LoginPage() {
     width: '100%', padding: '9px 12px', borderRadius: 'var(--radius)', fontSize: 14,
     border: `2px solid ${focused === name ? ACCENT : 'var(--border)'}`,
     outline: 'none', backgroundColor: 'var(--background)', color: TEXT,
-    fontFamily: 'var(--font-sans)', transition: 'border-color 0.15s, box-shadow 0.15s',
-    boxShadow: focused === name ? 'var(--glow)' : 'none',
+    fontFamily: 'var(--font-sans)', transition: 'border-color 0.15s',
     boxSizing: 'border-box' as const,
   });
 
@@ -62,10 +59,10 @@ export default function LoginPage() {
   return (
     <div style={{
       position: 'relative', display: 'grid', gridTemplateColumns: '1fr',
-      minHeight: '100vh', background: 'var(--background)', padding: 24,
+      minHeight: '100vh', background: ACCENT, padding: 24,
       fontFamily: 'var(--font-sans)',
     }}
-    className="force-dark-theme capa-login-grid"
+    className="capa-login-grid"
     >
       <style>{`
         @media (min-width: 1024px) {
@@ -78,7 +75,7 @@ export default function LoginPage() {
       <div style={{
         pointerEvents: 'none', position: 'absolute', left: '50%', top: 24, zIndex: 10,
         transform: 'translateX(-50%)', width: 80, height: 80, borderRadius: '50%',
-        border: '2px solid var(--primary)', background: 'var(--card)', boxShadow: 'var(--glow-lg)',
+        border: '2px solid rgba(255,255,255,0.7)', background: ACCENT,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <CapaCCircle size={44} />
@@ -90,14 +87,14 @@ export default function LoginPage() {
         justifyContent: 'center', gap: 28, padding: '0 16px 40px',
       }}>
         <div>
-          <p style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: SEC }}>
+          <p style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.7)' }}>
             Capa Investments
           </p>
           <h1 style={{ lineHeight: 0.98, margin: 0 }}>
             <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: 'clamp(34px, 5vw, 46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT }}>
               Sign in to your
             </span>
-            <span style={{ display: 'block', marginTop: 2, fontFamily: 'var(--font-script)', fontSize: 'clamp(52px, 7vw, 68px)', color: ACCENT, textShadow: 'var(--glow-lg)' }}>
+            <span style={{ display: 'block', marginTop: 2, fontFamily: 'var(--font-script)', fontSize: 'clamp(52px, 7vw, 68px)', color: '#fff' }}>
               portfolio.
             </span>
           </h1>
@@ -113,17 +110,17 @@ export default function LoginPage() {
           to="/contact"
           style={{
             display: 'inline-flex', width: 'fit-content', alignItems: 'center', gap: 8,
-            borderRadius: 'var(--radius)', border: '2px solid var(--primary)', background: 'var(--card)',
+            borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', background: '#fff',
             padding: '11px 20px', fontSize: 13, fontWeight: 700, color: TEXT, textDecoration: 'none',
-            boxShadow: '5px 5px 0 0 var(--primary)', transition: 'transform 0.15s, box-shadow 0.15s',
+            boxShadow: '5px 5px 0 0 var(--foreground)', transition: 'transform 0.15s, box-shadow 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '7px 7px 0 0 var(--primary)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '5px 5px 0 0 var(--primary)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '7px 7px 0 0 var(--foreground)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '5px 5px 0 0 var(--foreground)'; }}
         >
           Need help signing in? →
         </Link>
 
-        <p style={{ fontSize: 12, color: SEC, margin: 0 }}>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', margin: 0 }}>
           © {new Date().getFullYear()} Capa Investments Ltd.
         </p>
       </div>
@@ -132,8 +129,8 @@ export default function LoginPage() {
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px 24px' }}>
         <div style={{
           width: '100%', maxWidth: 380, borderRadius: 'calc(var(--radius) + 12px)',
-          border: '2px solid var(--primary)', background: 'var(--card)',
-          padding: '28px 24px', boxShadow: '8px 8px 0 0 var(--primary)',
+          border: '2px solid var(--foreground)', background: 'var(--card)',
+          padding: '28px 24px', boxShadow: '8px 8px 0 0 var(--foreground)',
           display: 'flex', flexDirection: 'column', gap: 20,
         }}>
           <div>
@@ -176,7 +173,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '11px', fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', boxShadow: 'var(--glow)' }}>
+            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '11px', fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer' }}>
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>

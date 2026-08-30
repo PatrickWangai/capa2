@@ -524,13 +524,6 @@ export default function LandingPage() {
             <p className="hero-text hero-text-3" style={{ fontSize: 11, color: 'rgba(235,235,245,0.28)', margin: '6px 0 0' }}>No minimum deposit</p>
           </div>
 
-          {/* Scroll indicator */}
-          <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 10,
-            opacity: Math.max(0, 1 - heroP * 5), transition: 'opacity 0.2s',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 10, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontFamily: 'inherit' }}>Scroll</span>
-            <div style={{ width: 1, height: 32, background: 'linear-gradient(to bottom, rgba(255,255,255,0.4), transparent)', animation: 'scroll-line 1.6s ease-in-out infinite' }} />
-          </div>
         </section>
       </div>
 
