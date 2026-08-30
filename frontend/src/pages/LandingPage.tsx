@@ -212,6 +212,14 @@ function usePreloader() {
   const [pct, setPct] = useState(0);
   const [exiting, setExiting] = useState(false);
   const [gone, setGone] = useState(false);
+  // Sized to the actual viewport diagonal (not a fixed guess) so the C-hole's
+  // growth is paced to the full transition duration on any screen size — a
+  // fixed oversized value made the hole swallow the screen well before the
+  // animation finished, reading as an abrupt pop instead of a grown reveal.
+  const [revealSize, setRevealSize] = useState(2000);
+  useEffect(() => {
+    setRevealSize(Math.ceil(Math.hypot(window.innerWidth, window.innerHeight) * 1.5));
+  }, []);
   useEffect(() => {
     let p = 0;
     const id = setInterval(() => {
@@ -221,31 +229,45 @@ function usePreloader() {
       if (p >= 100) {
         clearInterval(id);
         setTimeout(() => setExiting(true), 200);
-        setTimeout(() => setGone(true), 750);
+        setTimeout(() => setGone(true), 1150);
       }
     }, 70);
     return () => clearInterval(id);
   }, []);
-  return { pct, exiting, gone };
+  return { pct, exiting, gone, revealSize };
 }
 
 function Preloader() {
-  const { pct, exiting, gone } = usePreloader();
+  const { pct, exiting, gone, revealSize } = usePreloader();
   if (gone) return null;
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
       background: 'var(--primary)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      // Hard-edged circular wipe instead of an opacity fade -- a fade left the
-      // translucent teal visibly blending with the hero video underneath for
-      // over a second (looked like a stuck/muddy teal wash). A clip-path wipe
-      // has no partial-opacity period, so there's nothing to blend.
-      clipPath: exiting ? 'circle(0% at 50% 50%)' : 'circle(150% at 50% 50%)',
-      transition: exiting ? 'clip-path 0.55s cubic-bezier(0.65,0,0.35,1)' : 'none',
+      // The exit punches a C-shaped hole through the solid overlay and grows
+      // it until it swallows the whole screen — the page is revealed *through*
+      // the C, rather than behind a plain circular wipe. Two mask layers (a
+      // full opaque rect, and the C icon) combined with exclude/xor render
+      // as "everywhere opaque except where the C is", so growing the C
+      // layer's size is what grows the hole.
+      WebkitMaskImage: 'linear-gradient(#000,#000), url(/capa-c-icon-512.png)',
+      maskImage: 'linear-gradient(#000,#000), url(/capa-c-icon-512.png)',
+      WebkitMaskRepeat: 'no-repeat, no-repeat',
+      maskRepeat: 'no-repeat, no-repeat',
+      WebkitMaskPosition: 'center, center',
+      maskPosition: 'center, center',
+      WebkitMaskSize: exiting ? `100% 100%, ${revealSize}px ${revealSize}px` : '100% 100%, 0px 0px',
+      maskSize: exiting ? `100% 100%, ${revealSize}px ${revealSize}px` : '100% 100%, 0px 0px',
+      WebkitMaskComposite: 'xor',
+      maskComposite: 'exclude',
+      transition: exiting ? 'mask-size 0.9s cubic-bezier(0.6,0,0.3,1), -webkit-mask-size 0.9s cubic-bezier(0.6,0,0.3,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
-      <div style={{ animation: 'preloader-spin 1.1s linear infinite', display: 'flex' }}>
+      <div style={{
+        animation: 'preloader-spin 1.1s linear infinite', display: 'flex',
+        opacity: exiting ? 0 : 1, transition: 'opacity 0.2s ease',
+      }}>
         <CapaCCircle size={72} />
       </div>
       <span style={{
