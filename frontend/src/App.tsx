@@ -63,6 +63,18 @@ function PageTitle({ title }: { title: string }) {
   return null;
 }
 
+// Wraps each route's content so every page-to-page navigation gets a
+// consistent fade + rise-in. No router-level key trick is needed: React
+// Router already mounts a fresh element subtree whenever the matched route
+// changes (different route = different component type at that position),
+// so a plain CSS mount animation on this wrapper replays naturally on every
+// navigation — including inside AppLayout/AdminLayout's <Outlet />, where
+// only the swapped page animates while the persistent sidebar/nav chrome
+// stays mounted and untouched.
+function Reveal({ children }: { children: React.ReactNode }) {
+  return <div className="route-reveal">{children}</div>;
+}
+
 function RouteTracker() {
   const location = useLocation();
   useEffect(() => {
@@ -148,60 +160,60 @@ export default function App() {
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             {/* Public landing */}
-            <Route path="/" element={<PublicRoute><PageTitle title="Invest Globally" /><LandingPage /></PublicRoute>} />
+            <Route path="/" element={<PublicRoute><Reveal><PageTitle title="Invest Globally" /><LandingPage /></Reveal></PublicRoute>} />
 
             {/* Auth */}
-            <Route path="/login"          element={<PublicRoute><PageTitle title="Sign In" /><LoginPage /></PublicRoute>} />
-            <Route path="/register"       element={<PublicRoute><PageTitle title="Create Account" /><RegisterPage /></PublicRoute>} />
-            <Route path="/forgot-password" element={<PublicRoute><PageTitle title="Reset Password" /><ForgotPasswordPage /></PublicRoute>} />
-            <Route path="/reset-password"  element={<><PageTitle title="Set New Password" /><ResetPasswordPage /></>} />
-            <Route path="/verify-email"    element={<><PageTitle title="Verify Email" /><VerifyEmailPage /></>} />
+            <Route path="/login"          element={<PublicRoute><Reveal><PageTitle title="Sign In" /><LoginPage /></Reveal></PublicRoute>} />
+            <Route path="/register"       element={<PublicRoute><Reveal><PageTitle title="Create Account" /><RegisterPage /></Reveal></PublicRoute>} />
+            <Route path="/forgot-password" element={<PublicRoute><Reveal><PageTitle title="Reset Password" /><ForgotPasswordPage /></Reveal></PublicRoute>} />
+            <Route path="/reset-password"  element={<Reveal><PageTitle title="Set New Password" /><ResetPasswordPage /></Reveal>} />
+            <Route path="/verify-email"    element={<Reveal><PageTitle title="Verify Email" /><VerifyEmailPage /></Reveal>} />
 
             {/* Onboarding (after signup) */}
-            <Route path="/onboarding" element={<PrivateRoute><PageTitle title="Welcome" /><OnboardingPage /></PrivateRoute>} />
+            <Route path="/onboarding" element={<PrivateRoute><Reveal><PageTitle title="Welcome" /><OnboardingPage /></Reveal></PrivateRoute>} />
 
             {/* Protected app */}
             <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
-              <Route path="dashboard"    element={<><PageTitle title="Dashboard" /><ErrorBoundary><DashboardPage /></ErrorBoundary></>} />
-              <Route path="markets"      element={<><PageTitle title="Markets" /><ErrorBoundary><MarketsPage /></ErrorBoundary></>} />
-              <Route path="markets/:id"  element={<><PageTitle title="Asset" /><ErrorBoundary><AssetDetailPage /></ErrorBoundary></>} />
-              <Route path="portfolio"    element={<><PageTitle title="Portfolio" /><ErrorBoundary><PortfolioPage /></ErrorBoundary></>} />
-              <Route path="orders"       element={<><PageTitle title="Orders" /><ErrorBoundary><OrdersPage /></ErrorBoundary></>} />
-              <Route path="kyc"          element={<><PageTitle title="Verify Identity" /><ErrorBoundary><KycPage /></ErrorBoundary></>} />
-              <Route path="notifications" element={<><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></>} />
-              <Route path="profile"      element={<><PageTitle title="Profile" /><ErrorBoundary><ProfilePage /></ErrorBoundary></>} />
-              <Route path="wallet"         element={<><PageTitle title="Wallet" /><ErrorBoundary><WalletPage /></ErrorBoundary></>} />
-              <Route path="wallet/convert"       element={<><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></>} />
-              <Route path="wallet/history"       element={<><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></>} />
-              <Route path="wallet/transactions"  element={<><PageTitle title="Wallet Transactions" /><ErrorBoundary><WalletTransactionsPage /></ErrorBoundary></>} />
-              <Route path="watchlist"            element={<><PageTitle title="Watchlist" /><ErrorBoundary><WatchlistPage /></ErrorBoundary></>} />
-              <Route path="deposit"              element={<><PageTitle title="Deposit" /><ErrorBoundary><DepositPage /></ErrorBoundary></>} />
-              <Route path="withdraw"             element={<><PageTitle title="Withdraw" /><ErrorBoundary><WithdrawPage /></ErrorBoundary></>} />
-              <Route path="settings"             element={<><PageTitle title="Settings" /><ErrorBoundary><SettingsPage /></ErrorBoundary></>} />
-              <Route path="trade/confirm"        element={<><PageTitle title="Confirm Trade" /><ErrorBoundary><TradeConfirmPage /></ErrorBoundary></>} />
+              <Route path="dashboard"    element={<Reveal><PageTitle title="Dashboard" /><ErrorBoundary><DashboardPage /></ErrorBoundary></Reveal>} />
+              <Route path="markets"      element={<Reveal><PageTitle title="Markets" /><ErrorBoundary><MarketsPage /></ErrorBoundary></Reveal>} />
+              <Route path="markets/:id"  element={<Reveal><PageTitle title="Asset" /><ErrorBoundary><AssetDetailPage /></ErrorBoundary></Reveal>} />
+              <Route path="portfolio"    element={<Reveal><PageTitle title="Portfolio" /><ErrorBoundary><PortfolioPage /></ErrorBoundary></Reveal>} />
+              <Route path="orders"       element={<Reveal><PageTitle title="Orders" /><ErrorBoundary><OrdersPage /></ErrorBoundary></Reveal>} />
+              <Route path="kyc"          element={<Reveal><PageTitle title="Verify Identity" /><ErrorBoundary><KycPage /></ErrorBoundary></Reveal>} />
+              <Route path="notifications" element={<Reveal><PageTitle title="Notifications" /><ErrorBoundary><NotificationsPage /></ErrorBoundary></Reveal>} />
+              <Route path="profile"      element={<Reveal><PageTitle title="Profile" /><ErrorBoundary><ProfilePage /></ErrorBoundary></Reveal>} />
+              <Route path="wallet"         element={<Reveal><PageTitle title="Wallet" /><ErrorBoundary><WalletPage /></ErrorBoundary></Reveal>} />
+              <Route path="wallet/convert"       element={<Reveal><PageTitle title="Convert Currency" /><ErrorBoundary><CurrencyConverterPage /></ErrorBoundary></Reveal>} />
+              <Route path="wallet/history"       element={<Reveal><PageTitle title="FX History" /><ErrorBoundary><FxHistoryPage /></ErrorBoundary></Reveal>} />
+              <Route path="wallet/transactions"  element={<Reveal><PageTitle title="Wallet Transactions" /><ErrorBoundary><WalletTransactionsPage /></ErrorBoundary></Reveal>} />
+              <Route path="watchlist"            element={<Reveal><PageTitle title="Watchlist" /><ErrorBoundary><WatchlistPage /></ErrorBoundary></Reveal>} />
+              <Route path="deposit"              element={<Reveal><PageTitle title="Deposit" /><ErrorBoundary><DepositPage /></ErrorBoundary></Reveal>} />
+              <Route path="withdraw"             element={<Reveal><PageTitle title="Withdraw" /><ErrorBoundary><WithdrawPage /></ErrorBoundary></Reveal>} />
+              <Route path="settings"             element={<Reveal><PageTitle title="Settings" /><ErrorBoundary><SettingsPage /></ErrorBoundary></Reveal>} />
+              <Route path="trade/confirm"        element={<Reveal><PageTitle title="Confirm Trade" /><ErrorBoundary><TradeConfirmPage /></ErrorBoundary></Reveal>} />
             </Route>
 
             {/* Admin */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard"    element={<><PageTitle title="Admin — Dashboard" /><AdminDashboardPage /></>} />
-              <Route path="users"        element={<><PageTitle title="Admin — Users" /><AdminUsersPage /></>} />
-              <Route path="kyc"          element={<><PageTitle title="Admin — KYC" /><AdminKycPage /></>} />
-              <Route path="transactions" element={<><PageTitle title="Admin — Transactions" /><AdminTransactionsPage /></>} />
-              <Route path="wallets"      element={<><PageTitle title="Admin — Wallets" /><AdminWalletsPage /></>} />
+              <Route path="dashboard"    element={<Reveal><PageTitle title="Admin — Dashboard" /><AdminDashboardPage /></Reveal>} />
+              <Route path="users"        element={<Reveal><PageTitle title="Admin — Users" /><AdminUsersPage /></Reveal>} />
+              <Route path="kyc"          element={<Reveal><PageTitle title="Admin — KYC" /><AdminKycPage /></Reveal>} />
+              <Route path="transactions" element={<Reveal><PageTitle title="Admin — Transactions" /><AdminTransactionsPage /></Reveal>} />
+              <Route path="wallets"      element={<Reveal><PageTitle title="Admin — Wallets" /><AdminWalletsPage /></Reveal>} />
             </Route>
 
             {/* Info / marketing */}
-            <Route path="/about"    element={<><PageTitle title="About" /><AboutPage /></>} />
-            <Route path="/contact"  element={<><PageTitle title="Contact" /><ContactPage /></>} />
-            <Route path="/terms"    element={<><PageTitle title="Terms of Service" /><TermsPage /></>} />
-            <Route path="/privacy"  element={<><PageTitle title="Privacy Policy" /><PrivacyPage /></>} />
-            <Route path="/faq"      element={<><PageTitle title="FAQ" /><FaqPage /></>} />
-            <Route path="/pricing"  element={<><PageTitle title="Pricing" /><PricingPage /></>} />
-            <Route path="/security" element={<><PageTitle title="Security" /><SecurityPage /></>} />
+            <Route path="/about"    element={<Reveal><PageTitle title="About" /><AboutPage /></Reveal>} />
+            <Route path="/contact"  element={<Reveal><PageTitle title="Contact" /><ContactPage /></Reveal>} />
+            <Route path="/terms"    element={<Reveal><PageTitle title="Terms of Service" /><TermsPage /></Reveal>} />
+            <Route path="/privacy"  element={<Reveal><PageTitle title="Privacy Policy" /><PrivacyPage /></Reveal>} />
+            <Route path="/faq"      element={<Reveal><PageTitle title="FAQ" /><FaqPage /></Reveal>} />
+            <Route path="/pricing"  element={<Reveal><PageTitle title="Pricing" /><PricingPage /></Reveal>} />
+            <Route path="/security" element={<Reveal><PageTitle title="Security" /><SecurityPage /></Reveal>} />
 
             {/* 404 */}
-            <Route path="*" element={<><PageTitle title="Page Not Found" /><NotFoundPage /></>} />
+            <Route path="*" element={<Reveal><PageTitle title="Page Not Found" /><NotFoundPage /></Reveal>} />
           </Routes>
         </Suspense>
       </ErrorBoundary>
