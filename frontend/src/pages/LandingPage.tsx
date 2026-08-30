@@ -141,13 +141,13 @@ function HowItWorksStack() {
     }}>
       <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
         <div style={{
-          maxWidth: 1120, margin: '0 auto', width: '100%', padding: '0 32px',
-          display: 'grid', gridTemplateColumns: '1fr 440px 44px', alignItems: 'center', gap: 40,
+          width: '100%', padding: '0 5vw',
+          display: 'grid', gridTemplateColumns: '1fr minmax(380px, 34vw) 64px', alignItems: 'center', gap: '4vw',
         }}>
-          {/* Persistent heading */}
+          {/* Persistent heading — sized to dominate the full-viewport stage */}
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 16, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, lineHeight: 1.0, margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 20, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(44px,8.5vw,132px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, lineHeight: 0.95, margin: 0 }}>
               How<br />Capa<br />works.
             </h2>
           </div>
@@ -155,46 +155,46 @@ function HowItWorksStack() {
           {/* Stacked cards — solid, never faded; each new card slides up
               from fully off-screen and lands on top, cleanly occluding
               whatever's behind it rather than cross-fading with it. */}
-          <div style={{ position: 'relative', height: 400, overflow: 'hidden' }}>
+          <div style={{ position: 'relative', height: '58vh', minHeight: 420, maxHeight: 620, overflow: 'hidden' }}>
             {steps.map(({ icon: Icon, num, title, desc }, i) => {
               const local = Math.min(1, Math.max(0, progress * n - i + 1));
               const eased = 1 - (1 - local) * (1 - local);
-              const translateY = (1 - eased) * 480;
+              const translateY = (1 - eased) * 700;
               return (
                 <div key={num} style={{
                   position: 'absolute', inset: 0,
-                  transform: `translate(${i * 20}px, ${i * 16 + translateY}px)`,
+                  transform: `translate(${i * 24}px, ${i * 20 + translateY}px)`,
                   zIndex: i + 1,
                   backgroundColor: 'var(--card)',
                   border: '2px solid var(--foreground)',
                   borderRadius: 'var(--radius)',
-                  boxShadow: '8px 8px 0 0 var(--foreground)',
-                  padding: 32,
+                  boxShadow: '10px 10px 0 0 var(--foreground)',
+                  padding: '5vh 40px',
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 18 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={22} color={ACCENT} strokeWidth={1.8} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
+                    <div style={{ width: 64, height: 64, borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={30} color={ACCENT} strokeWidth={1.8} />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, color: 'var(--accent)', lineHeight: 1 }}>{num}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 56, fontWeight: 900, color: 'var(--accent)', lineHeight: 1 }}>{num}</span>
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 700, color: TEXT, margin: '0 0 10px', letterSpacing: '-0.01em' }}>{title}</h3>
-                  <p style={{ fontSize: 15, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+                  <h3 style={{ fontSize: 30, fontWeight: 700, color: TEXT, margin: '0 0 14px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 18, color: SEC, margin: 0, lineHeight: 1.65, maxWidth: 460 }}>{desc}</p>
                 </div>
               );
             })}
           </div>
 
           {/* Progress dots */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center' }}>
             {steps.map((_, i) => (
               <div key={i} style={{
-                width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
                 border: '2px solid var(--foreground)',
                 backgroundColor: i <= activeIndex ? 'var(--foreground)' : 'transparent',
                 color: i <= activeIndex ? 'var(--primary)' : 'var(--foreground)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 12, fontWeight: 700, fontFamily: MONO,
+                fontSize: 14, fontWeight: 700, fontFamily: MONO,
                 transition: 'background-color 0.2s, color 0.2s',
               }}>
                 {i + 1}
@@ -527,10 +527,10 @@ export default function LandingPage() {
         }
 
         /* How-it-works: scroll-pinned stack on desktop, plain static list
-           below 900px — the stack's fixed 3-column grid and scroll-jack
+           below 1040px — the stack's 3-column grid and scroll-jack
            interaction don't hold up at narrow widths. */
         .how-works-mobile { display: none; }
-        @media (max-width: 900px) {
+        @media (max-width: 1040px) {
           .how-works-stack { display: none; }
           .how-works-mobile { display: block; }
         }
@@ -561,9 +561,14 @@ export default function LandingPage() {
 
       <FloatingNav />
 
-      {/* HERO — sticky so the content sheet slides over it on scroll */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 0, height: '100svh', minHeight: 600 }}>
-        <section style={{ position: 'relative', height: '100svh', minHeight: 600, overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', background: '#060d1f' }}>
+      {/* HERO — wrapped in a taller block so the sticky hero has scroll
+          room to actually stay pinned; the content sheet below overlaps
+          it with a negative margin and a higher z-index, so it visibly
+          rises and slides over the still-pinned hero instead of just
+          appearing after an ordinary scroll cut. */}
+      <div style={{ position: 'relative', height: '200svh', minHeight: 1200 }}>
+        <div style={{ position: 'sticky', top: 0, zIndex: 0, height: '100svh', minHeight: 600, overflow: 'hidden' }}>
+        <section style={{ position: 'relative', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', background: '#060d1f' }}>
 
           {/* Background video */}
           <video
@@ -608,10 +613,14 @@ export default function LandingPage() {
           </div>
 
         </section>
+        </div>
       </div>
 
-      {/* Content sheet — slides over the pinned hero */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'var(--primary)' }}>
+      {/* Content sheet — overlaps the hero's tall wrapper with a negative
+          margin equal to the hero's own height, so it visibly rises and
+          slides over the still-pinned hero, finishing the cover exactly
+          when the hero runs out of sticky slack and un-pins — no gap. */}
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--primary)', marginTop: '-100svh' }}>
         <WavyDivider />
 
       {/* FEATURES */}
