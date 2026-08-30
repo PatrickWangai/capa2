@@ -198,7 +198,13 @@ const PORT = process.env.PORT || 4000;
   if (!process.env.ADMIN2_PASSWORD) logger.warn('ADMIN2_PASSWORD is not set — second admin account uses the default password');
   if (!process.env.MPESA_WEBHOOK_SECRET) logger.warn('MPESA_WEBHOOK_SECRET is not set — M-Pesa webhook accepts unauthenticated callbacks');
   setupSocketHandlers(io);
-  await startPriceFeed(io);
+  // Not awaited: startPriceFeed's initial fetch loop calls the Yahoo
+  // Finance API once per active asset, sequentially, with no per-call
+  // timeout — if that API is slow or throttling from this host's IP,
+  // it can take minutes or hang outright. Awaiting it here blocked
+  // httpServer.listen() from ever running, which is fatal on platforms
+  // (Render, etc.) that fail the deploy if no port opens in time.
+  startPriceFeed(io).catch(err => logger.error('Price feed failed to start', { error: err.message }));
   startLimitOrderJob();
   setInterval(checkPriceAlerts, 60_000);
   startPortfolioSnapshotJob();
