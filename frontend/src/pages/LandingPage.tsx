@@ -257,11 +257,12 @@ function FloatingNav() {
       width: 'calc(100vw - 2rem)', maxWidth: '27.375rem', zIndex: 200,
       fontFamily: MONO,
     }}>
-      {/* Pill backdrop */}
+      {/* Pill backdrop — fully opaque (not translucent) so whatever scrolls
+          underneath (dark video hero, then the light teal content sheet)
+          never bleeds/ghosts through it. */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'rgba(10,10,10,0.72)',
-        backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+        background: '#0a0a0a',
         borderRadius: 4, border: '1px solid rgba(255,255,255,0.08)',
         pointerEvents: 'none', zIndex: 0,
       }} />
