@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { useAlertStore } from '../store/alertStore';
 import CapaCCircle from '../components/ui/CapaCCircle';
+import { useForceDarkChrome } from '../hooks/useForceDarkChrome';
 
 const TEXT = 'var(--foreground)';
 const SEC = 'var(--muted-foreground)';
@@ -22,6 +23,7 @@ function Feature({ text }: { text: string }) {
 }
 
 export default function LoginPage() {
+  useForceDarkChrome();
   const [form, setForm] = useState({ email: '', password: '', mfaCode: '' });
   const [showPass, setShowPass] = useState(false);
   const [needsMfa, setNeedsMfa] = useState(false);

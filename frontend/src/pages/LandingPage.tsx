@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { TrendingUp, Shield, Zap, UserCheck, DollarSign, BarChart2, Check, ArrowUpRight, Percent, Lock, Clock } from 'lucide-react';
 import CapaLogo from '../components/ui/CapaLogo';
 import CapaCCircle from '../components/ui/CapaCCircle';
+import { useForceDarkChrome } from '../hooks/useForceDarkChrome';
 
 const ACCENT = 'var(--primary)';
 const TEXT = 'var(--text)';
@@ -376,6 +377,7 @@ function useHeroProgress() {
 }
 
 export default function LandingPage() {
+  useForceDarkChrome();
   const typedText = useTypeOnce(HERO_TEXT);
   const heroP = useHeroProgress();
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
