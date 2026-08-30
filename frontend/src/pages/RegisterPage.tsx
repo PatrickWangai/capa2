@@ -55,7 +55,7 @@ export default function RegisterPage() {
   const lbl: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: SEC, marginBottom: 6 };
 
   return (
-    <div style={{ minHeight: '100vh', background: ACCENT, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: 'var(--font-sans)' }}>
+    <div className="force-light-theme" style={{ minHeight: '100vh', background: ACCENT, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 24px', fontFamily: 'var(--font-sans)' }}>
 
       {/* Back to home */}
       <Link to="/" style={{ position: 'fixed', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: TEXT, textDecoration: 'none', padding: '7px 14px', borderRadius: 'var(--radius)', backgroundColor: '#fff', border: '2px solid var(--foreground)', transition: 'transform 0.15s' }}

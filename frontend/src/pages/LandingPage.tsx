@@ -357,7 +357,7 @@ export default function LandingPage() {
   const heroP = useHeroProgress();
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
-    <div style={{ background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
+    <div className="force-light-theme" style={{ background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Preloader />
       <style>{`
         @keyframes hero-text-in {

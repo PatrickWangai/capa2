@@ -422,6 +422,99 @@
 }
 .force-dark-theme .capa-logo-img { filter: none !important; }
 
+/* ── Forced-light scope — the mirror of .force-dark-theme above. Capa's
+   teal brand pages (login, register, landing) are meant to look identical
+   regardless of the visitor's OS light/dark preference, but they read
+   theme-relative tokens like var(--foreground)/var(--card) which otherwise
+   flip via the prefers-color-scheme:dark block — pinning them here stops
+   that (e.g. a dark-mode --foreground turning white text white-on-white
+   on a hardcoded #fff button). Values are the bare :root light defaults. */
+.force-light-theme {
+  --background: #f2f7f6;
+  --foreground: #0c1e1b;
+
+  --card: #ffffff;
+  --card-foreground: #0c1e1b;
+
+  --popover: #ffffff;
+  --popover-foreground: #0c1e1b;
+
+  --primary: #0d7d6f;
+  --primary-foreground: #ffffff;
+
+  --secondary: #e6efed;
+  --secondary-foreground: #0c1e1b;
+
+  --muted: #e6efed;
+  --muted-foreground: #5c7370;
+
+  --accent: #dcf3ee;
+  --accent-foreground: #0d7d6f;
+
+  --destructive: #d1284a;
+  --destructive-foreground: #ffffff;
+  --destructive-muted: #fbe3e8;
+
+  --success: #0e8a4a;
+  --success-foreground: #ffffff;
+  --success-muted: #e3f5ea;
+
+  --warning: #b56506;
+  --warning-foreground: #ffffff;
+  --warning-muted: #fbead2;
+
+  --info: #0c5ba0;
+  --info-foreground: #ffffff;
+  --info-muted: #e8f2fb;
+
+  --border: #d7e2e0;
+  --input: #c3d2cf;
+  --ring: #0d7d6f;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #4c625f;
+  --sidebar-foreground-active: #0d7d6f;
+  --sidebar-accent: #e6efed;
+  --sidebar-accent-foreground: #0c1e1b;
+  --sidebar-border: #d7e2e0;
+  --sidebar-primary: #0d7d6f;
+
+  --chart-1: #0d7d6f;
+  --chart-2: #17a89c;
+  --chart-3: #b56506;
+  --chart-4: #6b5fc4;
+  --chart-5: #d1284a;
+
+  --shadow-tint: 13 42 38;
+  --scrollbar-thumb: #c3d2cf;
+  --scrollbar-thumb-hover: #a8bdb9;
+
+  --glow: none;
+  --glow-lg: none;
+  --scan-rgb: 13 125 111;
+
+  --bg-1: var(--background);
+  --bg-gradient: var(--background);
+  --text: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-tertiary: var(--muted-foreground);
+  --card-bg: var(--card);
+  --card-border: var(--border);
+  --sidebar-bg: var(--sidebar);
+  --input-bg: var(--card);
+  --nav-text: var(--sidebar-foreground);
+  --accent-dark: #0a5c51;
+  --accent-rgb: 13, 125, 111;
+  --accent-dim: rgba(13, 125, 111, 0.12);
+  --accent-glow: rgba(13, 125, 111, 0.18);
+  --accent-text: #ffffff;
+  --color-primary-from: var(--primary);
+  --color-primary-to: var(--accent-dark);
+
+  background: var(--background);
+  color: var(--foreground);
+}
+
 /* ── Fonts — Space Mono is the base UI face everywhere (matches the CRM);
    Archivo is reserved for hero/display headlines only. ── */
 :root {

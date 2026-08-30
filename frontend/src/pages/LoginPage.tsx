@@ -62,7 +62,7 @@ export default function LoginPage() {
       minHeight: '100vh', background: ACCENT, padding: 24,
       fontFamily: 'var(--font-sans)',
     }}
-    className="capa-login-grid"
+    className="capa-login-grid force-light-theme"
     >
       <style>{`
         @media (min-width: 1024px) {
