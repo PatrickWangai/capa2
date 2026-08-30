@@ -108,6 +108,7 @@ const MONO = "'Space Mono', ui-monospace, 'SF Mono', monospace";
 // ── Preloader ─────────────────────────────────────────────────
 function usePreloader() {
   const [pct, setPct] = useState(0);
+  const [exiting, setExiting] = useState(false);
   const [gone, setGone] = useState(false);
   useEffect(() => {
     let p = 0;
@@ -117,28 +118,29 @@ function usePreloader() {
       setPct(p);
       if (p >= 100) {
         clearInterval(id);
-        setTimeout(() => setGone(true), 1200);
+        setTimeout(() => setExiting(true), 200);
+        setTimeout(() => setGone(true), 750);
       }
     }, 70);
     return () => clearInterval(id);
   }, []);
-  return { pct, gone };
+  return { pct, exiting, gone };
 }
 
 function Preloader() {
-  const { pct, gone } = usePreloader();
+  const { pct, exiting, gone } = usePreloader();
   if (gone) return null;
-  const exiting = pct >= 100;
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
       background: 'var(--primary)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      opacity: exiting ? 0 : 1,
-      transform: exiting ? 'scale(1.06)' : 'scale(1)',
-      transition: exiting
-        ? 'opacity 1.1s cubic-bezier(0.76,0,0.24,1), transform 1.1s cubic-bezier(0.76,0,0.24,1)'
-        : 'none',
+      // Hard-edged circular wipe instead of an opacity fade -- a fade left the
+      // translucent teal visibly blending with the hero video underneath for
+      // over a second (looked like a stuck/muddy teal wash). A clip-path wipe
+      // has no partial-opacity period, so there's nothing to blend.
+      clipPath: exiting ? 'circle(0% at 50% 50%)' : 'circle(150% at 50% 50%)',
+      transition: exiting ? 'clip-path 0.55s cubic-bezier(0.65,0,0.35,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
       <div style={{ animation: 'preloader-spin 1.1s linear infinite', display: 'flex' }}>
@@ -212,36 +214,6 @@ function Squiggle({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ── Floating drifting badge chips — the "physics-scattered coffee beans"
-// motif, reworked as small bordered brand chips that gently bob and rotate.
-// `dark` swaps the chip to a light-on-teal treatment for use on the teal CTA panel.
-const FLOAT_ICONS = ['$', '↑', '●', '%'];
-function FloatingBadges({ dark = false }: { dark?: boolean }) {
-  const items = [
-    { icon: FLOAT_ICONS[0], top: '6%',  left: '6%',  size: 34, delay: 0,    dur: 7 },
-    { icon: FLOAT_ICONS[1], top: '14%', left: '90%', size: 28, delay: 0.6,  dur: 8.5 },
-    { icon: FLOAT_ICONS[2], top: '78%', left: '4%',  size: 22, delay: 1.2,  dur: 6.5 },
-    { icon: FLOAT_ICONS[3], top: '85%', left: '92%', size: 30, delay: 0.3,  dur: 9 },
-  ];
-  return (
-    <div aria-hidden="true" className="float-badges-hide" style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-      {items.map((it, i) => (
-        <span key={i} style={{
-          position: 'absolute', top: it.top, left: it.left,
-          width: it.size, height: it.size, borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: it.size * 0.4,
-          color: dark ? ACCENT : '#fff',
-          background: dark ? '#fff' : ACCENT,
-          border: `2px solid var(--foreground)`,
-          animation: `float-drift ${it.dur}s ease-in-out ${it.delay}s infinite alternate`,
-        }}>
-          {it.icon}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 const NAV_ITEMS = [
   { label: 'Markets',   href: '/markets' },
@@ -426,15 +398,8 @@ export default function LandingPage() {
           80%  { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
           100% { opacity: 0; }
         }
-        @keyframes float-drift {
-          0%   { transform: translate(0, 0) rotate(-6deg); }
-          100% { transform: translate(10px, -16px) rotate(8deg); }
-        }
         @keyframes preloader-spin {
           to { transform: rotate(360deg); }
-        }
-        @media (max-width: 768px) {
-          .float-badges-hide { display: none !important; }
         }
 
         @media (max-width: 640px) {
@@ -541,7 +506,6 @@ export default function LandingPage() {
       {/* FEATURES */}
       <GlitchSection>
         <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto', position: 'relative' }}>
-          <FloatingBadges dark />
           <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
             Everything you need.<br /><Squiggle>Nothing you don't.</Squiggle>
@@ -625,24 +589,12 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-
-          {/* Corner badge — static hard-shadow pill, tilted, matching the reference's "SAVE 10%" corner tag */}
-          <span style={{
-            position: 'absolute', bottom: -14, right: 24, transform: 'rotate(-4deg)',
-            background: 'var(--primary)', color: 'var(--primary-foreground)',
-            border: '2px solid var(--foreground)', borderRadius: 'var(--radius)',
-            padding: '6px 14px', fontSize: 12, fontWeight: 900, textTransform: 'uppercase',
-            boxShadow: '3px 3px 0 0 var(--foreground)', letterSpacing: '0.02em',
-          }}>
-            0.5% flat fee
-          </span>
         </section>
       </GlitchSection>
 
       {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
       <GlitchSection>
         <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--primary)', padding: '88px 24px', borderTop: '2px solid var(--foreground)' }}>
-          <FloatingBadges dark />
           <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
               Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
