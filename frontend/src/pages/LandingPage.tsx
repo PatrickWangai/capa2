@@ -212,13 +212,13 @@ function usePreloader() {
   const [pct, setPct] = useState(0);
   const [exiting, setExiting] = useState(false);
   const [gone, setGone] = useState(false);
-  // Sized to the actual viewport diagonal (not a fixed guess) so the C-hole's
+  // Sized to the actual viewport diagonal (not a fixed guess) so the wipe's
   // growth is paced to the full transition duration on any screen size — a
-  // fixed oversized value made the hole swallow the screen well before the
+  // fixed oversized value made it swallow the screen well before the
   // animation finished, reading as an abrupt pop instead of a grown reveal.
-  const [revealSize, setRevealSize] = useState(2000);
+  const [revealRadius, setRevealRadius] = useState(1200);
   useEffect(() => {
-    setRevealSize(Math.ceil(Math.hypot(window.innerWidth, window.innerHeight) * 1.5));
+    setRevealRadius(Math.ceil(Math.hypot(window.innerWidth, window.innerHeight) / 2 * 1.08));
   }, []);
   useEffect(() => {
     let p = 0;
@@ -229,44 +229,38 @@ function usePreloader() {
       if (p >= 100) {
         clearInterval(id);
         setTimeout(() => setExiting(true), 200);
-        setTimeout(() => setGone(true), 1150);
+        setTimeout(() => setGone(true), 950);
       }
     }, 70);
     return () => clearInterval(id);
   }, []);
-  return { pct, exiting, gone, revealSize };
+  return { pct, exiting, gone, revealRadius };
 }
 
 function Preloader() {
-  const { pct, exiting, gone, revealSize } = usePreloader();
+  const { pct, exiting, gone, revealRadius } = usePreloader();
   if (gone) return null;
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9998,
       background: 'var(--primary)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      // The exit punches a C-shaped hole through the solid overlay and grows
-      // it until it swallows the whole screen — the page is revealed *through*
-      // the C, rather than behind a plain circular wipe. Two mask layers (a
-      // full opaque rect, and the C icon) combined with exclude/xor render
-      // as "everywhere opaque except where the C is", so growing the C
-      // layer's size is what grows the hole.
-      WebkitMaskImage: 'linear-gradient(#000,#000), url(/capa-c-icon-512.png)',
-      maskImage: 'linear-gradient(#000,#000), url(/capa-c-icon-512.png)',
-      WebkitMaskRepeat: 'no-repeat, no-repeat',
-      maskRepeat: 'no-repeat, no-repeat',
-      WebkitMaskPosition: 'center, center',
-      maskPosition: 'center, center',
-      WebkitMaskSize: exiting ? `100% 100%, ${revealSize}px ${revealSize}px` : '100% 100%, 0px 0px',
-      maskSize: exiting ? `100% 100%, ${revealSize}px ${revealSize}px` : '100% 100%, 0px 0px',
-      WebkitMaskComposite: 'xor',
-      maskComposite: 'exclude',
-      transition: exiting ? 'mask-size 0.9s cubic-bezier(0.6,0,0.3,1), -webkit-mask-size 0.9s cubic-bezier(0.6,0,0.3,1)' : 'none',
+      // A ring-shaped mark (which is what the C icon actually is) punches a
+      // hollow ring-shaped hole when used as a raw mask — it reads as "a
+      // ring", not as the logo. Instead, the icon itself pops (visibly
+      // scales up and fades), and a plain circular wipe grows from the same
+      // center in lockstep, so it reads as the logo growing to reveal the
+      // page rather than an abstract shape doing it off to the side.
+      clipPath: exiting ? 'circle(0px at 50% 50%)' : `circle(${revealRadius}px at 50% 50%)`,
+      transition: exiting ? 'clip-path 0.75s cubic-bezier(0.6,0,0.3,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
       <div style={{
-        animation: 'preloader-spin 1.1s linear infinite', display: 'flex',
-        opacity: exiting ? 0 : 1, transition: 'opacity 0.2s ease',
+        width: 72, height: 72, display: 'flex',
+        animation: exiting ? 'none' : 'preloader-spin 1.1s linear infinite',
+        transform: exiting ? 'scale(9)' : 'scale(1)',
+        opacity: exiting ? 0 : 1,
+        transition: exiting ? 'transform 0.75s cubic-bezier(0.2,0.8,0.2,1), opacity 0.6s ease 0.15s' : 'none',
       }}>
         <CapaCCircle size={72} />
       </div>
