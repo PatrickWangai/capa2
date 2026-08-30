@@ -98,12 +98,12 @@
 
   html {
     background: var(--background);
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     background: var(--background);
-    overflow-x: hidden;
+    overflow-x: clip;
     color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;

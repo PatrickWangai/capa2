@@ -105,6 +105,108 @@ const steps = [
 
 const MONO = "'Space Mono', ui-monospace, 'SF Mono', monospace";
 
+// ── Scroll-pinned stacked-card "How it works" ───────────────────
+// A tall wrapper (n × 100vh) holds a sticky viewport-height stage;
+// scroll progress through the wrapper drives each card sliding up
+// into a cascading stack, one per 1/n of the scroll range.
+function useStackProgress(ref: React.RefObject<HTMLElement>) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const handler = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      if (total <= 0) { setProgress(0); return; }
+      setProgress(Math.min(1, Math.max(0, -rect.top / total)));
+    };
+    handler();
+    window.addEventListener('scroll', handler, { passive: true });
+    window.addEventListener('resize', handler);
+    return () => { window.removeEventListener('scroll', handler); window.removeEventListener('resize', handler); };
+  }, [ref]);
+  return progress;
+}
+
+function HowItWorksStack() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const progress = useStackProgress(wrapRef);
+  const n = steps.length;
+  const activeIndex = Math.min(n - 1, Math.floor(progress * n));
+
+  return (
+    <section ref={wrapRef} className="how-works-stack" style={{
+      position: 'relative', height: `${n * 100}vh`, backgroundColor: 'var(--primary)',
+      borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)',
+    }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+        <div style={{
+          maxWidth: 1120, margin: '0 auto', width: '100%', padding: '0 32px',
+          display: 'grid', gridTemplateColumns: '1fr 440px 44px', alignItems: 'center', gap: 40,
+        }}>
+          {/* Persistent heading */}
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 16, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,5vw,68px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, lineHeight: 1.0, margin: 0 }}>
+              How<br />Capa<br />works.
+            </h2>
+          </div>
+
+          {/* Stacked cards — solid, never faded; each new card slides up
+              from fully off-screen and lands on top, cleanly occluding
+              whatever's behind it rather than cross-fading with it. */}
+          <div style={{ position: 'relative', height: 400, overflow: 'hidden' }}>
+            {steps.map(({ icon: Icon, num, title, desc }, i) => {
+              const local = Math.min(1, Math.max(0, progress * n - i + 1));
+              const eased = 1 - (1 - local) * (1 - local);
+              const translateY = (1 - eased) * 480;
+              return (
+                <div key={num} style={{
+                  position: 'absolute', inset: 0,
+                  transform: `translate(${i * 20}px, ${i * 16 + translateY}px)`,
+                  zIndex: i + 1,
+                  backgroundColor: 'var(--card)',
+                  border: '2px solid var(--foreground)',
+                  borderRadius: 'var(--radius)',
+                  boxShadow: '8px 8px 0 0 var(--foreground)',
+                  padding: 32,
+                  display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 18 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={22} color={ACCENT} strokeWidth={1.8} />
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, color: 'var(--accent)', lineHeight: 1 }}>{num}</span>
+                  </div>
+                  <h3 style={{ fontSize: 22, fontWeight: 700, color: TEXT, margin: '0 0 10px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 15, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress dots */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+            {steps.map((_, i) => (
+              <div key={i} style={{
+                width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                border: '2px solid var(--foreground)',
+                backgroundColor: i <= activeIndex ? 'var(--foreground)' : 'transparent',
+                color: i <= activeIndex ? 'var(--primary)' : 'var(--foreground)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, fontWeight: 700, fontFamily: MONO,
+                transition: 'background-color 0.2s, color 0.2s',
+              }}>
+                {i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── Preloader ─────────────────────────────────────────────────
 function usePreloader() {
   const [pct, setPct] = useState(0);
@@ -424,6 +526,15 @@ export default function LandingPage() {
           .hero-subtitle { font-size: 14px !important; }
         }
 
+        /* How-it-works: scroll-pinned stack on desktop, plain static list
+           below 900px — the stack's fixed 3-column grid and scroll-jack
+           interaction don't hold up at narrow widths. */
+        .how-works-mobile { display: none; }
+        @media (max-width: 900px) {
+          .how-works-stack { display: none; }
+          .how-works-mobile { display: block; }
+        }
+
         /* ── Lamalama-style rectangular buttons ── */
         .glow-pill { display: inline-flex; }
         .glow-pill-inner {
@@ -526,29 +637,30 @@ export default function LandingPage() {
         </section>
       </GlitchSection>
 
-      {/* HOW IT WORKS */}
+      {/* HOW IT WORKS — scroll-pinned stacked cards on desktop, static list on mobile */}
       <GlitchSection>
-        <section className="lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
-              How Capa works
-            </h2>
-            <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
-              {steps.map(({ icon: Icon, num, title, desc }) => (
-                <div key={num} style={{ textAlign: 'center' }}>
-                  <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <Icon size={24} color={ACCENT} strokeWidth={1.8} />
-                  </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>{num}</span>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
-                  <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HowItWorksStack />
       </GlitchSection>
+      <section className="how-works-mobile lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
+            How Capa works
+          </h2>
+          <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
+            {steps.map(({ icon: Icon, num, title, desc }) => (
+              <div key={num} style={{ textAlign: 'center' }}>
+                <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Icon size={24} color={ACCENT} strokeWidth={1.8} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>{num}</span>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+                <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* SOCIAL PROOF — bold headline + CTA on one side, icon-row detail card on the other */}
       <GlitchSection>
