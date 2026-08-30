@@ -83,11 +83,14 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://www.googletagmanager.com'],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      // 'unsafe-inline' is required for index.html's two static inline
+      // <script> tags (theme-flash prevention, GitHub Pages SPA routing
+      // fix) — same pattern already used below for styleSrc.
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       imgSrc: ["'self'", 'data:', 'https://logo.clearbit.com', 'https://www.google.com'],
       connectSrc: ["'self'", 'wss:', 'ws:', 'https:'],
-      fontSrc: ["'self'", 'data:'],
+      fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
     },
   },
 }));
