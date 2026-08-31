@@ -228,8 +228,8 @@ function usePreloader() {
       setPct(p);
       if (p >= 100) {
         clearInterval(id);
-        setTimeout(() => setExiting(true), 200);
-        setTimeout(() => setGone(true), 1150);
+        setTimeout(() => setExiting(true), 150);
+        setTimeout(() => setGone(true), 650);
       }
     }, 70);
     return () => clearInterval(id);
@@ -262,7 +262,7 @@ function Preloader() {
       maskSize: exiting ? `100% 100%, ${revealSize}px ${revealSize}px` : '100% 100%, 0px 0px',
       WebkitMaskComposite: 'xor',
       maskComposite: 'exclude',
-      transition: exiting ? 'mask-size 0.9s cubic-bezier(0.6,0,0.3,1), -webkit-mask-size 0.9s cubic-bezier(0.6,0,0.3,1)' : 'none',
+      transition: exiting ? 'mask-size 0.45s cubic-bezier(0.6,0,0.3,1), -webkit-mask-size 0.45s cubic-bezier(0.6,0,0.3,1)' : 'none',
       pointerEvents: exiting ? 'none' : 'all',
     }}>
       <div style={{
