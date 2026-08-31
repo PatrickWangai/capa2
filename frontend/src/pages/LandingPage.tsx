@@ -213,23 +213,23 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
   );
 }
 
-// ── Wavy torn-edge divider between the sticky video hero and the content
-// sheet that slides over it — same "hand-cut paper edge" language as
-// Apocalypse Coffee's section seams, in the page's own token color.
-const WAVE_PATH = "M0,30 C 50,4 100,56 150,30 C 200,4 250,56 300,30 C 350,4 400,56 450,30 C 500,4 550,56 600,30 C 650,4 700,56 750,30 C 800,4 850,56 900,30 C 950,4 1000,56 1050,30 C 1100,4 1150,56 1200,30";
+// ── Wavy hero→content divider ─────────────────────────────────
+// Overlaps the sticky hero with a negative top margin so the dark
+// hero colour bleeds DOWN in a wavy organic shape into the teal
+// section — the same filled-shape technique as Apocalypse Coffee.
+const W = "M0,70 C 180,24 360,116 540,70 C 720,24 900,116 1080,70 C 1260,24 1380,90 1440,70";
 
 function WavyDivider() {
   return (
-    <svg viewBox="0 0 1200 60" preserveAspectRatio="none" width="100%" height="60"
-      style={{ display: 'block', marginTop: -2, position: 'relative', zIndex: 2 }}>
-      {/* Fill — matches the content sheet's own teal, so the area under the
-          wave curve blends into the section it's leading into. */}
-      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--primary)" />
-      {/* Stroke — a contrasting black line tracing just the wave curve
-          itself (not the rectangle it closes into), so the boundary
-          between hero and content actually reads as a wavy line in a
-          different color, not a flat single-color band. */}
-      <path d={WAVE_PATH} fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" />
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" width="100%" height="120"
+      style={{ display: 'block', marginTop: -119, position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
+      {/* Dark fill ABOVE the wave — hero colour pouring down */}
+      <path d={`M0,0 L0,70 C 180,24 360,116 540,70 C 720,24 900,116 1080,70 C 1260,24 1380,90 1440,70 L1440,0 Z`}
+        fill="#000" />
+      {/* Teal fill BELOW the wave — merges seamlessly with content sheet */}
+      <path d={`${W} L1440,120 L0,120 Z`} fill="var(--primary)" />
+      {/* Contrasting stroke on the wave edge itself */}
+      <path d={W} fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
