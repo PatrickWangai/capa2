@@ -214,22 +214,18 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
 }
 
 // ── Wavy hero→content divider ─────────────────────────────────
-// Overlaps the sticky hero with a negative top margin so the dark
-// hero colour bleeds DOWN in a wavy organic shape into the teal
-// section — the same filled-shape technique as Apocalypse Coffee.
-const W = "M0,70 C 180,24 360,116 540,70 C 720,24 900,116 1080,70 C 1260,24 1380,90 1440,70";
+// Teal bleeds UP into the dark hero with a high-amplitude organic
+// blob edge — the same filled-shape technique as Apocalypse Coffee
+// (their dark blob on orange; ours is teal on dark).
+// High control-point variance gives the chunky drip look.
+const BLOB = "M0,110 C 100,52 220,128 380,68 C 520,16 640,114 820,58 C 960,10 1100,96 1260,50 C 1360,24 1410,72 1440,64";
 
 function WavyDivider() {
   return (
-    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" width="100%" height="120"
-      style={{ display: 'block', marginTop: -119, position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
-      {/* Dark fill ABOVE the wave — hero colour pouring down */}
-      <path d={`M0,0 L0,70 C 180,24 360,116 540,70 C 720,24 900,116 1080,70 C 1260,24 1380,90 1440,70 L1440,0 Z`}
-        fill="#000" />
-      {/* Teal fill BELOW the wave — merges seamlessly with content sheet */}
-      <path d={`${W} L1440,120 L0,120 Z`} fill="var(--primary)" />
-      {/* Contrasting stroke on the wave edge itself */}
-      <path d={W} fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
+    <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
+      style={{ display: 'block', marginTop: -140, position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
+      {/* Teal blob pushes UP into the dark hero with organic edge */}
+      <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
     </svg>
   );
 }
