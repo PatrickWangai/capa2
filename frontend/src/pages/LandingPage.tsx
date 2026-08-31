@@ -137,52 +137,45 @@ function HowItWorksStack() {
     <section ref={wrapRef} className="how-works-stack" style={{
       position: 'relative', height: `${n * 100}vh`, backgroundColor: 'var(--primary)',
     }}>
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-        <div style={{
-          width: '100%', padding: '0 5vw',
-          display: 'grid', gridTemplateColumns: '1fr minmax(380px, 34vw)', alignItems: 'center', gap: '4vw',
-        }}>
-          {/* Persistent heading — sized to dominate the full-viewport stage */}
-          <div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 20, textTransform: 'uppercase' }}>Get started in minutes</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(44px,8.5vw,132px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, lineHeight: 0.95, margin: 0 }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr minmax(340px, 38vw)', alignItems: 'stretch', gap: '4vw', padding: '0 5vw' }}>
+          {/* Persistent heading — vertically centred in the viewport */}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.1em', marginBottom: 20, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(44px,8.5vw,132px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#fff', lineHeight: 0.95, margin: 0 }}>
               How<br />Capa<br />works.
             </h2>
           </div>
 
-          {/* Stacked cards — solid, never faded; each new card slides up
-              from fully off-screen and lands on top, cleanly occluding
-              whatever's behind it rather than cross-fading with it. */}
-          <div style={{ position: 'relative', height: '58vh', minHeight: 420, maxHeight: 620, overflow: 'hidden' }}>
+          {/* Stacked cards — dark cards on teal; each slides up from off-screen */}
+          <div style={{ position: 'relative', overflow: 'hidden' }}>
             {steps.map(({ icon: Icon, num, title, desc }, i) => {
               const local = Math.min(1, Math.max(0, progress * n - i + 1));
               const eased = 1 - (1 - local) * (1 - local);
-              const translateY = (1 - eased) * 700;
+              const translateY = (1 - eased) * 800;
               return (
                 <div key={num} style={{
                   position: 'absolute', inset: 0,
-                  transform: `translate(${i * 24}px, ${i * 20 + translateY}px)`,
+                  transform: `translate(${i * 20}px, ${i * 16 + translateY}px)`,
                   zIndex: i + 1,
-                  backgroundColor: 'var(--card)',
-                  border: '2px solid var(--foreground)',
+                  backgroundColor: '#07130f',
+                  border: '1px solid rgba(255,255,255,0.12)',
                   borderRadius: 'var(--radius)',
-                  boxShadow: '10px 10px 0 0 var(--foreground)',
-                  padding: '5vh 40px',
+                  boxShadow: `${8 + i * 4}px ${8 + i * 4}px 0 0 rgba(0,0,0,0.55)`,
+                  padding: '0 44px',
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
-                    <div style={{ width: 64, height: 64, borderRadius: 'var(--radius)', border: '2px solid var(--foreground)', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={30} color={ACCENT} strokeWidth={1.8} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 28 }}>
+                    <div style={{ width: 60, height: 60, borderRadius: 10, backgroundColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={28} color="#07130f" strokeWidth={2} />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 56, fontWeight: 900, color: 'var(--accent)', lineHeight: 1 }}>{num}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 52, fontWeight: 900, color: 'var(--primary)', lineHeight: 1 }}>{num}</span>
                   </div>
-                  <h3 style={{ fontSize: 30, fontWeight: 700, color: TEXT, margin: '0 0 14px', letterSpacing: '-0.01em' }}>{title}</h3>
-                  <p style={{ fontSize: 18, color: SEC, margin: 0, lineHeight: 1.65, maxWidth: 460 }}>{desc}</p>
+                  <h3 style={{ fontSize: 26, fontWeight: 700, color: '#ffffff', margin: '0 0 12px', letterSpacing: '-0.01em' }}>{title}</h3>
+                  <p style={{ fontSize: 16, color: 'rgba(210,240,230,0.60)', margin: 0, lineHeight: 1.7 }}>{desc}</p>
                 </div>
               );
             })}
           </div>
-        </div>
       </div>
     </section>
   );
