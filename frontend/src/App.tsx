@@ -88,47 +88,41 @@ function LoadingSpinner() {
     <div style={{
       position: 'fixed', inset: 0,
       background: '#07090f',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20,
       zIndex: 9999,
     }}>
       <style>{`
-        @keyframes capa-spin-cw  { to { transform: rotate(360deg);  } }
-        @keyframes capa-spin-ccw { to { transform: rotate(-360deg); } }
-        .capa-ring {
-          position: absolute; border-radius: 50%;
-          border: 11px solid transparent;
-        }
-        .capa-ring-1 {
-          width: 200px; height: 200px;
-          border-top-color:    #1a6fa8;
-          border-right-color:  #1a6fa8;
-          border-bottom-color: #1a6fa8;
-          animation: capa-spin-cw 1.6s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
-        .capa-ring-2 {
-          width: 152px; height: 152px;
-          border-top-color:   #b8620a;
-          border-left-color:  #b8620a;
-          border-bottom-color:#b8620a;
-          animation: capa-spin-ccw 1.2s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
-        .capa-ring-3 {
-          width: 104px; height: 104px;
-          border-top-color:   #9b2d7a;
-          border-right-color: #9b2d7a;
-          animation: capa-spin-cw 0.9s cubic-bezier(.6,.1,.4,.9) infinite;
-        }
+        @keyframes ls-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+        @keyframes ls-dot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+        .ls-icon{animation:ls-pulse 2s ease-in-out infinite}
+        .ls-d1{animation:ls-dot 1.4s ease-in-out infinite}
+        .ls-d2{animation:ls-dot 1.4s ease-in-out .22s infinite}
+        .ls-d3{animation:ls-dot 1.4s ease-in-out .44s infinite}
       `}</style>
-      <div style={{ position: 'relative', width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="capa-ring capa-ring-1" />
-        <div className="capa-ring capa-ring-2" />
-        <div className="capa-ring capa-ring-3" />
-        <img
-          src="/capa-logo.png"
-          style={{ width: 52, height: 'auto', objectFit: 'contain', position: 'relative', zIndex: 1, opacity: 0.92 }}
-          alt="CAPA"
-          draggable={false}
-        />
+      <div className="ls-icon">
+        <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="63" cy="63" r="50" fill="#0a0f1e"/>
+          <circle cx="60" cy="60" r="50" fill="#2B4FD4" stroke="#0a0f1e" strokeWidth="5"/>
+          <clipPath id="ls-clip"><circle cx="60" cy="60" r="50"/></clipPath>
+          <g clipPath="url(#ls-clip)" stroke="white" strokeWidth="5" opacity="0.22">
+            <line x1="-30" y1="10"  x2="70"  y2="145"/>
+            <line x1="-15" y1="10"  x2="85"  y2="145"/>
+            <line x1="0"   y1="10"  x2="100" y2="145"/>
+            <line x1="15"  y1="10"  x2="115" y2="145"/>
+            <line x1="30"  y1="10"  x2="130" y2="145"/>
+            <line x1="45"  y1="10"  x2="145" y2="145"/>
+            <line x1="60"  y1="10"  x2="160" y2="145"/>
+            <line x1="75"  y1="10"  x2="175" y2="145"/>
+            <line x1="90"  y1="10"  x2="190" y2="145"/>
+          </g>
+          <rect x="29" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" strokeWidth="3.5"/>
+          <rect x="71" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" strokeWidth="3.5"/>
+        </svg>
+      </div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span className="ls-d1" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
+        <span className="ls-d2" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
+        <span className="ls-d3" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
       </div>
     </div>
   );

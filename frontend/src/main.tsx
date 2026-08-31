@@ -25,7 +25,15 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+function dismissSplash() {
+  const el = document.getElementById('capa-splash');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => el.remove(), 450);
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(
   <React.StrictMode>
     <ThemeProvider>
     <QueryClientProvider client={queryClient}>
@@ -42,3 +50,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ThemeProvider>
   </React.StrictMode>
 );
+
+// Dismiss the HTML splash screen after React's first paint
+requestAnimationFrame(() => requestAnimationFrame(dismissSplash));
