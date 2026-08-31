@@ -223,13 +223,13 @@ function WavyDivider() {
   return (
     <svg viewBox="0 0 1200 60" preserveAspectRatio="none" width="100%" height="60"
       style={{ display: 'block', marginTop: -2, position: 'relative', zIndex: 2 }}>
-      {/* Fill — true black, not the content sheet's teal. var(--foreground)
-          (#0c1e1b) still reads as green-tinted (G/B channels higher than
-          R), so using a genuinely neutral black instead — matching the
-          #0a0a0a already used for the floating nav pill elsewhere on
-          this page. */}
-      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="#0a0a0a" />
-      {/* Stroke — traces only the wave curve itself, not the rectangle it closes into */}
+      {/* Fill — matches the content sheet's own teal, so the area under the
+          wave curve blends into the section it's leading into. */}
+      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--primary)" />
+      {/* Stroke — a contrasting black line tracing just the wave curve
+          itself (not the rectangle it closes into), so the boundary
+          between hero and content actually reads as a wavy line in a
+          different color, not a flat single-color band. */}
       <path d={WAVE_PATH} fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
