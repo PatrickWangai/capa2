@@ -190,80 +190,6 @@ function HowItWorksStack() {
 }
 
 // ── Preloader ─────────────────────────────────────────────────
-function usePreloader() {
-  const [pct, setPct] = useState(0);
-  const [exiting, setExiting] = useState(false);
-  const [gone, setGone] = useState(false);
-  // Sized to the actual viewport diagonal (not a fixed guess) so the wipe's
-  // growth is paced to the full transition duration on any screen size — a
-  // fixed oversized value made it swallow the screen well before the
-  // animation finished, reading as an abrupt pop instead of a grown reveal.
-  const [revealRadius, setRevealRadius] = useState(1200);
-  useEffect(() => {
-    setRevealRadius(Math.ceil(Math.hypot(window.innerWidth, window.innerHeight) / 2 * 1.08));
-  }, []);
-  useEffect(() => {
-    let p = 0;
-    const id = setInterval(() => {
-      const step = p < 60 ? 8 : p < 85 ? 4 : p < 95 ? 2 : 1;
-      p = Math.min(100, p + step);
-      setPct(p);
-      if (p >= 100) {
-        clearInterval(id);
-        setTimeout(() => setExiting(true), 150);
-        setTimeout(() => setGone(true), 650);
-      }
-    }, 70);
-    return () => clearInterval(id);
-  }, []);
-  return { pct, exiting, gone, revealRadius };
-}
-
-function Preloader() {
-  const { pct, exiting, gone, revealRadius } = usePreloader();
-  if (gone) return null;
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9998,
-      background: 'var(--primary)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      // A plain clip-path circle wipe — pure geometry, no image masking.
-      // The mask-composite (exclude/xor) technique tried before this could
-      // flash a visible square during the transition on some browser/GPU
-      // combinations: mask-size defines a *rectangular* (square, since
-      // width=height) bounding box for the icon image, and at the large
-      // sizes this reveal scales through, an imperfectly-composited frame
-      // can show that box's hard edge instead of just the icon's shape
-      // within it. clip-path: circle() has no such bounding-box to leak.
-      clipPath: exiting ? 'circle(0px at 50% 50%)' : `circle(${revealRadius}px at 50% 50%)`,
-      transition: exiting ? 'clip-path 0.45s cubic-bezier(0.6,0,0.3,1)' : 'none',
-      pointerEvents: exiting ? 'none' : 'all',
-    }}>
-      <div style={{
-        width: 72, height: 72, display: 'flex',
-        animation: exiting ? 'none' : 'preloader-spin 1.1s linear infinite',
-        transform: exiting ? 'scale(9)' : 'scale(1)',
-        opacity: exiting ? 0 : 1,
-        transition: exiting ? 'transform 0.45s cubic-bezier(0.2,0.8,0.2,1), opacity 0.35s ease 0.1s' : 'none',
-      }}>
-        {/* Filled silhouette (capa-c-icon-filled.png), not the ring badge
-            asset — the real badge is a ring with a hollow middle and
-            reads as "a ring" when scaled up this large. */}
-        <img src="/capa-c-icon-filled.png" alt="Capa" width={72} height={72} draggable={false} style={{ display: 'block' }} />
-      </div>
-      <span style={{
-        position: 'absolute', bottom: 'max(40px, env(safe-area-inset-bottom, 0px) + 24px)',
-        fontFamily: MONO, fontSize: 13, fontWeight: 700,
-        color: 'var(--foreground)', letterSpacing: '0.14em', textTransform: 'uppercase',
-        opacity: pct >= 96 ? 0 : 1,
-        transition: 'opacity 0.35s ease',
-      }}>
-        Load Capa
-      </span>
-    </div>
-  );
-}
-
 // Animated 10×10 pixel art icon — two interleaved frames that toggle
 function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?: number; color?: string; animDelay?: number }) {
   const d = animDelay;
@@ -463,7 +389,6 @@ export default function LandingPage() {
   const { display: signInText, scramble: scrambleSignIn } = useScramble('Sign In');
   return (
     <div className="force-light-theme" style={{ background: 'transparent', color: TEXT, fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
-      <Preloader />
       <style>{`
         @keyframes hero-text-in {
           from { opacity: 0; transform: translateY(24px); }
@@ -503,10 +428,6 @@ export default function LandingPage() {
           80%  { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
           100% { opacity: 0; }
         }
-        @keyframes preloader-spin {
-          to { transform: rotate(360deg); }
-        }
-
         @media (max-width: 640px) {
           .hero-content { padding: 0 20px max(80px, env(safe-area-inset-bottom, 0px) + 60px) 20px !important; }
           .hero-logo-wrap { margin-bottom: -16px !important; margin-left: -4px !important; }
