@@ -132,7 +132,6 @@ function HowItWorksStack() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const progress = useStackProgress(wrapRef);
   const n = steps.length;
-  const activeIndex = Math.min(n - 1, Math.floor(progress * n));
 
   return (
     <section ref={wrapRef} className="how-works-stack" style={{
@@ -142,7 +141,7 @@ function HowItWorksStack() {
       <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
         <div style={{
           width: '100%', padding: '0 5vw',
-          display: 'grid', gridTemplateColumns: '1fr minmax(380px, 34vw) 64px', alignItems: 'center', gap: '4vw',
+          display: 'grid', gridTemplateColumns: '1fr minmax(380px, 34vw)', alignItems: 'center', gap: '4vw',
         }}>
           {/* Persistent heading — sized to dominate the full-viewport stage */}
           <div>
@@ -183,23 +182,6 @@ function HowItWorksStack() {
                 </div>
               );
             })}
-          </div>
-
-          {/* Progress dots */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center' }}>
-            {steps.map((_, i) => (
-              <div key={i} style={{
-                width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                border: '2px solid var(--foreground)',
-                backgroundColor: i <= activeIndex ? 'var(--foreground)' : 'transparent',
-                color: i <= activeIndex ? 'var(--primary)' : 'var(--foreground)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, fontWeight: 700, fontFamily: MONO,
-                transition: 'background-color 0.2s, color 0.2s',
-              }}>
-                {i + 1}
-              </div>
-            ))}
           </div>
         </div>
       </div>
