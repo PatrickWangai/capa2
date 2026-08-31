@@ -223,8 +223,12 @@ function WavyDivider() {
   return (
     <svg viewBox="0 0 1200 60" preserveAspectRatio="none" width="100%" height="60"
       style={{ display: 'block', marginTop: -2, position: 'relative', zIndex: 2 }}>
-      {/* Fill — masks the seam with the content sheet's own background */}
-      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--primary)" />
+      {/* Fill — black rather than the content sheet's teal, since this
+          divider sits at the very top of the content sheet, which peeks
+          up from the bottom of the viewport against the dark hero on
+          first load (before any scrolling) — a teal fill there showed as
+          an unwanted wavy green strip cutting into the hero. */}
+      <path d={`${WAVE_PATH} L1200,60 L0,60 Z`} fill="var(--foreground)" />
       {/* Stroke — traces only the wave curve itself, not the rectangle it closes into */}
       <path d={WAVE_PATH} fill="none" stroke="var(--foreground)" strokeWidth="3" strokeLinecap="round" />
     </svg>
