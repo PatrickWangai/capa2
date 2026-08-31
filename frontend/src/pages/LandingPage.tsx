@@ -136,7 +136,6 @@ function HowItWorksStack() {
   return (
     <section ref={wrapRef} className="how-works-stack" style={{
       position: 'relative', height: `${n * 100}vh`, backgroundColor: 'var(--primary)',
-      borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)',
     }}>
       <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
         <div style={{
@@ -231,6 +230,19 @@ function WavyDivider() {
           between hero and content actually reads as a wavy line in a
           different color, not a flat single-color band. */}
       <path d={WAVE_PATH} fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ── Wavy section-to-section divider (inline, replaces straight borders) ──
+function SectionDivider({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" width="100%" height="32"
+      style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}>
+      <path
+        d="M0,16 C80,4 140,28 240,16 C330,5 400,26 500,14 C590,3 660,27 760,16 C850,5 940,26 1040,14 C1130,3 1260,28 1440,16"
+        fill="none" stroke="var(--foreground)" strokeWidth="2.5" strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -575,10 +587,11 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* HOW IT WORKS — scroll-pinned stacked cards on desktop, static list on mobile */}
+      <SectionDivider />
       <GlitchSection>
         <HowItWorksStack />
       </GlitchSection>
-      <section className="how-works-mobile lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px', borderTop: '2px solid var(--foreground)', borderBottom: '2px solid var(--foreground)' }}>
+      <section className="how-works-mobile lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
@@ -600,6 +613,7 @@ export default function LandingPage() {
       </section>
 
       {/* SOCIAL PROOF — bold headline + CTA on one side, icon-row detail card on the other */}
+      <SectionDivider flip />
       <GlitchSection>
         <section className="lp-section-pad trust-section" style={{ padding: '88px 24px', maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', position: 'relative' }}>
           <div>
@@ -642,8 +656,9 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
+      <SectionDivider flip />
       <GlitchSection>
-        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--primary)', padding: '88px 24px', borderTop: '2px solid var(--foreground)' }}>
+        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--primary)', padding: '88px 24px' }}>
           <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
               Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
@@ -666,7 +681,8 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* FOOTER */}
-      <footer className="lp-footer" style={{ backgroundColor: 'var(--primary)', borderTop: '2px solid var(--foreground)', padding: '48px 24px 32px' }}>
+      <SectionDivider />
+      <footer className="lp-footer" style={{ backgroundColor: 'var(--primary)', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
