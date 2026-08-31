@@ -214,19 +214,20 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
 }
 
 // ── Wavy hero→content divider ─────────────────────────────────
-// Teal bleeds UP into the dark hero with a high-amplitude organic
-// blob edge — the same filled-shape technique as Apocalypse Coffee
-// (their dark blob on orange; ours is teal on dark).
-// High control-point variance gives the chunky drip look.
+// Absolutely positioned 140 px above the content-sheet so margin
+// collapsing can't interfere. The teal blob bleeds UP into the dark
+// hero — teal-on-dark makes the wavy edge visible, same principle
+// as Apocalypse Coffee's dark blob on orange.
 const BLOB = "M0,110 C 100,52 220,128 380,68 C 520,16 640,114 820,58 C 960,10 1100,96 1260,50 C 1360,24 1410,72 1440,64";
 
 function WavyDivider() {
   return (
-    <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
-      style={{ display: 'block', marginTop: -140, position: 'relative', zIndex: 2, pointerEvents: 'none' }}>
-      {/* Teal blob pushes UP into the dark hero with organic edge */}
-      <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
-    </svg>
+    <div style={{ position: 'absolute', top: -140, left: 0, right: 0, height: 140, zIndex: 2, pointerEvents: 'none' }}>
+      <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
+        style={{ display: 'block' }}>
+        <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
+      </svg>
+    </div>
   );
 }
 
