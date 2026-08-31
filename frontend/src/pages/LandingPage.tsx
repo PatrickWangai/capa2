@@ -214,20 +214,19 @@ function PixelIcon({ size = 14, color = 'currentColor', animDelay = 0 }: { size?
 }
 
 // ── Wavy hero→content divider ─────────────────────────────────
-// Absolutely positioned 140 px above the content-sheet so margin
-// collapsing can't interfere. The teal blob bleeds UP into the dark
-// hero — teal-on-dark makes the wavy edge visible, same principle
-// as Apocalypse Coffee's dark blob on orange.
+// Regular flow element — lives at the TOP of the content sheet.
+// The content sheet background is transparent for the first 140 px
+// (gradient trick), so the hero shows through above the wave curve.
+// The wave is therefore invisible on page load and only appears as
+// the content sheet scrolls into view from the bottom.
 const BLOB = "M0,110 C 100,52 220,128 380,68 C 520,16 640,114 820,58 C 960,10 1100,96 1260,50 C 1360,24 1410,72 1440,64";
 
 function WavyDivider() {
   return (
-    <div style={{ position: 'absolute', top: -140, left: 0, right: 0, height: 140, zIndex: 2, pointerEvents: 'none' }}>
-      <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
-        style={{ display: 'block' }}>
-        <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
-      </svg>
-    </div>
+    <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
+      style={{ display: 'block', pointerEvents: 'none' }}>
+      <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
+    </svg>
   );
 }
 
@@ -557,7 +556,7 @@ export default function LandingPage() {
           margin equal to the hero's own height, so it visibly rises and
           slides over the still-pinned hero, finishing the cover exactly
           when the hero runs out of sticky slack and un-pins — no gap. */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'var(--primary)', marginTop: '-100svh' }}>
+      <div style={{ position: 'relative', zIndex: 1, background: 'linear-gradient(to bottom, transparent 140px, var(--primary) 140px)', marginTop: '-100svh' }}>
         <WavyDivider />
 
       {/* FEATURES */}
