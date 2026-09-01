@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/capa2/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/capa2/favicon-32x32.png" />
+    <link rel="manifest" href="/capa2/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Capa — Invest in Kenyan Companies </title>
+    <meta name="description" content="Capa is a regulated investment platform that lets you trade Kenyan stocks — simply, securely and affordably from anywhere." />
+    <meta name="keywords" content="invest Africa, stocks Kenya, global investment, trading platform, Nairobi Stock Exchange, M-Pesa investing" />
+    <meta name="theme-color" content="#f2f7f6" />
+
+    <!-- Open Graph (social sharing) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://capa-q1nh-fx87.onrender.com/" />
+    <meta property="og:title" content="Capa — Invest Globally " />
+    <meta property="og:description" content="Trade globaly. Real-time data, instant execution, M-Pesa deposits. Open your account in under 10 minutes." />
+    <meta property="og:image" content="https://capa-q1nh-fx87.onrender.com/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Capa — Invest Globally" />
+    <meta name="twitter:description" content="Trade global markets. Real-time data, instant execution, M-Pesa deposits." />
+    <meta name="twitter:image" content="https://capa-q1nh-fx87.onrender.com/og-image.png" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://capa-q1nh-fx87.onrender.com/" />
+
+    <!-- Performance: preconnect only to what we actually load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo:wght@700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/capa2/assets/index-mbEfOLwR.js"></script>
+    <link rel="modulepreload" crossorigin href="/capa2/assets/vendor-data-CeGPvPVJ.js">
+    <link rel="modulepreload" crossorigin href="/capa2/assets/vendor-react-Dp1ThHIu.js">
+    <link rel="modulepreload" crossorigin href="/capa2/assets/vendor-charts-Ba5bGNA5.js">
+    <link rel="stylesheet" crossorigin href="/capa2/assets/index-hLkV5NDz.css">
+  </head>
+  <body>
+    <!-- Apply saved light/dark mode before React loads to prevent a flash of the wrong theme. -->
+    <script>
+      (function(){
+        var mode = localStorage.getItem('capa-color-mode');
+        if (mode !== 'dark' && mode !== 'light') mode = 'light';
+        document.documentElement.setAttribute('data-theme', mode);
+        if (mode === 'light') document.documentElement.setAttribute('data-color-mode', 'light');
+      })();
+    </script>
+
+    <!-- GitHub Pages SPA routing fix -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      }(window.location));
+    </script>
+    <!-- Splash screen — visible before React loads, dismissed by main.tsx -->
+    <div id="capa-splash" style="position:fixed;inset:0;background:#07090f;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;z-index:99999;transition:opacity 0.45s ease;">
+      <style>
+        @keyframes splash-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        @keyframes splash-dot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+        #capa-splash .sp-icon{animation:splash-pulse 2s ease-in-out infinite}
+        #capa-splash .sp-d1{animation:splash-dot 1.4s ease-in-out infinite}
+        #capa-splash .sp-d2{animation:splash-dot 1.4s ease-in-out .22s infinite}
+        #capa-splash .sp-d3{animation:splash-dot 1.4s ease-in-out .44s infinite}
+      </style>
+      <div class="sp-icon">
+        <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
+          <!-- drop shadow -->
+          <circle cx="63" cy="63" r="50" fill="#0a0f1e"/>
+          <!-- main blue fill -->
+          <circle cx="60" cy="60" r="50" fill="#2B4FD4" stroke="#0a0f1e" stroke-width="5"/>
+          <!-- diagonal hatching clipped to circle -->
+          <clipPath id="sp-clip"><circle cx="60" cy="60" r="50"/></clipPath>
+          <g clip-path="url(#sp-clip)" stroke="white" stroke-width="5" opacity="0.22">
+            <line x1="-30" y1="10"  x2="70"  y2="145"/>
+            <line x1="-15" y1="10"  x2="85"  y2="145"/>
+            <line x1="0"   y1="10"  x2="100" y2="145"/>
+            <line x1="15"  y1="10"  x2="115" y2="145"/>
+            <line x1="30"  y1="10"  x2="130" y2="145"/>
+            <line x1="45"  y1="10"  x2="145" y2="145"/>
+            <line x1="60"  y1="10"  x2="160" y2="145"/>
+            <line x1="75"  y1="10"  x2="175" y2="145"/>
+            <line x1="90"  y1="10"  x2="190" y2="145"/>
+          </g>
+          <!-- left pause bar -->
+          <rect x="29" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" stroke-width="3.5"/>
+          <!-- right pause bar -->
+          <rect x="71" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" stroke-width="3.5"/>
+        </svg>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="sp-d1" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);display:inline-block"></span>
+        <span class="sp-d2" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);display:inline-block"></span>
+        <span class="sp-d3" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);display:inline-block"></span>
+      </div>
+    </div>
+
+    <div id="root"></div>
+  </body>
+</html>
