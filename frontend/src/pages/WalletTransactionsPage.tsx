@@ -5,13 +5,17 @@ import { api } from '../services/api';
 import { ChevronLeft, ArrowDownLeft, ArrowUpRight, ArrowRightLeft, Receipt } from 'lucide-react';
 import { PageLoader, EmptyState } from '../components/ui';
 
+// Semantic tokens rather than fixed hues: these were pastels picked for the old
+// dark blue theme and did not change between light and dark, so money-in read as
+// mint on a light background. The meaning (in = success, out = destructive) is
+// unchanged.
 const TYPE_META: Record<string, { label: string; icon: any; color: string }> = {
-  DEPOSIT:       { label: 'Deposit',    icon: ArrowDownLeft,  color: '#34d399' },
-  WITHDRAWAL:    { label: 'Withdrawal', icon: ArrowUpRight,   color: '#f87171' },
-  FX_CONVERSION: { label: 'FX Convert', icon: ArrowRightLeft, color: '#60a5fa' },
-  BUY:           { label: 'Buy',        icon: ArrowUpRight,   color: '#f87171' },
-  SELL:          { label: 'Sell',       icon: ArrowDownLeft,  color: '#34d399' },
-  DIVIDEND:      { label: 'Dividend',   icon: ArrowDownLeft,  color: '#a78bfa' },
+  DEPOSIT:       { label: 'Deposit',    icon: ArrowDownLeft,  color: 'var(--success)' },
+  WITHDRAWAL:    { label: 'Withdrawal', icon: ArrowUpRight,   color: 'var(--destructive)' },
+  FX_CONVERSION: { label: 'FX Convert', icon: ArrowRightLeft, color: 'var(--info)' },
+  BUY:           { label: 'Buy',        icon: ArrowUpRight,   color: 'var(--destructive)' },
+  SELL:          { label: 'Sell',       icon: ArrowDownLeft,  color: 'var(--success)' },
+  DIVIDEND:      { label: 'Dividend',   icon: ArrowDownLeft,  color: 'var(--chart-4)' },
 };
 
 const FLAG: Record<string, string> = { KES: '🇰🇪', USD: '🇺🇸', GBP: '🇬🇧', EUR: '🇪🇺' };

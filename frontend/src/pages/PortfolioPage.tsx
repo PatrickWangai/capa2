@@ -16,7 +16,15 @@ type SortKey = 'value' | 'name';
 type Period = '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL';
 const PERIODS: Period[] = ['1W', '1M', '3M', '6M', '1Y', 'ALL'];
 
-const COLORS = ['#2563EB', '#14B8A6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#F97316', '#06B6D4'];
+// Allocation reads in the app's own chart palette and follows light/dark, rather
+// than the blue-led set left over from the old theme. Only the first five are
+// tokens: there are five chart tokens defined, and inventing three more without
+// the palette validator to hand risks hues that collide under colour-blindness,
+// so the tail keeps the values it already shipped with.
+const COLORS = [
+  'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)',
+  '#10B981', '#F97316', '#06B6D4',
+];
 
 export default function PortfolioPage() {
   const [tab, setTab] = useState('Holdings');
