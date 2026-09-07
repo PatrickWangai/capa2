@@ -34,32 +34,32 @@ enum KycDocumentType {
 }
 
 enum Currency {
-  USD   // US Dollar
-  GBP   // British Pound
-  KES   // Kenyan Shilling
-  EUR   // Euro
-  CAD   // Canadian Dollar
-  AUD   // Australian Dollar
-  JPY   // Japanese Yen
-  CHF   // Swiss Franc
-  HKD   // Hong Kong Dollar
-  SGD   // Singapore Dollar
-  ZAR   // South African Rand
+  USD // US Dollar
+  GBP // British Pound
+  KES // Kenyan Shilling
+  EUR // Euro
+  CAD // Canadian Dollar
+  AUD // Australian Dollar
+  JPY // Japanese Yen
+  CHF // Swiss Franc
+  HKD // Hong Kong Dollar
+  SGD // Singapore Dollar
+  ZAR // South African Rand
 }
 
 enum Exchange {
-  NYSE    // New York Stock Exchange
-  NASDAQ  // Nasdaq
-  LSE     // London Stock Exchange
-  NSE     // Nairobi Securities Exchange
-  TSE     // Tokyo Stock Exchange
-  TSX     // Toronto Stock Exchange
-  ASX     // Australian Securities Exchange
-  FSE     // Frankfurt Stock Exchange
-  SIX     // SIX Swiss Exchange
-  HKEX    // Hong Kong Stock Exchange
-  SGX     // Singapore Exchange
-  JSE     // Johannesburg Stock Exchange
+  NYSE // New York Stock Exchange
+  NASDAQ // Nasdaq
+  LSE // London Stock Exchange
+  NSE // Nairobi Securities Exchange
+  TSE // Tokyo Stock Exchange
+  TSX // Toronto Stock Exchange
+  ASX // Australian Securities Exchange
+  FSE // Frankfurt Stock Exchange
+  SIX // SIX Swiss Exchange
+  HKEX // Hong Kong Stock Exchange
+  SGX // Singapore Exchange
+  JSE // Johannesburg Stock Exchange
 }
 
 enum AssetClass {
@@ -137,42 +137,44 @@ enum AdminRoleType {
 // ─── MODELS ───────────────────────────────────────────────────
 
 model User {
-  id                  String      @id @default(uuid())
-  email               String      @unique
-  phone               String?     @unique
-  passwordHash        String      @map("password_hash")
-  firstName           String      @map("first_name")
-  lastName            String      @map("last_name")
-  dateOfBirth         DateTime?   @map("date_of_birth") @db.Date
-  nationality         String?     @db.Char(2)
-  countryOfResidence  String?     @map("country_of_residence") @db.Char(2)
-  addressLine1        String?     @map("address_line1")
-  addressLine2        String?     @map("address_line2")
-  city                String?
-  postalCode          String?     @map("postal_code")
-  taxId               String?     @map("tax_id")
-  status              UserStatus  @default(PENDING)
-  kycStatus           KycStatus   @default(NOT_STARTED) @map("kyc_status")
-  mfaSecret           String?     @map("mfa_secret")
-  mfaEnabled          Boolean     @default(false) @map("mfa_enabled")
-  referralCode        String?     @unique @map("referral_code")
-  referredById        String?     @map("referred_by_id")
-  lastLoginAt         DateTime?   @map("last_login_at")
-  createdAt           DateTime    @default(now()) @map("created_at")
-  updatedAt           DateTime    @updatedAt @map("updated_at")
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  phone              String?    @unique
+  passwordHash       String     @map("password_hash")
+  firstName          String     @map("first_name")
+  lastName           String     @map("last_name")
+  dateOfBirth        DateTime?  @map("date_of_birth") @db.Date
+  nationality        String?    @db.Char(2)
+  countryOfResidence String?    @map("country_of_residence") @db.Char(2)
+  addressLine1       String?    @map("address_line1")
+  addressLine2       String?    @map("address_line2")
+  city               String?
+  postalCode         String?    @map("postal_code")
+  taxId              String?    @map("tax_id")
+  status             UserStatus @default(PENDING)
+  kycStatus          KycStatus  @default(NOT_STARTED) @map("kyc_status")
+  mfaSecret          String?    @map("mfa_secret")
+  mfaEnabled         Boolean    @default(false) @map("mfa_enabled")
+  referralCode       String?    @unique @map("referral_code")
+  referredById       String?    @map("referred_by_id")
+  lastLoginAt        DateTime?  @map("last_login_at")
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
 
-  referredBy          User?               @relation("Referrals", fields: [referredById], references: [id])
-  referrals           User[]              @relation("Referrals")
+  referredBy          User?                @relation("Referrals", fields: [referredById], references: [id])
+  referrals           User[]               @relation("Referrals")
   accounts            InvestmentAccount[]
   kycDocuments        KycDocument[]
   refreshTokens       RefreshToken[]
   notifications       Notification[]
   watchlists          Watchlist[]
   priceAlerts         PriceAlert[]
-  auditLogs           AuditLog[]          @relation("UserAudit")
-  adminAuditLogs      AuditLog[]          @relation("AdminAudit")
-  adminRole           UserRole?           @relation(name: "AdminRole")
+  auditLogs           AuditLog[]           @relation("UserAudit")
+  adminAuditLogs      AuditLog[]           @relation("AdminAudit")
+  adminRole           UserRole?            @relation(name: "AdminRole")
   savedPaymentMethods SavedPaymentMethod[]
+
+  @@index([referredById])
   @@map("users")
 }
 
@@ -188,8 +190,9 @@ model SavedPaymentMethod {
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
-  user        User          @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
+  @@index([userId])
   @@map("saved_payment_methods")
 }
 
@@ -200,7 +203,7 @@ model UserRole {
   permissions Json          @default("[]")
   createdAt   DateTime      @default(now()) @map("created_at")
 
-  user        User          @relation("AdminRole", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("AdminRole", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("admin_roles")
 }
@@ -222,111 +225,114 @@ model KycDocument {
   createdAt       DateTime        @default(now()) @map("created_at")
   updatedAt       DateTime        @updatedAt @map("updated_at")
 
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("kyc_documents")
 }
 
 model InvestmentAccount {
-  id            String    @id @default(uuid())
-  userId        String    @map("user_id")
-  accountNumber String    @unique @map("account_number")
-  baseCurrency  Currency  @default(USD) @map("base_currency")
-  isPrimary     Boolean   @default(false) @map("is_primary")
-  isActive      Boolean   @default(true) @map("is_active")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  accountNumber String   @unique @map("account_number")
+  baseCurrency  Currency @default(USD) @map("base_currency")
+  isPrimary     Boolean  @default(false) @map("is_primary")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  balances      AccountBalance[]
-  orders        Order[]
-  positions     Position[]
-  transactions    Transaction[]
-  dividendPays        DividendPayment[]
-  conversions         CurrencyConversion[]
-  portfolioSnapshots  PortfolioSnapshot[]
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balances           AccountBalance[]
+  orders             Order[]
+  positions          Position[]
+  transactions       Transaction[]
+  dividendPays       DividendPayment[]
+  conversions        CurrencyConversion[]
+  portfolioSnapshots PortfolioSnapshot[]
 
+  @@index([userId])
   @@map("investment_accounts")
 }
 
 model AccountBalance {
-  id          String    @id @default(uuid())
-  accountId   String    @map("account_id")
-  currency    Currency
-  available   Decimal   @default(0) @db.Decimal(20, 6)
-  reserved    Decimal   @default(0) @db.Decimal(20, 6)
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  accountId String   @map("account_id")
+  currency  Currency
+  available Decimal  @default(0) @db.Decimal(20, 6)
+  reserved  Decimal  @default(0) @db.Decimal(20, 6)
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  account     InvestmentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account InvestmentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@unique([accountId, currency])
   @@map("account_balances")
 }
 
 model Asset {
-  id            String      @id @default(uuid())
-  symbol        String
-  exchange      Exchange
-  name          String
-  assetClass    AssetClass  @default(STOCK) @map("asset_class")
-  currency      Currency
-  isin          String?     @db.Char(12)
-  sector        String?
-  industry      String?
-  description   String?
-  logoUrl       String?     @map("logo_url")
-  isActive      Boolean     @default(true) @map("is_active")
-  isFractional  Boolean     @default(false) @map("is_fractional")
-  minOrderSize  Decimal     @default(1) @map("min_order_size") @db.Decimal(10, 6)
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
+  id           String     @id @default(uuid())
+  symbol       String
+  exchange     Exchange
+  name         String
+  assetClass   AssetClass @default(STOCK) @map("asset_class")
+  currency     Currency
+  isin         String?    @db.Char(12)
+  sector       String?
+  industry     String?
+  description  String?
+  logoUrl      String?    @map("logo_url")
+  isActive     Boolean    @default(true) @map("is_active")
+  isFractional Boolean    @default(false) @map("is_fractional")
+  minOrderSize Decimal    @default(1) @map("min_order_size") @db.Decimal(10, 6)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
 
-  price         AssetPrice?
-  priceHistory  PriceHistory[]
-  orders        Order[]
-  positions     Position[]
-  dividends     Dividend[]
+  price          AssetPrice?
+  priceHistory   PriceHistory[]
+  orders         Order[]
+  positions      Position[]
+  dividends      Dividend[]
   watchlistItems WatchlistItem[]
-  priceAlerts   PriceAlert[]
+  priceAlerts    PriceAlert[]
+
   @@unique([symbol, exchange])
   @@map("assets")
 }
 
 model AssetPrice {
-  id              String    @id @default(uuid())
-  assetId         String    @unique @map("asset_id")
-  price           Decimal   @db.Decimal(20, 6)
-  open            Decimal?  @db.Decimal(20, 6)
-  high            Decimal?  @db.Decimal(20, 6)
-  low             Decimal?  @db.Decimal(20, 6)
-  previousClose   Decimal?  @map("previous_close") @db.Decimal(20, 6)
-  changeAmount    Decimal?  @map("change_amount") @db.Decimal(20, 6)
-  changePercent   Decimal?  @map("change_percent") @db.Decimal(8, 4)
-  volume          BigInt?
-  marketCap       Decimal?  @map("market_cap") @db.Decimal(24, 2)
-  peRatio         Decimal?  @map("pe_ratio") @db.Decimal(10, 4)
-  dividendYield   Decimal?  @map("dividend_yield") @db.Decimal(6, 4)
-  weekHigh52      Decimal?  @map("week_high_52") @db.Decimal(20, 6)
-  weekLow52       Decimal?  @map("week_low_52") @db.Decimal(20, 6)
-  fetchedAt       DateTime  @default(now()) @map("fetched_at")
+  id            String   @id @default(uuid())
+  assetId       String   @unique @map("asset_id")
+  price         Decimal  @db.Decimal(20, 6)
+  open          Decimal? @db.Decimal(20, 6)
+  high          Decimal? @db.Decimal(20, 6)
+  low           Decimal? @db.Decimal(20, 6)
+  previousClose Decimal? @map("previous_close") @db.Decimal(20, 6)
+  changeAmount  Decimal? @map("change_amount") @db.Decimal(20, 6)
+  changePercent Decimal? @map("change_percent") @db.Decimal(8, 4)
+  volume        BigInt?
+  marketCap     Decimal? @map("market_cap") @db.Decimal(24, 2)
+  peRatio       Decimal? @map("pe_ratio") @db.Decimal(10, 4)
+  dividendYield Decimal? @map("dividend_yield") @db.Decimal(6, 4)
+  weekHigh52    Decimal? @map("week_high_52") @db.Decimal(20, 6)
+  weekLow52     Decimal? @map("week_low_52") @db.Decimal(20, 6)
+  fetchedAt     DateTime @default(now()) @map("fetched_at")
 
-  asset           Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@map("asset_prices")
 }
 
 model PriceHistory {
-  id          String    @id @default(uuid())
-  assetId     String    @map("asset_id")
-  interval    String    // 1m, 5m, 1h, 1d, 1w
-  openTime    DateTime  @map("open_time")
-  open        Decimal   @db.Decimal(20, 6)
-  high        Decimal   @db.Decimal(20, 6)
-  low         Decimal   @db.Decimal(20, 6)
-  close       Decimal   @db.Decimal(20, 6)
-  volume      BigInt?
+  id       String   @id @default(uuid())
+  assetId  String   @map("asset_id")
+  interval String // 1m, 5m, 1h, 1d, 1w
+  openTime DateTime @map("open_time")
+  open     Decimal  @db.Decimal(20, 6)
+  high     Decimal  @db.Decimal(20, 6)
+  low      Decimal  @db.Decimal(20, 6)
+  close    Decimal  @db.Decimal(20, 6)
+  volume   BigInt?
 
-  asset       Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@unique([assetId, interval, openTime])
   @@index([assetId, interval, openTime(sort: Desc)])
@@ -334,52 +340,53 @@ model PriceHistory {
 }
 
 model Order {
-  id              String      @id @default(uuid())
-  accountId       String      @map("account_id")
-  assetId         String      @map("asset_id")
-  orderType       OrderType   @default(MARKET) @map("order_type")
-  side            OrderSide
-  status          OrderStatus @default(PENDING)
-  quantity        Decimal     @db.Decimal(20, 6)
-  filledQuantity  Decimal     @default(0) @map("filled_quantity") @db.Decimal(20, 6)
-  limitPrice      Decimal?    @map("limit_price") @db.Decimal(20, 6)
-  stopPrice       Decimal?    @map("stop_price") @db.Decimal(20, 6)
-  avgFillPrice    Decimal?    @map("avg_fill_price") @db.Decimal(20, 6)
-  estimatedTotal  Decimal?    @map("estimated_total") @db.Decimal(20, 6)
-  filledTotal     Decimal?    @map("filled_total") @db.Decimal(20, 6)
-  currency        Currency
-  fee             Decimal     @default(0) @db.Decimal(20, 6)
-  brokerOrderId   String?     @map("broker_order_id")
-  notes           String?
-  expiresAt       DateTime?   @map("expires_at")
-  filledAt        DateTime?   @map("filled_at")
-  cancelledAt     DateTime?   @map("cancelled_at")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
+  id             String      @id @default(uuid())
+  accountId      String      @map("account_id")
+  assetId        String      @map("asset_id")
+  orderType      OrderType   @default(MARKET) @map("order_type")
+  side           OrderSide
+  status         OrderStatus @default(PENDING)
+  quantity       Decimal     @db.Decimal(20, 6)
+  filledQuantity Decimal     @default(0) @map("filled_quantity") @db.Decimal(20, 6)
+  limitPrice     Decimal?    @map("limit_price") @db.Decimal(20, 6)
+  stopPrice      Decimal?    @map("stop_price") @db.Decimal(20, 6)
+  avgFillPrice   Decimal?    @map("avg_fill_price") @db.Decimal(20, 6)
+  estimatedTotal Decimal?    @map("estimated_total") @db.Decimal(20, 6)
+  filledTotal    Decimal?    @map("filled_total") @db.Decimal(20, 6)
+  currency       Currency
+  fee            Decimal     @default(0) @db.Decimal(20, 6)
+  brokerOrderId  String?     @map("broker_order_id")
+  notes          String?
+  expiresAt      DateTime?   @map("expires_at")
+  filledAt       DateTime?   @map("filled_at")
+  cancelledAt    DateTime?   @map("cancelled_at")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
 
-  account         InvestmentAccount   @relation(fields: [accountId], references: [id])
-  asset           Asset               @relation(fields: [assetId], references: [id])
-  transactions    Transaction[]
+  account      InvestmentAccount @relation(fields: [accountId], references: [id])
+  asset        Asset             @relation(fields: [assetId], references: [id])
+  transactions Transaction[]
 
   @@index([accountId])
   @@index([status])
   @@index([createdAt(sort: Desc)])
+  @@index([assetId])
   @@map("orders")
 }
 
 model Position {
-  id              String    @id @default(uuid())
-  accountId       String    @map("account_id")
-  assetId         String    @map("asset_id")
-  quantity        Decimal   @default(0) @db.Decimal(20, 6)
-  avgCostPrice    Decimal   @map("avg_cost_price") @db.Decimal(20, 6)
-  totalInvested   Decimal   @map("total_invested") @db.Decimal(20, 6)
-  realizedPnl     Decimal   @default(0) @map("realized_pnl") @db.Decimal(20, 6)
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  accountId     String   @map("account_id")
+  assetId       String   @map("asset_id")
+  quantity      Decimal  @default(0) @db.Decimal(20, 6)
+  avgCostPrice  Decimal  @map("avg_cost_price") @db.Decimal(20, 6)
+  totalInvested Decimal  @map("total_invested") @db.Decimal(20, 6)
+  realizedPnl   Decimal  @default(0) @map("realized_pnl") @db.Decimal(20, 6)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  account         InvestmentAccount   @relation(fields: [accountId], references: [id])
-  asset           Asset               @relation(fields: [assetId], references: [id])
+  account          InvestmentAccount @relation(fields: [accountId], references: [id])
+  asset            Asset             @relation(fields: [assetId], references: [id])
   dividendPayments DividendPayment[]
 
   @@unique([accountId, assetId])
@@ -403,53 +410,55 @@ model Transaction {
   createdAt   DateTime          @default(now()) @map("created_at")
   updatedAt   DateTime          @updatedAt @map("updated_at")
 
-  account             InvestmentAccount   @relation(fields: [accountId], references: [id])
-  order               Order?              @relation(fields: [orderId], references: [id])
-  paymentInstruction  PaymentInstruction?
+  account            InvestmentAccount   @relation(fields: [accountId], references: [id])
+  order              Order?              @relation(fields: [orderId], references: [id])
+  paymentInstruction PaymentInstruction?
 
   @@index([accountId])
   @@index([type])
   @@index([createdAt(sort: Desc)])
+  @@index([orderId])
   @@map("transactions")
 }
 
 model PaymentInstruction {
-  id              String            @id @default(uuid())
-  transactionId   String            @unique @map("transaction_id")
-  paymentMethod   PaymentMethod     @map("payment_method")
-  direction       String            // 'in' | 'out'
-  amount          Decimal           @db.Decimal(20, 6)
-  currency        Currency
-  status          TransactionStatus @default(PENDING)
-  providerRef     String?           @map("provider_ref")
-  bankName        String?           @map("bank_name")
-  bankAccount     String?           @map("bank_account")
-  bankCode        String?           @map("bank_code")
-  phoneNumber     String?           @map("phone_number")
-  confirmedAt     DateTime?         @map("confirmed_at")
-  metadata        Json              @default("{}")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  id            String            @id @default(uuid())
+  transactionId String            @unique @map("transaction_id")
+  paymentMethod PaymentMethod     @map("payment_method")
+  direction     String // 'in' | 'out'
+  amount        Decimal           @db.Decimal(20, 6)
+  currency      Currency
+  status        TransactionStatus @default(PENDING)
+  providerRef   String?           @map("provider_ref")
+  bankName      String?           @map("bank_name")
+  bankAccount   String?           @map("bank_account")
+  bankCode      String?           @map("bank_code")
+  phoneNumber   String?           @map("phone_number")
+  confirmedAt   DateTime?         @map("confirmed_at")
+  metadata      Json              @default("{}")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
 
-  transaction     Transaction       @relation(fields: [transactionId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
 
   @@map("payment_instructions")
 }
 
 model Dividend {
-  id                String    @id @default(uuid())
-  assetId           String    @map("asset_id")
-  exDividendDate    DateTime  @map("ex_dividend_date") @db.Date
-  recordDate        DateTime? @map("record_date") @db.Date
-  payDate           DateTime? @map("pay_date") @db.Date
-  amountPerShare    Decimal   @map("amount_per_share") @db.Decimal(12, 6)
-  currency          Currency
-  dividendType      String    @default("regular") @map("dividend_type")
-  createdAt         DateTime  @default(now()) @map("created_at")
+  id             String    @id @default(uuid())
+  assetId        String    @map("asset_id")
+  exDividendDate DateTime  @map("ex_dividend_date") @db.Date
+  recordDate     DateTime? @map("record_date") @db.Date
+  payDate        DateTime? @map("pay_date") @db.Date
+  amountPerShare Decimal   @map("amount_per_share") @db.Decimal(12, 6)
+  currency       Currency
+  dividendType   String    @default("regular") @map("dividend_type")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
-  asset             Asset             @relation(fields: [assetId], references: [id])
-  payments          DividendPayment[]
+  asset    Asset             @relation(fields: [assetId], references: [id])
+  payments DividendPayment[]
 
+  @@index([assetId])
   @@map("dividends")
 }
 
@@ -467,36 +476,41 @@ model DividendPayment {
   paidAt      DateTime?         @map("paid_at")
   createdAt   DateTime          @default(now()) @map("created_at")
 
-  dividend    Dividend          @relation(fields: [dividendId], references: [id])
-  account     InvestmentAccount @relation(fields: [accountId], references: [id])
-  position    Position          @relation(fields: [positionId], references: [id])
+  dividend Dividend          @relation(fields: [dividendId], references: [id])
+  account  InvestmentAccount @relation(fields: [accountId], references: [id])
+  position Position          @relation(fields: [positionId], references: [id])
 
+  @@index([dividendId])
+  @@index([accountId])
+  @@index([positionId])
   @@map("dividend_payments")
 }
 
 model Watchlist {
-  id          String          @id @default(uuid())
-  userId      String          @map("user_id")
-  name        String          @default("My Watchlist")
-  isDefault   Boolean         @default(false) @map("is_default")
-  createdAt   DateTime        @default(now()) @map("created_at")
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String   @default("My Watchlist")
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at")
 
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items       WatchlistItem[]
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items WatchlistItem[]
 
+  @@index([userId])
   @@map("watchlists")
 }
 
 model WatchlistItem {
-  id            String    @id @default(uuid())
-  watchlistId   String    @map("watchlist_id")
-  assetId       String    @map("asset_id")
-  addedAt       DateTime  @default(now()) @map("added_at")
+  id          String   @id @default(uuid())
+  watchlistId String   @map("watchlist_id")
+  assetId     String   @map("asset_id")
+  addedAt     DateTime @default(now()) @map("added_at")
 
-  watchlist     Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
-  asset         Asset     @relation(fields: [assetId], references: [id])
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  asset     Asset     @relation(fields: [assetId], references: [id])
 
   @@unique([watchlistId, assetId])
+  @@index([assetId])
   @@map("watchlist_items")
 }
 
@@ -504,48 +518,50 @@ model PriceAlert {
   id            String    @id @default(uuid())
   userId        String    @map("user_id")
   assetId       String    @map("asset_id")
-  condition     String    // 'above' | 'below' | 'percent_change'
+  condition     String // 'above' | 'below' | 'percent_change'
   targetPrice   Decimal?  @map("target_price") @db.Decimal(20, 6)
   percentChange Decimal?  @map("percent_change") @db.Decimal(6, 2)
   isActive      Boolean   @default(true) @map("is_active")
   triggeredAt   DateTime? @map("triggered_at")
   createdAt     DateTime  @default(now()) @map("created_at")
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  asset         Asset     @relation(fields: [assetId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id])
 
+  @@index([userId])
+  @@index([assetId])
   @@map("price_alerts")
 }
 
 model Notification {
-  id          String            @id @default(uuid())
-  userId      String            @map("user_id")
-  type        NotificationType
-  title       String
-  body        String
-  metadata    Json              @default("{}")
-  isRead      Boolean           @default(false) @map("is_read")
-  sentPush    Boolean           @default(false) @map("sent_push")
-  sentEmail   Boolean           @default(false) @map("sent_email")
-  createdAt   DateTime          @default(now()) @map("created_at")
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  title     String
+  body      String
+  metadata  Json             @default("{}")
+  isRead    Boolean          @default(false) @map("is_read")
+  sentPush  Boolean          @default(false) @map("sent_push")
+  sentEmail Boolean          @default(false) @map("sent_email")
+  createdAt DateTime         @default(now()) @map("created_at")
 
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead, createdAt(sort: Desc)])
   @@map("notifications")
 }
 
 model RefreshToken {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
-  tokenHash   String    @unique @map("token_hash")
-  deviceInfo  String?   @map("device_info")
-  ipAddress   String?   @map("ip_address")
-  expiresAt   DateTime  @map("expires_at")
-  revokedAt   DateTime? @map("revoked_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  tokenHash  String    @unique @map("token_hash")
+  deviceInfo String?   @map("device_info")
+  ipAddress  String?   @map("ip_address")
+  expiresAt  DateTime  @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("refresh_tokens")
@@ -553,22 +569,22 @@ model RefreshToken {
 
 // Tracks every multi-currency conversion for regulatory & user history.
 model CurrencyConversion {
-  id            String    @id @default(uuid())
-  accountId     String    @map("account_id")
-  fromCurrency  Currency  @map("from_currency")
-  toCurrency    Currency  @map("to_currency")
-  fromAmount    Decimal   @map("from_amount")   @db.Decimal(20, 6)
-  toAmount      Decimal   @map("to_amount")     @db.Decimal(20, 6)
-  rate          Decimal   @db.Decimal(16, 8)
-  midRate       Decimal?  @map("mid_rate")      @db.Decimal(16, 8)  // interbank mid rate
-  spread        Decimal   @default(0)           @db.Decimal(8, 6)   // spread as decimal fraction
-  fee           Decimal   @default(0)           @db.Decimal(20, 6)
-  feeCurrency   Currency  @map("fee_currency")
-  reference     String?   @unique               // human-readable ref e.g. FX-20260717-XXXXX
-  provider      String    @default("mock")      // fx provider name
-  createdAt     DateTime  @default(now())       @map("created_at")
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  fromCurrency Currency @map("from_currency")
+  toCurrency   Currency @map("to_currency")
+  fromAmount   Decimal  @map("from_amount") @db.Decimal(20, 6)
+  toAmount     Decimal  @map("to_amount") @db.Decimal(20, 6)
+  rate         Decimal  @db.Decimal(16, 8)
+  midRate      Decimal? @map("mid_rate") @db.Decimal(16, 8) // interbank mid rate
+  spread       Decimal  @default(0) @db.Decimal(8, 6) // spread as decimal fraction
+  fee          Decimal  @default(0) @db.Decimal(20, 6)
+  feeCurrency  Currency @map("fee_currency")
+  reference    String?  @unique // human-readable ref e.g. FX-20260717-XXXXX
+  provider     String   @default("mock") // fx provider name
+  createdAt    DateTime @default(now()) @map("created_at")
 
-  account       InvestmentAccount @relation(fields: [accountId], references: [id])
+  account InvestmentAccount @relation(fields: [accountId], references: [id])
 
   @@index([accountId, createdAt(sort: Desc)])
   @@map("currency_conversions")
@@ -576,15 +592,15 @@ model CurrencyConversion {
 
 // Snapshots portfolio total value daily for charting / performance history.
 model PortfolioSnapshot {
-  id          String    @id @default(uuid())
-  accountId   String    @map("account_id")
-  totalValue  Decimal   @map("total_value")  @db.Decimal(20, 6)
-  cashValue   Decimal   @map("cash_value")   @db.Decimal(20, 6)
-  equityValue Decimal   @map("equity_value") @db.Decimal(20, 6)
-  currency    Currency  @default(USD)
-  snapshotAt  DateTime  @map("snapshot_at")
+  id          String   @id @default(uuid())
+  accountId   String   @map("account_id")
+  totalValue  Decimal  @map("total_value") @db.Decimal(20, 6)
+  cashValue   Decimal  @map("cash_value") @db.Decimal(20, 6)
+  equityValue Decimal  @map("equity_value") @db.Decimal(20, 6)
+  currency    Currency @default(USD)
+  snapshotAt  DateTime @map("snapshot_at")
 
-  account     InvestmentAccount @relation(fields: [accountId], references: [id])
+  account InvestmentAccount @relation(fields: [accountId], references: [id])
 
   @@unique([accountId, snapshotAt])
   @@index([accountId, snapshotAt(sort: Desc)])
@@ -592,21 +608,22 @@ model PortfolioSnapshot {
 }
 
 model AuditLog {
-  id          String    @id @default(uuid())
-  userId      String?   @map("user_id")
-  adminId     String?   @map("admin_id")
-  action      String
-  entityType  String?   @map("entity_type")
-  entityId    String?   @map("entity_id")
-  oldValues   Json?     @map("old_values")
-  newValues   Json?     @map("new_values")
-  ipAddress   String?   @map("ip_address")
-  userAgent   String?   @map("user_agent")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  adminId    String?  @map("admin_id")
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  oldValues  Json?    @map("old_values")
+  newValues  Json?    @map("new_values")
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  user        User?     @relation("UserAudit", fields: [userId], references: [id])
-  admin       User?     @relation("AdminAudit", fields: [adminId], references: [id])
+  user  User? @relation("UserAudit", fields: [userId], references: [id])
+  admin User? @relation("AdminAudit", fields: [adminId], references: [id])
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([adminId])
   @@map("audit_logs")
 }

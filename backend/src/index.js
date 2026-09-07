@@ -21,6 +21,11 @@ import logger from './utils/logger.js';
 import { prisma } from './utils/db.js';
 import { redis } from './utils/redis.js';
 import { initSentry, Sentry, sentryEnabled } from './utils/sentry.js';
+import { checkEnvironment } from './config/env.js';
+
+// Before anything else: a half-configured money service that answers
+// requests is worse than one that is plainly down.
+checkEnvironment();
 
 initSentry();
 import authRoutes from './routes/auth.js';
@@ -197,9 +202,6 @@ const PORT = process.env.PORT || 4000;
 (async () => {
   await prisma.$connect();
   logger.info('PostgreSQL connected via Prisma');
-  if (!process.env.ADMIN_PASSWORD)  logger.warn('ADMIN_PASSWORD is not set — admin account uses the default password');
-  if (!process.env.ADMIN2_PASSWORD) logger.warn('ADMIN2_PASSWORD is not set — second admin account uses the default password');
-  if (!process.env.MPESA_WEBHOOK_SECRET) logger.warn('MPESA_WEBHOOK_SECRET is not set — M-Pesa webhook accepts unauthenticated callbacks');
   setupSocketHandlers(io);
   // Not awaited: startPriceFeed's initial fetch loop calls the Yahoo
   // Finance API once per active asset, sequentially, with no per-call
