@@ -180,7 +180,7 @@ export default function PortfolioPage() {
               <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false}
                 tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} width={44} />
               <Tooltip
-                contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: 'var(--surface-dark)', border: '1px solid var(--surface-dark-border)', borderRadius: 8, fontSize: 12 }}
                 formatter={(v: any) => [`$${Number(v).toLocaleString('en', { minimumFractionDigits: 2 })}`, 'Value']}
               />
               <Area type="monotone" dataKey="value" stroke={chartColor} strokeWidth={2} fill="url(#portGrad)" dot={false} />
@@ -325,7 +325,7 @@ export default function PortfolioPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
+                      contentStyle={{ background: 'var(--surface-dark)', border: '1px solid var(--surface-dark-border)', borderRadius: 8 }}
                       formatter={(v: any, _: any, props: any) => [`$${Number(v).toFixed(2)}`, props.payload.name]}
                     />
                   </PieChart>

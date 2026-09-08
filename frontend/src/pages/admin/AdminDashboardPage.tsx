@@ -32,7 +32,7 @@ function MiniChart({ data, dataKey, color, label, formatter }: {
         <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} width={32}
           tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
         <Tooltip
-          contentStyle={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, fontSize: 11 }}
+          contentStyle={{ background: 'var(--surface-dark)', border: '1px solid var(--surface-dark-border)', borderRadius: 8, fontSize: 11 }}
           formatter={(v: any) => [formatter ? formatter(v) : v, label]}
           labelFormatter={d => d}
         />

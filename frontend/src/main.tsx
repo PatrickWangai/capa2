@@ -35,7 +35,7 @@ root.render(
       <Toaster
         position="top-right"
         toastOptions={{
-          style: { background: '#1f2937', color: '#f9fafb', border: '1px solid #374151' },
+          style: { background: 'var(--surface-dark)', color: 'var(--surface-dark-foreground)', border: '1px solid var(--surface-dark-border)' },
           success: { iconTheme: { primary: '#28976d', secondary: '#fff' } },
         }}
       />

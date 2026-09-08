@@ -157,8 +157,8 @@ function HowItWorksStack() {
                   position: 'absolute', inset: 0,
                   transform: `translate(${i * 20}px, ${i * 16 + translateY}px)`,
                   zIndex: i + 1,
-                  backgroundColor: '#07130f',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  backgroundColor: 'var(--surface-dark)',
+                  border: '1px solid var(--surface-dark-border)',
                   borderRadius: 'var(--radius)',
                   boxShadow: `${8 + i * 4}px ${8 + i * 4}px 0 0 rgba(0,0,0,0.55)`,
                   padding: '0 44px',
@@ -166,7 +166,7 @@ function HowItWorksStack() {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 28 }}>
                     <div style={{ width: 60, height: 60, borderRadius: 10, backgroundColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={28} color="#07130f" strokeWidth={2} />
+                      <Icon size={28} color="var(--surface-dark)" strokeWidth={2} />
                     </div>
                     <span style={{ fontFamily: 'var(--font-display)', fontSize: 52, fontWeight: 900, color: 'var(--primary)', lineHeight: 1 }}>{num}</span>
                   </div>
@@ -274,7 +274,7 @@ function FloatingNav() {
           never bleeds/ghosts through it. */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: '#0a0a0a',
+        background: 'var(--surface-dark)',
         borderRadius: 4, border: '1px solid rgba(255,255,255,0.08)',
         pointerEvents: 'none', zIndex: 0,
       }} />
@@ -497,7 +497,7 @@ export default function LandingPage() {
           appearing after an ordinary scroll cut. */}
       <div style={{ position: 'relative', height: '200svh', minHeight: 1200 }}>
         <div style={{ position: 'sticky', top: 0, zIndex: 0, height: '100svh', minHeight: 600, overflow: 'hidden' }}>
-        <section style={{ position: 'relative', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', background: '#060d1f' }}>
+        <section style={{ position: 'relative', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', background: 'var(--surface-dark)' }}>
 
           {/* Background video */}
           <video
