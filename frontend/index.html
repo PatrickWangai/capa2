@@ -7,7 +7,11 @@
          Firefox from downloading it and using it in place of the SVG. -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Deliberately not linked: Safari was picking apple-touch-icon for the
+         tab icon, which is a solid blue tile, so the tab never showed the
+         transparent mark. iOS still finds /apple-touch-icon.png by
+         convention at the site root without a link tag, so the home-screen
+         icon is unaffected. -->
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
