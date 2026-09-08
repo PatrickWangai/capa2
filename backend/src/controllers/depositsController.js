@@ -2,6 +2,27 @@ import crypto from 'crypto';
 import { prisma } from '../utils/db.js';
 import { initiateMpesaSTKPush } from '../services/mpesaService.js';
 import Decimal from 'decimal.js';
+import logger from '../utils/logger.js';
+
+/**
+ * The customer is told where to send their money, so a fallback here means
+ * telling them to wire it to a placeholder. Returns null rather than inventing
+ * an account number; the caller refuses the request instead.
+ */
+function configuredBankDetails() {
+  const bankName = process.env.BANK_NAME;
+  const accountName = process.env.BANK_ACCOUNT_NAME;
+  const accountNumber = process.env.BANK_ACCOUNT_NO;
+  const unusable = (v) => !v || !v.trim() || /^x+$/i.test(v.trim());
+  if (unusable(bankName) || unusable(accountName) || unusable(accountNumber)) return null;
+  return {
+    bankName,
+    accountName,
+    accountNumber,
+    branch: process.env.BANK_BRANCH || '',
+    paybill: process.env.BANK_PAYBILL || '',
+  };
+}
 
 // POST /api/deposits/mpesa
 export async function mpesaDeposit(req, res) {
@@ -27,6 +48,15 @@ export async function mpesaDeposit(req, res) {
 // POST /api/deposits/bank
 export async function bankDeposit(req, res) {
   const { amount, currency = 'USD', bankName, bankAccount } = req.body;
+
+  // Checked before anything is written: without real instructions to hand back
+  // there is no point creating a PENDING transaction the customer cannot act on.
+  const bank = configuredBankDetails();
+  if (!bank) {
+    logger.error('Bank transfer deposit refused — BANK_NAME / BANK_ACCOUNT_NAME / BANK_ACCOUNT_NO are not configured');
+    return res.status(503).json({ error: 'Bank transfer deposits are temporarily unavailable. Please use M-Pesa, or contact support.' });
+  }
+
   const account = await prisma.investmentAccount.findFirst({ where: { userId: req.user.id, isPrimary: true } });
   if (!account) return res.status(404).json({ error: 'No active account found.' });
 
@@ -41,11 +71,7 @@ export async function bankDeposit(req, res) {
   res.json({
     transaction: tx,
     bankDetails: {
-      bankName:      process.env.BANK_NAME        || 'Capa Custodian Bank',
-      accountName:   process.env.BANK_ACCOUNT_NAME || 'Capa Investments Ltd',
-      accountNumber: process.env.BANK_ACCOUNT_NO   || 'XXXXXXXXXXXX',
-      branch:        process.env.BANK_BRANCH        || '',
-      paybill:       process.env.BANK_PAYBILL       || '',
+      ...bank,
       reference: `BT-${tx.id.slice(0, 8).toUpperCase()}`,
       amount,
       currency,

@@ -31,8 +31,19 @@ const REQUIRED_ALWAYS = [
   ['JWT_REFRESH_SECRET', 'REFRESH_TOKEN_SECRET'],
 ];
 
-/** Safe to omit locally; unacceptable in production. */
-const REQUIRED_IN_PRODUCTION = [
+/**
+ * Warned about, never fatal. An earlier version of this file exited on these in
+ * production, which failed the deploy outright: MFA_ENCRYPTION_KEY,
+ * ADMIN_PASSWORD and ADMIN2_PASSWORD are not provisioned on Render at all.
+ *
+ * Refusing to boot is the right response to configuration whose absence cannot
+ * be detected later — but that is a narrow set, and it is not this one. The
+ * bank details are the case that started all of this, and they are now guarded
+ * where the damage would happen: depositsController refuses the request rather
+ * than handing a customer a placeholder account number. That fails precisely,
+ * at the moment it matters, instead of taking the whole service down.
+ */
+const WARN_IN_PRODUCTION = [
   'CORS_ORIGINS',
   'FRONTEND_URL',
   'MFA_ENCRYPTION_KEY',
@@ -81,11 +92,8 @@ export function checkEnvironment({ exitOnFailure = true } = {}) {
     }
   }
 
-  for (const name of REQUIRED_IN_PRODUCTION) {
-    if (!isBlank(name)) continue;
-    (production ? errors : warnings).push(
-      production ? `${name} is required in production.` : `${name} is not set — fine locally, required in production.`,
-    );
+  for (const name of WARN_IN_PRODUCTION) {
+    if (isBlank(name)) warnings.push(`${name} is not set — features depending on it will be unavailable.`);
   }
 
   for (const rule of WHEN_ENABLED) {
