@@ -403,6 +403,10 @@ export default function LandingPage() {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
+        @keyframes hero-text-fade {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
         .hero-text { animation: hero-text-in 0.9s ease both; }
         .hero-text-1 { animation-delay: 2.5s; }
         .hero-text-2 { animation-delay: 2.75s; }
@@ -434,6 +438,11 @@ export default function LandingPage() {
           100% { opacity: 0; }
         }
         @media (max-width: 640px) {
+          /* Fade only, no translate: hero-text-in slid everything up 24px, and
+             the button row runs it on a 3s delay — so on a phone the Start and
+             Sign in buttons visibly jumped three seconds after the page had
+             settled. They now appear where they will stay. */
+          .hero-text { animation-name: hero-text-fade !important; }
           .hero-content { padding: 0 20px max(80px, env(safe-area-inset-bottom, 0px) + 60px) 20px !important; }
           .hero-logo-wrap { margin-bottom: -16px !important; margin-left: -4px !important; }
           .hero-logo-wrap img { width: min(110px, 55vw) !important; height: auto !important; }
@@ -528,8 +537,16 @@ export default function LandingPage() {
               <CapaLogo size={130} className="capa-logo-on-dark" />
             </div>
 
-            <p className="hero-text hero-text-2 hero-subtitle" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif", fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', minHeight: '1.5em' }}>
-              {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
+            {/* The full sentence is rendered hidden to reserve its final wrapped
+                height, with the typed text laid over it. minHeight of 1.5em only
+                ever reserved one line, so on narrow screens — where this wraps to
+                three or four — the paragraph grew as it typed and pushed the
+                buttons below it down the page on every line break. */}
+            <p className="hero-text hero-text-2 hero-subtitle" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif", fontSize: 18, fontWeight: 400, color: SEC, lineHeight: 1.55, maxWidth: 460, margin: '0 0 28px', position: 'relative' }}>
+              <span aria-hidden="true" style={{ visibility: 'hidden' }}>{HERO_TEXT}</span>
+              <span style={{ position: 'absolute', inset: 0 }}>
+                {typedText}<span style={{ display: 'inline-block', width: 2, height: '1em', background: typedText.length < HERO_TEXT.length ? SEC : 'transparent', marginLeft: 2, verticalAlign: 'middle', animation: typedText.length < HERO_TEXT.length ? 'cursor-blink 0.9s step-end infinite' : 'none' }} />
+              </span>
             </p>
 
             <div className="hero-text hero-text-3 hero-buttons" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>

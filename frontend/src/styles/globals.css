@@ -583,6 +583,17 @@ body::before {
   animation: route-reveal-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* On phones the route transition fades without sliding. The 12px translate
+   moves the whole page, so anything the eye is resting on — the hero's Start
+   and Sign in buttons in particular — visibly shifts on every navigation. */
+@keyframes route-reveal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (max-width: 640px) {
+  .route-reveal { animation-name: route-reveal-fade; }
+}
+
 /* ── Components — bold flat borders, no glass/blur, sharp-ish corners,
    matches the CRM's Card/Button/Input treatment. ── */
 .card {
