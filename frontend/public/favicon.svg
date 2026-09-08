@@ -1,10 +1,10 @@
 <svg viewBox="-60 -60 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capa">
-  <!-- Transparent ground and no black anywhere: the mark is the logo's own blue,
-       which reads on a light tab bar and a dark one alike. An earlier version
-       drew it in #0a0f1e on light chrome, which is black in all but name — and
-       it disagreed with the raster fallbacks, so Chrome and Safari showed
-       different colours. One colour, every browser. -->
+  <!-- White mark on a transparent ground. Note this is invisible against light
+       browser chrome; the tile that used to make it legible there is gone by
+       request. apple-touch-icon and the android icons keep their solid ground,
+       because those are composited onto a home-screen tile where transparency
+       renders as a white or black box. -->
   <path d="M 40.6 11.7 A 42.25 42.25 0 1 1 40.6 -11.7"
-        fill="none" stroke="#2B4FD4" stroke-width="15.5" stroke-linecap="butt"/>
-  <circle r="24.1" fill="#2B4FD4"/>
+        fill="none" stroke="#ffffff" stroke-width="15.5" stroke-linecap="butt"/>
+  <circle r="24.1" fill="#ffffff"/>
 </svg>
