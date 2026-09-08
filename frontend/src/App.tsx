@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useAuthStore } from './store/authStore';
 import { initGA, trackPageView } from './lib/analytics';
 import ErrorBoundary from './components/ui/ErrorBoundary';
-import CookieBanner from './components/ui/CookieBanner';
 import CapaLogo from './components/ui/CapaLogo';
 import CapaCIcon from './components/ui/CapaCIcon';
 
@@ -149,7 +148,6 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <RouteTracker />
-      <CookieBanner />
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
