@@ -1,9 +1,15 @@
 <svg viewBox="-60 -60 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capa">
-  <!-- The capa C: an open ring with the notch on the right, and the solid
-       centre disc, white on black — the mark as supplied. Vector rather than
-       the 96px PNG the old favicon wrapped, so it holds at 16px. -->
-  <rect x="-60" y="-60" width="120" height="120" fill="#000000"/>
-  <path d="M 40.6 11.7 A 42.25 42.25 0 1 1 40.6 -11.7"
-        fill="none" stroke="#ffffff" stroke-width="15.5" stroke-linecap="butt"/>
-  <circle r="24.1" fill="#ffffff"/>
+  <!-- Transparent ground: no black tile behind the mark. The colour follows the
+       browser chrome, which an SVG favicon can do and a PNG cannot — dark ink on
+       a light tab bar, white on a dark one. -->
+  <style>
+    .mark { fill: none; stroke: #0a0f1e; }
+    .disc { fill: #0a0f1e; }
+    @media (prefers-color-scheme: dark) {
+      .mark { stroke: #ffffff; }
+      .disc { fill: #ffffff; }
+    }
+  </style>
+  <path class="mark" d="M 40.6 11.7 A 42.25 42.25 0 1 1 40.6 -11.7" stroke-width="15.5" stroke-linecap="butt"/>
+  <circle class="disc" r="24.1"/>
 </svg>
