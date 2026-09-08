@@ -82,51 +82,6 @@ function RouteTracker() {
   return null;
 }
 
-function LoadingSpinner() {
-  return (
-    <div style={{
-      position: 'fixed', inset: 0,
-      background: '#07090f',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20,
-      zIndex: 9999,
-    }}>
-      <style>{`
-        @keyframes ls-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
-        @keyframes ls-dot{0%,80%,100%{opacity:.2}40%{opacity:1}}
-        .ls-icon{animation:ls-pulse 2s ease-in-out infinite}
-        .ls-d1{animation:ls-dot 1.4s ease-in-out infinite}
-        .ls-d2{animation:ls-dot 1.4s ease-in-out .22s infinite}
-        .ls-d3{animation:ls-dot 1.4s ease-in-out .44s infinite}
-      `}</style>
-      <div className="ls-icon">
-        <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="63" cy="63" r="50" fill="#0a0f1e"/>
-          <circle cx="60" cy="60" r="50" fill="#2B4FD4" stroke="#0a0f1e" strokeWidth="5"/>
-          <clipPath id="ls-clip"><circle cx="60" cy="60" r="50"/></clipPath>
-          <g clipPath="url(#ls-clip)" stroke="white" strokeWidth="5" opacity="0.22">
-            <line x1="-30" y1="10"  x2="70"  y2="145"/>
-            <line x1="-15" y1="10"  x2="85"  y2="145"/>
-            <line x1="0"   y1="10"  x2="100" y2="145"/>
-            <line x1="15"  y1="10"  x2="115" y2="145"/>
-            <line x1="30"  y1="10"  x2="130" y2="145"/>
-            <line x1="45"  y1="10"  x2="145" y2="145"/>
-            <line x1="60"  y1="10"  x2="160" y2="145"/>
-            <line x1="75"  y1="10"  x2="175" y2="145"/>
-            <line x1="90"  y1="10"  x2="190" y2="145"/>
-          </g>
-          <rect x="29" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" strokeWidth="3.5"/>
-          <rect x="71" y="31" width="20" height="58" rx="5" fill="white" stroke="#0a0f1e" strokeWidth="3.5"/>
-        </svg>
-      </div>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span className="ls-d1" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
-        <span className="ls-d2" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
-        <span className="ls-d3" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', display: 'inline-block' }}/>
-      </div>
-    </div>
-  );
-}
-
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore(s => s.accessToken);
   return token ? <>{children}</> : <Navigate to="/login" replace />;
@@ -149,7 +104,10 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <RouteTracker />
       <ErrorBoundary>
-        <Suspense fallback={<LoadingSpinner />}>
+        {/* No fallback: the full-screen loading overlay is gone by request. Core
+            pages are eagerly imported, so only rarely-visited lazy routes have a
+            gap here, and it shows the page beneath rather than a takeover. */}
+        <Suspense fallback={null}>
           <Routes>
             {/* Public landing */}
             <Route path="/" element={<PublicRoute><Reveal><PageTitle title="Invest Globally" /><LandingPage /></Reveal></PublicRoute>} />
