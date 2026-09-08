@@ -1,10 +1,9 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capa">
-  <!-- The capa C, returned as vector rather than the 96px PNG it used to be.
-       On the brand disc because every C asset in public/ is white on
-       transparent — restored as-is it is invisible against a light tab bar,
-       which is what it was doing before. -->
-  <circle cx="60" cy="60" r="58" fill="#2B4FD4"/>
-  <g transform="translate(60 60) scale(0.78)" fill="none" stroke="#ffffff" stroke-width="15.5" stroke-linecap="butt">
-    <path d="M 40.6 11.7 A 42.25 42.25 0 1 1 40.6 -11.7"/>
-  </g>
+<svg viewBox="-60 -60 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capa">
+  <!-- The capa C: an open ring with the notch on the right, and the solid
+       centre disc, white on black — the mark as supplied. Vector rather than
+       the 96px PNG the old favicon wrapped, so it holds at 16px. -->
+  <rect x="-60" y="-60" width="120" height="120" fill="#000000"/>
+  <path d="M 40.6 11.7 A 42.25 42.25 0 1 1 40.6 -11.7"
+        fill="none" stroke="#ffffff" stroke-width="15.5" stroke-linecap="butt"/>
+  <circle r="24.1" fill="#ffffff"/>
 </svg>
