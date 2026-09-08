@@ -26,10 +26,19 @@ import logger from '../utils/logger.js';
  */
 const REQUIRED_ALWAYS = [
   ['DATABASE_URL'],
-  ['REDIS_URL'],
   ['JWT_SECRET', 'ACCESS_TOKEN_SECRET'],
   ['JWT_REFRESH_SECRET', 'REFRESH_TOKEN_SECRET'],
 ];
+
+// REDIS_URL is deliberately not in that list. utils/redis.js substitutes a
+// no-op stub when it is absent and logs its own warning — running without
+// Redis costs token blacklisting and nothing else, and it is how production
+// is currently configured. Listing it here failed the deploy.
+//
+// The rule for this list: only variables whose absence makes the process
+// throw on its own — Prisma without DATABASE_URL, config/jwt.js without its
+// secrets. If the app already degrades gracefully, this file must not
+// second-guess it.
 
 /**
  * Warned about, never fatal. An earlier version of this file exited on these in
