@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { getStockPageData } from "@/services/stock";
+import { listTheses } from "@/services/theses";
 import { PriceChange } from "@/components/price-change";
 import { StockChart } from "@/components/stock-chart";
+import { ThesisCard } from "@/components/thesis-card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatMoney, formatCompactMoney, formatPercent } from "@/lib/money";
@@ -24,7 +26,11 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
   if (!data) notFound();
 
   const { asset, quote, company, news, community } = data;
+  const theses = await listTheses({ assetId: asset.id });
   const tradeHref = session?.user ? `/trade?symbol=${asset.symbol}` : `/login?callbackUrl=/trade?symbol=${asset.symbol}`;
+  const thesisHref = session?.user
+    ? `/social/theses/new?symbol=${asset.symbol}`
+    : `/login?callbackUrl=/social/theses/new?symbol=${asset.symbol}`;
   const totalCommunity = community.buyOrders + community.sellOrders;
   const buyShare = totalCommunity === 0 ? 50 : Math.round((community.buyOrders / totalCommunity) * 100);
 
@@ -152,13 +158,39 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
         </TabsContent>
 
         <TabsContent value="theses">
-          <p className="text-[13.5px] text-muted">
-            No public investment theses on {asset.symbol} yet.{" "}
-            <Link href={tradeHref} className="font-medium text-ink underline underline-offset-2">
-              Be the first to publish one
-            </Link>
-            .
-          </p>
+          {theses.length === 0 ? (
+            <p className="text-[13.5px] text-muted">
+              No public investment theses on {asset.symbol} yet.{" "}
+              <Link href={thesisHref} className="font-medium text-ink underline underline-offset-2">
+                Be the first to publish one
+              </Link>
+              .
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {theses.map((t) => (
+                <ThesisCard
+                  key={t.id}
+                  id={t.id}
+                  direction={t.direction}
+                  status={t.status}
+                  title={t.title}
+                  entryPrice={Number(t.entryPrice)}
+                  targetPrice={t.targetPrice ? Number(t.targetPrice) : null}
+                  timeHorizon={t.timeHorizon}
+                  currency={asset.currency}
+                  symbol={asset.symbol}
+                  authorName={t.user.name}
+                  authorUsername={t.user.username}
+                  likeCount={t.likeCount}
+                  followCount={t.followCount}
+                />
+              ))}
+              <Link href={thesisHref} className="block text-[13px] font-medium text-signal">
+                Publish your own thesis on {asset.symbol} →
+              </Link>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </section>

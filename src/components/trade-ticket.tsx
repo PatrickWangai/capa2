@@ -53,7 +53,9 @@ export function TradeTicket({
   const [step, setStep] = useState<"form" | "review" | "success">("form");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [placedOrder, setPlacedOrder] = useState<{ id: string; symbol: string } | null>(null);
+  const [placedOrder, setPlacedOrder] = useState<{ id: string; symbol: string; tradeId: string | null } | null>(null);
+  const [shared, setShared] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const asset = assets.find((a) => a.id === assetId) ?? assets[0];
 
@@ -101,7 +103,7 @@ export function TradeTicket({
         setStep("form");
         return;
       }
-      setPlacedOrder({ id: data.id, symbol: asset.symbol });
+      setPlacedOrder({ id: data.id, symbol: asset.symbol, tradeId: data.tradeId ?? null });
       setStep("success");
       router.refresh();
     } catch {
@@ -128,6 +130,23 @@ export function TradeTicket({
             <Link href="/portfolio">View Portfolio</Link>
           </Button>
         </div>
+        {placedOrder.tradeId && (
+          <div className="mt-4 border-t border-line pt-4">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={shared || sharing}
+              onClick={async () => {
+                setSharing(true);
+                await fetch(`/api/trades/${placedOrder.tradeId}/share`, { method: "POST" });
+                setSharing(false);
+                setShared(true);
+              }}
+            >
+              {shared ? "Shared to your feed" : sharing ? "Sharing…" : "Share as verified trade"}
+            </Button>
+          </div>
+        )}
       </div>
     );
   }

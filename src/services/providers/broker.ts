@@ -57,6 +57,7 @@ export interface BrokerOrderView {
   filledAt: Date | null;
   filledPrice: Decimal | null;
   createdAt: Date;
+  tradeId: string | null;
 }
 
 export class InsufficientBuyingPowerError extends Error {
@@ -103,6 +104,7 @@ function toOrderView(order: {
   filledAt: Date | null;
   filledPrice: unknown;
   createdAt: Date;
+  tradeId?: string | null;
 }): BrokerOrderView {
   return {
     id: order.id,
@@ -118,6 +120,7 @@ function toOrderView(order: {
     filledAt: order.filledAt,
     filledPrice: order.filledPrice ? new Decimal(String(order.filledPrice)) : null,
     createdAt: order.createdAt,
+    tradeId: order.tradeId ?? null,
   };
 }
 
@@ -236,8 +239,9 @@ export class MockBrokerService implements BrokerService {
         include: { asset: true },
       });
 
+      let tradeId: string | null = null;
       if (willFillNow) {
-        await tx.trade.create({
+        const trade = await tx.trade.create({
           data: {
             orderId: order.id,
             userId: input.userId,
@@ -248,6 +252,7 @@ export class MockBrokerService implements BrokerService {
             fee: fee.toString(),
           },
         });
+        tradeId = trade.id;
 
         const filledTotal = quantity.mul(fillPrice);
         const cashDelta =
@@ -313,7 +318,7 @@ export class MockBrokerService implements BrokerService {
         },
       });
 
-      return order;
+      return { ...order, tradeId };
     });
 
     return toOrderView(result);

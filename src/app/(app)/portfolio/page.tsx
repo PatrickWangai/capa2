@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { getBrokerService } from "@/services/providers/broker";
 import { StatCard } from "@/components/stat-card";
 import { PriceChange } from "@/components/price-change";
+import { ExplainPortfolio } from "@/components/explain-portfolio";
 import { convertToBase, formatMoney, formatQuantity } from "@/lib/money";
 
 export const metadata: Metadata = { title: "Portfolio" };
@@ -23,7 +24,10 @@ export default async function PortfolioPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
-      <h1 className="text-2xl font-bold text-ink">Portfolio</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-ink">Portfolio</h1>
+        <ExplainPortfolio />
+      </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-4">
         <StatCard label="Total value" value={formatMoney(account.totalValue.toNumber())} emphasize />

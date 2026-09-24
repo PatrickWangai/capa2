@@ -52,7 +52,40 @@ function pick<T>(arr: readonly T[]): T {
   return arr[randomInt(0, arr.length - 1)];
 }
 
+/**
+ * Clears rows this script creates fresh each run (orders/trades/social data),
+ * so re-running the seed is idempotent instead of duplicating holdings and
+ * follower counts. Scoped to whatever DATABASE_URL points at — this repo's
+ * local dev database — never touches anything outside this Prisma client.
+ */
+async function resetSeedData() {
+  await db.circlePost.deleteMany();
+  await db.circleMember.deleteMany();
+  await db.circle.deleteMany();
+  await db.thesisFollow.deleteMany();
+  await db.thesisVersion.deleteMany();
+  await db.post.deleteMany();
+  await db.thesis.deleteMany();
+  await db.follow.deleteMany();
+  await db.investmentMilestone.deleteMany();
+  await db.notification.deleteMany();
+  await db.trade.deleteMany();
+  await db.order.deleteMany();
+  await db.holding.deleteMany();
+  await db.watchlistItem.deleteMany();
+  await db.watchlist.deleteMany();
+  await db.transaction.deleteMany();
+  await db.marketEvent.deleteMany();
+  await db.kYCApplication.deleteMany();
+  await db.wallet.deleteMany();
+  await db.account.deleteMany();
+  await db.profile.deleteMany();
+}
+
 async function main() {
+  console.log("Resetting previous seed data…");
+  await resetSeedData();
+
   console.log("Seeding assets…");
   for (const a of ASSETS) {
     await db.asset.upsert({
@@ -151,6 +184,7 @@ async function main() {
 
   console.log("Seeding holdings, orders, and trades…");
   const allAssets = await db.asset.findMany();
+  const createdTrades: { userId: string; tradeId: string; assetId: string; quantity: number; price: number }[] = [];
   for (const user of users) {
     const wallet = await db.wallet.findUniqueOrThrow({ where: { userId: user.id } });
     let cash = Number(wallet.cashBalance);
@@ -184,7 +218,7 @@ async function main() {
           reason: Math.random() > 0.3 ? pick(REASONS) : null,
         },
       });
-      await db.trade.create({
+      const trade = await db.trade.create({
         data: {
           orderId: order.id,
           userId: user.id,
@@ -196,6 +230,7 @@ async function main() {
           executedAt: order.filledAt!,
         },
       });
+      createdTrades.push({ userId: user.id, tradeId: trade.id, assetId: asset.id, quantity, price: fillPrice });
       await db.holding.upsert({
         where: { userId_assetId: { userId: user.id, assetId: asset.id } },
         create: { userId: user.id, assetId: asset.id, quantity, avgPrice: fillPrice },
@@ -217,6 +252,117 @@ async function main() {
         update: {},
       });
     }
+  }
+
+  console.log("Seeding follows…");
+  for (const user of users) {
+    const others = users.filter((u) => u.id !== user.id).sort(() => Math.random() - 0.5).slice(0, randomInt(1, 3));
+    for (const target of others) {
+      const existing = await db.follow.findUnique({ where: { followerId_followingId: { followerId: user.id, followingId: target.id } } });
+      if (existing) continue;
+      await db.follow.create({ data: { followerId: user.id, followingId: target.id } });
+      await db.profile.update({ where: { userId: target.id }, data: { followerCount: { increment: 1 } } });
+      await db.profile.update({ where: { userId: user.id }, data: { followingCount: { increment: 1 } } });
+    }
+  }
+
+  console.log("Seeding verified-trade posts…");
+  for (const t of createdTrades.slice(0, 12)) {
+    if (Math.random() > 0.6) continue; // only some trades get shared
+    await db.post.create({
+      data: {
+        userId: t.userId,
+        type: "VERIFIED_TRADE",
+        content: pick([
+          "Adding to a position I believe in for the long run.",
+          "Started small, will build this up over time.",
+          "",
+          "Dividend play — happy to hold through the noise.",
+        ]),
+        tradeId: t.tradeId,
+      },
+    });
+  }
+
+  console.log("Seeding commentary posts…");
+  const COMMENTARY = [
+    "Anyone else watching the NSE this week? Volumes look thin.",
+    "US tech earnings season is going to be interesting — margins are the story, not revenue.",
+    "Rebalanced my portfolio today, trimmed one position that had grown too large.",
+    "Reminder: diversification isn't exciting, but neither is a 40% drawdown.",
+    "Dividend investors — what's your minimum yield cutoff?",
+  ];
+  for (const text of COMMENTARY) {
+    await db.post.create({ data: { userId: pick(users).id, type: "COMMENTARY", content: text } });
+  }
+
+  console.log("Seeding investment theses…");
+  const THESES = [
+    { symbol: "SCOM", direction: "BULL" as const, title: "Dividend + long-term growth", reason: "DIVIDEND" as const, horizon: "12 months" },
+    { symbol: "NVDA", direction: "BULL" as const, title: "AI infrastructure demand still underestimated", reason: "LONG_TERM_GROWTH" as const, horizon: "24 months" },
+    { symbol: "TSLA", direction: "BEAR" as const, title: "Valuation has run too far ahead of deliveries", reason: "TECHNICAL_SETUP" as const, horizon: "6 months" },
+    { symbol: "EQTY", direction: "BULL" as const, title: "Undervalued relative to regional peers", reason: "UNDERVALUED" as const, horizon: "18 months" },
+  ];
+  for (const t of THESES) {
+    const asset = allAssets.find((a) => a.symbol === t.symbol)!;
+    const author = pick(users);
+    const entryPrice = Number(asset.currentPrice) * (1 - randomInt(-800, 800) / 10000);
+    const thesis = await db.thesis.create({
+      data: {
+        userId: author.id,
+        assetId: asset.id,
+        direction: t.direction,
+        title: t.title,
+        entryPrice,
+        targetPrice: entryPrice * (t.direction === "BULL" ? 1.25 : 0.8),
+        timeHorizon: t.horizon,
+        reason: t.reason,
+        body: `I believe ${asset.symbol} is worth watching closely. ${t.title}. This is a sandbox thesis for demonstration purposes.`,
+        riskFactors: "Macro conditions, regulatory changes, and company-specific execution risk could all invalidate this thesis.",
+        likeCount: randomInt(2, 40),
+      },
+    });
+    await db.post.create({
+      data: { userId: author.id, type: "THESIS", content: "", thesisId: thesis.id },
+    });
+    const followers = users.filter((u) => u.id !== author.id).sort(() => Math.random() - 0.5).slice(0, randomInt(1, 4));
+    for (const f of followers) {
+      await db.thesisFollow.create({ data: { userId: f.id, thesisId: thesis.id } }).catch(() => {});
+    }
+    await db.thesis.update({ where: { id: thesis.id }, data: { followCount: followers.length } });
+  }
+
+  console.log("Seeding circles…");
+  const CIRCLES = [
+    { name: "Kenyan Investors", description: "Discussion and research on NSE-listed companies." },
+    { name: "US Tech Investors", description: "Following US technology stocks and earnings." },
+    { name: "Dividend Investors", description: "Sharing dividend-paying stocks and yield strategies." },
+  ];
+  for (const c of CIRCLES) {
+    const owner = pick(users);
+    const slug = `${c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${randomInt(1000, 9999)}`;
+    const circle = await db.circle.create({
+      data: { name: c.name, description: c.description, slug, ownerId: owner.id, visibility: "PUBLIC", memberCount: 1 },
+    });
+    await db.circleMember.create({ data: { circleId: circle.id, userId: owner.id, role: "OWNER" } });
+    const members = users.filter((u) => u.id !== owner.id).sort(() => Math.random() - 0.5).slice(0, randomInt(2, 4));
+    for (const m of members) {
+      await db.circleMember.create({ data: { circleId: circle.id, userId: m.id, role: "MEMBER" } });
+    }
+    await db.circle.update({ where: { id: circle.id }, data: { memberCount: members.length + 1 } });
+    await db.circlePost.create({
+      data: { circleId: circle.id, userId: owner.id, content: `Welcome to ${c.name}! Share your research and questions here.` },
+    });
+  }
+
+  console.log("Seeding investment milestones…");
+  for (const user of users.slice(0, 3)) {
+    await db.investmentMilestone.createMany({
+      data: [
+        { userId: user.id, title: "Started investing", description: "Joined Capa and made a first contribution.", occurredAt: new Date(2026, 0, 15), isPublic: true },
+        { userId: user.id, title: "First thesis published", description: "Shared reasoning behind a position for the first time.", occurredAt: new Date(2026, 4, 3), isPublic: true },
+      ],
+    });
   }
 
   console.log("Seed complete.");

@@ -225,6 +225,7 @@ model User {
   followers       Follow[]           @relation("following")
   circleMemberships CircleMember[]
   ownedCircles    Circle[]
+  circlePosts     CirclePost[]
   notifications   Notification[]
   milestones      InvestmentMilestone[]
   marketBriefs    MarketBrief[]
@@ -642,6 +643,7 @@ model CirclePost {
   circleId  String
   circle    Circle   @relation(fields: [circleId], references: [id], onDelete: Cascade)
   userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
