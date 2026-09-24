@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+:root {
+  /* Neutrals — a graphite-biased scale, not a pure gray, so black/white
+     reads as chosen rather than an unstyled default. */
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #fafaf9;
+  --ink: #0a0a0a;
+  --ink-soft: #33332f;
+  --muted: #66655d;
+  --faint: #9c9a8f;
+  --line: #e7e5df;
+  --line-strong: #d3d0c6;
+
+  /* Primary — near-black, so buttons/CTAs read as confident and financial
+     rather than branded. One restrained signal accent for links, focus
+     rings, and the active nav item — used sparingly, never as a gradient. */
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --signal: #3452e0;
+  --signal-tint: #eaedfb;
+
+  /* Financial semantics — the only place color is used freely. */
+  --gain: #0e8f5f;
+  --gain-tint: #e6f5ee;
+  --loss: #d33d2c;
+  --loss-tint: #fbeae7;
+
+  --ring: #0a0a0a;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-signal: var(--signal);
+  --color-signal-tint: var(--signal-tint);
+  --color-gain: var(--gain);
+  --color-gain-tint: var(--gain-tint);
+  --color-loss: var(--loss);
+  --color-loss-tint: var(--loss-tint);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-instrument-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0a0a0a;
+    --surface: #121211;
+    --surface-raised: #171715;
+    --ink: #f5f4ef;
+    --ink-soft: #d8d6cb;
+    --muted: #9c9a8f;
+    --faint: #66655d;
+    --line: #262622;
+    --line-strong: #34332d;
+
+    --primary: #f5f4ef;
+    --primary-foreground: #0a0a0a;
+    --signal: #7d92f0;
+    --signal-tint: #1a2140;
+
+    --gain: #34c48c;
+    --gain-tint: #103526;
+    --loss: #ef6b57;
+    --loss-tint: #3a1712;
+
+    --ring: #f5f4ef;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0a0a0a;
+  --surface: #121211;
+  --surface-raised: #171715;
+  --ink: #f5f4ef;
+  --ink-soft: #d8d6cb;
+  --muted: #9c9a8f;
+  --faint: #66655d;
+  --line: #262622;
+  --line-strong: #34332d;
+
+  --primary: #f5f4ef;
+  --primary-foreground: #0a0a0a;
+  --signal: #7d92f0;
+  --signal-tint: #1a2140;
+
+  --gain: #34c48c;
+  --gain-tint: #103526;
+  --loss: #ef6b57;
+  --loss-tint: #3a1712;
+
+  --ring: #f5f4ef;
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 6px;
+}
