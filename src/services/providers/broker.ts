@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { db } from "@/lib/db";
 import { OrderSide, OrderStatus, OrderType, TradeReason, TransactionType } from "@/generated/prisma/client";
-import { estimatedTotal, orderFee, weightedAvgPrice } from "@/lib/money";
+import { convertToBase, estimatedTotal, orderFee, weightedAvgPrice } from "@/lib/money";
 import { getMarketDataProvider } from "./market-data";
 
 export interface BrokerAccountView {
@@ -22,10 +22,14 @@ export interface BrokerPosition {
   avgPrice: Decimal;
   currentPrice: Decimal;
   marketValue: Decimal;
+  /** marketValue converted to the account's base currency (KES) — the only figure safe to sum across positions. */
+  marketValueBase: Decimal;
   unrealizedPnl: Decimal;
   unrealizedPnlPercent: Decimal;
   allocationPercent: Decimal;
   dayChangeAmount: Decimal;
+  /** dayChangeAmount converted to KES — safe to sum across positions of different currencies. */
+  dayChangeAmountBase: Decimal;
   dayChangePercent: Decimal;
 }
 
@@ -124,7 +128,7 @@ export class MockBrokerService implements BrokerService {
       db.wallet.findUniqueOrThrow({ where: { userId } }),
       this.getPositions(userId),
     ]);
-    const portfolioValue = positions.reduce((sum, p) => sum.plus(p.marketValue), new Decimal(0));
+    const portfolioValue = positions.reduce((sum, p) => sum.plus(p.marketValueBase), new Decimal(0));
     const cashBalance = new Decimal(wallet.cashBalance.toString());
     return {
       accountNumber: account.accountNumber,
@@ -150,8 +154,10 @@ export class MockBrokerService implements BrokerService {
         const quantity = new Decimal(h.quantity.toString());
         const avgPrice = new Decimal(h.avgPrice.toString());
         const marketValue = quantity.mul(quote.price);
+        const marketValueBase = convertToBase(marketValue, h.asset.currency);
         const costBasis = quantity.mul(avgPrice);
         const unrealizedPnl = marketValue.minus(costBasis);
+        const dayChangeAmount = quote.change.mul(quantity);
         return {
           assetId: h.assetId,
           symbol: h.asset.symbol,
@@ -161,18 +167,20 @@ export class MockBrokerService implements BrokerService {
           avgPrice,
           currentPrice: quote.price,
           marketValue,
+          marketValueBase,
           unrealizedPnl,
           unrealizedPnlPercent: costBasis.isZero() ? new Decimal(0) : unrealizedPnl.div(costBasis).mul(100),
           allocationPercent: new Decimal(0), // filled in below once total is known
-          dayChangeAmount: quote.change.mul(quantity),
+          dayChangeAmount,
+          dayChangeAmountBase: convertToBase(dayChangeAmount, h.asset.currency),
           dayChangePercent: quote.changePercent,
         };
       }),
     );
-    const total = withPrices.reduce((sum, p) => sum.plus(p.marketValue), new Decimal(0));
+    const total = withPrices.reduce((sum, p) => sum.plus(p.marketValueBase), new Decimal(0));
     return withPrices.map((p) => ({
       ...p,
-      allocationPercent: total.isZero() ? new Decimal(0) : p.marketValue.div(total).mul(100),
+      allocationPercent: total.isZero() ? new Decimal(0) : p.marketValueBase.div(total).mul(100),
     }));
   }
 

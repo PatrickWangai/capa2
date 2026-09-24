@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { getMarketDataProvider, type ChartRange } from "@/services/providers/market-data";
+import { convertToBase } from "@/lib/money";
 import Decimal from "decimal.js";
 
 const VALID_RANGES: ChartRange[] = ["1D", "1W", "1M", "3M", "6M", "1Y"];
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
     holdings.map(async (h) => {
       const candles = await provider.getHistoricalPrices(h.asset.symbol, range);
       const qty = new Decimal(h.quantity.toString()).toNumber();
-      return candles.map((c) => ({ time: c.time, value: c.close * qty }));
+      return candles.map((c) => ({ time: c.time, value: convertToBase(c.close * qty, h.asset.currency).toNumber() }));
     }),
   );
 

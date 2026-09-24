@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { getBrokerService } from "@/services/providers/broker";
 import { StatCard } from "@/components/stat-card";
 import { PriceChange } from "@/components/price-change";
-import { formatMoney, formatQuantity } from "@/lib/money";
+import { convertToBase, formatMoney, formatQuantity } from "@/lib/money";
 
 export const metadata: Metadata = { title: "Portfolio" };
 
@@ -16,7 +16,10 @@ export default async function PortfolioPage() {
     broker.getPositions(session!.user.id),
   ]);
 
-  const totalUnrealizedPnl = positions.reduce((sum, p) => sum + p.unrealizedPnl.toNumber(), 0);
+  const totalUnrealizedPnl = positions.reduce(
+    (sum, p) => sum + convertToBase(p.unrealizedPnl, p.currency).toNumber(),
+    0,
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">

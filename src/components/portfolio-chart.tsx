@@ -38,20 +38,23 @@ export function PortfolioChart({ isGain }: { isGain: boolean }) {
       chartRef.current = null;
       seriesRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGain]);
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetch(`/api/portfolio/history?range=${range}`)
-      .then((r) => r.json())
-      .then((data: { time: number; value: number }[]) => {
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/portfolio/history?range=${range}`);
+        const data: { time: number; value: number }[] = await res.json();
         if (cancelled || !seriesRef.current) return;
         seriesRef.current.setData(data.map((d) => ({ time: d.time as UTCTimestamp, value: d.value })));
         chartRef.current?.timeScale().fitContent();
-      })
-      .finally(() => !cancelled && setLoading(false));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
     return () => {
       cancelled = true;
     };

@@ -12,6 +12,22 @@ export function toDecimal(value: Money): Decimal {
   return new Decimal(value);
 }
 
+/**
+ * Fixed illustrative FX rates to KES, the account/wallet base currency.
+ * Only used to make cross-currency aggregates (portfolio totals, P/L)
+ * additive — never shown to the user as a live exchange rate.
+ */
+const FX_TO_KES: Record<string, number> = {
+  KES: 1,
+  USD: 129,
+  GBP: 163,
+};
+
+export function convertToBase(amount: Money, currency: string): Decimal {
+  const rate = FX_TO_KES[currency] ?? 1;
+  return toDecimal(amount).mul(rate);
+}
+
 export function orderFee(estimatedTotal: Money): Decimal {
   // Flat 0.5% commission, floored at KES 10 — a placeholder fee schedule
   // until a real broker's fee schedule replaces MockBrokerService.

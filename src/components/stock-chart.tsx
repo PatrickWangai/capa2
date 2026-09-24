@@ -51,15 +51,19 @@ export function StockChart({ symbol, initialRange = "1M" }: { symbol: string; in
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetch(`/api/assets/${symbol}/history?range=${range}`)
-      .then((r) => r.json())
-      .then((data: CandlePoint[]) => {
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/assets/${symbol}/history?range=${range}`);
+        const data: CandlePoint[] = await res.json();
         if (cancelled || !seriesRef.current) return;
         seriesRef.current.setData(data.map((d) => ({ time: d.time as UTCTimestamp, value: d.close })));
         chartRef.current?.timeScale().fitContent();
-      })
-      .finally(() => !cancelled && setLoading(false));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
     return () => {
       cancelled = true;
     };

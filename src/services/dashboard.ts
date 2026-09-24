@@ -2,6 +2,7 @@ import Decimal from "decimal.js";
 import { db } from "@/lib/db";
 import { getBrokerService } from "./providers/broker";
 import { getMarketDataProvider } from "./providers/market-data";
+import { convertToBase } from "@/lib/money";
 
 export async function getDashboardData(userId: string) {
   const broker = getBrokerService();
@@ -16,12 +17,18 @@ export async function getDashboardData(userId: string) {
     }),
   ]);
 
-  const dayChangeAmount = positions.reduce((sum, p) => sum.plus(p.dayChangeAmount), new Decimal(0));
+  const dayChangeAmount = positions.reduce((sum, p) => sum.plus(p.dayChangeAmountBase), new Decimal(0));
   const dayChangeBase = account.totalValue.minus(dayChangeAmount);
   const dayChangePercent = dayChangeBase.isZero() ? new Decimal(0) : dayChangeAmount.div(dayChangeBase).mul(100);
 
-  const totalCostBasis = positions.reduce((sum, p) => sum.plus(p.quantity.mul(p.avgPrice)), new Decimal(0));
-  const totalUnrealizedPnl = positions.reduce((sum, p) => sum.plus(p.unrealizedPnl), new Decimal(0));
+  const totalCostBasis = positions.reduce(
+    (sum, p) => sum.plus(convertToBase(p.quantity.mul(p.avgPrice), p.currency)),
+    new Decimal(0),
+  );
+  const totalUnrealizedPnl = positions.reduce(
+    (sum, p) => sum.plus(convertToBase(p.unrealizedPnl, p.currency)),
+    new Decimal(0),
+  );
   const totalReturnPercent = totalCostBasis.isZero() ? new Decimal(0) : totalUnrealizedPnl.div(totalCostBasis).mul(100);
 
   return {
@@ -35,7 +42,7 @@ export async function getDashboardData(userId: string) {
     totalUnrealizedPnl: totalUnrealizedPnl.toNumber(),
     totalReturnPercent: totalReturnPercent.toNumber(),
     holdings: positions
-      .sort((a, b) => b.marketValue.comparedTo(a.marketValue))
+      .sort((a, b) => b.marketValueBase.comparedTo(a.marketValueBase))
       .slice(0, 5)
       .map((p) => ({
         symbol: p.symbol,
