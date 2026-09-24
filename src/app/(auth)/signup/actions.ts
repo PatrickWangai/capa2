@@ -1,7 +1,9 @@
 "use server";
 
 import { z } from "zod";
+import { headers } from "next/headers";
 import { createUser, EmailTakenError, UsernameTakenError } from "@/services/users";
+import { rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name."),
@@ -21,6 +23,12 @@ export interface RegisterState {
 }
 
 export async function registerAction(_prev: RegisterState, formData: FormData): Promise<RegisterState> {
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const limited = rateLimit(`signup:${ip}`, 10, 60 * 60 * 1000);
+  if (!limited.allowed) {
+    return { ok: false, error: "Too many signup attempts from this network. Please try again later." };
+  }
+
   const parsed = schema.safeParse({
     name: formData.get("name"),
     username: formData.get("username"),

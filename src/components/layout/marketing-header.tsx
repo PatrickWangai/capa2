@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { MARKETING_NAV } from "@/config/nav";
 
 export function MarketingHeader({ isAuthed = false }: { isAuthed?: boolean }) {
@@ -24,6 +25,7 @@ export function MarketingHeader({ isAuthed = false }: { isAuthed?: boolean }) {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2.5">
+          <ThemeToggle />
           {isAuthed ? (
             <Button asChild size="sm">
               <Link href="/dashboard">Dashboard</Link>

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { getBrokerService, InsufficientBuyingPowerError, InsufficientSharesError } from "@/services/providers/broker";
 import { OrderSide, OrderType, TradeReason } from "@/generated/prisma/client";
+import { rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   assetId: z.string().min(1),
@@ -34,6 +35,11 @@ export async function GET() {
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const limited = rateLimit(`order:${session.user.id}`, 20, 60 * 1000);
+  if (!limited.allowed) {
+    return NextResponse.json({ error: "Too many orders placed too quickly. Please slow down." }, { status: 429 });
+  }
 
   const body = await request.json();
   const parsed = schema.safeParse(body);

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Bell, Wallet as WalletIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserMenu } from "@/components/layout/user-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { formatMoney } from "@/lib/money";
 
 export function AppTopbar({
@@ -35,6 +36,7 @@ export function AppTopbar({
           <WalletIcon className="size-3.5" />
           <span className="font-tabular">{formatMoney(cashBalance)}</span>
         </Link>
+        <ThemeToggle />
         <Link
           href="/notifications"
           className="relative flex size-9 items-center justify-center rounded-full text-ink-soft hover:bg-surface-raised"
