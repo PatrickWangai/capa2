@@ -26,7 +26,7 @@ export function AppTopbar({
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-end gap-2 border-b border-line bg-paper/90 px-5 backdrop-blur-md lg:justify-between">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-end gap-2 border-b-2 border-line-strong bg-paper px-5 lg:justify-between">
       <div className="hidden lg:block" />
       <div className="flex items-center gap-1.5">
         <Link

@@ -34,7 +34,7 @@ export function CreateCircleForm() {
   };
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <Label htmlFor="circle-name">Name</Label>
       <Input id="circle-name" value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5" placeholder="e.g. Dividend Investors" />
       <Label htmlFor="circle-desc" className="mt-3 block">

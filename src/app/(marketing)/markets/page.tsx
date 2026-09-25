@@ -45,7 +45,7 @@ export default async function MarketsPage({
         ))}
       </div>
 
-      <div className="mt-8 rounded-xl border border-line">
+      <div className="mt-8 rounded-md border-2 border-line-strong">
         {assets.length === 0 ? (
           <p className="p-8 text-center text-[13.5px] text-muted">No assets match this filter yet.</p>
         ) : (

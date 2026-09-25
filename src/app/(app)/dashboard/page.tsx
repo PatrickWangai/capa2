@@ -28,7 +28,7 @@ export default async function DashboardPage() {
         <PriceChange percent={data.dayChangePercent} amount={data.dayChangeAmount} />
       </div>
 
-      <div className="mt-6 rounded-xl border border-line bg-surface p-5">
+      <div className="mt-6 rounded-md border-2 border-line-strong shadow-hard-sm bg-surface p-5">
         <PortfolioChart isGain={isGain} />
       </div>
 
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
               View all →
             </Link>
           </div>
-          <div className="mt-3 rounded-xl border border-line">
+          <div className="mt-3 rounded-md border-2 border-line-strong">
             {data.holdings.length === 0 ? (
               <p className="p-6 text-center text-[13.5px] text-muted">
                 No holdings yet. <Link href="/markets" className="font-medium text-ink underline">Browse markets</Link> to
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
               View all →
             </Link>
           </div>
-          <div className="mt-3 rounded-xl border border-line">
+          <div className="mt-3 rounded-md border-2 border-line-strong">
             {data.watchlist.length === 0 ? (
               <p className="p-6 text-center text-[13.5px] text-muted">
                 Your watchlist is empty. <Link href="/markets" className="font-medium text-ink underline">Add an asset</Link>.

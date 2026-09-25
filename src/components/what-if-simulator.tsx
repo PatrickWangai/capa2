@@ -32,7 +32,7 @@ export function WhatIfSimulator() {
   };
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <h2 className="text-[15px] font-semibold text-ink">What if…?</h2>
       <p className="mt-1 text-[13px] text-muted">Hypothetical scenarios against your current portfolio.</p>
 

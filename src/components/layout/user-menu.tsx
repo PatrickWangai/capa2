@@ -18,7 +18,7 @@ export function UserMenu({ username, children }: { username: string; children: R
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="z-50 w-52 rounded-lg border border-line bg-surface p-1.5 shadow-lg"
+          className="z-50 w-52 rounded-md border-2 border-line-strong bg-surface p-1.5 shadow-hard"
         >
           <DropdownMenu.Item asChild>
             <Link

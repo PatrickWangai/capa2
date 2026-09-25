@@ -42,7 +42,7 @@ export function ThesisCard({
 }) {
   const Icon = direction === "BULL" ? TrendingUp : TrendingDown;
   return (
-    <Link href={`/social/theses/${id}`} className="block rounded-xl border border-line p-5 hover:border-ink">
+    <Link href={`/social/theses/${id}`} className="block rounded-md border-2 border-line-strong shadow-hard-sm p-5 hover:border-primary">
       <div className="flex items-center justify-between">
         <span className={`flex items-center gap-1.5 text-[12.5px] font-semibold ${direction === "BULL" ? "text-gain" : "text-loss"}`}>
           <Icon className="size-4" /> {direction === "BULL" ? "Bull case" : "Bear case"} · {symbol}

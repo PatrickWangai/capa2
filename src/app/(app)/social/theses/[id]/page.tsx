@@ -55,7 +55,7 @@ export default async function ThesisDetailPage({ params }: { params: Promise<{ i
         · {new Date(thesis.createdAt).toLocaleDateString()}
       </p>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 rounded-xl border border-line p-5 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 rounded-md border-2 border-line-strong shadow-hard-sm p-5 sm:grid-cols-4">
         <Stat label="Entry" value={formatMoney(entryPrice, thesis.asset.currency)} />
         <Stat label="Current" value={formatMoney(currentPrice, thesis.asset.currency)} />
         <Stat label="Since entry" value={<PriceChange percent={changeSinceEntry} size="sm" />} />
@@ -86,7 +86,7 @@ export default async function ThesisDetailPage({ params }: { params: Promise<{ i
           <h2 className="text-[13px] font-semibold uppercase tracking-wide text-faint">Previous versions</h2>
           <div className="mt-2 space-y-3">
             {thesis.versions.map((v) => (
-              <div key={v.id} className="rounded-lg border border-line p-3">
+              <div key={v.id} className="rounded-md border-2 border-line-strong p-3">
                 <p className="text-[11.5px] text-faint">{new Date(v.createdAt).toLocaleString()}</p>
                 <p className="mt-1 whitespace-pre-wrap text-[13px] text-muted">{v.body}</p>
               </div>

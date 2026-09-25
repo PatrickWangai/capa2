@@ -15,7 +15,7 @@ export default async function AdminContentPage() {
       ) : (
         <div className="mt-6 space-y-3">
           {reports.map((r) => (
-            <div key={r.id} className="rounded-xl border border-line p-4">
+            <div key={r.id} className="rounded-md border-2 border-line-strong shadow-hard-sm p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[12.5px] text-faint">Reported by @{r.reporter.username} · {r.targetType}</p>

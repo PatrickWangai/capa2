@@ -33,7 +33,7 @@ export function ExplainPortfolio() {
   }
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <h3 className="text-[14px] font-semibold text-ink">Portfolio explanation</h3>
       <p className="mt-2 text-[13.5px] text-ink-soft">{insights.recentPerformanceNote}</p>
 

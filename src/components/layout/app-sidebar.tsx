@@ -10,7 +10,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line bg-paper lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r-2 border-line-strong bg-paper lg:flex">
       <div className="flex h-16 items-center px-5">
         <Link href="/dashboard">
           <Logo />
@@ -34,11 +34,13 @@ export function AppSidebar() {
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors",
-                        active ? "bg-surface-raised text-ink" : "text-ink-soft hover:bg-surface-raised hover:text-ink",
+                        "flex items-center gap-2.5 rounded-md border-2 px-3 py-2 text-[13.5px] font-bold transition-colors",
+                        active
+                          ? "border-line-strong bg-primary text-primary-foreground"
+                          : "border-transparent text-ink-soft hover:border-line-strong hover:bg-surface-raised hover:text-ink",
                       )}
                     >
-                      <Icon className="size-[17px]" strokeWidth={2} />
+                      <Icon className="size-[17px]" strokeWidth={2.5} />
                       {item.label}
                     </Link>
                   </li>

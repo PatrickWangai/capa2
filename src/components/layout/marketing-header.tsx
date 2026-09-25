@@ -6,7 +6,7 @@ import { MARKETING_NAV } from "@/config/nav";
 
 export function MarketingHeader({ isAuthed = false }: { isAuthed?: boolean }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b-2 border-line-strong bg-paper">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <Link href="/" className="shrink-0">
           <Logo />

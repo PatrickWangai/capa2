@@ -90,7 +90,7 @@ export function PostCard({ post }: { post: PostCardData }) {
           {post.thesis && (
             <Link
               href={`/social/theses/${post.thesis.id}`}
-              className="mt-2 block rounded-lg border border-line p-3 text-[13.5px] hover:border-ink"
+              className="mt-2 block rounded-md border-2 border-line-strong p-3 text-[13.5px] hover:border-primary"
             >
               <span className={cn("font-semibold", post.thesis.direction === "BULL" ? "text-gain" : "text-loss")}>
                 {post.thesis.direction === "BULL" ? "Bull case" : "Bear case"} · {post.thesis.asset.symbol}

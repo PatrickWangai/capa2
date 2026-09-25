@@ -26,7 +26,7 @@ export function InvestorCard({
   isSelf: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-line p-4">
+    <div className="flex items-center justify-between gap-3 rounded-md border-2 border-line-strong shadow-hard-sm p-4">
       <Link href={`/profile/${username}`} className="flex min-w-0 items-center gap-3">
         <Avatar>
           <AvatarImage src={avatarUrl ?? undefined} alt={name} />

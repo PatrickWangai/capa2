@@ -42,14 +42,14 @@ export default async function PortfolioPage() {
       <div className="mt-10">
         <h2 className="text-[15px] font-semibold text-ink">Holdings</h2>
         {positions.length === 0 ? (
-          <div className="mt-3 rounded-xl border border-dashed border-line-strong p-10 text-center">
+          <div className="mt-3 rounded-md border-2 border-dashed border-line-strong p-10 text-center">
             <p className="text-[14px] text-muted">You don&apos;t hold any positions yet.</p>
             <Link href="/markets" className="mt-2 inline-block text-[13.5px] font-medium text-ink underline underline-offset-2">
               Browse markets to make your first trade
             </Link>
           </div>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-xl border border-line">
+          <div className="mt-3 overflow-x-auto rounded-md border-2 border-line-strong">
             <table className="w-full min-w-[720px] text-left text-[13.5px]">
               <thead>
                 <tr className="border-b border-line text-[11.5px] uppercase tracking-wide text-faint">

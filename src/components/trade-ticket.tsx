@@ -116,7 +116,7 @@ export function TradeTicket({
 
   if (step === "success" && placedOrder) {
     return (
-      <div className="rounded-2xl border border-line bg-surface p-7 text-center">
+      <div className="rounded-md border-2 border-line-strong shadow-hard bg-surface p-7 text-center">
         <CheckCircle2 className="mx-auto size-10 text-gain" strokeWidth={1.5} />
         <h2 className="mt-3 text-[17px] font-semibold text-ink">Order submitted</h2>
         <p className="mt-1 font-tabular text-[14px] text-muted">
@@ -153,7 +153,7 @@ export function TradeTicket({
 
   if (step === "review") {
     return (
-      <div className="rounded-2xl border border-line bg-surface p-7">
+      <div className="rounded-md border-2 border-line-strong shadow-hard bg-surface p-7">
         <h2 className="text-[13px] font-semibold uppercase tracking-wide text-faint">Confirm order</h2>
         <p className="mt-3 text-[17px] font-semibold text-ink">
           {side === "BUY" ? "Buy" : "Sell"} {qty} {asset?.symbol}
@@ -178,15 +178,15 @@ export function TradeTicket({
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-6">
-      <div className="grid grid-cols-2 rounded-full bg-surface-raised p-1">
+    <div className="rounded-md border-2 border-line-strong shadow-hard bg-surface p-6">
+      <div className="grid grid-cols-2 gap-1.5 rounded-md border-2 border-line-strong bg-surface-raised p-1.5">
         {(["BUY", "SELL"] as const).map((s) => (
           <button
             key={s}
             onClick={() => setSide(s)}
             className={cn(
-              "rounded-full py-2 text-[13.5px] font-semibold transition-colors",
-              side === s ? (s === "BUY" ? "bg-ink text-paper" : "bg-loss text-white") : "text-muted",
+              "rounded-md py-2 text-[13.5px] font-bold transition-colors",
+              side === s ? (s === "BUY" ? "bg-primary text-primary-foreground" : "bg-loss text-white") : "text-muted",
             )}
           >
             {s === "BUY" ? "Buy" : "Sell"}

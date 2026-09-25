@@ -38,7 +38,7 @@ export default async function WalletPage() {
         {wallet.transactions.length === 0 ? (
           <p className="mt-3 text-[13.5px] text-muted">No transactions yet.</p>
         ) : (
-          <div className="mt-3 rounded-xl border border-line">
+          <div className="mt-3 rounded-md border-2 border-line-strong">
             {wallet.transactions.map((t) => (
               <div key={t.id} className="flex items-center justify-between gap-4 border-b border-line p-4 last:border-none">
                 <div>

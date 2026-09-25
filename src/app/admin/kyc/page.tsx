@@ -15,7 +15,7 @@ export default async function AdminKycPage() {
       ) : (
         <div className="mt-6 space-y-3">
           {applications.map((app) => (
-            <div key={app.id} className="flex items-center justify-between gap-4 rounded-xl border border-line p-4">
+            <div key={app.id} className="flex items-center justify-between gap-4 rounded-md border-2 border-line-strong shadow-hard-sm p-4">
               <div>
                 <p className="text-[14px] font-medium text-ink">{app.fullName}</p>
                 <p className="text-[12.5px] text-muted">

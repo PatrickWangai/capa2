@@ -85,7 +85,7 @@ export default function LandingPage() {
       </section>
 
       {/* Ticker strip */}
-      <section className="border-y border-line bg-surface-raised py-3">
+      <section className="border-y-2 border-line-strong bg-surface-raised py-3">
         <div className="mx-auto flex max-w-6xl gap-8 overflow-x-auto px-5 [scrollbar-width:none]">
           {TICKER.map((t) => {
             const up = t.change >= 0;
@@ -106,16 +106,18 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="mx-auto max-w-6xl px-5 py-20">
-        <p className="eyebrow text-[12px] font-semibold uppercase tracking-wide text-faint">What you get</p>
+        <p className="text-[12px] font-bold uppercase tracking-wide text-faint">What you get</p>
         <h2 className="mt-3 max-w-[26ch] text-3xl font-bold text-ink sm:text-4xl">
           See what investors are doing. Understand why. Track what happened next.
         </h2>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
-            <div key={f.title} className="bg-surface p-7">
-              <f.icon className="size-6 text-ink" strokeWidth={1.75} />
-              <h3 className="mt-4 text-[15.5px] font-semibold text-ink">{f.title}</h3>
+            <div key={f.title} className="rounded-md border-2 border-line-strong bg-surface p-7 shadow-hard-sm">
+              <div className="flex size-11 items-center justify-center rounded-md border-2 border-line-strong bg-primary">
+                <f.icon className="size-5 text-primary-foreground" strokeWidth={2} />
+              </div>
+              <h3 className="mt-4 text-[15.5px] font-bold text-ink">{f.title}</h3>
               <p className="mt-2 text-[13.5px] leading-relaxed text-muted">{f.copy}</p>
             </div>
           ))}
@@ -123,17 +125,17 @@ export default function LandingPage() {
       </section>
 
       {/* Market Pulse preview */}
-      <section className="border-t border-line bg-surface-raised py-20">
+      <section className="border-t-2 border-line-strong bg-surface-raised py-20">
         <div className="mx-auto grid max-w-6xl gap-10 px-5 lg:grid-cols-[1fr_1fr] lg:items-center">
           <div>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-faint">Market Pulse</p>
+            <p className="text-[12px] font-bold uppercase tracking-wide text-faint">Market Pulse</p>
             <h2 className="mt-3 text-3xl font-bold text-ink">Aggregated activity, never advice.</h2>
             <p className="mt-4 max-w-[46ch] text-[14.5px] leading-relaxed text-muted">
               Capa surfaces what its own investor base is buying, selling, and discussing — clearly labeled as
               community activity, not a signal to act on.
             </p>
           </div>
-          <div className="rounded-2xl border border-line bg-surface p-6">
+          <div className="rounded-md border-2 border-line-strong bg-surface p-6 shadow-hard">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-faint">Based on aggregated user activity</p>
             <div className="mt-4 space-y-4">
               {[
@@ -156,7 +158,7 @@ export default function LandingPage() {
 
       {/* Security / trust */}
       <section className="mx-auto max-w-6xl px-5 py-20">
-        <div className="flex flex-col items-start gap-6 rounded-2xl border border-line p-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-6 rounded-md border-2 border-line-strong p-8 shadow-hard-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <ShieldCheck className="mt-1 size-7 shrink-0 text-ink" strokeWidth={1.5} />
             <div>
@@ -173,16 +175,19 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="border-t border-line bg-ink py-20">
+      <section className="border-t-2 border-line-strong bg-primary py-20">
         <div className="mx-auto max-w-6xl px-5 text-center">
-          <h2 className="text-3xl font-bold text-paper sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
-            Open your first position with the reasoning already attached.
+          <p className="text-4xl text-primary-foreground sm:text-5xl" style={{ fontFamily: "var(--font-script)" }}>
+            Open your first position
+          </p>
+          <h2 className="mt-2 text-3xl font-bold text-primary-foreground sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
+            with the reasoning already attached.
           </h2>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" className="bg-paper text-ink hover:opacity-90">
+            <Button asChild size="lg" className="!bg-paper !text-ink">
               <Link href="/signup">Start investing</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-paper/30 text-paper hover:bg-paper/10">
+            <Button asChild variant="outline" size="lg" className="!border-primary-foreground !bg-primary !text-primary-foreground">
               <Link href="/markets">Explore markets</Link>
             </Button>
           </div>

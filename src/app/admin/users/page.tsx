@@ -11,7 +11,7 @@ export default async function AdminUsersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-ink">Users</h1>
-      <div className="mt-6 overflow-x-auto rounded-xl border border-line">
+      <div className="mt-6 overflow-x-auto rounded-md border-2 border-line-strong">
         <table className="w-full min-w-[720px] text-left text-[13.5px]">
           <thead>
             <tr className="border-b border-line text-[11.5px] uppercase tracking-wide text-faint">

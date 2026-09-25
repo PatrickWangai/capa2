@@ -19,7 +19,7 @@ export default async function BriefingPage() {
       {brief.highlights.length > 0 && (
         <div className="mt-6 space-y-4">
           {brief.highlights.map((h, i) => (
-            <div key={i} className="rounded-xl border border-line p-4">
+            <div key={i} className="rounded-md border-2 border-line-strong shadow-hard-sm p-4">
               <Link href={`/stock/${h.symbol}`} className="font-tabular text-[14px] font-semibold text-ink hover:underline">
                 {h.symbol}
               </Link>

@@ -42,7 +42,7 @@ export function KYCForm({ initialStatus }: { initialStatus: KYCStatusView }) {
   };
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <div className="flex items-center justify-between">
         <h3 className="text-[14px] font-semibold text-ink">Identity verification (KYC)</h3>
         <Badge variant={status.status === "VERIFIED" ? "gain" : status.status === "REJECTED" ? "loss" : "signal"}>

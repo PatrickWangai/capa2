@@ -81,7 +81,7 @@ function PulseSection({
   return (
     <div>
       <h2 className="text-[14px] font-semibold text-ink">{title}</h2>
-      <div className="mt-2 rounded-xl border border-line px-4">
+      <div className="mt-2 rounded-md border-2 border-line-strong shadow-hard-sm px-4">
         {rows.filter((r) => r[metricKey] > 0).length === 0 ? (
           <p className="py-6 text-center text-[13px] text-muted">No activity in this window yet.</p>
         ) : (

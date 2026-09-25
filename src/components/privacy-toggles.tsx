@@ -37,7 +37,7 @@ export function PrivacyToggles({ initial }: { initial: PrivacySettings }) {
   };
 
   return (
-    <div className="divide-y divide-line rounded-xl border border-line">
+    <div className="divide-y divide-line rounded-md border-2 border-line-strong">
       {(Object.keys(LABELS) as (keyof PrivacySettings)[]).map((key) => (
         <div key={key} className="flex items-center justify-between p-4">
           <span className="text-[13.5px] text-ink-soft">{LABELS[key]}</span>
@@ -45,7 +45,7 @@ export function PrivacyToggles({ initial }: { initial: PrivacySettings }) {
             checked={settings[key]}
             onCheckedChange={(v) => update(key, v)}
             className={cn(
-              "relative h-6 w-11 rounded-full bg-line-strong transition-colors data-[state=checked]:bg-ink",
+              "relative h-6 w-11 rounded-full border-2 border-line-strong bg-surface-raised transition-colors data-[state=checked]:bg-primary",
             )}
           >
             <Switch.Thumb className="block size-5 translate-x-0.5 rounded-full bg-white transition-transform data-[state=checked]:translate-x-[22px]" />

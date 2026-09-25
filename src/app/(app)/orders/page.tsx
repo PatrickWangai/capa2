@@ -28,14 +28,14 @@ export default async function OrdersPage() {
       <h1 className="text-2xl font-bold text-ink">Orders</h1>
 
       {orders.length === 0 ? (
-        <div className="mt-6 rounded-xl border border-dashed border-line-strong p-10 text-center">
+        <div className="mt-6 rounded-md border-2 border-dashed border-line-strong p-10 text-center">
           <p className="text-[14px] text-muted">You haven&apos;t placed any orders yet.</p>
           <Link href="/trade" className="mt-2 inline-block text-[13.5px] font-medium text-ink underline underline-offset-2">
             Place your first trade
           </Link>
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-xl border border-line">
+        <div className="mt-6 overflow-x-auto rounded-md border-2 border-line-strong">
           <table className="w-full min-w-[720px] text-left text-[13.5px]">
             <thead>
               <tr className="border-b border-line text-[11.5px] uppercase tracking-wide text-faint">

@@ -10,7 +10,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-line bg-paper/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t-2 border-line-strong bg-paper pb-[env(safe-area-inset-bottom)] lg:hidden">
       {MOBILE_NAV.map((item) => {
         const active = pathname === item.href || pathname.startsWith(item.href + "/");
         const Icon = item.icon;

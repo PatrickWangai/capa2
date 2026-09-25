@@ -29,7 +29,7 @@ export default function LearnPage() {
             <h2 className="text-[15px] font-semibold text-ink">{cat.name}</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {cat.articles.map((title) => (
-                <div key={title} className="rounded-xl border border-line p-5 transition-colors hover:border-ink">
+                <div key={title} className="rounded-md border-2 border-line-strong shadow-hard-sm p-5 transition-colors hover:border-primary">
                   <p className="text-[14px] font-medium leading-snug text-ink">{title}</p>
                   <p className="mt-2 text-[12.5px] text-faint">4 min read</p>
                 </div>

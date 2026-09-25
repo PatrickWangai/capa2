@@ -30,7 +30,7 @@ export function CreatePostForm({ onPosted }: { onPosted?: () => void }) {
         onChange={(e) => setContent(e.target.value)}
         placeholder="Share research, a question, or market commentary…"
         rows={3}
-        className="w-full resize-none rounded-lg border border-line-strong bg-surface p-3 text-[14px] text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="w-full resize-none rounded-md border-2 border-line-strong bg-surface p-3 text-[14px] text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <div className="mt-2 flex justify-end">
         <Button size="sm" onClick={submit} disabled={submitting || !content.trim()}>

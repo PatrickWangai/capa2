@@ -72,7 +72,7 @@ export function WatchlistManager({ initialItems }: { initialItems: WatchlistItem
           className="pl-9"
         />
         {results.length > 0 && (
-          <div className="absolute z-10 mt-1.5 w-full rounded-lg border border-line bg-surface shadow-lg">
+          <div className="absolute z-10 mt-1.5 w-full rounded-md border-2 border-line-strong bg-surface shadow-hard">
             {results.map((r) => (
               <button
                 key={r.id}
@@ -88,7 +88,7 @@ export function WatchlistManager({ initialItems }: { initialItems: WatchlistItem
         )}
       </div>
 
-      <div className="mt-6 rounded-xl border border-line">
+      <div className="mt-6 rounded-md border-2 border-line-strong">
         {items.length === 0 ? (
           <p className="p-8 text-center text-[13.5px] text-muted">Your watchlist is empty — search above to add one.</p>
         ) : (

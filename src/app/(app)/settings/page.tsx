@@ -21,7 +21,7 @@ export default async function SettingsPage() {
 
       <section className="mt-6">
         <h2 className="text-[13px] font-semibold uppercase tracking-wide text-faint">Account</h2>
-        <div className="mt-2 rounded-xl border border-line p-4 text-[13.5px]">
+        <div className="mt-2 rounded-md border-2 border-line-strong shadow-hard-sm p-4 text-[13.5px]">
           <p className="text-ink-soft">
             <span className="text-faint">Name</span> — {user.name}
           </p>

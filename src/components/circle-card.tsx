@@ -18,7 +18,7 @@ export function CircleCard({
   isMember: boolean;
 }) {
   return (
-    <Link href={`/circles/${id}`} className="block rounded-xl border border-line p-5 hover:border-ink">
+    <Link href={`/circles/${id}`} className="block rounded-md border-2 border-line-strong shadow-hard-sm p-5 hover:border-primary">
       <div className="flex items-start justify-between">
         <h3 className="text-[15px] font-semibold text-ink">{name}</h3>
         {isMember && <Badge variant="signal">Member</Badge>}

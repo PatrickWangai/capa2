@@ -22,7 +22,7 @@ export default async function NotificationsPage() {
       {notifications.length === 0 ? (
         <p className="mt-10 text-center text-[13.5px] text-muted">You&apos;re all caught up.</p>
       ) : (
-        <div className="mt-6 rounded-xl border border-line">
+        <div className="mt-6 rounded-md border-2 border-line-strong">
           {notifications.map((n) => (
             <Link
               key={n.id}

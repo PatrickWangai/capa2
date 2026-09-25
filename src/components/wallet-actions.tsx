@@ -44,7 +44,7 @@ export function WalletActions() {
   }
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <h3 className="text-[14px] font-semibold text-ink">{mode === "deposit" ? "Deposit" : "Withdraw"}</h3>
       <div className="mt-3">
         <Label htmlFor="wallet-amount">Amount (KES)</Label>

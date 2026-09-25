@@ -71,8 +71,10 @@ export function SignupForm() {
                   setSelected((prev) => (active ? prev.filter((i) => i !== interest) : [...prev, interest]))
                 }
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-colors",
-                  active ? "border-ink bg-ink text-paper" : "border-line-strong text-ink-soft hover:bg-surface-raised",
+                  "rounded-md border-2 px-3 py-1.5 text-[12.5px] font-bold transition-colors",
+                  active
+                    ? "border-line-strong bg-primary text-primary-foreground"
+                    : "border-line-strong text-ink-soft hover:bg-surface-raised",
                 )}
               >
                 {interest}

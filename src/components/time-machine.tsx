@@ -42,7 +42,7 @@ export function TimeMachine({ assets }: { assets: AssetOption[] }) {
   };
 
   return (
-    <div className="rounded-xl border border-line p-5">
+    <div className="rounded-md border-2 border-line-strong shadow-hard-sm p-5">
       <h2 className="text-[15px] font-semibold text-ink">Time Machine</h2>
       <p className="mt-1 text-[13px] text-muted">See how a historical investment would have performed — a simulation, not a prediction.</p>
 
