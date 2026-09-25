@@ -10,7 +10,12 @@ services:
     plan: free
     region: frankfurt
     autoDeploy: true
-    buildCommand: npm ci && npm run build
+    # --include=dev is required here: NODE_ENV=production makes `npm ci`
+    # skip devDependencies, but `next build` needs tailwindcss/@tailwindcss/
+    # postcss and typescript to run at all. Moving only the packages needed
+    # at runtime (dotenv, tsx, prisma) to dependencies wasn't enough — build
+    # tooling needs to be present too.
+    buildCommand: npm ci --include=dev && npm run build
     # Deliberately does NOT run `npm run db:seed` on every start — the seed
     # script wipes and recreates demo data, which would erase every real
     # signup/trade on each restart. Run it once manually (Render shell) after
