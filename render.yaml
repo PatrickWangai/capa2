@@ -10,33 +10,69 @@ services:
     plan: free
     region: frankfurt
     autoDeploy: true
-    # --include=dev is required here: NODE_ENV=production makes `npm ci`
-    # skip devDependencies, but `next build` needs tailwindcss/@tailwindcss/
-    # postcss and typescript to run at all. Moving only the packages needed
-    # at runtime (dotenv, tsx, prisma) to dependencies wasn't enough — build
-    # tooling needs to be present too.
-    buildCommand: npm ci --include=dev && npm run build
-    # Deliberately does NOT run `npm run db:seed` on every start — the seed
-    # script wipes and recreates demo data, which would erase every real
-    # signup/trade on each restart. Run it once manually (Render shell) after
-    # the first deploy to populate initial demo assets/users, then leave it.
-    startCommand: npx prisma migrate deploy && npm start
+    buildCommand: npm ci --include=dev && npm run --workspace=frontend build && cd backend && npx prisma generate
+    startCommand: cd backend && npx prisma migrate resolve --applied 20260705000000_add_trading_bots 2>/dev/null; npx prisma migrate resolve --applied 20260706000000_fix_trading_bots 2>/dev/null; node src/utils/seed.js && node src/index.js
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
       - key: DATABASE_URL
         fromDatabase:
           name: capa-db
           property: connectionString
-      - key: AUTH_SECRET
-        generateValue: true
-      - key: AUTH_URL
+      - key: REDIS_URL
         sync: false
-      - key: BROKER_PROVIDER
-        value: mock
-      - key: MARKET_DATA_PROVIDER
-        value: mock
-      - key: PAYMENT_PROVIDER
-        value: mock
-      - key: KYC_PROVIDER
-        value: mock
+      - key: CORS_ORIGINS
+        value: '*'
+      - key: VITE_BASE
+        value: /
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: MPESA_CONSUMER_KEY
+        sync: false
+      - key: MPESA_CONSUMER_SECRET
+        sync: false
+      - key: MPESA_PASSKEY
+        sync: false
+      - key: MPESA_SHORTCODE
+        sync: false
+      - key: MPESA_CALLBACK_URL
+        sync: false
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_SECRET_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: POLYGON_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        value: https://capa-q1nh-fx87.onrender.com
+      - key: BANK_NAME
+        sync: false
+      - key: BANK_ACCOUNT_NAME
+        sync: false
+      - key: BANK_ACCOUNT_NO
+        sync: false
+      - key: BANK_BRANCH
+        sync: false
+      - key: BANK_PAYBILL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

@@ -1,103 +1,319 @@
-# Capa — Invest beyond the market
+# Capa — Invest Globally. Grow Confidently.
 
-Capa is a trading and social-investing platform for Kenyan, US, and global markets. Every position can carry an investment thesis — why it was opened, and what happened next. Built as a sandbox: every order executes against a simulated broker with real market-shaped pricing, and no real money moves until a licensed broker and payment provider are connected.
+Capa is a full-stack global investment platform enabling users to buy and sell US (NYSE/NASDAQ), UK (LSE), and Kenyan (NSE) stocks and ETFs, deposit via M-Pesa or bank transfer, track portfolios in real time, and receive dividend notifications.
 
-## Tech stack
+---
+
+## Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router), TypeScript, React 19 |
-| Styling | Tailwind CSS v4 |
-| Database | PostgreSQL, Prisma ORM 7 |
-| Auth | Auth.js (credentials) |
-| Charts | TradingView Lightweight Charts |
-| Forms | React Hook Form + Zod |
-| Testing | Vitest |
+|-------|-----------|
+| Backend | Node.js · Express · Prisma ORM · PostgreSQL · Redis · Socket.IO |
+| Frontend | React 18 · Vite · TypeScript · Tailwind CSS · Recharts · React Query |
+| Mobile | Expo (React Native) · TypeScript · React Navigation |
+| Broker | Alpaca Markets (US equities) |
+| Payments | M-Pesa Daraja STK Push · Bank Transfer |
+| Storage | AWS S3 (KYC documents) |
+| Infra | Docker · Nginx · GitHub Actions |
 
-## Architecture: provider abstractions
+---
 
-Every external integration point is a TypeScript interface with a `Mock*` implementation, so the UI never knows whether it's talking to a real vendor or a sandbox:
+## Project Structure
 
-| Interface | File | Mock implementation |
-|---|---|---|
-| `BrokerService` | `src/services/providers/broker.ts` | Executes orders against live-shaped mock quotes, updates holdings/wallet/transactions atomically |
-| `MarketDataProvider` | `src/services/providers/market-data.ts` | Deterministic seeded price jitter + synthetic OHLC history, no external API |
-| `PaymentProvider` | `src/services/providers/payment.ts` | Simulates instant M-Pesa/bank/card confirmation |
-| `KYCProvider` | `src/services/providers/kyc.ts` | Leaves submissions `PENDING` for the admin review queue — no auto-approval |
+```
+capa/
+├── backend/                  # Express API server
+│   ├── prisma/
+│   │   ├── schema.prisma     # Full data model (20 models, 14 enums)
+│   │   └── migrations/       # SQL migrations
+│   ├── src/
+│   │   ├── controllers/      # Business logic (auth, orders, kyc, portfolio…)
+│   │   ├── middleware/        # JWT auth, KYC guard, admin guard, validation
+│   │   ├── routes/           # 14 route files
+│   │   ├── services/         # Alpaca, M-Pesa, S3, email, price feed, socket
+│   │   ├── jobs/             # Dividend processor, price alert checker
+│   │   └── utils/            # DB, Redis, logger, seed
+│   └── tests/                # Unit + integration tests
+├── frontend/                 # React/Vite web app
+│   └── src/
+│       ├── pages/            # 10 user pages + 4 admin pages
+│       ├── components/       # UI primitives, layout, admin panel
+│       ├── services/         # Axios client with JWT refresh
+│       └── store/            # Zustand auth store
+├── mobile/                   # Expo React Native app
+│   └── src/
+│       ├── screens/          # Auth, Home, Markets, Portfolio, Deposit, Account
+│       ├── navigation/       # Stack + Tab navigators
+│       ├── components/       # Charts, price change, common
+│       └── store/            # SecureStore-backed auth
+├── infra/
+│   ├── nginx/nginx.conf      # Reverse proxy + WebSocket support
+│   └── postgres/init.sql     # DB initialisation
+├── brand_assets/             # Capa logo SVG
+├── docker-compose.yml        # Full stack orchestration
+├── .env.example              # All required environment variables
+└── README.md
+```
 
-Swapping in a real broker, market data vendor, or payment processor means writing a `Real*` class against the same interface — no changes to pages, API routes, or the database schema.
+---
 
-## Getting started
+## Quick Start (Local)
 
 ### Prerequisites
-
 - Node.js 20+
-- A local PostgreSQL server
+- Docker & Docker Compose
+- Git
 
-### Setup
+### 1. Clone and configure
+First, clone the repository and navigate into the new directory.
+```bash
+git clone https://github.com/chimerawang/capa.git
+cd capa
+```
+
+Next, create your local environment file from the example provided.
+```bash
+cp .env.example .env
+```
+
+### 2. Start infrastructure
 
 ```bash
-npm install
-cp .env.example .env
-# Edit .env: set DATABASE_URL to a local Postgres database, generate AUTH_SECRET with:
-#   openssl rand -base64 32
-
-npx prisma migrate dev
-npm run db:seed
-npm run dev
+docker-compose up -d postgres redis
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+### 3. Set up backend
 
-### Demo accounts (after seeding)
+```bash
+cd backend
+npm install
+npx prisma migrate deploy     # Run migrations
+node src/utils/seed.js        # Seed assets + demo accounts
+npm run dev                   # Start API on :4000
+```
+
+### 4. Start frontend
+
+```bash
+cd ../frontend
+npm install
+npm run dev                   # Start web app on :5173
+```
+
+### 5. Start mobile (optional)
+
+```bash
+cd ../mobile
+npm install
+npx expo start               # Scan QR with Expo Go app
+```
+
+### Demo Accounts
 
 | Role | Email | Password |
-|---|---|---|
-| Investor | `demo@capa.invest` | `Demo1234!` |
-| Admin | `admin@capa.invest` | `Demo1234!` |
+|------|-------|----------|
+| Admin | admin@capa.invest | Admin1234! |
+| Demo User | demo@capa.invest | Demo1234! |
 
-Five more investor accounts (`amara@capa.invest`, `brian@capa.invest`, `faith@capa.invest`, `james@capa.invest`, `lindiwe@capa.invest`) share the same password and seed the social feed, theses, and circles with realistic activity.
+---
 
-## Scripts
+## Docker (Full Stack)
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start the dev server |
-| `npm run build` | Production build (runs `prisma generate` first) |
-| `npm test` | Run the Vitest suite |
-| `npm run lint` | ESLint |
-| `npm run db:seed` | Reset and reseed the local database |
-| `npm run db:studio` | Open Prisma Studio |
+```bash
+cp .env.example .env
+# Fill in .env values
 
-## Project structure
-
-```
-prisma/
-  schema.prisma       # Full data model — trading, social, circles, wallet, KYC, admin
-  seed.ts             # Realistic demo data: assets, users, holdings, orders, posts, theses, circles
-src/
-  app/
-    (marketing)/      # Public: landing, markets, stock detail, about, pricing, learn
-    (auth)/           # Login, signup
-    (app)/            # Authenticated: dashboard, portfolio, trade, social, circles, wallet, settings...
-    admin/            # Role-gated admin console
-    api/              # Route handlers backing every mutation and data fetch
-  services/
-    providers/        # Broker / market data / payment / KYC interfaces + mocks
-    *.ts              # Business logic (social, theses, circles, market pulse, simulator, admin...)
-  components/         # UI primitives (ui/) and domain components (post-card, trade-ticket, ...)
-  lib/
-    money.ts           # Centralized Decimal-based financial math — never floating point for money
-    db.ts               # Prisma client singleton
-  auth.ts / auth.config.ts / proxy.ts   # Auth.js config, split Edge-safe vs. full for middleware
+docker-compose up -d
+# Web app:  http://localhost:3000
+# API:      http://localhost:4000
+# Nginx:    http://localhost:80
 ```
 
-## Notable implementation details
+---
 
-- **Financial math never uses native floats.** `src/lib/money.ts` wraps `decimal.js` for every calculation — order fees, P&L, weighted average cost, currency conversion for cross-currency portfolio aggregation.
-- **RBAC is enforced in `proxy.ts`** (the Next.js middleware), not just in the UI — hitting `/admin` as a non-admin redirects server-side to `/forbidden` before any admin page code runs.
-- **Compliance-conscious language throughout**: Market Pulse is always labeled "based on aggregated user activity," never phrased as a recommendation; simulator results are labeled as historical/hypothetical; the footer and landing page are explicit that this is a sandbox with no real broker-dealer behind it.
+## Environment Variables
+
+See `.env.example` for all variables. Key ones:
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `REDIS_URL` | Redis connection string |
+| `JWT_SECRET` | 64+ char random string for access tokens |
+| `JWT_REFRESH_SECRET` | 64+ char random string for refresh tokens |
+| `MPESA_CONSUMER_KEY` | Safaricom Daraja API key |
+| `MPESA_CONSUMER_SECRET` | Safaricom Daraja secret |
+| `MPESA_PASSKEY` | Daraja STK push passkey |
+| `MPESA_CALLBACK_URL` | Public URL for M-Pesa callbacks |
+| `ALPACA_API_KEY` | Alpaca Markets API key |
+| `ALPACA_SECRET_KEY` | Alpaca Markets secret |
+| `ALPACA_BASE_URL` | Use paper-api URL for testing |
+| `AWS_ACCESS_KEY_ID` | S3 access for KYC documents |
+| `AWS_SECRET_ACCESS_KEY` | S3 secret |
+| `AWS_S3_BUCKET` | S3 bucket name |
+| `POLYGON_API_KEY` | Polygon.io for live market data |
+| `SMTP_HOST/USER/PASS` | Email (SendGrid recommended) |
+
+---
+
+## API Reference
+
+### Authentication
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Login (returns JWT) |
+| POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/auth/logout` | Revoke tokens |
+| POST | `/api/auth/mfa/setup` | Enable MFA (TOTP) |
+| POST | `/api/auth/mfa/verify` | Confirm MFA code |
+
+### Markets
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/assets` | List assets (filter: exchange, assetClass, search) |
+| GET | `/api/assets/:id` | Asset details + live price |
+| GET | `/api/assets/:id/history` | OHLCV candles |
+| GET | `/api/assets/watchlist` | User's watchlist |
+| POST | `/api/assets/watchlist/:assetId` | Add to watchlist |
+| DELETE | `/api/assets/watchlist/:assetId` | Remove from watchlist |
+
+### Orders
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/orders` | Order history |
+| POST | `/api/orders` | Place order (requires KYC) |
+| DELETE | `/api/orders/:id` | Cancel open order |
+
+### Portfolio
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/portfolio` | Holdings + summary + P&L |
+| GET | `/api/portfolio/history` | Value over time |
+| GET | `/api/portfolio/dividends` | Dividend payments |
+
+### Deposits
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/deposits/mpesa` | M-Pesa STK Push |
+| POST | `/api/deposits/bank` | Bank transfer instructions |
+| POST | `/api/deposits/withdraw` | Withdrawal request |
+| GET | `/api/deposits/history` | Transaction history |
+
+### KYC
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/kyc/status` | KYC status + submitted docs |
+| POST | `/api/kyc/upload` | Upload document (multipart) |
+
+### Admin
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/admin/dashboard` | Platform metrics |
+| GET | `/api/admin/users` | List users |
+| PATCH | `/api/admin/users/:id` | Update user status |
+| GET | `/api/admin/kyc/pending` | Pending KYC docs |
+| PATCH | `/api/admin/kyc/:docId/review` | Approve/reject KYC |
+| GET | `/api/admin/transactions` | All transactions |
+| PATCH | `/api/admin/transactions/:id/confirm` | Confirm deposit |
+
+### Webhooks
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/webhooks/mpesa` | M-Pesa Daraja callback |
+
+---
 
 ## Deployment
 
-Set `DATABASE_URL`, `AUTH_SECRET`, and `AUTH_URL` (your deployed origin) in the hosting provider's environment variables. The build step (`prisma generate && next build`) and a `prisma migrate deploy` before `next start` are both required — see `render.yaml` for a working Render Blueprint.
+### Railway
+
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+railway login
+railway init
+
+# Add services: PostgreSQL, Redis from Railway dashboard
+# Set environment variables in Railway dashboard
+
+railway up
+```
+
+Railway auto-detects Node.js. Set `START_COMMAND` to:
+```
+cd backend && npx prisma migrate deploy && node src/index.js
+```
+
+### Render
+
+1. Create a new **Web Service** → connect GitHub repo
+2. **Build Command**: `cd backend && npm install && npx prisma generate`
+3. **Start Command**: `cd backend && npx prisma migrate deploy && node src/index.js`
+4. Add **PostgreSQL** and **Redis** from Render dashboard
+5. Set all environment variables from `.env.example`
+
+For frontend, create a **Static Site**:
+- **Build Command**: `cd frontend && npm install && npm run build`
+- **Publish Directory**: `frontend/dist`
+
+### Vercel (Frontend only)
+
+```bash
+cd frontend
+npx vercel --prod
+```
+
+Set environment variables in Vercel dashboard:
+- `VITE_API_URL` = your Railway/Render backend URL
+- `VITE_WS_URL` = same URL with `wss://` prefix
+
+### Expo (Mobile — EAS Build)
+
+```bash
+npm install -g eas-cli
+cd mobile
+eas build --platform android   # or ios
+eas submit --platform android
+```
+
+Update `mobile/app.json` → `extra.apiUrl` to point to your deployed backend.
+
+---
+
+## M-Pesa Setup
+
+1. Register at [Safaricom Daraja](https://developer.safaricom.co.ke/)
+2. Create an app and get `Consumer Key` + `Consumer Secret`
+3. For callbacks, use [ngrok](https://ngrok.com/) in dev:
+   ```bash
+   ngrok http 4000
+   # Set MPESA_CALLBACK_URL=https://xxxxx.ngrok.io/api/webhooks/mpesa
+   ```
+4. Set `MPESA_ENV=production` and use your domain in production
+
+---
+
+## Alpaca Setup
+
+1. Register at [Alpaca Markets](https://alpaca.markets/)
+2. Create paper trading API keys for testing
+3. Set `ALPACA_BASE_URL=https://paper-api.alpaca.markets`
+4. Switch to live keys + `https://api.alpaca.markets` for production
+5. If `ALPACA_API_KEY` is not set, the system uses simulated fills
+
+---
+
+## Running Tests
+
+```bash
+cd backend
+npm test                      # All tests
+npm test -- --testPathPattern auth   # Auth tests only
+```
+
+---
+
+## License
+
+MIT © Capa Technologies Ltd

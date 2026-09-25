@@ -1,0 +1,12 @@
+import { Router } from 'express';
+const router = Router();
+import * as c from '../controllers/depositsController.js';
+import auth from '../middleware/authenticate.js';
+import requireKyc from '../middleware/requireKyc.js';
+import validate from '../middleware/validate.js';
+import { mpesaDepositSchema, bankDepositSchema, withdrawSchema } from '../validation/schemas.js';
+router.get('/history', auth, c.getHistory);
+router.post('/mpesa', auth, requireKyc, validate(mpesaDepositSchema), c.mpesaDeposit);
+router.post('/bank', auth, requireKyc, validate(bankDepositSchema), c.bankDeposit);
+router.post('/withdraw', auth, requireKyc, validate(withdrawSchema), c.withdraw);
+export default router;

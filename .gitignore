@@ -1,49 +1,44 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Build outputs
+dist/
+build/
+.next/
+.expo/
+web-build/
 
-# testing
-/coverage
+# Environment
+.env
+.env.local
+.env.*.local
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+logs/
+*.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# OS
+.DS_Store
+Thumbs.db
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# prisma generated client (regenerated via `prisma generate` on install/build)
-/src/generated/prisma
-
-# editor / tooling state, not app source
+# IDE
 .vscode/
-.cla.run/
+.idea/
+*.swp
+*.swo
+
+# Prisma
+backend/prisma/migrations/dev/
+
+# Coverage
+coverage/
+
+# Expo
+.expo-shared/
+
+# Exported static site
+exported-site/
+backend/prisma/generated/
