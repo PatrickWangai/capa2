@@ -5,41 +5,46 @@ const VARIANT_CONFIG: Record<AlertVariant, {
   bg: string;
   border: string;
   iconBg: string;
+  iconFg: string;
   icon: string;
   label: string;
   progressColor: string;
 }> = {
   success: {
-    bg: '#f0fff4',
-    border: '#000',
-    iconBg: '#00C853',
+    bg: 'var(--success-muted)',
+    border: 'var(--foreground)',
+    iconBg: 'var(--success)',
+    iconFg: 'var(--success-foreground)',
     icon: '✓',
     label: 'SUCCESS',
-    progressColor: '#00C853',
+    progressColor: 'var(--success)',
   },
   error: {
-    bg: '#fff5f5',
-    border: '#000',
-    iconBg: '#FF3B30',
+    bg: 'var(--destructive-muted)',
+    border: 'var(--foreground)',
+    iconBg: 'var(--destructive)',
+    iconFg: 'var(--destructive-foreground)',
     icon: '✕',
     label: 'ERROR',
-    progressColor: '#FF3B30',
+    progressColor: 'var(--destructive)',
   },
   warning: {
-    bg: '#fffbf0',
-    border: '#000',
-    iconBg: '#FF9500',
+    bg: 'var(--warning-muted)',
+    border: 'var(--foreground)',
+    iconBg: 'var(--warning)',
+    iconFg: 'var(--warning-foreground)',
     icon: '!',
     label: 'WARNING',
-    progressColor: '#FF9500',
+    progressColor: 'var(--warning)',
   },
   info: {
-    bg: '#f0f8ff',
-    border: '#000',
-    iconBg: '#007AFF',
+    bg: 'var(--info-muted)',
+    border: 'var(--foreground)',
+    iconBg: 'var(--info)',
+    iconFg: 'var(--info-foreground)',
     icon: 'i',
     label: 'INFO',
-    progressColor: '#007AFF',
+    progressColor: 'var(--info)',
   },
 };
 
@@ -104,7 +109,7 @@ export default function AlertPopup() {
           backgroundColor: cfg.bg,
           border: `2px solid ${cfg.border}`,
           borderRadius: 12,
-          boxShadow: '4px 4px 0 #000',
+          boxShadow: `4px 4px 0 var(--foreground)`,
           animation: 'nb-pop-in 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards',
           overflow: 'hidden',
           fontFamily: 'var(--font-sans)',
@@ -113,7 +118,7 @@ export default function AlertPopup() {
         {/* Top label bar */}
         <div style={{
           backgroundColor: cfg.iconBg,
-          borderBottom: '2px solid #000',
+          borderBottom: `2px solid ${cfg.border}`,
           padding: '4px 12px',
           display: 'flex',
           alignItems: 'center',
@@ -123,7 +128,7 @@ export default function AlertPopup() {
             fontSize: 10,
             fontWeight: 900,
             letterSpacing: '0.16em',
-            color: '#fff',
+            color: cfg.iconFg,
             textTransform: 'uppercase',
           }}>{cfg.label}</span>
           <button
@@ -164,14 +169,14 @@ export default function AlertPopup() {
             height: 36,
             borderRadius: '50%',
             backgroundColor: cfg.iconBg,
-            border: '2px solid #000',
-            boxShadow: '2px 2px 0 #000',
+            border: `2px solid ${cfg.border}`,
+            boxShadow: `2px 2px 0 var(--foreground)`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 16,
             fontWeight: 900,
-            color: '#fff',
+            color: cfg.iconFg,
             fontStyle: cfg.icon === 'i' ? 'italic' : 'normal',
           }}>
             {cfg.icon}
@@ -183,7 +188,7 @@ export default function AlertPopup() {
               margin: 0,
               fontSize: 14,
               fontWeight: 900,
-              color: '#000',
+              color: 'var(--card-foreground)',
               letterSpacing: '-0.01em',
               lineHeight: 1.25,
             }}>
@@ -194,7 +199,7 @@ export default function AlertPopup() {
                 margin: '4px 0 0',
                 fontSize: 12,
                 fontWeight: 500,
-                color: '#333',
+                color: 'var(--muted-foreground)',
                 lineHeight: 1.45,
               }}>
                 {alert.message}
@@ -205,8 +210,8 @@ export default function AlertPopup() {
 
         {/* Progress bar */}
         <div style={{
-          borderTop: '1.5px solid #000',
-          backgroundColor: 'rgba(0,0,0,0.08)',
+          borderTop: `1.5px solid var(--foreground)`,
+          backgroundColor: 'rgb(var(--shadow-tint) / 0.08)',
           height: 4,
           position: 'relative',
           overflow: 'hidden',

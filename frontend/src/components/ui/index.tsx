@@ -56,20 +56,28 @@ export function Modal({ open, onClose, title, children }: {
 }
 
 // ─── StatCard ──────────────────────────────────────────────
-export function StatCard({ label, value, sub, positive, icon: Icon }: {
-  label: string; value: string; sub?: string; positive?: boolean; icon?: React.ElementType;
+type StatTone = 'default' | 'success' | 'warning' | 'destructive' | 'info';
+
+export function StatCard({ label, value, sub, positive, icon: Icon, tone = 'default' }: {
+  label: string; value: string; sub?: string; positive?: boolean; icon?: React.ElementType; tone?: StatTone;
 }) {
   return (
-    <div className="card flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-400">{label}</p>
-        {Icon && <Icon size={16} className="text-gray-600" />}
-      </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
-      {sub !== undefined && (
-        <p className={clsx('text-xs', positive === true ? 'text-green-400' : positive === false ? 'text-red-400' : 'text-gray-400')}>
-          {sub}
+    <div className="card flex items-start justify-between gap-3">
+      <div className="flex flex-col gap-1.5 min-w-0">
+        <p className="stat-label">
+          <span aria-hidden="true">[ </span>{label}<span aria-hidden="true"> ]</span>
         </p>
+        <p className="stat-value">{value}</p>
+        {sub !== undefined && (
+          <p className={clsx('text-xs', positive === true ? 'text-green-400' : positive === false ? 'text-red-400' : 'text-gray-400')}>
+            {sub}
+          </p>
+        )}
+      </div>
+      {Icon && (
+        <div className={`icon-chip icon-chip-${tone}`}>
+          <Icon size={17} strokeWidth={2} />
+        </div>
       )}
     </div>
   );

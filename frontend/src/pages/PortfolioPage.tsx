@@ -86,7 +86,7 @@ export default function PortfolioPage() {
     date: new Date(h.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
     value: Number(h.value),
   }));
-  const chartColor = totalGainLoss >= 0 ? 'var(--primary)' : '#ef4444';
+  const chartColor = totalGainLoss >= 0 ? 'var(--primary)' : 'var(--destructive)';
 
   const downloadCSV = () => {
     const rows = [
@@ -140,6 +140,7 @@ export default function PortfolioPage() {
           value={`${totalGainLoss >= 0 ? '+' : '−'}$${Math.abs(totalGainLoss).toLocaleString('en', { minimumFractionDigits: 2 })}`}
           icon={totalGainLoss >= 0 ? TrendingUp : TrendingDown}
           positive={totalGainLoss >= 0}
+          tone={totalGainLoss >= 0 ? 'success' : 'destructive'}
           sub={`${totalGainLossPct >= 0 ? '+' : ''}${totalGainLossPct.toFixed(2)}% all time`}
         />
         <StatCard
@@ -147,6 +148,7 @@ export default function PortfolioPage() {
           value={`${dailyChange >= 0 ? '+' : '−'}$${Math.abs(dailyChange).toLocaleString('en', { minimumFractionDigits: 2 })}`}
           icon={BarChart2}
           positive={dailyChange >= 0}
+          tone={dailyChange >= 0 ? 'success' : 'destructive'}
           sub={`${dailyChangePct >= 0 ? '+' : ''}${dailyChangePct.toFixed(2)}% today`}
         />
       </div>
@@ -176,8 +178,8 @@ export default function PortfolioPage() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false}
+              <XAxis dataKey="date" tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }} axisLine={false} tickLine={false}
                 tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} width={44} />
               <Tooltip
                 contentStyle={{ background: 'var(--surface-dark)', border: '1px solid var(--surface-dark-border)', borderRadius: 8, fontSize: 12 }}

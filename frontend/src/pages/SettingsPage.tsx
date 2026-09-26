@@ -45,7 +45,7 @@ function MfaDisableSection({ onDisabled }: { onDisabled: () => void }) {
           onChange={e => setCode(e.target.value.replace(/\D/g, ''))} />
         <div className="flex gap-3">
           <button className="flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-colors"
-            style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}
+            style={{ background: 'var(--destructive-muted)', color: 'var(--destructive)', border: '1px solid var(--destructive)' }}
             onClick={handleDisable} disabled={busy}>
             {busy ? 'Disabling…' : 'Confirm Disable'}
           </button>
@@ -58,14 +58,14 @@ function MfaDisableSection({ onDisabled }: { onDisabled: () => void }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="flex items-center gap-3">
-        <CheckCircle size={18} style={{ color: '#34d399' }} />
+        <CheckCircle size={18} style={{ color: 'var(--success)' }} />
         <div>
           <p className="text-sm font-semibold text-white">2FA is enabled</p>
           <p className="text-xs text-gray-500">Your account is protected with an authenticator app.</p>
         </div>
       </div>
       <button className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
-        style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)', whiteSpace: 'nowrap' }}
+        style={{ background: 'var(--destructive-muted)', color: 'var(--destructive)', border: '1px solid var(--destructive)', whiteSpace: 'nowrap' }}
         onClick={() => setConfirming(true)}>
         Disable 2FA
       </button>
@@ -226,8 +226,8 @@ function SecurityTab() {
         <p className="text-sm text-gray-400">
           You are currently logged in. To log out all other devices, change your password.
         </p>
-        <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)' }}>
-          <CheckCircle size={16} style={{ color: '#34d399' }} />
+        <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--success-muted)', border: '1px solid var(--success)' }}>
+          <CheckCircle size={16} style={{ color: 'var(--success)' }} />
           <span className="text-sm text-white">This device — current session</span>
         </div>
       </Section>
@@ -259,7 +259,7 @@ function NotificationsTab() {
       </div>
       <button onClick={() => toggle(k)}
         className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-        style={{ background: prefs[k] ? 'var(--primary)' : 'rgba(255,255,255,0.1)' }}>
+        style={{ background: prefs[k] ? 'var(--primary)' : 'var(--border)' }}>
         <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
           style={{ transform: prefs[k] ? 'translateX(24px)' : 'translateX(4px)' }} />
       </button>
@@ -372,7 +372,7 @@ function AccountTab() {
         <div className="flex flex-wrap gap-3">
           <button className="btn-secondary text-sm">Request Data Export</button>
           <button className="text-sm px-4 py-2 rounded-xl font-semibold transition-all"
-            style={{ background: 'rgba(248,113,113,0.1)', color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>
+            style={{ background: 'var(--destructive-muted)', color: 'var(--destructive)', border: '1px solid var(--destructive)' }}>
             Request Account Deletion
           </button>
         </div>

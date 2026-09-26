@@ -94,11 +94,14 @@ export default function OrdersPage() {
           {(['ALL', 'BUY', 'SELL'] as SideFilter[]).map(s => (
             <button key={s} onClick={() => setSideFilter(s)}
               className={clsx('px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1',
-                sideFilter === s ? 'text-white' : 'text-gray-400 hover:text-white')}
+                sideFilter !== s && 'text-gray-400 hover:text-white')}
               style={{
                 background: sideFilter === s
-                  ? s === 'BUY' ? '#10b981' : s === 'SELL' ? '#ef4444' : 'var(--secondary)'
+                  ? s === 'BUY' ? 'var(--success)' : s === 'SELL' ? 'var(--destructive)' : 'var(--secondary)'
                   : 'var(--border)',
+                color: sideFilter === s
+                  ? s === 'BUY' ? 'var(--success-foreground)' : s === 'SELL' ? 'var(--destructive-foreground)' : 'var(--foreground)'
+                  : undefined,
                 border: sideFilter === s ? 'none' : '1px solid var(--border)',
               }}>
               {s === 'BUY' && <TrendingUp size={10} />}

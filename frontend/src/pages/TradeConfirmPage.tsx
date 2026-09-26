@@ -176,7 +176,7 @@ export default function TradeConfirmPage() {
 
       {/* Risk notice */}
       <div className="flex gap-2 px-4 py-3 rounded-xl text-xs"
-        style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', color: 'rgba(251,191,36,0.8)' }}>
+        style={{ background: 'var(--warning-muted)', border: '1px solid var(--warning)', color: 'var(--warning)' }}>
         <AlertCircle size={13} className="flex-shrink-0 mt-0.5" />
         <span>
           Investments carry risk. The final execution price may differ from the estimate.

@@ -103,7 +103,7 @@ export default function DepositPage() {
 
       {/* Mock notice */}
       <div className="flex gap-2 px-4 py-2.5 rounded-xl text-sm"
-        style={{ background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', color: '#fbbf24' }}>
+        style={{ background: 'var(--warning-muted)', border: '1px solid var(--warning)', color: 'var(--warning)' }}>
         <Info size={14} className="flex-shrink-0 mt-0.5" />
         <span>Payment is simulated — no real money is moved. Balance is credited instantly.</span>
       </div>

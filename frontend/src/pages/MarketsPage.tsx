@@ -292,7 +292,7 @@ export default function MarketsPage() {
                       </td>
 
                       {/* Chg % */}
-                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: up ? '#30d158' : '#ff453a', whiteSpace: 'nowrap' }}>
+                      <td style={{ ...TD, textAlign: 'right', fontWeight: 600, color: up ? 'var(--success)' : 'var(--destructive)', whiteSpace: 'nowrap' }}>
                         {up ? '+' : ''}{chg.toFixed(2)}%
                       </td>
 
@@ -338,7 +338,7 @@ export default function MarketsPage() {
                       <td style={{ ...TD, textAlign: 'center', width: 40 }}>
                         <button
                           onClick={e => toggleWatchlist(asset.id, e)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: watched ? '#ffa00a' : 'var(--muted-foreground)', padding: 4, lineHeight: 1 }}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: watched ? 'var(--warning)' : 'var(--muted-foreground)', padding: 4, lineHeight: 1 }}
                         >
                           <Star size={13} fill={watched ? 'currentColor' : 'none'} />
                         </button>

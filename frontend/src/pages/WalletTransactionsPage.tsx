@@ -82,7 +82,7 @@ export default function WalletTransactionsPage() {
               </thead>
               <tbody>
                 {transactions.map((tx: any, i: number) => {
-                  const meta = TYPE_META[tx.type] ?? { label: tx.type, icon: Receipt, color: '#9ca3af' };
+                  const meta = TYPE_META[tx.type] ?? { label: tx.type, icon: Receipt, color: 'var(--muted-foreground)' };
                   const Icon = meta.icon;
                   return (
                     <tr key={tx.id} className="hover:bg-white/[0.025] transition-colors"
@@ -101,8 +101,8 @@ export default function WalletTransactionsPage() {
                       <td className="px-4 py-3">
                         <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
                           style={{
-                            background: tx.status === 'COMPLETED' ? 'rgba(52,211,153,0.12)' : tx.status === 'PENDING' ? 'rgba(251,191,36,0.12)' : 'rgba(248,113,113,0.12)',
-                            color:      tx.status === 'COMPLETED' ? '#34d399' : tx.status === 'PENDING' ? '#fbbf24' : '#f87171',
+                            background: tx.status === 'COMPLETED' ? 'var(--success-muted)' : tx.status === 'PENDING' ? 'var(--warning-muted)' : 'var(--destructive-muted)',
+                            color:      tx.status === 'COMPLETED' ? 'var(--success)' : tx.status === 'PENDING' ? 'var(--warning)' : 'var(--destructive)',
                           }}>
                           {tx.status}
                         </span>
@@ -123,7 +123,7 @@ export default function WalletTransactionsPage() {
           {/* Mobile cards */}
           <div className="block lg:hidden space-y-2">
             {transactions.map((tx: any) => {
-              const meta = TYPE_META[tx.type] ?? { label: tx.type, icon: Receipt, color: '#9ca3af' };
+              const meta = TYPE_META[tx.type] ?? { label: tx.type, icon: Receipt, color: 'var(--muted-foreground)' };
               const Icon = meta.icon;
               return (
                 <div key={tx.id} className="card p-3">
@@ -140,8 +140,8 @@ export default function WalletTransactionsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
                       style={{
-                        background: tx.status === 'COMPLETED' ? 'rgba(52,211,153,0.12)' : tx.status === 'PENDING' ? 'rgba(251,191,36,0.12)' : 'rgba(248,113,113,0.12)',
-                        color:      tx.status === 'COMPLETED' ? '#34d399' : tx.status === 'PENDING' ? '#fbbf24' : '#f87171',
+                        background: tx.status === 'COMPLETED' ? 'var(--success-muted)' : tx.status === 'PENDING' ? 'var(--warning-muted)' : 'var(--destructive-muted)',
+                        color:      tx.status === 'COMPLETED' ? 'var(--success)' : tx.status === 'PENDING' ? 'var(--warning)' : 'var(--destructive)',
                       }}>
                       {tx.status}
                     </span>

@@ -73,7 +73,7 @@ function PreviewModal({
           <div className="text-center py-2">
             <div style={{
               width: 60, height: 60, borderRadius: '50%',
-              background: 'rgba(52,199,89,0.15)', border: '1px solid rgba(52,199,89,0.3)',
+              background: 'var(--success-muted)', border: '1px solid var(--success)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
             }}>
               <CheckCircle size={30} className="text-green-400" />
@@ -102,8 +102,8 @@ function PreviewModal({
               <span
                 className="text-sm font-bold px-3 py-1 rounded-full"
                 style={{
-                  backgroundColor: isBuy ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
-                  color: isBuy ? '#22c55e' : '#ef4444',
+                  backgroundColor: isBuy ? 'var(--success-muted)' : 'var(--destructive-muted)',
+                  color: isBuy ? 'var(--success)' : 'var(--destructive)',
                 }}
               >
                 {side}
@@ -131,7 +131,7 @@ function PreviewModal({
             {ordType === 'MARKET' && (
               <div
                 className="flex items-start gap-2 p-3 rounded-xl mb-4 text-xs text-yellow-400"
-                style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.15)' }}
+                style={{ background: 'var(--warning-muted)', border: '1px solid var(--warning)' }}
               >
                 <Info size={13} className="mt-0.5 shrink-0" />
                 Market orders fill at the current market price, which may differ slightly from the estimate shown.
@@ -150,8 +150,8 @@ function PreviewModal({
               <button
                 onClick={onConfirm}
                 disabled={loading}
-                className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all"
-                style={{ backgroundColor: isBuy ? '#22c55e' : '#ef4444', opacity: loading ? 0.65 : 1 }}
+                className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
+                style={{ backgroundColor: isBuy ? 'var(--success)' : 'var(--destructive)', color: isBuy ? 'var(--success-foreground)' : 'var(--destructive-foreground)', opacity: loading ? 0.65 : 1 }}
               >
                 {loading ? 'Placing…' : `Confirm ${side}`}
               </button>
@@ -528,7 +528,7 @@ function BuyFlowModal({
           <p style={{ fontWeight: 700, color: 'var(--foreground)', fontSize: 13, margin: 0 }}>{asset.symbol}</p>
           <p style={{ fontSize: 11, color: 'var(--muted-foreground)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</p>
         </div>
-        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 999, backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>BUY</span>
+        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 999, backgroundColor: 'var(--success-muted)', color: 'var(--success)' }}>BUY</span>
       </div>
       <OrderSummaryRows />
       {ordType === 'MARKET' && (
@@ -753,7 +753,7 @@ export default function AssetDetailPage() {
                       className="py-2.5 rounded-xl text-sm font-semibold capitalize transition-all"
                       style={{
                         background: alertCond === c ? 'var(--primary)' : 'var(--border)',
-                        color: alertCond === c ? '#fff' : 'var(--muted-foreground)',
+                        color: alertCond === c ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
                         border: alertCond === c ? 'none' : '1px solid var(--border)',
                       }}>
                       Price goes {c}
@@ -892,8 +892,8 @@ export default function AssetDetailPage() {
               onClick={toggleWatchlist}
               className="p-2.5 rounded-xl transition-all"
               style={{
-                background: watched ? 'rgba(234,179,8,0.12)' : 'var(--border)',
-                color: watched ? '#facc15' : 'var(--muted-foreground)',
+                background: watched ? 'var(--warning-muted)' : 'var(--border)',
+                color: watched ? 'var(--warning)' : 'var(--muted-foreground)',
               }}
             >
               <Star size={18} fill={watched ? 'currentColor' : 'none'} />
@@ -947,8 +947,8 @@ export default function AssetDetailPage() {
                     onClick={() => { setSide(s); setAmount(''); }}
                     className="py-2.5 rounded-lg text-sm font-bold transition-all"
                     style={{
-                      backgroundColor: side === s ? (s === 'BUY' ? '#22c55e' : '#ef4444') : 'transparent',
-                      color: side === s ? '#fff' : 'var(--muted-foreground)',
+                      backgroundColor: side === s ? (s === 'BUY' ? 'var(--success)' : 'var(--destructive)') : 'transparent',
+                      color: side === s ? (s === 'BUY' ? 'var(--success-foreground)' : 'var(--destructive-foreground)') : 'var(--muted-foreground)',
                     }}
                   >
                     {s}
@@ -1104,8 +1104,8 @@ export default function AssetDetailPage() {
                   onClick={() => canBuy && setBuyFlow(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    backgroundColor: canBuy ? '#22c55e' : 'var(--border)',
-                    color: canBuy ? '#fff' : 'var(--muted-foreground)',
+                    backgroundColor: canBuy ? 'var(--success)' : 'var(--border)',
+                    color: canBuy ? 'var(--success-foreground)' : 'var(--muted-foreground)',
                     cursor: canBuy ? 'pointer' : 'not-allowed',
                   }}
                 >
@@ -1117,8 +1117,8 @@ export default function AssetDetailPage() {
                   onClick={() => canOrder && setSellPreview(true)}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all"
                   style={{
-                    backgroundColor: canOrder ? '#ef4444' : 'var(--border)',
-                    color: canOrder ? '#fff' : 'var(--muted-foreground)',
+                    backgroundColor: canOrder ? 'var(--destructive)' : 'var(--border)',
+                    color: canOrder ? 'var(--destructive-foreground)' : 'var(--muted-foreground)',
                     cursor: canOrder ? 'pointer' : 'not-allowed',
                   }}
                 >

@@ -229,7 +229,7 @@ export default function ProfilePage() {
               placeholder="e.g. A012345678Z"
               value={profile.taxId}
               onChange={e => setProfile(p => ({ ...p, taxId: e.target.value.toUpperCase() }))}
-              style={!profile.taxId ? { borderColor: 'rgba(249,115,22,0.5)' } : {}}
+              style={!profile.taxId ? { borderColor: 'var(--warning)' } : {}}
             />
             <p className="text-xs text-gray-500 mt-1">Your Kenya Revenue Authority Personal Identification Number.</p>
           </div>

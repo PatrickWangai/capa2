@@ -140,7 +140,7 @@ export default function NotificationsPage() {
                   'card flex items-start gap-4 transition-colors cursor-pointer',
                   !n.isRead && 'border-blue-800/50',
                 )}
-                style={!n.isRead ? { backgroundColor: 'rgba(37,99,235,0.07)' } : {}}
+                style={!n.isRead ? { backgroundColor: 'var(--info-muted)' } : {}}
                 onClick={() => !n.isRead && markOne(n.id)}
               >
                 <div className={clsx('p-2 rounded-lg shrink-0 mt-0.5', iconClass)}>

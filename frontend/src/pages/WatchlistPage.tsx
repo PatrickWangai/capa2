@@ -11,7 +11,7 @@ function PctBadge({ pct }: { pct: number | null }) {
   const up = pct >= 0;
   return (
     <span className="flex items-center gap-0.5 text-xs font-semibold"
-      style={{ color: up ? '#34d399' : '#f87171' }}>
+      style={{ color: up ? 'var(--success)' : 'var(--destructive)' }}>
       {up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
       {up ? '+' : ''}{pct.toFixed(2)}%
     </span>

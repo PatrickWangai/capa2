@@ -70,7 +70,7 @@ export default function PricingPage() {
                     <span style={{ fontSize: 15, color: TEXT }}>{item.label}</span>
                     {item.note && <span style={{ fontSize: 13, color: SEC, marginLeft: 8 }}>— {item.note}</span>}
                   </div>
-                  <span style={{ fontSize: 15, fontWeight: 600, color: item.value === 'Free' ? '#30d158' : TEXT }}>{item.value}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: item.value === 'Free' ? 'var(--success)' : TEXT }}>{item.value}</span>
                 </div>
               ))}
             </div>
@@ -83,7 +83,7 @@ export default function PricingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {['Account opening', 'Real-time price data', 'Portfolio tracking', 'Price alerts', 'Tax statements', 'Mobile app', 'Customer support', 'Account statements'].map(f => (
               <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Check size={16} color="#30d158" />
+                <Check size={16} color="var(--success)" />
                 <span style={{ fontSize: 14, color: SEC }}>{f}</span>
               </div>
             ))}

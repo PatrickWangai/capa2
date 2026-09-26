@@ -52,13 +52,13 @@ export function ReceiptCard({ title, amount, note, rows, actions }: ReceiptCardP
           <div style={{
             position: 'absolute', bottom: -7, right: -7,
             width: 26, height: 26,
-            background: '#22c55e',
+            background: 'var(--success)',
             borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 0 0 3px var(--bg-1)',
           }}>
             <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
-              <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" strokeWidth="2.2"
+              <path d="M1.5 5L5 8.5L11.5 1.5" stroke="var(--success-foreground)" strokeWidth="2.2"
                 strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>

@@ -129,6 +129,7 @@
   .text-gray-300 { color: var(--muted-foreground)   !important; }
   .text-gray-400 { color: var(--muted-foreground)   !important; }
   .text-gray-500 { color: var(--muted-foreground)   !important; }
+  .text-gray-600, .text-gray-700 { color: var(--muted-foreground) !important; }
   .placeholder-gray-500::placeholder,
   .placeholder-gray-600::placeholder { color: var(--muted-foreground); }
 
@@ -141,6 +142,10 @@
   .text-yellow-300, .text-yellow-400, .text-yellow-400\/80 { color: var(--warning) !important; }
   .text-blue-300, .text-blue-400    { color: var(--info)        !important; }
   .text-orange-300, .text-orange-400, .text-orange-400\/80 { color: var(--warning) !important; }
+  .text-teal-400   { color: var(--primary)  !important; }
+  .bg-teal-900\/30 { background-color: var(--accent) !important; }
+  .text-violet-400 { color: var(--chart-4)  !important; }
+  .text-emerald-400 { color: var(--success) !important; }
 
   .bg-green-900\/20, .bg-green-900\/30, .bg-green-900\/40 { background-color: var(--success-muted)     !important; }
   .bg-red-900\/10, .bg-red-900\/20, .bg-red-900\/30, .bg-red-900\/40, .bg-red-500\/10 { background-color: var(--destructive-muted) !important; }
@@ -616,30 +621,26 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 500;
   font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  transition: opacity 150ms cubic-bezier(0.4,0,0.2,1), background-color 150ms;
+  transition: background-color 150ms cubic-bezier(0.4,0,0.2,1);
   background-color: var(--primary);
   color: var(--primary-foreground) !important;
   border-radius: var(--radius);
   padding: 10px 20px;
   font-size: 14px;
-  border: 2px solid var(--primary);
+  border: none;
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-primary:hover:not(:disabled) { background-color: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-primary:hover:not(:disabled) { background-color: var(--accent-dark); }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 500;
   font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
   transition: background-color 150ms cubic-bezier(0.4,0,0.2,1);
   background-color: var(--card);
   color: var(--foreground) !important;
@@ -655,17 +656,15 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 500;
   font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
   transition: background-color 150ms cubic-bezier(0.4,0,0.2,1);
   background-color: var(--destructive);
   color: var(--destructive-foreground) !important;
   border-radius: var(--radius);
   padding: 10px 18px;
   font-size: 13px;
-  border: 2px solid var(--destructive);
+  border: none;
 }
 
 .input {
@@ -701,6 +700,59 @@ body::before {
 .badge-yellow { display:inline-flex; align-items:center; padding:2px 9px; border-radius:var(--radius); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; background:var(--warning-muted); color:var(--warning); border:1px solid var(--warning); }
 .badge-blue   { display:inline-flex; align-items:center; padding:2px 9px; border-radius:var(--radius); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; background:var(--accent); color:var(--primary); border:1px solid var(--primary); }
 .badge-gray   { display:inline-flex; align-items:center; padding:2px 9px; border-radius:var(--radius); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; background:var(--secondary); color:var(--muted-foreground); border:1px solid var(--border); }
+
+/* Underline-style tab (Dashboard's mover filter, matches the CRM's Tabs
+   component: mono uppercase label, no filled pill, active = bottom border
+   + primary text). Active/inactive colors are set inline per-button since
+   they're state-driven. */
+.tab-underline {
+  padding: 8px 12px;
+  margin-bottom: -1px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms;
+}
+
+/* Stat-card bracket label + icon chip — matches the CRM StatCard motif. */
+.stat-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+.icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.icon-chip-default     { background: var(--accent);            color: var(--primary); }
+.icon-chip-success     { background: var(--success-muted);     color: var(--success); }
+.icon-chip-warning     { background: var(--warning-muted);     color: var(--warning); }
+.icon-chip-destructive { background: var(--destructive-muted); color: var(--destructive); }
+.icon-chip-info        { background: var(--info-muted);        color: var(--info); }
 
 .gradient-text {
   color: var(--primary);

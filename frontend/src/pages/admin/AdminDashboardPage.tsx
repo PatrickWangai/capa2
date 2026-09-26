@@ -27,9 +27,9 @@ function MiniChart({ data, dataKey, color, label, formatter }: {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false}
+        <XAxis dataKey="date" tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false}
           tickFormatter={d => d?.slice(5)} interval="preserveStartEnd" />
-        <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} width={32}
+        <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} width={32}
           tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
         <Tooltip
           contentStyle={{ background: 'var(--surface-dark)', border: '1px solid var(--surface-dark-border)', borderRadius: 8, fontSize: 11 }}
@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">New Users</p>
               <p className="text-sm font-bold text-white">{totalNewUsers}</p>
             </div>
-            <MiniChart data={signups} dataKey="count" color="#8b5cf6" label="Signups" />
+            <MiniChart data={signups} dataKey="count" color="var(--chart-4)" label="Signups" />
           </div>
 
           {/* Trades */}
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
               </p>
             </div>
             <MiniChart
-              data={deposits} dataKey="amount" color="#10b981" label="Deposited"
+              data={deposits} dataKey="amount" color="var(--success)" label="Deposited"
               formatter={v => `$${Number(v).toLocaleString('en', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
             />
           </div>

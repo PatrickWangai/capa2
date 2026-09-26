@@ -5,11 +5,11 @@ import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp, DollarSign, Briefcase, ShieldCheck,
-  ArrowRight, BarChart2, Star, Clock, Wallet, ArrowUpRight, ArrowDownLeft,
+  ArrowRight, BarChart2, Star, Clock, Wallet, ArrowUpRight, ArrowDownLeft, Layers,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { StockLogo } from '../components/ui/StockLogo';
-import { Badge } from '../components/ui';
+import { Badge, StatCard } from '../components/ui';
 
 const FLAG: Record<string, string> = {
   KES: '🇰🇪', USD: '🇺🇸', GBP: '🇬🇧', EUR: '🇪🇺',
@@ -18,16 +18,6 @@ const FLAG: Record<string, string> = {
 };
 
 type MoverTab = 'gainers' | 'losers' | 'active';
-
-function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
-  return (
-    <div className="card">
-      <p className="text-sm text-gray-400">{label}</p>
-      <p className="text-2xl font-bold text-white mt-1">{value}</p>
-      {sub && <p className="text-sm mt-1 text-gray-400">{sub}</p>}
-    </div>
-  );
-}
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -159,15 +149,21 @@ const { data: wlData } = useQuery({
         <StatCard
           label="Total Value"
           value={`$${Number(summary?.totalValue || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          icon={DollarSign}
+          tone="default"
         />
         <StatCard
           label="Total Invested"
           value={`$${Number(summary?.totalInvested || 0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          icon={Briefcase}
+          tone="info"
         />
         <StatCard
           label="Positions"
           value={String(portfolio?.positions?.length || 0)}
           sub="Active holdings"
+          icon={Layers}
+          tone="success"
         />
       </div>
 
@@ -228,14 +224,14 @@ const { data: wlData } = useQuery({
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-white">Top Movers</h2>
-          <div className="flex gap-1 p-1 rounded-lg" style={{ background: 'var(--secondary)' }}>
+          <div className="flex items-center gap-1" style={{ borderBottom: '1px solid var(--border)' }}>
             {(['gainers', 'losers', 'active'] as MoverTab[]).map(t => (
               <button key={t} onClick={() => setMoverTab(t)}
-                className={clsx(
-                  'px-3 py-1 text-xs font-semibold rounded-md transition-all',
-                  moverTab === t ? 'text-white' : 'text-gray-500 hover:text-gray-300',
-                )}
-                style={moverTab === t ? { backgroundColor: 'var(--card)' } : {}}>
+                className="tab-underline"
+                style={{
+                  borderBottomColor: moverTab === t ? 'var(--primary)' : 'transparent',
+                  color: moverTab === t ? 'var(--primary)' : 'var(--muted-foreground)',
+                }}>
                 {t === 'gainers' ? 'Gainers' : t === 'losers' ? 'Losers' : 'Active'}
               </button>
             ))}
