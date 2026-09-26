@@ -45,10 +45,16 @@ services:
         # API calls should be relative to the root, so Nginx can proxy them.
         - VITE_API_URL=/
     # This service only builds the frontend, it does not need to run.
-    # The static files are served by nginx.
+    # The static files are served by nginx. A bind mount (not a named
+    # volume) on purpose: Docker only auto-populates a named volume from
+    # the image on that volume's first creation, so a later
+    # `docker compose up -d --build` would rebuild the image but leave a
+    # pre-existing named volume holding stale files — silently shipping
+    # old frontend code on every redeploy after the first. A bind mount
+    # gets overwritten by every build.
     container_name: capa_frontend
     volumes:
-      - frontend_dist:/app/dist
+      - ./deploy/frontend_dist:/app/dist
 
   nginx:
     container_name: capa_nginx
@@ -57,7 +63,7 @@ services:
     ports:
       - "80:80" # Main entrypoint
     volumes:
-      - frontend_dist:/usr/share/nginx/html
+      - ./deploy/frontend_dist:/usr/share/nginx/html
       - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - backend
@@ -65,4 +71,3 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  frontend_dist:

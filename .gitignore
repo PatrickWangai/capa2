@@ -9,6 +9,7 @@ build/
 .next/
 .expo/
 web-build/
+deploy/
 
 # Environment
 .env

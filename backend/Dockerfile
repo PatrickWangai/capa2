@@ -22,5 +22,12 @@ RUN npx prisma generate
 # Make port 4000 available to the world outside this container
 EXPOSE 4000
 
-# Define the command to run the app
-CMD ["sh", "-c", "npm run migrate:deploy && npm run start"]
+# Define the command to run the app.
+# The two `migrate resolve --applied` calls permanently skip
+# 20260705000000_add_trading_bots and 20260706000000_fix_trading_bots: they
+# create tables for a TradingBot/BotTrade feature that no longer exists in
+# schema.prisma, and their FK column (UUID) doesn't match users.id (TEXT) —
+# running them for real fails on any database, fresh or not. Marking them
+# applied-without-running is intentional (see render.yaml for the same
+# pattern, proven working against a fresh database).
+CMD ["sh", "-c", "npx prisma migrate resolve --applied 20260705000000_add_trading_bots 2>/dev/null; npx prisma migrate resolve --applied 20260706000000_fix_trading_bots 2>/dev/null; npm run migrate:deploy && npm run db:seed && npm run start"]
