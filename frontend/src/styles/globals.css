@@ -530,10 +530,16 @@
   color: var(--foreground);
 }
 
-/* ── Fonts — Space Mono is the base UI face everywhere (matches the CRM);
-   Archivo is reserved for hero/display headlines only. ── */
+/* ── Fonts — matches the CRM's actual split: Inter is the base UI face for
+   body text, labels, inputs and buttons everywhere; Space Mono is reserved
+   for the CRM's specific mono accents (table headers, nav section labels,
+   stat-card bracket labels, tabs — anywhere `font-mono` is used directly);
+   Archivo is for hero/display headlines only. Previously --font-sans was
+   set to Space Mono itself, which put the whole app's body copy in
+   monospace — the CRM's own --font-sans is Inter, mono is `--font-mono`
+   only, used selectively. ── */
 :root {
-  --font-sans: 'Space Mono', ui-monospace, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Space Mono', ui-monospace, monospace;
   --font-display: 'Archivo', var(--font-sans);
   --font-script: 'Caveat', cursive;
