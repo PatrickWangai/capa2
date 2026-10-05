@@ -135,12 +135,12 @@ function HowItWorksStack() {
 
   return (
     <section ref={wrapRef} className="how-works-stack" style={{
-      position: 'relative', height: `${n * 100}vh`, backgroundColor: 'var(--primary)',
+      position: 'relative', height: `${n * 100}vh`, backgroundColor: '#111111',
     }}>
       <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr minmax(340px, 38vw)', alignItems: 'stretch', gap: '4vw', padding: '0 5vw' }}>
           {/* Persistent heading — vertically centred in the viewport */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.1em', marginBottom: 20, textTransform: 'uppercase' }}>Get started in minutes</p>
+            <p style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.1em', marginBottom: 20, textTransform: 'uppercase' }}>[ Get started in minutes ]</p>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(44px,8.5vw,132px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#fff', lineHeight: 0.95, margin: 0 }}>
               How<br />Capa<br />works.
             </h2>
@@ -218,7 +218,7 @@ function WavyDivider() {
   return (
     <svg viewBox="0 0 1440 140" preserveAspectRatio="none" width="100%" height="140"
       style={{ display: 'block', pointerEvents: 'none' }}>
-      <path d={`${BLOB} L1440,140 L0,140 Z`} fill="var(--primary)" />
+      <path d={`${BLOB} L1440,140 L0,140 Z`} fill="#ffffff" />
     </svg>
   );
 }
@@ -566,13 +566,13 @@ export default function LandingPage() {
           margin equal to the hero's own height, so it visibly rises and
           slides over the still-pinned hero, finishing the cover exactly
           when the hero runs out of sticky slack and un-pins — no gap. */}
-      <div style={{ position: 'relative', zIndex: 1, background: 'linear-gradient(to bottom, transparent 140px, var(--primary) 140px)', marginTop: '-100svh' }}>
+      <div style={{ position: 'relative', zIndex: 1, background: 'linear-gradient(to bottom, transparent 140px, #ffffff 140px)', marginTop: '-100svh' }}>
         <WavyDivider />
 
       {/* FEATURES */}
       <GlitchSection>
         <section className="lp-section-pad" style={{ padding: '88px 24px', maxWidth: 980, margin: '0 auto', position: 'relative' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Built for performance</p>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#111', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>[ Built for performance ]</p>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 56, lineHeight: 1.1 }}>
             Everything you need.<br /><Squiggle>Nothing you don't.</Squiggle>
           </h2>
@@ -597,21 +597,21 @@ export default function LandingPage() {
       <GlitchSection>
         <HowItWorksStack />
       </GlitchSection>
-      <section className="how-works-mobile lp-section-pad-sm" style={{ backgroundColor: 'var(--primary)', padding: '80px 24px' }}>
+      <section className="how-works-mobile lp-section-pad-sm" style={{ backgroundColor: '#111111', padding: '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>Get started in minutes</p>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: TEXT, marginBottom: 48, lineHeight: 1.1 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 12, textTransform: 'uppercase' }}>[ Get started in minutes ]</p>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px,5vw,46px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', textAlign: 'center', color: '#ffffff', marginBottom: 48, lineHeight: 1.1 }}>
             How Capa works
           </h2>
           <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
             {steps.map(({ icon: Icon, num, title, desc }) => (
               <div key={num} style={{ textAlign: 'center' }}>
-                <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'var(--card)', border: '2px solid var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <div className="step-icon" style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                   <Icon size={24} color={ACCENT} strokeWidth={1.8} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>{num}</span>
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: TEXT, margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
-                <p style={{ fontSize: 14, color: SEC, margin: 0, lineHeight: 1.65 }}>{desc}</p>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.06em' }}>{num}</span>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#ffffff', margin: '6px 0 8px', letterSpacing: '-0.01em' }}>{title}</h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', margin: 0, lineHeight: 1.65 }}>{desc}</p>
               </div>
             ))}
           </div>
@@ -623,11 +623,11 @@ export default function LandingPage() {
       <GlitchSection>
         <section className="lp-section-pad trust-section" style={{ padding: '88px 24px', maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', position: 'relative' }}>
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.1em', marginBottom: 12, textTransform: 'uppercase' }}>Why investors choose Capa</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#111', letterSpacing: '0.1em', marginBottom: 12, textTransform: 'uppercase' }}>[ Why investors choose Capa ]</p>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 16, lineHeight: 1.05 }}>
               Built on trust.<br />Backed by data.
             </h2>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
+            <p style={{ fontSize: 15, color: '#555', lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
               Regulated, transparent, and built the way a platform holding your money should be.
             </p>
             <Link to="/security" style={{
@@ -664,7 +664,7 @@ export default function LandingPage() {
       {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
       <SectionDivider flip />
       <GlitchSection>
-        <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--primary)', padding: '88px 24px' }}>
+        <section style={{ position: 'relative', overflow: 'hidden', background: '#111111', padding: '88px 24px' }}>
           <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', color: TEXT, marginBottom: 12, lineHeight: 1.05 }}>
               Start investing<br /><span style={{ fontFamily: 'var(--font-script)', textTransform: 'none', fontWeight: 400, fontSize: '1.3em', color: ACCENT }}>today.</span>
@@ -688,7 +688,7 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <SectionDivider />
-      <footer className="lp-footer" style={{ backgroundColor: 'var(--primary)', padding: '48px 24px 32px' }}>
+      <footer className="lp-footer" style={{ backgroundColor: '#111111', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
             <div>
