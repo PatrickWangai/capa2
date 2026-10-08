@@ -593,7 +593,6 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* HOW IT WORKS — scroll-pinned stacked cards on desktop, static list on mobile */}
-      <SectionDivider />
       <GlitchSection>
         <HowItWorksStack />
       </GlitchSection>
@@ -619,7 +618,6 @@ export default function LandingPage() {
       </section>
 
       {/* SOCIAL PROOF — bold headline + CTA on one side, icon-row detail card on the other */}
-      <SectionDivider flip />
       <GlitchSection>
         <section className="lp-section-pad trust-section" style={{ padding: '88px 24px', maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', position: 'relative' }}>
           <div>
@@ -662,7 +660,6 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* CTA — same dark-panel + glowing hard-shadow-card language as the sign-in page */}
-      <SectionDivider flip />
       <GlitchSection>
         <section style={{ position: 'relative', overflow: 'hidden', background: '#111111', padding: '88px 24px' }}>
           <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', textAlign: 'center', borderRadius: 'calc(var(--radius) + 12px)', border: '2px solid var(--foreground)', background: 'var(--card)', padding: '48px 32px', boxShadow: '8px 8px 0 0 var(--foreground)' }}>
@@ -687,7 +684,6 @@ export default function LandingPage() {
       </GlitchSection>
 
       {/* FOOTER */}
-      <SectionDivider />
       <footer className="lp-footer" style={{ backgroundColor: '#111111', padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 32, marginBottom: 40 }}>
